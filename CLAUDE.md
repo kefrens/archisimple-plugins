@@ -74,19 +74,20 @@ const theme = context.services.get(ThemeServiceToken);
 
 Well-known token names:
 
-| Service            | Token name        | Notes                                                |
-| ------------------ | ----------------- | ---------------------------------------------------- |
-| Logging            | `logging`         | also on `context.logger`                             |
-| Document           | `document`        | reads ambient; writes need the `document` capability |
-| Selection          | `selection`       | read-only                                            |
-| Commands           | `command`         | also on `context.commands`                           |
-| Resources          | `resource`        |                                                      |
-| Theme              | `theme`           | read + `onDidChange`; cannot switch the theme        |
-| Localization       | `i18n`            | `translate(key, params)`                             |
-| Installed packages | `package`         |                                                      |
-| Preferences        | `preferences`     | `get` / `set` / `delete`                             |
-| Component Model    | `component-model` | writes need the `components` capability              |
-| Geo Map            | `geo-map`         | writes need the `geo` capability                     |
+| Service            | Token name        | Notes                                                   |
+| ------------------ | ----------------- | ------------------------------------------------------- |
+| Logging            | `logging`         | also on `context.logger`                                |
+| Document           | `document`        | reads ambient; writes need the `document` capability    |
+| Selection          | `selection`       | read-only                                               |
+| Commands           | `command`         | also on `context.commands`                              |
+| Resources          | `resource`        |                                                         |
+| Theme              | `theme`           | read + `onDidChange`; cannot switch the theme           |
+| Localization       | `i18n`            | `translate(key, params)`                                |
+| Installed packages | `package`         |                                                         |
+| Preferences        | `preferences`     | `get` / `set` / `delete`                                |
+| Component Model    | `component-model` | writes need the `components` capability                 |
+| Geo Map            | `geo-map`         | writes need the `geo` capability                        |
+| AI contributions   | `ai`              | registering needs the `ai` capability; listing does not |
 
 `context.commands` and `context.events` arrive **directly on the context** — no
 token, no lookup.
@@ -232,8 +233,9 @@ the model, and reaching around this is not possible from an extension.
 | `document`   | ✅ document **writes** (`transact`). Reading is ambient. |
 | `components` | ✅ registering components and entity kinds               |
 | `geo`        | ✅ contributing base-map layers                          |
+| `ai`         | ✅ contributing Skills and planning stages (Sprint 28.3) |
 
-**Reserved, and grant nothing yet**: `import`, `export`, `rendering`, `ai`,
+**Reserved, and grant nothing yet**: `import`, `export`, `rendering`,
 `properties`, `object-types`, `generators`. They are valid in a manifest and
 parse fine — but no service is gated on them, so declaring one buys you nothing
 today. Do not design a package around one of these expecting it to work.
@@ -268,7 +270,10 @@ Declaring one you do not use is harmless, but don't.
    status, `lastReloadAt` and any message. `Validate` there is a dry run.
 4. **Run the starter test** — no install, no build:
    ```bash
-   cd my-plugin && node --test
+   # From THIS folder, not from inside the package. Volta reads the nearest
+   # package.json and cannot parse an ArchiSimple manifest — its `name` is a
+   # display name ("Urban Rules"), not an npm name.
+   node --test my-plugin/tests/package.test.mjs
    ```
 5. **Validate and ship:**
    ```bash
@@ -312,21 +317,80 @@ These are not this repo's preferences; they are what the host enforces.
 
 ---
 
+## Contributing AI knowledge (`ai` capability)
+
+Since Sprint 28.3 (ADR-0028) a package can contribute **deterministic knowledge**
+to the AI platform. Two kinds, one service, gated by the `ai` capability:
+
+```js
+const AiExtensionServiceToken = { name: 'ai' };
+
+export function activate(context) {
+  const ai = context.services.get(AiExtensionServiceToken);
+
+  // A Skill: pure, synchronous, resolved by id like any built-in.
+  context.subscriptions.add(
+    ai.registerSkill({
+      id: 'urban-rules.maxBuildableArea',
+      summary: 'Compute the maximum buildable floor area on a plot.',
+      execute: (input, skillContext) => ({ ok: true, value: input.plot * 0.4 })
+    })
+  );
+
+  // A planning-stage enricher: artefact in, richer artefact out.
+  context.subscriptions.add(
+    ai.registerPlanningStage({
+      id: 'urban-rules.programme',
+      stage: 'programme', // 'brief' | 'programme' | 'layout' | 'geometry'
+      enrich: (programme, knowledge) => ({
+        ...programme,
+        warnings: [...programme.warnings, 'exceeds the local plan']
+      })
+    })
+  );
+}
+```
+
+Rules the host enforces, not suggests:
+
+- **Return a new object; never mutate.** The artefact is deep-frozen before you
+  see it, so a write throws and your provider is dropped for that call. Spreading
+  the input is the way; `programme.warnings.push(...)` is not.
+- **Stay synchronous.** An `async` skill is refused at registration. Asynchrony
+  implies I/O, and a capability needing I/O is a Provider, not a Skill.
+- **50 ms budget per enrichment.** Over it, you are dropped and reported.
+- **Abstain by returning the input** unchanged.
+- **You get a snapshot, not a service.** `knowledge` is frozen plain data —
+  `roomCount`, `rooms`, `totalFloorAreaSquareMetres`, `wallCount`,
+  `loadBearingWallCount`, `storeyCount`. There is nothing callable on it.
+- **Ids are namespaced by convention** (`urban-rules.programme`); duplicates are
+  refused across every registered provider.
+- **Listing is ambient.** `listSkills()` / `listPlanningStages()` work without the
+  `ai` capability; only registering needs it.
+
+Enrichment always runs **before** the user sees the proposal, and the ids that
+touched an artefact are recorded on it, so the card can name you. You contribute
+what you know — never what happens.
+
+[urban-rules/](urban-rules/) is the working reference for both seams.
+
+---
+
 ## What you cannot build here today
 
 Check this list before promising a capability:
 
-- **An AI provider with its own code.** The `ai` capability is reserved and gates
-  nothing. A package can _declare_ an AI provider through a `provides` block, but
-  the adapter that talks to a model lives in `@archisimple/ai-engine` inside the
-  application repo — not in an extension.
+- **An AI provider with its own code.** A package can _declare_ an AI provider
+  through a `provides` block, but the adapter that talks to a model lives in
+  `@archisimple/ai-engine` inside the application repo. The `ai` capability
+  contributes knowledge, not providers.
 - **A custom renderer.** `packages/rendering` publishes no provider interface and
   the `rendering` capability has no service behind it.
-- **Import/export formats, property panels, object types, generators.** Same —
-  reserved capabilities, no extension point wired yet.
-- **A planning-stage provider.** `PlanningStageProvider` exists on
-  `ArchitecturalPlanner`, but it is not reachable from the extension SDK, and
-  zero have shipped.
+- **Import/export formats, property panels, object types, generators.** Reserved
+  capabilities, no extension point wired yet.
+- **An `ArchitecturalOperationProvider`.** Stage providers enrich; operation
+  providers emit `CommandRequest`s. Sprint 28.3 exposed the first and
+  deliberately not the second (ADR-0028 Rule 4).
 - **Anything touching the Automation API directly.** Extensions do not get a
   `CommandDispatcher`. Document writes go through `document.transact`.
 

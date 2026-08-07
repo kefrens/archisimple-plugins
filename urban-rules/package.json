@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "com.archisimple.urban-rules",
+  "name": "Urban Rules",
+  "version": "1.0.0",
+  "author": "ArchiSimple",
+  "description": "Local planning limits — site coverage, floor-area ratio and storey caps — applied to the space programme before anything is drawn.",
+  "type": "extension",
+  "minimumApplicationVersion": "0.1.0",
+  "sdkVersion": "1.0",
+  "entryPoint": "src/index.js",
+  "capabilities": ["ai"],
+  "dependencies": [],
+  "resources": [],
+  "overrides": [],
+  "configuration": {
+    "preferences": [
+      {
+        "id": "plotAreaSquareMetres",
+        "type": "number",
+        "label": "Plot area (m²)",
+        "description": "The site's total area. Buildable area is derived from it.",
+        "default": 500
+      },
+      {
+        "id": "siteCoverageRatio",
+        "type": "number",
+        "label": "Maximum site coverage",
+        "description": "Fraction of the plot the building footprint may cover.",
+        "default": 0.4
+      },
+      {
+        "id": "maxStoreys",
+        "type": "number",
+        "label": "Maximum storeys",
+        "description": "Storeys permitted by the local plan.",
+        "default": 2
+      }
+    ]
+  }
+}
