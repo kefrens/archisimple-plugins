@@ -88,6 +88,8 @@ Well-known token names:
 | Component Model    | `component-model` | writes need the `components` capability                 |
 | Geo Map            | `geo-map`         | writes need the `geo` capability                        |
 | AI contributions   | `ai`              | registering needs the `ai` capability; listing does not |
+| Asset catalogue    | `assets`          | registering needs the `assets` capability; listing does not |
+| Importers          | `importer`        | registering needs the `import` capability; listing does not |
 
 `context.commands` and `context.events` arrive **directly on the context** — no
 token, no lookup.
@@ -140,9 +142,11 @@ my-plugin/
 - `id` is dot/dash-separated alphanumeric segments; `version` is semver.
 - `type`: `extension` when it carries code, `resource` when it carries only
   content (themes, translations, materials, templates, icons, textures).
-- `sdkVersion` is `major.minor`, **not** semver. Current SDK is **`1.0`**. A `1.0`
-  extension runs on a `1.4` host (additive only); a different major is refused
-  outright.
+- `sdkVersion` is `major.minor`, **not** semver. Current SDK is **`1.1`**, which
+  added the importer contract (Sprint 041.1). A `1.0` extension runs on a `1.4`
+  host (additive only); a different major is refused outright. Declare `1.1` if
+  you register an importer — a `1.0` host has no `importer` token, and saying so
+  in the manifest turns a runtime `undefined` into a refusal with a reason.
 - `entryPoint` here is a **path relative to the package root** (`src/index.js`),
   because that is what the Development Repository reads.
 - A package declaring a **role** rather than content uses a `provides` block —
@@ -234,11 +238,16 @@ the model, and reaching around this is not possible from an extension.
 | `components` | ✅ registering components and entity kinds               |
 | `geo`        | ✅ contributing base-map layers                          |
 | `ai`         | ✅ contributing Skills and planning stages (Sprint 28.3) |
+| `assets`     | ✅ contributing Library asset definitions (Sprint 040.4) |
+| `import`     | ✅ registering an importer (Sprint 041.1)                |
 
-**Reserved, and grant nothing yet**: `import`, `export`, `rendering`,
-`properties`, `object-types`, `generators`. They are valid in a manifest and
-parse fine — but no service is gated on them, so declaring one buys you nothing
-today. Do not design a package around one of these expecting it to work.
+**Reserved, and grant nothing yet**: `export`, `rendering`, `properties`,
+`object-types`, `generators`. They are valid in a manifest and parse fine — but
+no service is gated on them, so declaring one buys you nothing today. Do not
+design a package around one of these expecting it to work.
+
+> `import` was on that list until Sprint 041.1. It now gates
+> `importer.registerImporter`; listing what is registered stays ambient.
 
 Read-only observation (logging, preferences, package, document, selection,
 resource, theme, i18n, component model, geo map) is **ambient** — always

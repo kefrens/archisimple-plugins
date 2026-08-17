@@ -13,6 +13,7 @@ archisimple-plugins/
     package.json          the manifest — the authoritative description
     src/index.js          the entry point, plain ESM JavaScript
     tests/                runs under `node --test`, no install, no build
+  sh3f-importer/          another
   docs/                   design notes and extension ADRs
 ```
 
@@ -28,6 +29,7 @@ is discovered, installed and hot-reloaded as its own package.
 | Package                        | Type      | What it does                                                                                     |
 | ------------------------------ | --------- | ------------------------------------------------------------------------------------------------ |
 | [urban-rules/](urban-rules/)   | extension | Applies local planning limits — site coverage, buildable floor area, storey caps — to the Space Programme, before any geometry exists. The reference for contributing knowledge to the planning pipeline. |
+| [sh3f-importer/](sh3f-importer/) | extension | Imports Sweet Home 3D furniture libraries (`.sh3f`) into the Library — categories, metre dimensions, plan icons, doors and windows, and the licence each entry carries. The reference for contributing an **importer**, and the proof that a format needs no change to the application. |
 
 ---
 

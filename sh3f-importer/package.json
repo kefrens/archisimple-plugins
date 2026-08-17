@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "com.archisimple.sh3f-importer",
+  "name": "Sweet Home 3D Furniture Import",
+  "version": "1.0.0",
+  "author": "ArchiSimple",
+  "description": "Imports Sweet Home 3D furniture libraries (.sh3f) into the ArchiSimple Library, with their categories, dimensions, plan icons and licence.",
+  "type": "extension",
+  "minimumApplicationVersion": "0.1.0",
+  "sdkVersion": "1.1",
+  "entryPoint": "src/index.js",
+  "capabilities": ["import"],
+  "dependencies": [],
+  "resources": [],
+  "overrides": []
+}
