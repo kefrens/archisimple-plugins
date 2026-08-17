@@ -748,6 +748,14 @@ export async function readSh3f(source, context) {
     assets.push(draft);
 
     context.report({ completed: position + 1, total: indices.length, label: name });
+    // Hand the browser a turn (Sprint 041.9 §8.4). `await`ing an archive read
+    // only queues a microtask, and a microtask does not let a page paint — so a
+    // sixty-four-model import reported progress that nobody ever saw, and the
+    // browser called the tab unresponsive.
+    //
+    // A macrotask per **asset**, not per operation: sixty-four of these cost
+    // nothing, and an asset is the unit progress is reported in anyway.
+    await new Promise((resume) => setTimeout(resume, 0));
   }
 
   return { library, assets, payloads };
