@@ -811,22 +811,24 @@ async function readEntry(options) {
   // The plan icon, and **only** the plan icon (§8.5). Falling back to the 3/4
   // render would put a perspective drawing into a technical one, which is worse
   // than a footprint.
+  //
+  // **Nothing is reported here.** Until Sprint 041.7 a missing plan icon meant a
+  // rectangle, so it was worth a warning; since 041.7 it usually means a symbol
+  // derived from the model, which is a success. Warning at this point produced
+  // one line per asset for a library that ended up perfectly well drawn — on a
+  // five-hundred-model library, a thousand notifications about nothing.
+  //
+  // So the *reason* is recorded and the decision is made below, once the
+  // derivation has had its turn.
   const planIcon = at(values, 'planIcon', index);
   let symbol;
+  let planIconProblem;
   if (planIcon === undefined) {
-    context.warn({
-      code: 'missing-plan-icon',
-      subject: name,
-      message: `"${name}" has no plan icon and is drawn as its footprint.`
-    });
+    planIconProblem = 'declares no plan icon';
   } else {
     const entry = findEntry(entries, planIcon, catalogueDirectory);
     if (entry === undefined) {
-      context.warn({
-        code: 'missing-plan-icon',
-        subject: name,
-        message: `"${name}" names the plan icon "${planIcon}", which the archive does not contain; it is drawn as its footprint.`
-      });
+      planIconProblem = `names the plan icon "${planIcon}", which the archive does not contain`;
     } else {
       const bytes = await archive.read(entry.path);
       const image = await context.capabilities.decodeImage(bytes);
@@ -934,6 +936,8 @@ async function readEntry(options) {
   // whole of ADR-0039 Rule 2, and it is why GLTF or IFC would need nothing new
   // over there either.
   let derivedSymbol;
+  let derivationProblem;
+  let derivationCause;
   if (symbol === undefined && objText !== undefined && typeof context.capabilities.outline === 'function') {
     const positions = objTriangles(objText);
     const outlined =
@@ -955,14 +959,34 @@ async function readEntry(options) {
         derivedFrom: outlined.derivedFrom
       };
     } else {
-      // Per-asset and never fatal: sixty-three outlines and one rectangle is a
-      // good import (ADR-0039 Rule 9).
-      context.warn({
-        code: 'no-derived-symbol',
-        subject: name,
-        message: `"${name}" has no plan icon and its model could not be outlined (${outlined.reason}); it is drawn as its footprint.`
-      });
+      derivationProblem = outlined.reason;
+      // The host's stable code, carried into the warning so a report can group
+      // "too detailed" apart from "overlaps itself" (Sprint 042.2b). Prose is
+      // for the person; the code is for the count.
+      derivationCause = outlined.code;
     }
+  }
+
+  // **One warning per asset, and only when it ended up as a rectangle.**
+  //
+  // Per-asset and never fatal: sixty-three outlines and one rectangle is a good
+  // import (ADR-0039 Rule 9). What changed in Sprint 042.1 is *when* it is worth
+  // saying anything — an asset that has no plan icon and gained a derived one is
+  // drawn correctly, and reporting that was noise proportional to the library.
+  if (symbol === undefined && derivedSymbol === undefined) {
+    const because =
+      derivationProblem === undefined
+        ? planIconProblem === undefined
+          ? 'has no plan icon and no model to derive one from'
+          : `${planIconProblem}, and has no model to derive one from`
+        : `${planIconProblem ?? 'declares no plan icon'}, and its model could not be outlined (${derivationProblem})`;
+    context.warn({
+      // Suffixed by cause, so a hundred rectangles group into the two or three
+      // reasons they actually have rather than into one undifferentiated pile.
+      code: derivationCause === undefined ? 'footprint-only' : `footprint-only-${derivationCause}`,
+      subject: name,
+      message: `"${name}" ${because}; it is drawn as its footprint.`
+    });
   }
 
   return {

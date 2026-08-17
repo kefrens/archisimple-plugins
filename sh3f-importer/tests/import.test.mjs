@@ -313,10 +313,15 @@ test('no plan icon means footprint-only, with one warning and no fallback', asyn
   const result = await readSh3f(source(), context);
 
   assert.equal(result.assets[3].representation2d.symbol, undefined);
+  // `footprint-only` since Sprint 042.1, and emitted **once per asset** rather
+  // than once per cause. The old `missing-plan-icon` fired before the derivation
+  // had its turn, so a library that ended up perfectly well drawn still produced
+  // a line per asset.
   const warning = warnings.find(
-    (entry) => entry.code === 'missing-plan-icon' && entry.subject === 'Plan de travail'
+    (entry) => entry.code === 'footprint-only' && entry.subject === 'Plan de travail'
   );
   assert.ok(warning);
+  assert.equal(warnings.filter((entry) => entry.subject === 'Plan de travail').length, 1);
 });
 
 test('a plan icon the archive does not contain warns rather than failing', async () => {
@@ -329,7 +334,12 @@ test('a plan icon the archive does not contain warns rather than failing', async
   const result = await readSh3f(source(), context);
 
   assert.equal(result.assets[0].representation2d.symbol, undefined);
-  assert.ok(warnings.some((entry) => entry.code === 'missing-plan-icon'));
+  const warning = warnings.find((entry) => entry.code === 'footprint-only');
+  assert.ok(warning);
+  // The cause is still named: a plan icon the archive does not yield is either a
+  // malformed library or a path convention this importer does not handle, and
+  // the message has to say which entry and which file.
+  assert.match(warning.message, /absent\.png/);
 });
 
 test('the 3D model is recorded as a reference and never read', async () => {
@@ -917,9 +927,12 @@ test('warns by name and falls back to the footprint when a mesh cannot be outlin
 
   const result = await readSh3f(source(), context);
 
-  const warning = warnings.find((entry) => entry.code === 'no-derived-symbol');
+  const warning = warnings.find((entry) => entry.code === 'footprint-only');
   assert.ok(warning);
   assert.match(warning.message, /Bookcase/);
+  // Why it is a rectangle, in one line rather than two: the plan icon is absent
+  // *and* the derivation failed, and a user needs both halves to act.
+  assert.match(warning.message, /could not be outlined/);
   assert.equal(result.assets[0].representation2d.derivedSymbol, undefined);
   // Still a real drawing: the footprint the catalogue's dimensions give.
   assert.equal(result.assets[0].representation2d.footprint.length, 4);
@@ -935,7 +948,7 @@ test('derives nothing from a model that declares no faces, and says so', async (
   // Never handed to the host at all: an empty mesh is this importer's own
   // answer, not a question worth asking.
   assert.equal(outlined.length, 0);
-  assert.ok(warnings.some((entry) => entry.code === 'no-derived-symbol'));
+  assert.ok(warnings.some((entry) => entry.code === 'footprint-only'));
 });
 
 test('keeps working on a host with no outline capability', async () => {
@@ -949,4 +962,61 @@ test('keeps working on a host with no outline capability', async () => {
 
   assert.equal(result.assets[0].representation2d.derivedSymbol, undefined);
   assert.equal(result.assets[0].representation3d.reference, 'bookcase.obj');
+});
+
+/* -------------------------------------------------------------------------- */
+/* Sprint 042.1 — one warning per asset, and only when it is a rectangle       */
+/* -------------------------------------------------------------------------- */
+
+test('says nothing at all when a missing plan icon was made good by a derivation', async () => {
+  // The noise this replaced: before 042.1 a library with no plan icons produced
+  // `missing-plan-icon` for every asset — including every asset that then gained
+  // a perfectly good derived outline. On a five-hundred-model library that is a
+  // thousand notifications about nothing.
+  const { context, warnings } = hostContext(meshLibrary());
+
+  const result = await readSh3f(source(), context);
+
+  assert.ok(result.assets[0].representation2d.derivedSymbol);
+  assert.equal(warnings.filter((entry) => entry.code === 'footprint-only').length, 0);
+  assert.equal(warnings.filter((entry) => entry.code === 'missing-plan-icon').length, 0);
+});
+
+test('reports a rectangle once, however many reasons it had to be one', async () => {
+  // No plan icon **and** an unusable model is one outcome, not two, and a user
+  // reads one line to learn both halves.
+  const { context, warnings } = hostContext(meshLibrary(), {
+    outline: () => ({ ok: false, reason: 'the projection encloses no area' })
+  });
+
+  await readSh3f(source(), context);
+
+  const own = warnings.filter((entry) => entry.subject === 'Bookcase');
+  assert.equal(own.length, 1);
+  assert.equal(own[0].code, 'footprint-only');
+});
+
+test('carries the host’s reason code into the warning, so a report can group by it', async () => {
+  // A hundred rectangles are not one fact. "Your models are finely tessellated"
+  // and "this shape overlaps itself" are two problems with two answers, and a
+  // report that grouped them together hid the distinction (Sprint 042.2b).
+  const { context, warnings } = hostContext(meshLibrary(), {
+    outline: () => ({ ok: false, code: 'self-overlapping', reason: 'it overlaps itself' })
+  });
+
+  await readSh3f(source(), context);
+
+  assert.equal(warnings[0].code, 'footprint-only-self-overlapping');
+});
+
+test('falls back to the bare code when the host offers none', async () => {
+  // An older host, or one whose refusal has no code: the warning is still
+  // emitted and still says what happened.
+  const { context, warnings } = hostContext(meshLibrary(), {
+    outline: () => ({ ok: false, reason: 'no reason code here' })
+  });
+
+  await readSh3f(source(), context);
+
+  assert.equal(warnings[0].code, 'footprint-only');
 });
