@@ -1020,3 +1020,25 @@ test('falls back to the bare code when the host offers none', async () => {
 
   assert.equal(warnings[0].code, 'footprint-only');
 });
+
+test('records why an outline was refused, so the host can tell it from never trying', async () => {
+  // Sprint 042.4 §8.6: "has a 3D model and no symbol" cannot distinguish a
+  // library imported before derivation existed from one whose models were
+  // refused, and only the first is fixed by importing again.
+  const { context } = hostContext(meshLibrary(), {
+    outline: () => ({ ok: false, code: 'too-detailed', reason: 'too many triangles' })
+  });
+
+  const result = await readSh3f(source(), context);
+
+  assert.equal(result.assets[0].representation2d.symbolRefusal, 'too-detailed');
+});
+
+test('records no refusal when a symbol was derived', async () => {
+  const { context } = hostContext(meshLibrary());
+
+  const result = await readSh3f(source(), context);
+
+  assert.ok(result.assets[0].representation2d.derivedSymbol);
+  assert.equal(result.assets[0].representation2d.symbolRefusal, undefined);
+});

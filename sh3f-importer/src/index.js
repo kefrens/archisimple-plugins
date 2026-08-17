@@ -1001,7 +1001,13 @@ async function readEntry(options) {
       footprint: isOpening ? centredRectangle(width, 0.1) : centredRectangle(width, depth),
       ...(symbol === undefined ? {} : { symbol }),
       ...(derivedSymbol === undefined ? {} : { derivedSymbol }),
-      ...(preview === undefined ? {} : { preview })
+      ...(preview === undefined ? {} : { preview }),
+      // Recorded when an outline was attempted and refused (Sprint 042.4).
+      // Absent means never tried — which is what an entry with no model is, and
+      // what every library imported before 041.7 is. The host uses the
+      // difference to stop telling a user that re-importing would help when it
+      // would not.
+      ...(derivationCause === undefined ? {} : { symbolRefusal: derivationCause })
     },
     ...(representation3d === undefined ? {} : { representation3d }),
     capabilities,
