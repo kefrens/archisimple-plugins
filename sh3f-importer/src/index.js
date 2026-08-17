@@ -841,9 +841,18 @@ async function readEntry(options) {
     }
   }
 
-  // The 3/4 render becomes the preview payload. Carried under its own key so a
-  // preview surface can find it; nothing points a plan symbol at it.
+  // The 3/4 render becomes the preview payload, and since Sprint 042.0 it is
+  // **declared** rather than left for a host to find by guessing a key.
+  //
+  // The key's shape is this importer's business; a host that recomposed it would
+  // be encoding one format's convention, and a second format spelling it
+  // differently would silently show nothing (ADR-0037 Rule 1).
+  //
+  // It is a catalogue picture and never a plan symbol: a ¾ perspective render
+  // drawn into a floor plan is worse than a footprint, which is why nothing here
+  // falls back from `planIcon` to `icon`.
   const icon = at(values, 'icon', index);
+  let preview;
   if (icon !== undefined) {
     const entry = findEntry(entries, icon, catalogueDirectory);
     if (entry === undefined) {
@@ -857,11 +866,13 @@ async function readEntry(options) {
         message: `"${name}" names the icon "${icon}", which could not be resolved to an archive entry; it has no preview.`
       });
     } else {
+      const previewKey = `${sourceKey}--preview`;
       payloads.push({
-        key: `${sourceKey}--preview`,
+        key: previewKey,
         format: formatOf(icon),
         bytes: await archive.read(entry.path)
       });
+      preview = { payloadKey: previewKey };
     }
   }
 
@@ -965,7 +976,8 @@ async function readEntry(options) {
       // draws, and never what positions the opening on its host.
       footprint: isOpening ? centredRectangle(width, 0.1) : centredRectangle(width, depth),
       ...(symbol === undefined ? {} : { symbol }),
-      ...(derivedSymbol === undefined ? {} : { derivedSymbol })
+      ...(derivedSymbol === undefined ? {} : { derivedSymbol }),
+      ...(preview === undefined ? {} : { preview })
     },
     ...(representation3d === undefined ? {} : { representation3d }),
     capabilities,
