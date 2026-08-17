@@ -436,6 +436,68 @@ export function mtlTextures(text) {
 }
 
 /**
+ * The triangles of an OBJ, as the flat list the host's `outline` expects.
+ *
+ * `v` records are vertices and `f` records are faces. Two things a naive reader
+ * gets wrong and a real library will punish:
+ *
+ * - **indices are one-based, and may be negative** — `-1` is the *last* vertex
+ *   seen so far, which is how a generator writes a streamable file;
+ * - **a face may have more than three vertices.** Quads are the common case and
+ *   n-gons occur; both are fanned from the first vertex, which is correct for
+ *   the convex faces every mesh exporter emits.
+ *
+ * `v/vt/vn` is split on the first `/`: texture and normal indices are irrelevant
+ * to a silhouette.
+ *
+ * Nine numbers per triangle, flat, because a hundred-thousand-triangle mesh as
+ * point objects is three hundred thousand allocations (Sprint 041.7 §8.1).
+ */
+export function objTriangles(text) {
+  const vertices = [];
+  const positions = [];
+
+  for (const line of text.split(/\r\n|\r|\n/)) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('v ')) {
+      const parts = trimmed.slice(2).trim().split(/\s+/);
+      const x = Number(parts[0]);
+      const y = Number(parts[1]);
+      const z = Number(parts[2]);
+      if (Number.isFinite(x) && Number.isFinite(y) && Number.isFinite(z)) {
+        vertices.push([x, y, z]);
+      }
+      continue;
+    }
+    if (!trimmed.startsWith('f ')) {
+      continue;
+    }
+
+    const corners = [];
+    for (const token of trimmed.slice(2).trim().split(/\s+/)) {
+      const raw = Number(token.split('/')[0]);
+      if (!Number.isInteger(raw) || raw === 0) {
+        continue;
+      }
+      // Negative indices count back from the vertices seen so far.
+      const index = raw > 0 ? raw - 1 : vertices.length + raw;
+      const vertex = vertices[index];
+      if (vertex !== undefined) {
+        corners.push(vertex);
+      }
+    }
+
+    // A fan from the first corner: three vertices for a triangle, two triangles
+    // for a quad, and so on.
+    for (let at = 1; at + 1 < corners.length; at += 1) {
+      positions.push(...corners[0], ...corners[at], ...corners[at + 1]);
+    }
+  }
+
+  return positions;
+}
+
+/**
  * Resolves a model into the graph a future viewer would need (§8.4).
  *
  * The mesh, the materials it names, and the textures those name — read from the
@@ -487,6 +549,10 @@ async function resolveModelGraph(options) {
   };
 
   const objText = context.capabilities.text(await archive.read(modelEntry.path), 'utf-8');
+  // Handed back so the outline is derived from bytes that were already read.
+  // Reading the same model twice for two answers is a cost a sixty-four-model
+  // library pays sixty-four times.
+  options.onObjText?.(objText);
   for (const materialName of objMaterialLibraries(objText)) {
     const materialEntry = resolve(materialName);
     if (materialEntry === undefined) {
@@ -824,6 +890,7 @@ async function readEntry(options) {
   const model = at(values, 'model', index);
   const rotation = parseModelRotation(at(values, 'modelRotation', index));
   let representation3d;
+  let objText;
   if (model !== undefined) {
     const graph = await resolveModelGraph({
       model,
@@ -831,9 +898,52 @@ async function readEntry(options) {
       entries,
       catalogueDirectory,
       context,
-      name
+      name,
+      onObjText: (text) => {
+        objText = text;
+      }
     });
     representation3d = rotation === undefined ? graph : { ...graph, transform: { rotation } };
+  }
+
+  // The plan symbol, derived (Sprint 041.7, ADR-0039). Only when the library
+  // supplied none of its own — the author's drawing always wins, and the host
+  // enforces that too (Rule 5), so this is an economy rather than the rule.
+  //
+  // This importer computes **no geometry**: it parses its own format into
+  // triangles and the host projects, unions and simplifies them. That is the
+  // whole of ADR-0039 Rule 2, and it is why GLTF or IFC would need nothing new
+  // over there either.
+  let derivedSymbol;
+  if (symbol === undefined && objText !== undefined && typeof context.capabilities.outline === 'function') {
+    const positions = objTriangles(objText);
+    const outlined =
+      positions.length === 0
+        ? { ok: false, reason: 'the model declares no faces' }
+        : context.capabilities.outline({
+            positions,
+            // Sweet Home 3D's models are Y-up, as Java3D's are.
+            upAxis: 'y',
+            // A model is in whatever units its author worked in; the catalogue
+            // states the real size, so the host scales the outline onto it.
+            fitTo: { width, depth: isOpening ? 0.1 : depth },
+            ...(rotation === undefined ? {} : { transform: rotation })
+          });
+    if (outlined.ok) {
+      derivedSymbol = {
+        kind: 'vector',
+        paths: outlined.paths,
+        derivedFrom: outlined.derivedFrom
+      };
+    } else {
+      // Per-asset and never fatal: sixty-three outlines and one rectangle is a
+      // good import (ADR-0039 Rule 9).
+      context.warn({
+        code: 'no-derived-symbol',
+        subject: name,
+        message: `"${name}" has no plan icon and its model could not be outlined (${outlined.reason}); it is drawn as its footprint.`
+      });
+    }
   }
 
   return {
@@ -846,7 +956,8 @@ async function readEntry(options) {
       // An opening's footprint is the leaf swept flat: it is what a preview
       // draws, and never what positions the opening on its host.
       footprint: isOpening ? centredRectangle(width, 0.1) : centredRectangle(width, depth),
-      ...(symbol === undefined ? {} : { symbol })
+      ...(symbol === undefined ? {} : { symbol }),
+      ...(derivedSymbol === undefined ? {} : { derivedSymbol })
     },
     ...(representation3d === undefined ? {} : { representation3d }),
     capabilities,

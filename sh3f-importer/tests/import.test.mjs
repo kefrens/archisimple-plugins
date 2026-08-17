@@ -13,6 +13,7 @@ import assert from 'node:assert/strict';
 import {
   directoryOf,
   findEntry,
+  objTriangles,
   localisedCatalogueFor,
   mtlTextures,
   objMaterialLibraries,
@@ -36,6 +37,7 @@ function latin1(text) {
 function hostContext(files, options = {}) {
   const warnings = [];
   const progress = [];
+  const outlined = [];
   const controller = new AbortController();
 
   const context = {
@@ -60,11 +62,31 @@ function hostContext(files, options = {}) {
       }),
       decodeImage: async () => ({ width: options.imageWidth ?? 64, height: 64 }),
       // The real host uses `TextDecoder`, which Node has natively.
-      text: (bytes, encoding) => new TextDecoder(encoding).decode(bytes)
+      text: (bytes, encoding) => new TextDecoder(encoding).decode(bytes),
+      // The fourth capability (Sprint 041.7). The host runs a Skill behind it;
+      // the double below records what it was handed, because what this importer
+      // must get right is *what it sends*, not what geometry comes back.
+      outline: options.outline ?? ((mesh) => {
+        outlined.push(mesh);
+        return {
+          ok: true,
+          paths: [
+            {
+              points: [
+                { x: -0.5, y: -0.5 },
+                { x: 0.5, y: -0.5 },
+                { x: 0, y: 0.5 }
+              ],
+              closed: true
+            }
+          ],
+          derivedFrom: { representation: '3d', skill: 'mesh.groundOutline' }
+        };
+      })
     }
   };
 
-  return { context, warnings, progress, controller };
+  return { context, warnings, progress, outlined, controller };
 }
 
 function source(name = 'Contributions.sh3f') {
@@ -772,4 +794,159 @@ test('localisedCatalogueFor prefers the region and then the language, and guesse
   // language in front of a user that they did not ask for.
   assert.equal(localisedCatalogueFor(entries, '', 'de'), undefined);
   assert.equal(localisedCatalogueFor(entries, '', undefined), undefined);
+});
+
+/* -------------------------------------------------------------------------- */
+/* Sprint 041.7 — plan symbols derived from the model                          */
+/* -------------------------------------------------------------------------- */
+
+/** A unit cube as an OBJ, with a quad face and a negative index, on purpose. */
+const CUBE_OBJ = [
+  '# a cube',
+  'v -1 0 -1',
+  'v 1 0 -1',
+  'v 1 0 1',
+  'v -1 0 1',
+  'v -1 2 -1',
+  'v 1 2 -1',
+  'v 1 2 1',
+  'v -1 2 1',
+  '# a quad, which must be triangulated',
+  'f 1/1/1 2/2/1 3/3/1 4/4/1',
+  '# the same face again, addressed from the end',
+  'f -8 -7 -6',
+  'f 5 6 7',
+  'f 5 7 8'
+].join('\n');
+
+const MESH_CATALOGUE = [
+  'id=eTeks#meshes',
+  'name=Meshes',
+  'license=CC-BY-4.0',
+  'name#1=Bookcase',
+  'width#1=90',
+  'depth#1=40',
+  'height#1=200',
+  'model#1=bookcase.obj',
+  'modelRotation#1=1 0 0 0 0 -1 0 1 0'
+].join('\n');
+
+function meshLibrary(overrides = {}) {
+  return {
+    [CATALOGUE]: latin1(overrides.catalogue ?? MESH_CATALOGUE),
+    'bookcase.obj': latin1(overrides.obj ?? CUBE_OBJ),
+    ...overrides.files
+  };
+}
+
+test('objTriangles reads vertices, quads and negative indices', () => {
+  const positions = objTriangles(CUBE_OBJ);
+
+  // A quad fans into two triangles, so four faces become five.
+  assert.equal(positions.length % 9, 0);
+  assert.equal(positions.length / 9, 5);
+  // The first triangle is the first three corners of the quad.
+  assert.deepEqual(positions.slice(0, 9), [-1, 0, -1, 1, 0, -1, 1, 0, 1]);
+});
+
+test('objTriangles ignores what a silhouette does not need', () => {
+  const positions = objTriangles(
+    ['vt 0 0', 'vn 0 1 0', 'v 0 0 0', 'v 1 0 0', 'v 0 0 1', 'f 1/1/1 2/1/1 3/1/1'].join('\n')
+  );
+
+  assert.deepEqual(positions, [0, 0, 0, 1, 0, 0, 0, 0, 1]);
+});
+
+test('hands the host triangles and puts the ring it gets back on the draft', () => {
+  const { context, outlined } = hostContext(meshLibrary());
+
+  return readSh3f(source(), context).then((result) => {
+    // The importer computes no geometry: it parses its format and the host
+    // projects (ADR-0039 Rule 2).
+    assert.equal(outlined.length, 1);
+    assert.equal(outlined[0].positions.length / 9, 5);
+    assert.equal(outlined[0].upAxis, 'y');
+
+    const derived = result.assets[0].representation2d.derivedSymbol;
+    assert.equal(derived.kind, 'vector');
+    assert.equal(derived.paths[0].points.length, 3);
+    assert.deepEqual(derived.derivedFrom, {
+      representation: '3d',
+      skill: 'mesh.groundOutline'
+    });
+  });
+});
+
+test('passes modelRotation as the transform, so a model on its side is not a profile', async () => {
+  const { context, outlined } = hostContext(meshLibrary());
+
+  await readSh3f(source(), context);
+
+  assert.deepEqual(outlined[0].transform, [1, 0, 0, 0, 0, -1, 0, 1, 0]);
+});
+
+test('passes the catalogue’s own width and depth, because a mesh is in its author’s units', async () => {
+  const { context, outlined } = hostContext(meshLibrary());
+
+  await readSh3f(source(), context);
+
+  assert.deepEqual(outlined[0].fitTo, { width: 0.9, depth: 0.4 });
+});
+
+test('derives nothing when the library drew its own plan icon', async () => {
+  // The author's drawing always wins (ADR-0039 Rule 5). Not deriving is an
+  // economy here; the host enforces the rule regardless.
+  const { context, outlined } = hostContext(
+    meshLibrary({
+      catalogue: `${MESH_CATALOGUE}\nplanIcon#1=bookcasePlan.png`,
+      files: { 'bookcasePlan.png': PNG }
+    })
+  );
+
+  const result = await readSh3f(source(), context);
+
+  assert.equal(outlined.length, 0);
+  assert.equal(result.assets[0].representation2d.symbol.kind, 'sprite');
+  assert.equal(result.assets[0].representation2d.derivedSymbol, undefined);
+});
+
+test('warns by name and falls back to the footprint when a mesh cannot be outlined', async () => {
+  const { context, warnings } = hostContext(meshLibrary(), {
+    outline: () => ({ ok: false, reason: 'the projection encloses no area' })
+  });
+
+  const result = await readSh3f(source(), context);
+
+  const warning = warnings.find((entry) => entry.code === 'no-derived-symbol');
+  assert.ok(warning);
+  assert.match(warning.message, /Bookcase/);
+  assert.equal(result.assets[0].representation2d.derivedSymbol, undefined);
+  // Still a real drawing: the footprint the catalogue's dimensions give.
+  assert.equal(result.assets[0].representation2d.footprint.length, 4);
+});
+
+test('derives nothing from a model that declares no faces, and says so', async () => {
+  const { context, warnings, outlined } = hostContext(
+    meshLibrary({ obj: ['v 0 0 0', 'v 1 0 0'].join('\n') })
+  );
+
+  await readSh3f(source(), context);
+
+  // Never handed to the host at all: an empty mesh is this importer's own
+  // answer, not a question worth asking.
+  assert.equal(outlined.length, 0);
+  assert.ok(warnings.some((entry) => entry.code === 'no-derived-symbol'));
+});
+
+test('keeps working on a host with no outline capability', async () => {
+  // `SDK_VERSION` did not move for this, so an older host is a real
+  // possibility — and the honest behaviour is to derive nothing rather than to
+  // throw (Sprint 041.6's migration note).
+  const { context } = hostContext(meshLibrary());
+  delete context.capabilities.outline;
+
+  const result = await readSh3f(source(), context);
+
+  assert.equal(result.assets[0].representation2d.derivedSymbol, undefined);
+  assert.equal(result.assets[0].representation3d.reference, 'bookcase.obj');
 });

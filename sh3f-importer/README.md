@@ -44,6 +44,7 @@ none of them and redistributes none of them: you import a file you obtained.
 | `elevation#i`                         | the window's sill, in metres                                    |
 | `movable#i=false`                     | the `movable` capability is withheld                            |
 | `planIcon#i`                          | the plan symbol, scaled by the decoded image's pixel width      |
+| *(none)*                              | a plan symbol **derived** from the model, when there is no icon |
 | `icon#i`                              | a preview payload — **never** the plan symbol                   |
 | `tags#i`                              | free-form search words, split on commas and otherwise verbatim  |
 | `model#i`                             | a **resource graph** — mesh, materials, textures — never loaded |
@@ -78,6 +79,38 @@ than something you discover.
 Which catalogue was read is recorded in each definition's source metadata, so a
 user who switches language later can tell why their furniture is in the language
 it is in.
+
+### Derived plan symbols
+
+The analysed library declares `planIcon` for **none** of its 64 entries, so every
+asset used to draw as an identical rectangle. Where a library ships no plan icon
+and the model is an OBJ, this importer parses the mesh into triangles and hands
+them to the host's `outline` capability, which projects them onto the ground
+plane and unions them into the plan silhouette (ADR-0039).
+
+The division is the point: **this importer computes no geometry.** It parses OBJ
+`v` and `f` records — one-based and negative indices, quads and n-gons fanned
+from the first corner — and the host does the projection, the union and the
+simplification. A second mesh-bearing format would need nothing new on the host's
+side.
+
+`modelRotation` is passed as the transform, so a model authored on its side
+projects to its plan rather than to its profile. The catalogue's own `width` and
+`depth` are passed too: a mesh is in whatever units its author worked in, and the
+catalogue is what states the real size.
+
+Three things this deliberately does not do:
+
+- **Override the author's drawing.** A library that ships `planIcon` gets its own
+  symbol, and the host enforces that regardless of what an importer supplies.
+- **Fail an import.** A mesh that will not parse or will not outline costs its own
+  asset a symbol, warns by name, and draws as its footprint. Sixty-three outlines
+  and one rectangle is a good import.
+- **Raise its own budget.** The triangle limit is the host's.
+
+A silhouette helps unevenly, and it is worth saying so: a bathtub, a basin and a
+round table gain a great deal, while a bookcase and a wardrobe gain almost
+nothing because their silhouette *is* a rectangle.
 
 ### The model graph
 
