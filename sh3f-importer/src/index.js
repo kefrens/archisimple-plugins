@@ -12,10 +12,11 @@
  * A ZIP archive containing:
  *
  * ```text
- * PluginFurnitureCatalog.properties   the catalogue: one numbered block per item
- * <name>.obj / <name>.zip             3D models
- * <name>.png                          icons — a 3/4 render per item
- * <name>Plan.png                      plan icons — the top view, where present
+ * PluginFurnitureCatalog.properties      the catalogue: one numbered block per item
+ * PluginFurnitureCatalog_<lang>.properties   the same, translated — twenty of them
+ * <name>.obj / <name>.mtl / textures     3D models and what they need
+ * <name>.png                             icons — a 3/4 render per item
+ * <name>Plan.png                         plan icons — the top view, where present
  * ```
  *
  * ## The three things that would otherwise ship as bugs
@@ -66,6 +67,19 @@ const DOOR_ELEVATION_THRESHOLD_CM = 10;
 
 /** Within this much of the threshold, the decision is reported as a guess. */
 const NEAR_THRESHOLD_CM = 5;
+
+/**
+ * The keys a localized catalogue actually carries (Sprint 041.6 §8.5).
+ *
+ * A `PluginFurnitureCatalog_fr.properties` translates the **display strings**
+ * and nothing else — there is no French centimetre and no French file path — so
+ * these are the only keys a localized catalogue may override. Everything
+ * structural comes from the base catalogue, which is the only place it exists.
+ */
+const LOCALISED_KEYS = ['name', 'category', 'tags', 'description'];
+
+/** `tags#i` is a comma-separated list, in the library's own language. */
+const TAG_SEPARATOR = /\s*,\s*/;
 
 /* -------------------------------------------------------------------------- */
 /* Units                                                                       */
@@ -209,6 +223,80 @@ export function catalogueIndices(values) {
 }
 
 /* -------------------------------------------------------------------------- */
+/* Localized catalogues                                                        */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The catalogue that matches the language the user is working in.
+ *
+ * `context.locale` is a BCP 47 tag (ADR-0037 revision 2.1); a `.properties`
+ * bundle is suffixed the Java way. `fr-FR` therefore tries `_fr_FR` and then
+ * `_fr`, in that order, and answers `undefined` when the library ships neither —
+ * which is not a failure, it is a library that was never translated.
+ *
+ * Deliberately no "close enough" matching. `pt` is not `pt-BR` and Sweet Home
+ * 3D's own libraries ship both; picking one for the other would put a language
+ * in front of a user that they did not ask for and cannot switch off.
+ */
+export function localisedCatalogueFor(entries, baseDirectory, locale) {
+  if (typeof locale !== 'string' || locale.length === 0) {
+    return undefined;
+  }
+  const parts = locale.replace(/-/g, '_').split('_');
+  const suffixes = parts.length > 1 ? [`${parts[0]}_${parts[1]}`, parts[0]] : [parts[0]];
+
+  for (const suffix of suffixes) {
+    const name = `PluginFurnitureCatalog_${suffix}.properties`;
+    const candidate = baseDirectory.length === 0 ? name : `${baseDirectory}/${name}`;
+    const found = entries.find((entry) => entry.path === candidate);
+    if (found !== undefined) {
+      return found;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Overlays a localized catalogue's display strings onto the base one.
+ *
+ * **Only** {@link LOCALISED_KEYS}, and only where the translation actually says
+ * something. Two things follow, and both are deliberate:
+ *
+ * - a dimension, a file reference or a flag is **never** taken from a localized
+ *   catalogue, because it is not there;
+ * - an entry the translation skipped keeps the base catalogue's name rather than
+ *   losing one. That is Java's own `ResourceBundle` behaviour and Sweet Home
+ *   3D's, and the alternative — refusing the whole translation because it is
+ *   incomplete — would leave a French user with an English library over one
+ *   missing chair.
+ *
+ * A partial translation is **reported** rather than silently absorbed, so
+ * "half my furniture is in English" is a fact the user is told rather than one
+ * they discover.
+ */
+export function overlayLocalisedValues(base, localised) {
+  const merged = { ...base };
+  let translated = 0;
+  let missing = 0;
+
+  for (const key of Object.keys(base)) {
+    const hash = key.lastIndexOf('#');
+    if (hash === -1 || !LOCALISED_KEYS.includes(key.slice(0, hash))) {
+      continue;
+    }
+    const value = localised[key];
+    if (value === undefined || value === '') {
+      if (key.startsWith('name#')) missing += 1;
+      continue;
+    }
+    merged[key] = value;
+    if (key.startsWith('name#')) translated += 1;
+  }
+
+  return { values: merged, translated, missing };
+}
+
+/* -------------------------------------------------------------------------- */
 /* Identity                                                                    */
 /* -------------------------------------------------------------------------- */
 
@@ -269,7 +357,15 @@ function centredRectangle(width, depth) {
   ];
 }
 
-/** Format-specific keys carried verbatim, namespaced away from every core field. */
+/**
+ * Format-specific keys carried verbatim, namespaced away from every core field.
+ *
+ * Sprint 041.6 added the last four. None has an ArchiSimple equivalent and none
+ * is *invented* one: `dropOnTopElevation` and `shelfElevations` describe Sweet
+ * Home 3D's placement semantics, which is a constraint system rather than an
+ * import, and reproducing them here would be modelling a behaviour this
+ * application has not decided to have (ADR-0037 Rule 8).
+ */
 const CARRIED_METADATA_KEYS = [
   'doorOrWindow',
   'elevation',
@@ -277,8 +373,150 @@ const CARRIED_METADATA_KEYS = [
   'movable',
   'currency',
   'price',
-  'dropOnTopElevation'
+  'dropOnTopElevation',
+  'creationDate',
+  'multiPartModel',
+  'shelfElevations',
+  'description'
 ];
+
+/* -------------------------------------------------------------------------- */
+/* The model, and what it needs to be openable                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * A `modelRotation#i`, as a row-major 3×3.
+ *
+ * Sweet Home 3D writes nine numbers separated by spaces. Anything else is
+ * ignored rather than half-read: a partial rotation matrix is not a rotation,
+ * and recording one would be worse than recording none.
+ */
+export function parseModelRotation(raw) {
+  if (typeof raw !== 'string') {
+    return undefined;
+  }
+  const numbers = raw
+    .trim()
+    .split(/[\s,]+/)
+    .map((value) => Number(value));
+  return numbers.length === 9 && numbers.every((value) => Number.isFinite(value))
+    ? numbers
+    : undefined;
+}
+
+/** The `mtllib` files an `.obj` declares, in the order it declares them. */
+export function objMaterialLibraries(text) {
+  const names = [];
+  for (const line of text.split(/\r\n|\r|\n/)) {
+    const match = /^\s*mtllib\s+(.+?)\s*$/i.exec(line);
+    if (match !== null) {
+      // One `mtllib` line may name several files, space-separated.
+      names.push(...match[1].split(/\s+/).filter((name) => name.length > 0));
+    }
+  }
+  return [...new Set(names)];
+}
+
+/** The texture files a `.mtl` maps, whatever the map slot. */
+export function mtlTextures(text) {
+  const names = [];
+  for (const line of text.split(/\r\n|\r|\n/)) {
+    const match = /^\s*map_[A-Za-z_]+\s+(.+?)\s*$/i.exec(line);
+    if (match === null) {
+      continue;
+    }
+    // `map_Kd -s 1 1 1 wood.png` — options come first, the file name last.
+    const parts = match[1].split(/\s+/).filter((part) => part.length > 0);
+    const name = parts[parts.length - 1];
+    if (name !== undefined && !name.startsWith('-')) {
+      names.push(name);
+    }
+  }
+  return [...new Set(names)];
+}
+
+/**
+ * Resolves a model into the graph a future viewer would need (§8.4).
+ *
+ * The mesh, the materials it names, and the textures those name — read from the
+ * archive rather than guessed from a naming convention, because a convention
+ * that held for one library is exactly the kind of thing that fails silently on
+ * the next.
+ *
+ * **Nothing is loaded.** The bytes of the `.obj` and the `.mtl` are read as
+ * *text*, to find out what they reference; no geometry is parsed, no image is
+ * decoded, and the result is a list of names (ADR-0038 Rule 21).
+ *
+ * A declared dependency the archive does not contain is a **warning naming it**,
+ * never a fatal error and never a silent omission: the model is still worth
+ * recording, and the user is told what is missing from it.
+ */
+async function resolveModelGraph(options) {
+  const { model, archive, entries, catalogueDirectory, context, name } = options;
+
+  const modelEntry = findEntry(entries, model, catalogueDirectory);
+  if (modelEntry === undefined) {
+    context.warn({
+      code: 'missing-model',
+      subject: name,
+      message: `"${name}" names the model "${model}", which the archive does not contain; its 3D reference is recorded and nothing else.`
+    });
+    return { format: formatOf(model), reference: model };
+  }
+
+  // Only OBJ declares its dependencies in a form worth reading. A multi-part
+  // model is a nested archive, and unpacking one to enumerate it would be
+  // loading it — which is exactly what Rule 21 abstains from.
+  if (formatOf(model) !== 'obj') {
+    return { format: formatOf(model), reference: modelEntry.path };
+  }
+
+  const directory = directoryOf(modelEntry.path);
+  const dependencies = [];
+  const resolve = (reference) => {
+    const found = findEntry(entries, reference, directory);
+    if (found === undefined) {
+      context.warn({
+        code: 'missing-model-dependency',
+        subject: name,
+        message: `"${name}" needs "${reference}", which the archive does not contain; its model is recorded without it.`
+      });
+      return undefined;
+    }
+    return found;
+  };
+
+  const objText = context.capabilities.text(await archive.read(modelEntry.path), 'utf-8');
+  for (const materialName of objMaterialLibraries(objText)) {
+    const materialEntry = resolve(materialName);
+    if (materialEntry === undefined) {
+      continue;
+    }
+    dependencies.push({
+      name: materialName,
+      reference: materialEntry.path,
+      format: formatOf(materialName)
+    });
+
+    const mtlText = context.capabilities.text(await archive.read(materialEntry.path), 'utf-8');
+    for (const textureName of mtlTextures(mtlText)) {
+      const textureEntry = resolve(textureName);
+      if (textureEntry !== undefined) {
+        dependencies.push({
+          name: textureName,
+          reference: textureEntry.path,
+          format: formatOf(textureName)
+        });
+      }
+    }
+  }
+
+  return {
+    format: 'obj',
+    reference: modelEntry.path,
+    ...(dependencies.length === 0 ? {} : { dependencies })
+  };
+}
 
 /** Library-level keys, which have no `#i` suffix. */
 function readLibrary(values, fallbackId) {
@@ -332,9 +570,35 @@ export async function readSh3f(source, context) {
     );
   }
 
-  const values = parseProperties(
+  const catalogueDirectory = directoryOf(catalogueEntry.path);
+  const base = parseProperties(
     context.capabilities.text(await archive.read(catalogueEntry.path), PROPERTIES_ENCODING)
   );
+
+  // The user's own language, where the library has one (§8.5, ADR-0037
+  // revision 2.1). An importer that ignored `locale` would be correct; reading
+  // it is what makes a French library arrive in French.
+  const localisedEntry = localisedCatalogueFor(entries, catalogueDirectory, context.locale);
+  let values = base;
+  let catalogueRead = catalogueEntry.path;
+  if (localisedEntry !== undefined) {
+    const localised = parseProperties(
+      context.capabilities.text(await archive.read(localisedEntry.path), PROPERTIES_ENCODING)
+    );
+    const overlay = overlayLocalisedValues(base, localised);
+    values = overlay.values;
+    catalogueRead = localisedEntry.path;
+    if (overlay.missing > 0) {
+      // A half-translated library is a fact the user is told rather than one
+      // they discover in a name they cannot search for.
+      context.warn({
+        code: 'partial-translation',
+        subject: localisedEntry.path,
+        message: `${overlay.translated} of ${overlay.translated + overlay.missing} names are translated in "${localisedEntry.path}"; the rest keep the library's own language.`
+      });
+    }
+  }
+
   const library = readLibrary(values, source.name.replace(/\.[^.]*$/, ''));
 
   if (library.licence === 'unknown') {
@@ -408,7 +672,10 @@ export async function readSh3f(source, context) {
       entries,
       // A catalogue may sit in a subdirectory, and its icon references are
       // relative to *it* rather than to the archive root.
-      catalogueDirectory: directoryOf(catalogueEntry.path),
+      catalogueDirectory,
+      // Which catalogue the names came from, recorded so a user who switches
+      // language later can tell why their furniture is still in English (§8.5).
+      catalogueRead,
       context,
       payloads
     });
@@ -431,6 +698,7 @@ async function readEntry(options) {
     archive,
     entries,
     catalogueDirectory,
+    catalogueRead,
     context,
     payloads
   } = options;
@@ -445,13 +713,26 @@ async function readEntry(options) {
   const category = at(values, 'category', index);
   const creator = at(values, 'creator', index);
 
-  const metadata = {};
+  const metadata = { catalogue: catalogueRead };
   for (const key of CARRIED_METADATA_KEYS) {
     const value = at(values, key, index);
     if (value !== undefined) {
       metadata[key] = value;
     }
   }
+
+  // The source's own search words, in its own language. Split and trimmed, and
+  // otherwise untouched: normalising them is where a vocabulary starts, and
+  // ADR-0038 Rule 13 revision 2.2 adds tags precisely without one.
+  const tags = (at(values, 'tags', index) ?? '')
+    .split(TAG_SEPARATOR)
+    .map((tag) => tag.trim())
+    .filter((tag) => tag.length > 0);
+
+  // Per-entry, where the source states one. The analysed library declares
+  // `license#i` on all 64 of its entries, and folding them into one
+  // library-wide value would flatten a distinction its author drew.
+  const licence = at(values, 'license', index) ?? at(values, 'licence', index);
 
   // The plan icon, and **only** the plan icon (§8.5). Falling back to the 3/4
   // render would put a perspective drawing into a technical one, which is worse
@@ -535,10 +816,25 @@ async function readEntry(options) {
     });
   }
 
-  // The 3D model is **recorded and never read** (ADR-0038 Rule 21). Extracting
-  // megabytes of geometry nobody can display would multiply storage for no
-  // capability.
+  // The 3D model is **recorded and never read** (ADR-0038 Rule 21). Since
+  // Sprint 041.6 what is recorded is the whole graph — the mesh, its materials
+  // and their textures — because a reference whose `.mtl` was dropped records
+  // something no future viewer can open, which is worse than recording nothing
+  // because it looks complete (§8.4).
   const model = at(values, 'model', index);
+  const rotation = parseModelRotation(at(values, 'modelRotation', index));
+  let representation3d;
+  if (model !== undefined) {
+    const graph = await resolveModelGraph({
+      model,
+      archive,
+      entries,
+      catalogueDirectory,
+      context,
+      name
+    });
+    representation3d = rotation === undefined ? graph : { ...graph, transform: { rotation } };
+  }
 
   return {
     sourceKey,
@@ -552,11 +848,11 @@ async function readEntry(options) {
       footprint: isOpening ? centredRectangle(width, 0.1) : centredRectangle(width, depth),
       ...(symbol === undefined ? {} : { symbol })
     },
-    ...(model === undefined
-      ? {}
-      : { representation3d: { format: formatOf(model), reference: model } }),
+    ...(representation3d === undefined ? {} : { representation3d }),
     capabilities,
+    ...(tags.length === 0 ? {} : { tags }),
     ...(creator === undefined ? {} : { creator }),
+    ...(licence === undefined ? {} : { licence }),
     ...(Object.keys(metadata).length === 0 ? {} : { metadata })
   };
 }
@@ -641,6 +937,8 @@ export function deactivate() {}
 export const __testing = {
   CATALOGUE_ENTRY,
   DOOR_ELEVATION_THRESHOLD_CM,
+  LOCALISED_KEYS,
   PROPERTIES_ENCODING,
-  readEntry
+  readEntry,
+  resolveModelGraph
 };

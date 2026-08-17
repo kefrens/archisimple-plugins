@@ -10,7 +10,16 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { directoryOf, findEntry, readSh3f, sh3fImporter } from '../src/index.js';
+import {
+  directoryOf,
+  findEntry,
+  localisedCatalogueFor,
+  mtlTextures,
+  objMaterialLibraries,
+  parseModelRotation,
+  readSh3f,
+  sh3fImporter
+} from '../src/index.js';
 
 const CATALOGUE = 'PluginFurnitureCatalog.properties';
 
@@ -31,6 +40,9 @@ function hostContext(files, options = {}) {
 
   const context = {
     signal: controller.signal,
+    // The fifth member, since ADR-0037 revision 2.1. Absent here unless a test
+    // sets one, which is the state an importer must also handle.
+    ...(options.locale === undefined ? {} : { locale: options.locale }),
     report: (value) => {
       progress.push(value);
       options.onProgress?.(value, controller);
@@ -519,4 +531,245 @@ test('icons resolve when the catalogue sits in a subdirectory', async () => {
     result.payloads.map((payload) => payload.key).sort(),
     ['chair', 'chair--preview']
   );
+});
+
+/* -------------------------------------------------------------------------- */
+/* Sprint 041.6 — the fields the first importer discarded                      */
+/* -------------------------------------------------------------------------- */
+
+const WITH_EXTRAS = [
+  'id=eTeks#contributions',
+  'name=Contributions',
+  'license=CC-BY-4.0',
+  'id#1=eTeks#chair',
+  'name#1=Chaise pliante',
+  'category#1=Si\\u00e8ges',
+  'tags#1=chaise, si\\u00e8ge , pliante',
+  'width#1=45',
+  'depth#1=50',
+  'height#1=90',
+  'creator#1=eTeks',
+  'license#1=Free Art License 1.3',
+  'creationDate#1=2009-05-01',
+  'multiPartModel#1=false',
+  'shelfElevations#1=30 60 90',
+  'modelRotation#1=1 0 0 0 0 -1 0 1 0',
+  'model#1=chair/chair.obj',
+  'icon#1=chair.png'
+].join('\n');
+
+const OBJ = ['# a chair', 'mtllib chair.mtl', 'v 0 0 0'].join('\n');
+const MTL = ['newmtl wood', 'map_Kd wood.png', 'map_Bump -bm 0.2 bump.png'].join('\n');
+
+function withExtras(overrides = {}) {
+  return {
+    [CATALOGUE]: latin1(WITH_EXTRAS),
+    'chair.png': PNG,
+    'chair/chair.obj': latin1(OBJ),
+    'chair/chair.mtl': latin1(MTL),
+    'chair/wood.png': PNG,
+    'chair/bump.png': PNG,
+    ...overrides
+  };
+}
+
+test('reads the source’s own tags, split and trimmed and otherwise untouched', async () => {
+  const { context } = hostContext(withExtras());
+
+  const result = await readSh3f(source(), context);
+
+  // Accents kept, case kept, order kept. Normalising is where a vocabulary
+  // starts, and ADR-0038 Rule 13 revision 2.2 adds tags without one.
+  assert.deepEqual(result.assets[0].tags, ['chaise', 'siège', 'pliante']);
+});
+
+test('reads a per-entry licence, which the analysed library states on all 64', async () => {
+  const { context } = hostContext(withExtras());
+
+  const result = await readSh3f(source(), context);
+
+  assert.equal(result.assets[0].licence, 'Free Art License 1.3');
+  // The library's own is still declared, and the host decides which wins.
+  assert.equal(result.library.licence, 'CC-BY-4.0');
+});
+
+test('carries the fields with no ArchiSimple equivalent as source metadata', async () => {
+  const { context } = hostContext(withExtras());
+
+  const result = await readSh3f(source(), context);
+  const metadata = result.assets[0].metadata;
+
+  // Carried, not reproduced: "on top of" and "on a shelf" are a constraint
+  // system, and an import is not the place to invent one (ADR-0037 Rule 8).
+  assert.equal(metadata.creationDate, '2009-05-01');
+  assert.equal(metadata.multiPartModel, 'false');
+  assert.equal(metadata.shelfElevations, '30 60 90');
+});
+
+test('records the model with its materials and its textures', async () => {
+  const { context } = hostContext(withExtras());
+
+  const result = await readSh3f(source(), context);
+  const model = result.assets[0].representation3d;
+
+  assert.equal(model.reference, 'chair/chair.obj');
+  assert.deepEqual(
+    model.dependencies.map((dependency) => dependency.name),
+    ['chair.mtl', 'wood.png', 'bump.png']
+  );
+  // Resolved to real archive paths, so a viewer has something to open rather
+  // than a name relative to a folder it would have to infer.
+  assert.equal(model.dependencies[1].reference, 'chair/wood.png');
+});
+
+test('records a source-declared rotation, and applies it to nothing', async () => {
+  const { context } = hostContext(withExtras());
+
+  const result = await readSh3f(source(), context);
+
+  assert.deepEqual(result.assets[0].representation3d.transform.rotation, [1, 0, 0, 0, 0, -1, 0, 1, 0]);
+  // The footprint is still the catalogue's width × depth: nothing rotated,
+  // because nothing renders (ADR-0038 Rule 21).
+  assert.equal(result.assets[0].representation2d.footprint[1].x, 0.225);
+});
+
+test('warns by name for a dependency the archive does not contain', async () => {
+  const files = withExtras();
+  delete files['chair/wood.png'];
+  const { context, warnings } = hostContext(files);
+
+  const result = await readSh3f(source(), context);
+
+  const warning = warnings.find((entry) => entry.code === 'missing-model-dependency');
+  assert.ok(warning, 'a missing texture must be reported, not silently omitted');
+  assert.match(warning.message, /wood\.png/);
+  // And the model is still recorded, with what does exist.
+  assert.deepEqual(
+    result.assets[0].representation3d.dependencies.map((dependency) => dependency.name),
+    ['chair.mtl', 'bump.png']
+  );
+});
+
+test('records a model whose format declares no dependencies, and reads nothing', async () => {
+  // A multi-part model is a nested archive. Unpacking one to enumerate it would
+  // be loading it, which is exactly what Rule 21 abstains from.
+  const { context } = hostContext({
+    [CATALOGUE]: latin1(
+      ['name=Lib', 'name#1=Chair', 'width#1=45', 'depth#1=50', 'model#1=chair.zip'].join('\n')
+    ),
+    'chair.zip': PNG
+  });
+
+  const result = await readSh3f(source(), context);
+
+  assert.equal(result.assets[0].representation3d.format, 'zip');
+  assert.equal(result.assets[0].representation3d.dependencies, undefined);
+});
+
+test('objMaterialLibraries and mtlTextures read what the formats declare', () => {
+  assert.deepEqual(objMaterialLibraries('mtllib a.mtl b.mtl\nmtllib a.mtl'), ['a.mtl', 'b.mtl']);
+  // Map options come first and the file name last, which is why the last token
+  // is the one taken.
+  assert.deepEqual(mtlTextures('map_Kd -s 1 1 1 wood.png\nmap_Ka wood.png'), ['wood.png']);
+});
+
+test('parseModelRotation refuses anything that is not a 3×3', () => {
+  assert.deepEqual(parseModelRotation('1 0 0 0 1 0 0 0 1'), [1, 0, 0, 0, 1, 0, 0, 0, 1]);
+  // A partial matrix is not a rotation, and recording one is worse than none.
+  assert.equal(parseModelRotation('1 0 0'), undefined);
+  assert.equal(parseModelRotation(undefined), undefined);
+});
+
+/* -------------------------------------------------------------------------- */
+/* Localized catalogues (§8.5)                                                 */
+/* -------------------------------------------------------------------------- */
+
+const FRENCH = ['name#1=Chaise pliante en m\\u00e9tal', 'category#1=Si\\u00e8ges'].join('\n');
+const BASE_EN = [
+  'name=Contributions',
+  'license=CC-BY-4.0',
+  'name#1=Folding chair',
+  'category#1=Seating',
+  'width#1=45',
+  'depth#1=50',
+  'name#2=Table',
+  'category#2=Tables',
+  'width#2=120',
+  'depth#2=80'
+].join('\n');
+
+function bilingual() {
+  return {
+    [CATALOGUE]: latin1(BASE_EN),
+    'PluginFurnitureCatalog_fr.properties': latin1(FRENCH)
+  };
+}
+
+test('reads the catalogue matching the language the user is working in', async () => {
+  const { context } = hostContext(bilingual(), { locale: 'fr' });
+
+  const result = await readSh3f(source(), context);
+
+  assert.equal(result.assets[0].name, 'Chaise pliante en métal');
+  assert.deepEqual(result.assets[0].categoryPath, ['Sièges']);
+});
+
+test('takes a dimension from the base catalogue, because that is where it lives', async () => {
+  const { context } = hostContext(bilingual(), { locale: 'fr' });
+
+  const result = await readSh3f(source(), context);
+
+  // There is no French centimetre. A localized catalogue translates display
+  // strings and nothing else (§8.5).
+  assert.equal(result.assets[0].representation2d.footprint[1].x, 0.225);
+});
+
+test('falls back to the base catalogue for a language the library does not ship', async () => {
+  const { context, warnings } = hostContext(bilingual(), { locale: 'de' });
+
+  const result = await readSh3f(source(), context);
+
+  assert.equal(result.assets[0].name, 'Folding chair');
+  // Not a warning: an untranslated library is a library, not a defect.
+  assert.equal(warnings.filter((entry) => entry.code === 'partial-translation').length, 0);
+});
+
+test('records which catalogue the names came from', async () => {
+  const { context } = hostContext(bilingual(), { locale: 'fr' });
+
+  const result = await readSh3f(source(), context);
+
+  // So a user who switches language later can tell why their furniture is
+  // still in the language it is in (§8.5).
+  assert.equal(result.assets[0].metadata.catalogue, 'PluginFurnitureCatalog_fr.properties');
+});
+
+test('reports a half-translated library rather than absorbing it silently', async () => {
+  const { context, warnings } = hostContext(bilingual(), { locale: 'fr' });
+
+  const result = await readSh3f(source(), context);
+
+  // Entry 2 has no French name: it keeps the base one, which is Java's own
+  // ResourceBundle behaviour and Sweet Home 3D's — and the user is told.
+  assert.equal(result.assets[1].name, 'Table');
+  const warning = warnings.find((entry) => entry.code === 'partial-translation');
+  assert.ok(warning);
+  assert.match(warning.message, /1 of 2/);
+});
+
+test('localisedCatalogueFor prefers the region and then the language, and guesses neither', () => {
+  const entries = [
+    { path: 'PluginFurnitureCatalog_pt.properties', size: 1 },
+    { path: 'PluginFurnitureCatalog_pt_BR.properties', size: 1 }
+  ];
+
+  assert.equal(
+    localisedCatalogueFor(entries, '', 'pt-BR').path,
+    'PluginFurnitureCatalog_pt_BR.properties'
+  );
+  assert.equal(localisedCatalogueFor(entries, '', 'pt').path, 'PluginFurnitureCatalog_pt.properties');
+  // `de` is not "close enough" to anything, and picking one for it would put a
+  // language in front of a user that they did not ask for.
+  assert.equal(localisedCatalogueFor(entries, '', 'de'), undefined);
+  assert.equal(localisedCatalogueFor(entries, '', undefined), undefined);
 });
