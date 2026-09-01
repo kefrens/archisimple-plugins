@@ -48,6 +48,8 @@ none of them and redistributes none of them: you import a file you obtained.
 | `icon#i`                              | a preview payload — **never** the plan symbol                   |
 | `tags#i`                              | free-form search words, split on commas and otherwise verbatim  |
 | `model#i`                             | a **resource graph** — mesh, materials, textures — never loaded |
+| `height#i` on anything else           | the asset's height, so it can be drawn in three dimensions       |
+| `model#i` bytes, **when you ask**     | payloads that travel with the project — read, never opened      |
 | `modelRotation#i`                     | recorded as a 3×3 transform; applied by nothing                 |
 | `license#i`, else the library's       | the licence recorded on that definition                         |
 | `creator#i`                           | provenance on every imported definition                         |
@@ -178,3 +180,40 @@ No install, no build:
 # From the repository root, not from inside this folder.
 node --test sh3f-importer/tests/*.mjs
 ```
+
+## Keeping the 3D models (1.1.0)
+
+A `.sh3f` carries `.obj` meshes with their `.mtl` materials and textures. This
+importer has always recorded **what a model needs** — the graph of names — and
+never the bytes, so a library opened on another machine named files nobody had.
+
+Since 1.1.0 it can keep them, and **ArchiSimple asks you before it reads
+anything**:
+
+- **Import without models** — the default, and byte-for-byte what earlier
+  versions produced. Every asset still draws its plan symbol.
+- **Import with models** — the mesh, its materials and its textures travel with
+  the library and with any project you save from it.
+
+Models and textures are far larger than the icons a plan needs, which is why the
+choice is offered up front rather than discovered afterwards from a save that
+left things behind.
+
+**Nothing is loaded either way.** The bytes are read and handed over unopened —
+no geometry is parsed and no image is decoded. Whether ArchiSimple draws a model
+is its decision, not this importer's (ADR-0038 Rule 21).
+
+**Whole or not at all.** A model whose `.mtl` is kept and whose textures are not
+would look complete and not be, so a format whose dependencies cannot be
+enumerated without unpacking it — anything that is not OBJ — keeps nothing and
+records its reference as before.
+
+## Heights (1.1.0)
+
+`height#i` has always been read and, until 1.1.0, kept only for doors and
+windows. Furniture now records it too, which is what lets ArchiSimple draw a
+piece of furniture in its 3D view.
+
+A `height` of `0` is treated as no height at all — nothing is 0 m tall, so a zero
+is a catalogue saying nothing rather than saying "flat", and the entry imports
+exactly as it did before.

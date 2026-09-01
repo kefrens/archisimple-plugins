@@ -514,7 +514,33 @@ export function objTriangles(text) {
  * recording, and the user is told what is missing from it.
  */
 async function resolveModelGraph(options) {
-  const { model, archive, entries, catalogueDirectory, context, name } = options;
+  const { model, archive, entries, catalogueDirectory, context, name, sourceKey, payloads } =
+    options;
+
+  /**
+   * Whether to keep the bytes, not merely name them (ArchiSimple Sprint 055.3).
+   *
+   * The user was asked before anything was read, and `context.retainModels` is
+   * their answer. Absent on an older host, which is a `false` this importer
+   * treats exactly as a "no".
+   *
+   * **Reading bytes to store them is not loading them.** No geometry is parsed,
+   * no image decoded — ADR-0038 Rule 21's abstention is about *rendering*, and
+   * this reads a file and hands it over unopened, the way the plan icon and the
+   * preview already are.
+   */
+  const retain = context.retainModels === true;
+
+  /** Keeps one file, and answers with the key the host resolves it by. */
+  const keep = async (entry, suffix) => {
+    const key = `${sourceKey}--${suffix}`;
+    payloads.push({
+      key,
+      format: formatOf(entry.path),
+      bytes: await archive.read(entry.path)
+    });
+    return key;
+  };
 
   const modelEntry = findEntry(entries, model, catalogueDirectory);
   if (modelEntry === undefined) {
@@ -529,6 +555,13 @@ async function resolveModelGraph(options) {
   // Only OBJ declares its dependencies in a form worth reading. A multi-part
   // model is a nested archive, and unpacking one to enumerate it would be
   // loading it — which is exactly what Rule 21 abstains from.
+  //
+  // **And nothing is retained for one.** Its dependencies are unknowable without
+  // unpacking it, so keeping the primary file alone would produce exactly the
+  // "looks complete and is not" record ADR-0038 revision 2.2 reshaped this entry
+  // to prevent — a viewer would find a model it cannot resolve, rather than a
+  // reference it knows it must go and find. Whole or not at all, and for this
+  // format the honest answer is not at all.
   if (formatOf(model) !== 'obj') {
     return { format: formatOf(model), reference: modelEntry.path };
   }
@@ -548,7 +581,12 @@ async function resolveModelGraph(options) {
     return found;
   };
 
-  const objText = context.capabilities.text(await archive.read(modelEntry.path), 'utf-8');
+  // Read **once**, and used twice: for the references it declares, and — when
+  // the user asked for it — as the bytes that travel with the library. Reading
+  // the same model twice for two answers is the cost the comment below already
+  // refuses to pay.
+  const objBytes = await archive.read(modelEntry.path);
+  const objText = context.capabilities.text(objBytes, 'utf-8');
   // Handed back so the outline is derived from bytes that were already read.
   // Reading the same model twice for two answers is a cost a sixty-four-model
   // library pays sixty-four times.
@@ -558,28 +596,44 @@ async function resolveModelGraph(options) {
     if (materialEntry === undefined) {
       continue;
     }
+    const mtlBytes = await archive.read(materialEntry.path);
     dependencies.push({
       name: materialName,
       reference: materialEntry.path,
-      format: formatOf(materialName)
+      format: formatOf(materialName),
+      ...(retain ? { payloadKey: await keep(materialEntry, `mtl-${dependencies.length}`) } : {})
     });
 
-    const mtlText = context.capabilities.text(await archive.read(materialEntry.path), 'utf-8');
+    const mtlText = context.capabilities.text(mtlBytes, 'utf-8');
     for (const textureName of mtlTextures(mtlText)) {
       const textureEntry = resolve(textureName);
       if (textureEntry !== undefined) {
+        // A texture is **located** today and never read; retaining one is a
+        // genuinely new read, and most of a library's bytes. That cost is the
+        // whole reason the user is asked first.
         dependencies.push({
           name: textureName,
           reference: textureEntry.path,
-          format: formatOf(textureName)
+          format: formatOf(textureName),
+          ...(retain
+            ? { payloadKey: await keep(textureEntry, `tex-${dependencies.length}`) }
+            : {})
         });
       }
     }
   }
 
+  if (retain) {
+    payloads.push({ key: `${sourceKey}--model`, format: 'obj', bytes: objBytes });
+  }
+
   return {
     format: 'obj',
+    // The archive path stays as the record of where the model came from; the key
+    // is a separate field, because a host handed one overloaded string cannot
+    // tell a dangling key from an intentional path (ArchiSimple Sprint 055.2).
     reference: modelEntry.path,
+    ...(retain ? { payloadKey: `${sourceKey}--model` } : {}),
     ...(dependencies.length === 0 ? {} : { dependencies })
   };
 }
@@ -893,7 +947,19 @@ async function readEntry(options) {
         // The same field doing honest work rather than a second guess.
         sill: toMetres(elevationCm ?? 0)
       }
-    : { kind: 'standalone' };
+    : {
+        kind: 'standalone',
+        // The height this importer has always read and always thrown away for
+        // anything that was not a door (ArchiSimple Sprint 055.4).
+        //
+        // **Only when it is greater than zero.** `numberAt` gives `undefined`
+        // for a missing value and `0` for `"0"`, and the host validates the
+        // field as positive — so passing a zero through would make an entry
+        // that imports today fail validation and be *skipped*, taking the asset
+        // out of the user's library with nothing but a warning. Nothing is 0 m
+        // tall: a zero is a catalogue saying nothing, not saying "flat".
+        ...(heightCm !== undefined && heightCm > 0 ? { height: toMetres(heightCm) } : {})
+      };
 
   if (isOpening && isNearThreshold(elevationCm)) {
     context.warn({
@@ -920,6 +986,8 @@ async function readEntry(options) {
       catalogueDirectory,
       context,
       name,
+      sourceKey,
+      payloads,
       onObjText: (text) => {
         objText = text;
       }
@@ -1079,6 +1147,11 @@ export const sh3fImporter = {
   id: 'sh3f',
   label: 'Sweet Home 3D furniture library',
   extensions: ['.sh3f'],
+  // The host asks about retention only of an importer that says it can do it,
+  // and passes `context.retainModels` to that one alone (ArchiSimple Sprint
+  // 055.3). Without this line the user is never asked, `retainModels` is always
+  // false, and every byte of retention below is unreachable.
+  canRetainModels: true,
   // Every `.sh3f` is a ZIP, and `PK\x03\x04` is a ZIP. Deliberately **not**
   // declared as a signature: it would claim every `.aspkg`, `.docx` and `.jar` a
   // user ever drops, and the host's policy treats a signature as the strongest

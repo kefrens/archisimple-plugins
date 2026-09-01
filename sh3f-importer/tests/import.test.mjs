@@ -45,6 +45,10 @@ function hostContext(files, options = {}) {
     // The fifth member, since ADR-0037 revision 2.1. Absent here unless a test
     // sets one, which is the state an importer must also handle.
     ...(options.locale === undefined ? {} : { locale: options.locale }),
+    // The sixth, since ArchiSimple Sprint 055.3. Absent unless a test asks for
+    // retention — which is also what an older host looks like, and must read as
+    // a "no".
+    ...(options.retainModels === undefined ? {} : { retainModels: options.retainModels }),
     report: (value) => {
       progress.push(value);
       options.onProgress?.(value, controller);
@@ -1041,4 +1045,122 @@ test('records no refusal when a symbol was derived', async () => {
 
   assert.ok(result.assets[0].representation2d.derivedSymbol);
   assert.equal(result.assets[0].representation2d.symbolRefusal, undefined);
+});
+
+/* -------------------------------------------------------------------------- */
+/* Sprint 001.0 — the importer keeps the mesh, and the height                  */
+/* -------------------------------------------------------------------------- */
+
+test('declares that it can retain models, or the host never asks', async () => {
+  // ArchiSimple Sprint 055.3 asks only an importer that says it can, and passes
+  // `retainModels` to that one alone. Without this the user is never asked, the
+  // flag is always false, and every line of retention below is unreachable.
+  assert.equal(sh3fImporter.canRetainModels, true);
+});
+
+test('records the height it has always read for a standalone entry', async () => {
+  const { context } = hostContext(withExtras());
+
+  const result = await readSh3f(source(), context);
+
+  // 90 cm in the catalogue, metres in the contract — converted at this
+  // boundary, as every other length here is.
+  assert.equal(result.assets[0].realisation.kind, 'standalone');
+  assert.equal(result.assets[0].realisation.height, 0.9);
+});
+
+test('treats a zero height as no height, rather than removing the asset', async () => {
+  // The dangerous case. `numberAt` gives `0` for "0", the host validates the
+  // field as positive, and a definition that fails validation is **skipped** —
+  // so passing a zero through would take an entry that imports today out of the
+  // user's library with nothing but a warning.
+  const { context } = hostContext(
+    withExtras({ [CATALOGUE]: latin1(WITH_EXTRAS.replace('height#1=90', 'height#1=0')) })
+  );
+
+  const result = await readSh3f(source(), context);
+
+  assert.equal(result.assets.length, 1, 'the asset is still imported');
+  assert.equal(result.assets[0].realisation.height, undefined);
+});
+
+test('retains nothing unless the host asked, and says nothing about it', async () => {
+  // The regression guard. An older host, or a user who declined: byte-identical
+  // to what this importer produced before retention existed.
+  const { context } = hostContext(withExtras());
+
+  const result = await readSh3f(source(), context);
+  const model = result.assets[0].representation3d;
+
+  assert.equal(model.payloadKey, undefined);
+  assert.deepEqual(
+    model.dependencies.map((one) => one.payloadKey),
+    [undefined, undefined, undefined]
+  );
+  // Only the plan icon and the preview, exactly as before.
+  assert.ok(result.payloads.every((payload) => !payload.key.includes('--model')));
+});
+
+test('retains the mesh, its materials and its textures when asked', async () => {
+  const { context } = hostContext(withExtras(), { retainModels: true });
+
+  const result = await readSh3f(source(), context);
+  const model = result.assets[0].representation3d;
+
+  // Whole or not at all: a mesh whose `.mtl` arrived and whose textures did not
+  // "looks complete and is not" (ADR-0038 revision 2.2).
+  assert.ok(model.payloadKey, 'the mesh has a key');
+  for (const dependency of model.dependencies) {
+    assert.ok(dependency.payloadKey, `${dependency.name} has a key`);
+  }
+
+  // Four files: the .obj, the .mtl, and the two textures it names.
+  const kept = result.payloads.filter((payload) => payload.key.startsWith('eTeks#chair--'));
+  assert.equal(kept.filter((payload) => payload.key.includes('model')).length, 1);
+  assert.equal(kept.filter((payload) => payload.key.includes('mtl')).length, 1);
+  assert.equal(kept.filter((payload) => payload.key.includes('tex')).length, 2);
+});
+
+test('keeps the archive path as well as the key, because they say different things', async () => {
+  // ArchiSimple Sprint 055.2: the key is what the host resolves, the reference
+  // is the record of where the model came from. Overloading one string means a
+  // host cannot tell a dangling key from an intentional path.
+  const { context } = hostContext(withExtras(), { retainModels: true });
+
+  const result = await readSh3f(source(), context);
+
+  assert.equal(result.assets[0].representation3d.reference, 'chair/chair.obj');
+});
+
+test('reads each retained file once, not twice', async () => {
+  // The `.obj` and the `.mtl` are already read for the references they declare,
+  // and retention reuses those reads. A sixty-four-model library pays this cost
+  // sixty-four times if it is paid twice.
+  //
+  // Counted at `archive.read`, not on the fixture object: `entries()` walks the
+  // same map with `Object.entries`, which is a property access and not a read.
+  const { context } = hostContext(withExtras(), { retainModels: true });
+  const reads = [];
+  const realReadArchive = context.capabilities.readArchive;
+  const counting = {
+    ...context,
+    capabilities: {
+      ...context.capabilities,
+      readArchive: async (bytes) => {
+        const archive = await realReadArchive(bytes);
+        return {
+          ...archive,
+          read: async (path) => {
+            reads.push(path);
+            return archive.read(path);
+          }
+        };
+      }
+    }
+  };
+
+  await readSh3f(source(), counting);
+
+  const objReads = reads.filter((path) => path === 'chair/chair.obj').length;
+  assert.equal(objReads, 1, `the .obj was read ${objReads} times`);
 });
