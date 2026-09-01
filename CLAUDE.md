@@ -40,6 +40,28 @@ So: every folder here is a **package**. A folder with behaviour is an
 **extension**. Use those words in code, commit messages and docs, even when the
 user says "plugin".
 
+
+---
+
+## When a draft's shape changes, regenerate ArchiSimple's fixture
+
+`apps/web/src/library/__tests__/fixtures/imported-library.json` over there is a
+**capture of what `sh3f-importer` actually emits**, produced by running this
+package's real entry point. It is the only thing that checks the two
+repositories' mirrors agree — neither imports the other, and CI checks out one.
+
+So after changing what a draft carries — a new field, a renamed payload key, a
+different realisation — regenerate it:
+
+```bash
+cd ../archisimple && pnpm --filter import-capture run capture        # rewrite
+cd ../archisimple && pnpm --filter import-capture run capture:check  # is it stale?
+```
+
+**It is a script, not a test, on purpose.** A CI test that skipped when this
+checkout is absent would report green for something it did not do, which is worse
+than no test.
+
 ---
 
 ## The one constraint that shapes everything

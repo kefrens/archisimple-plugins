@@ -418,6 +418,55 @@ export function objMaterialLibraries(text) {
 }
 
 /** The texture files a `.mtl` maps, whatever the map slot. */
+/**
+ * The materials an `.mtl` declares (Sprint 001.2).
+ *
+ * `newmtl` opens one; `Kd` is its diffuse colour and `map_Kd` its diffuse map.
+ * Nothing else is read — an `.mtl` from these libraries states little more, and
+ * a flat-shaded massing view could not honestly use metalness or roughness.
+ *
+ * A material with no `Kd` gets **white**, which is what an `.mtl` means by
+ * omitting it: the map, or the renderer's default, unmodulated. Not a guess —
+ * the format's own default.
+ */
+export function mtlMaterials(text) {
+  const materials = [];
+  let current;
+
+  for (const line of text.split(/\r\n|\r|\n/)) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('newmtl ')) {
+      const name = trimmed.slice(7).trim();
+      if (name.length > 0) {
+        current = { name, colour: { r: 1, g: 1, b: 1 } };
+        materials.push(current);
+      }
+      continue;
+    }
+    if (current === undefined) {
+      continue;
+    }
+    if (/^Kd\s/i.test(trimmed)) {
+      const parts = trimmed.slice(2).trim().split(/\s+/).map(Number);
+      if (parts.length >= 3 && parts.every((value) => Number.isFinite(value))) {
+        current.colour = { r: parts[0], g: parts[1], b: parts[2] };
+      }
+      continue;
+    }
+    const map = /^map_Kd\s+(.+?)\s*$/i.exec(trimmed);
+    if (map !== null) {
+      // `map_Kd -s 1 1 1 wood.png` — options come first, the file name last,
+      // exactly as `mtlTextures` already reads it.
+      const name = map[1].split(/\s+/).pop();
+      if (name !== undefined && name.length > 0) {
+        current.texture = name;
+      }
+    }
+  }
+
+  return materials;
+}
+
 export function mtlTextures(text) {
   const names = [];
   for (const line of text.split(/\r\n|\r|\n/)) {
@@ -454,11 +503,61 @@ export function mtlTextures(text) {
  * point objects is three hundred thousand allocations (Sprint 041.7 §8.1).
  */
 export function objTriangles(text) {
+  return objGeometry(text).positions;
+}
+
+/**
+ * The same walk, keeping what a texture needs (Sprint 001.2).
+ *
+ * `objTriangles` above is this, minus everything. It stays because the derived
+ * plan symbol wants only positions and asking for the rest would make a
+ * sixty-four-model library pay for what it does not use.
+ *
+ * Three things beyond vertices and faces:
+ *
+ * - **`vt` records**, indexed like `v` — one-based, negatives counting back —
+ *   and emitted **per corner**, because an `.obj` pairs a position with a
+ *   texture coordinate at the face, not at the vertex. Two corners sharing a
+ *   position may use different coordinates, which is how a cube's faces get
+ *   separate patches of one image;
+ * - **`usemtl`**, which opens a run. A run is a range of the emitted triangle
+ *   stream, closed by the next `usemtl` or by the end;
+ * - a face with no `vt` at all, which is normal and yields `0,0` — the corner of
+ *   the image, and honest about knowing nothing.
+ */
+export function objGeometry(text) {
   const vertices = [];
+  const coordinates = [];
   const positions = [];
+  const uv = [];
+  const groups = [];
+  let material;
+
+  const closeGroup = () => {
+    const open = groups[groups.length - 1];
+    if (open !== undefined && open.count === -1) {
+      open.count = positions.length / 3 - open.start;
+    }
+  };
 
   for (const line of text.split(/\r\n|\r|\n/)) {
     const trimmed = line.trim();
+    if (trimmed.startsWith('vt ')) {
+      const parts = trimmed.slice(3).trim().split(/\s+/);
+      const u = Number(parts[0]);
+      const v = Number(parts[1]);
+      coordinates.push([Number.isFinite(u) ? u : 0, Number.isFinite(v) ? v : 0]);
+      continue;
+    }
+    if (trimmed.startsWith('usemtl ')) {
+      const name = trimmed.slice(7).trim();
+      if (name.length > 0) {
+        closeGroup();
+        material = name;
+        groups.push({ start: positions.length / 3, count: -1, material });
+      }
+      continue;
+    }
     if (trimmed.startsWith('v ')) {
       const parts = trimmed.slice(2).trim().split(/\s+/);
       const x = Number(parts[0]);
@@ -475,26 +574,50 @@ export function objTriangles(text) {
 
     const corners = [];
     for (const token of trimmed.slice(2).trim().split(/\s+/)) {
-      const raw = Number(token.split('/')[0]);
+      const parts = token.split('/');
+      const raw = Number(parts[0]);
       if (!Number.isInteger(raw) || raw === 0) {
         continue;
       }
       // Negative indices count back from the vertices seen so far.
       const index = raw > 0 ? raw - 1 : vertices.length + raw;
       const vertex = vertices[index];
-      if (vertex !== undefined) {
-        corners.push(vertex);
+      if (vertex === undefined) {
+        continue;
       }
+
+      // `v/vt/vn`. The texture index is the **second** field and is indexed the
+      // same way — one-based, negatives counting back. A face with none is
+      // normal and yields the image's corner rather than a guess.
+      const rawUv = Number(parts[1]);
+      const uvIndex = Number.isInteger(rawUv)
+        ? rawUv > 0
+          ? rawUv - 1
+          : coordinates.length + rawUv
+        : -1;
+      corners.push({ vertex, uv: coordinates[uvIndex] ?? [0, 0] });
     }
 
     // A fan from the first corner: three vertices for a triangle, two triangles
-    // for a quad, and so on.
+    // for a quad, and so on. The uv fans with it, corner for corner — which is
+    // what keeps the two arrays aligned, and the alignment is the whole
+    // correctness of a texture.
     for (let at = 1; at + 1 < corners.length; at += 1) {
-      positions.push(...corners[0], ...corners[at], ...corners[at + 1]);
+      for (const corner of [corners[0], corners[at], corners[at + 1]]) {
+        positions.push(...corner.vertex);
+        uv.push(...corner.uv);
+      }
     }
   }
 
-  return positions;
+  closeGroup();
+  return {
+    positions,
+    // Emitted only when the model actually said something: an all-zero uv array
+    // is worse than none, because it looks like data.
+    uv: coordinates.length > 0 ? uv : undefined,
+    groups: groups.filter((group) => group.count > 0)
+  };
 }
 
 /**
@@ -605,6 +728,10 @@ async function resolveModelGraph(options) {
     });
 
     const mtlText = context.capabilities.text(mtlBytes, 'utf-8');
+    // Handed back for the same reason the `.obj` text is: these bytes are
+    // already read, and parsing them again for a second answer is a cost a
+    // sixty-four-model library pays sixty-four times (Sprint 001.2).
+    options.onMaterials?.(mtlMaterials(mtlText));
     for (const textureName of mtlTextures(mtlText)) {
       const textureEntry = resolve(textureName);
       if (textureEntry !== undefined) {
@@ -978,6 +1105,8 @@ async function readEntry(options) {
   const rotation = parseModelRotation(at(values, 'modelRotation', index));
   let representation3d;
   let objText;
+  /** What the model's `.mtl` files declared, in the order they were read. */
+  const declaredMaterials = [];
   if (model !== undefined) {
     const graph = await resolveModelGraph({
       model,
@@ -990,6 +1119,9 @@ async function readEntry(options) {
       payloads,
       onObjText: (text) => {
         objText = text;
+      },
+      onMaterials: (found) => {
+        declaredMaterials.push(...found);
       }
     });
     representation3d = rotation === undefined ? graph : { ...graph, transform: { rotation } };
@@ -1006,13 +1138,15 @@ async function readEntry(options) {
   // Parsed at most **once** per entry, and only if something wants it: the
   // outline below, the drawable mesh above, or both. `objTriangles` walks the
   // whole file, and a sixty-four-model library pays that walk sixty-four times.
-  let triangles;
-  const trianglesOf = () => {
-    if (triangles === undefined && objText !== undefined) {
-      triangles = objTriangles(objText);
+  let geometry;
+  const geometryOf = () => {
+    if (geometry === undefined && objText !== undefined) {
+      geometry = objGeometry(objText);
     }
-    return triangles ?? [];
+    return geometry ?? { positions: [], uv: undefined, groups: [] };
   };
+  /** The outline wants positions and nothing else. */
+  const trianglesOf = () => geometryOf().positions;
 
   // The model, as geometry a 3D view can draw (Sprint 001.1, ArchiSimple
   // 056.1). The host normalises — up-axis, the catalogue's real size, the
@@ -1028,12 +1162,24 @@ async function readEntry(options) {
     objText !== undefined &&
     typeof context.capabilities.mesh === 'function'
   ) {
-    const positions = trianglesOf();
+    const geometry = geometryOf();
+    // Only the materials the geometry actually uses. An `.mtl` commonly declares
+    // more than one model needs, and a group naming a material that was not sent
+    // is refused by the host — correctly, since the alternative is a mesh drawn
+    // in a colour nobody chose.
+    const used = new Set(geometry.groups.map((group) => group.material));
+    const materials = declaredMaterials.filter((material) => used.has(material.name));
+    const groups = geometry.groups.filter((group) =>
+      materials.some((material) => material.name === group.material)
+    );
+
     const drawable =
-      positions.length === 0
+      geometry.positions.length === 0
         ? { ok: false, reason: 'the model declares no faces' }
         : context.capabilities.mesh({
-            positions,
+            positions: geometry.positions,
+            ...(geometry.uv === undefined ? {} : { uv: geometry.uv }),
+            ...(materials.length === 0 ? {} : { materials, groups }),
             // Sweet Home 3D's models are Y-up, as Java3D's are.
             upAxis: 'y',
             // The catalogue states the real size; the model is in whatever units

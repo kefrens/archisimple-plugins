@@ -1277,3 +1277,115 @@ test('asks nothing of a host too old to have the capability', async () => {
 
   assert.equal(result.assets[0].representation3d.meshPayloadKey, undefined);
 });
+
+/* -------------------------------------------------------------------------- */
+/* Sprint 001.2 — what the model is made of                                    */
+/* -------------------------------------------------------------------------- */
+
+/** A cube with two materials and texture coordinates. */
+const TEXTURED_OBJ = [
+  // The name the file map uses — an `mtllib` naming a file the archive does not
+  // contain is resolved to nothing, which is a case the importer already warns
+  // about and not the one under test here.
+  'mtllib chair.mtl',
+  'v -1 0 -1',
+  'v 1 0 -1',
+  'v 1 0 1',
+  'v -1 0 1',
+  'v -1 2 -1',
+  'v 1 2 -1',
+  'vt 0 0',
+  'vt 1 0',
+  'vt 1 1',
+  'usemtl wood',
+  'f 1/1 2/2 3/3',
+  'usemtl steel',
+  'f 4/1 5/2 6/3'
+].join('\n');
+
+const TEXTURED_MTL = [
+  'newmtl wood',
+  'Kd 0.6 0.4 0.2',
+  'map_Kd grain.png',
+  'newmtl steel',
+  'Kd 0.7 0.7 0.75',
+  'newmtl unused',
+  'Kd 1 0 0'
+].join('\n');
+
+const withMaterials = () =>
+  withExtras({
+    'chair/chair.obj': latin1(TEXTURED_OBJ),
+    'chair/chair.mtl': latin1(TEXTURED_MTL),
+    'chair/grain.png': PNG
+  });
+
+test('sends a uv per vertex, in positions order', async () => {
+  const { context, meshed } = hostContext(withMaterials(), { retainModels: true });
+
+  await readSh3f(source(), context);
+
+  const sent = meshed[0];
+  // Two numbers per vertex. The alignment is the whole correctness of a texture.
+  assert.equal(sent.uv.length, (sent.positions.length / 3) * 2);
+});
+
+test('sends a group per usemtl run, over the triangle stream', async () => {
+  const { context, meshed } = hostContext(withMaterials(), { retainModels: true });
+
+  await readSh3f(source(), context);
+
+  const { groups } = meshed[0];
+  assert.deepEqual(
+    groups.map((group) => group.material),
+    ['wood', 'steel']
+  );
+  // Three vertices each — one triangle apiece, and contiguous.
+  assert.equal(groups[0].start, 0);
+  assert.equal(groups[0].count, 3);
+  assert.equal(groups[1].start, 3);
+});
+
+test('sends each material’s colour and its map, by name', async () => {
+  const { context, meshed } = hostContext(withMaterials(), { retainModels: true });
+
+  await readSh3f(source(), context);
+
+  const wood = meshed[0].materials.find((material) => material.name === 'wood');
+  assert.deepEqual(wood.colour, { r: 0.6, g: 0.4, b: 0.2 });
+  // A name, not a resource id: a mesh is encoded during the import and resolves
+  // no payload key. The host matches it against the dependency of that name.
+  assert.equal(wood.texture, 'grain.png');
+});
+
+test('sends only the materials the geometry uses', async () => {
+  // An `.mtl` commonly declares more than one model needs, and the host refuses
+  // a group naming a material that was not sent — so sending the unused one
+  // would be harmless, and sending a group for it would not.
+  const { context, meshed } = hostContext(withMaterials(), { retainModels: true });
+
+  await readSh3f(source(), context);
+
+  assert.ok(!meshed[0].materials.some((material) => material.name === 'unused'));
+});
+
+test('sends no uv for a model that declares none, rather than zeroes', async () => {
+  // An all-zero uv array is worse than none: it looks like data.
+  const { context, meshed } = hostContext(withModel(), { retainModels: true });
+
+  await readSh3f(source(), context);
+
+  assert.equal(meshed[0].uv, undefined);
+  assert.equal(meshed[0].materials, undefined);
+});
+
+test('parses the model once, still, now that two things want more of it', async () => {
+  const { context, meshed, outlined } = hostContext(
+    withMaterials({ [CATALOGUE]: latin1(WITH_EXTRAS.replace('icon#1=chair.png', '')) }),
+    { retainModels: true }
+  );
+
+  await readSh3f(source(), context);
+
+  assert.equal(meshed[0].positions, outlined[0].positions, 'one parse, shared');
+});

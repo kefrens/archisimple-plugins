@@ -235,3 +235,23 @@ which is what it drew before. A host too old to offer the capability imports
 exactly as it did.
 
 Untextured for now: one colour, the right shape.
+
+## Materials and textures (1.3.0)
+
+A model kept with **Import with models** now brings what it is made of: each
+`usemtl` run, each material's `Kd` colour, and its `map_Kd` texture.
+
+The division of labour is unchanged. This package parses its own format —
+`vt` records, `usemtl` runs, `newmtl`/`Kd`/`map_Kd` — and the host normalises,
+encodes and draws. It still computes no geometry and knows no encoding.
+
+Two things it is careful about:
+
+- **A texture is named, never resolved.** A mesh is prepared during the import,
+  before the host has stored anything, so a material names `wood.png` the way the
+  model did. The host matches that against the dependency of the same name.
+- **Only the materials the geometry uses are sent.** An `.mtl` commonly declares
+  more than one model needs.
+
+A model with no `vt` sends no texture coordinates rather than an array of zeroes,
+which would look like data.
