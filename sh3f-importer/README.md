@@ -217,3 +217,21 @@ piece of furniture in its 3D view.
 A `height` of `0` is treated as no height at all — nothing is 0 m tall, so a zero
 is a catalogue saying nothing rather than saying "flat", and the entry imports
 exactly as it did before.
+
+## Seeing the models (1.2.0)
+
+Choosing **Import with models** now also prepares each model for ArchiSimple's 3D
+view, so furniture appears as its real shape rather than a box.
+
+This importer still computes no geometry. It parses its own format into
+triangles and hands them to the host, which normalises them — the model's
+up-axis, the size the catalogue states, and any rotation the source declared —
+and returns them in its own encoding. That is the same division of labour the
+derived plan symbol has used since 1.0: **the format is this package's business,
+the geometry is not.**
+
+A model that cannot be prepared is reported and the asset keeps its placeholder,
+which is what it drew before. A host too old to offer the capability imports
+exactly as it did.
+
+Untextured for now: one colour, the right shape.

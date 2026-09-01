@@ -1003,11 +1003,70 @@ async function readEntry(options) {
   // triangles and the host projects, unions and simplifies them. That is the
   // whole of ADR-0039 Rule 2, and it is why GLTF or IFC would need nothing new
   // over there either.
+  // Parsed at most **once** per entry, and only if something wants it: the
+  // outline below, the drawable mesh above, or both. `objTriangles` walks the
+  // whole file, and a sixty-four-model library pays that walk sixty-four times.
+  let triangles;
+  const trianglesOf = () => {
+    if (triangles === undefined && objText !== undefined) {
+      triangles = objTriangles(objText);
+    }
+    return triangles ?? [];
+  };
+
+  // The model, as geometry a 3D view can draw (Sprint 001.1, ArchiSimple
+  // 056.1). The host normalises — up-axis, the catalogue's real size, the
+  // source-declared rotation — and hands back its own encoding, so this
+  // importer still computes no geometry and knows no encoding.
+  //
+  // **Tied to retention**, because they are one choice: a user who said "import
+  // with models" wants to see them, and one who declined wants neither the
+  // bytes nor what is derived from them.
+  if (
+    context.retainModels === true &&
+    representation3d !== undefined &&
+    objText !== undefined &&
+    typeof context.capabilities.mesh === 'function'
+  ) {
+    const positions = trianglesOf();
+    const drawable =
+      positions.length === 0
+        ? { ok: false, reason: 'the model declares no faces' }
+        : context.capabilities.mesh({
+            positions,
+            // Sweet Home 3D's models are Y-up, as Java3D's are.
+            upAxis: 'y',
+            // The catalogue states the real size; the model is in whatever units
+            // its author worked in. Height included since ArchiSimple 056.1 —
+            // without it a mesh is the right footprint and the wrong height.
+            fitTo: {
+              width,
+              depth: isOpening ? 0.1 : depth,
+              ...(heightCm !== undefined && heightCm > 0 ? { height: toMetres(heightCm) } : {})
+            },
+            ...(rotation === undefined ? {} : { transform: rotation })
+          });
+
+    if (drawable.ok) {
+      const meshKey = `${sourceKey}--mesh`;
+      payloads.push({ key: meshKey, format: 'as3m', bytes: drawable.bytes });
+      representation3d = { ...representation3d, meshPayloadKey: meshKey };
+    } else {
+      // Reported, never fatal: the asset keeps its model reference and draws the
+      // placeholder box, which is what it did before this existed.
+      context.warn({
+        code: 'mesh-not-produced',
+        subject: name,
+        message: `"${name}" could not be prepared for the 3D view (${drawable.reason}); it draws a placeholder.`
+      });
+    }
+  }
+
   let derivedSymbol;
   let derivationProblem;
   let derivationCause;
   if (symbol === undefined && objText !== undefined && typeof context.capabilities.outline === 'function') {
-    const positions = objTriangles(objText);
+    const positions = trianglesOf();
     const outlined =
       positions.length === 0
         ? { ok: false, reason: 'the model declares no faces' }

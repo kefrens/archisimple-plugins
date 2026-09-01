@@ -38,6 +38,7 @@ function hostContext(files, options = {}) {
   const warnings = [];
   const progress = [];
   const outlined = [];
+  const meshed = [];
   const controller = new AbortController();
 
   const context = {
@@ -67,6 +68,16 @@ function hostContext(files, options = {}) {
       decodeImage: async () => ({ width: options.imageWidth ?? 64, height: 64 }),
       // The real host uses `TextDecoder`, which Node has natively.
       text: (bytes, encoding) => new TextDecoder(encoding).decode(bytes),
+      // The sixth (ArchiSimple Sprint 056.1). Doubled the same way and for the
+      // same reason: what this importer must get right is *what it sends* — the
+      // triangles, the up-axis, the catalogue's real size — not the bytes that
+      // come back, which are the host's own encoding.
+      mesh:
+        options.mesh ??
+        ((mesh) => {
+          meshed.push(mesh);
+          return { ok: true, bytes: new Uint8Array([1, 2, 3, 4]), triangleCount: 1 };
+        }),
       // The fourth capability (Sprint 041.7). The host runs a Skill behind it;
       // the double below records what it was handed, because what this importer
       // must get right is *what it sends*, not what geometry comes back.
@@ -90,7 +101,7 @@ function hostContext(files, options = {}) {
     }
   };
 
-  return { context, warnings, progress, outlined, controller };
+  return { context, warnings, progress, outlined, meshed, controller };
 }
 
 function source(name = 'Contributions.sh3f') {
@@ -1163,4 +1174,106 @@ test('reads each retained file once, not twice', async () => {
 
   const objReads = reads.filter((path) => path === 'chair/chair.obj').length;
   assert.equal(objReads, 1, `the .obj was read ${objReads} times`);
+});
+
+/* -------------------------------------------------------------------------- */
+/* Sprint 001.1 — the model becomes something the 3D view can draw             */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * `withExtras`' OBJ is `v 0 0 0` — one vertex and no faces, which was enough for
+ * every test before this one and yields **no triangles**. A mesh needs a model
+ * that is actually a model.
+ */
+const withModel = (overrides = {}) =>
+  withExtras({ 'chair/chair.obj': latin1(CUBE_OBJ), ...overrides });
+
+test('prepares a drawable mesh when the user asked for models', async () => {
+  const { context, meshed } = hostContext(withModel(), { retainModels: true });
+
+  const result = await readSh3f(source(), context);
+
+  assert.equal(meshed.length, 1, 'the host was asked once');
+  assert.equal(result.assets[0].representation3d.meshPayloadKey, 'eTeks#chair--mesh');
+  assert.ok(
+    result.payloads.some((payload) => payload.key === 'eTeks#chair--mesh'),
+    'the mesh travels as a payload'
+  );
+});
+
+test('sends the triangles, the up-axis and the catalogue’s real size', async () => {
+  // What this importer must get right is *what it sends*. The host normalises,
+  // and its encoding is none of this package's business.
+  const { context, meshed } = hostContext(withModel(), { retainModels: true });
+
+  await readSh3f(source(), context);
+
+  const sent = meshed[0];
+  assert.ok(sent.positions.length > 0, 'triangles were parsed');
+  // Sweet Home 3D is Y-up, as Java3D is.
+  assert.equal(sent.upAxis, 'y');
+  // 45 x 50 x 90 cm in the catalogue, metres at this boundary.
+  assert.equal(sent.fitTo.width, 0.45);
+  assert.equal(sent.fitTo.depth, 0.5);
+  assert.equal(sent.fitTo.height, 0.9);
+});
+
+test('sends the source-declared rotation, which the host applies', async () => {
+  const { context, meshed } = hostContext(withModel(), { retainModels: true });
+
+  await readSh3f(source(), context);
+
+  assert.deepEqual(meshed[0].transform, [1, 0, 0, 0, 0, -1, 0, 1, 0]);
+});
+
+test('prepares none when the user declined, so a plain import is unchanged', async () => {
+  const { context, meshed } = hostContext(withModel());
+
+  const result = await readSh3f(source(), context);
+
+  assert.equal(meshed.length, 0);
+  assert.equal(result.assets[0].representation3d.meshPayloadKey, undefined);
+});
+
+test('parses the model once, however many things want its triangles', async () => {
+  // The outline and the mesh both want them, and `objTriangles` walks the whole
+  // file — a sixty-four-model library pays that walk sixty-four times.
+  //
+  // Asserted through the two capabilities receiving the **same array**, which is
+  // what one parse looks like from outside.
+  const { context, meshed, outlined } = hostContext(
+    // No plan icon, so an outline is derived too.
+    withModel({ [CATALOGUE]: latin1(WITH_EXTRAS.replace('icon#1=chair.png', '')) }),
+    { retainModels: true }
+  );
+
+  await readSh3f(source(), context);
+
+  assert.equal(meshed.length, 1);
+  assert.equal(outlined.length, 1);
+  assert.equal(meshed[0].positions, outlined[0].positions, 'one parse, shared');
+});
+
+test('reports a mesh it could not prepare, and keeps the asset', async () => {
+  const { context, warnings } = hostContext(withModel(), {
+    retainModels: true,
+    mesh: () => ({ ok: false, reason: 'the projection encloses no area' })
+  });
+
+  const result = await readSh3f(source(), context);
+
+  assert.equal(result.assets.length, 1, 'the asset still imports');
+  assert.equal(result.assets[0].representation3d.meshPayloadKey, undefined);
+  assert.ok(warnings.some((warning) => warning.code === 'mesh-not-produced'));
+});
+
+test('asks nothing of a host too old to have the capability', async () => {
+  // An extension runs against whatever host installed it. One without `mesh`
+  // imports exactly as it did before, with no mesh and no complaint.
+  const { context } = hostContext(withModel(), { retainModels: true });
+  delete context.capabilities.mesh;
+
+  const result = await readSh3f(source(), context);
+
+  assert.equal(result.assets[0].representation3d.meshPayloadKey, undefined);
 });
