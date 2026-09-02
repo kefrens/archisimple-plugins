@@ -6,7 +6,7 @@
 # that "a Marketplace is simply another implementation of PackageRepository",
 # and the pipeline that installs a bundled theme installs a downloaded one.
 #
-# ## Why this checks out the platform
+# ## Why this checks out the platform, and why that needs a token
 #
 # The builder is `@archisimple/package-builder`, reached through
 # `@archisimple/cli` — both **private and unpublished**, so there is nothing to
@@ -15,8 +15,20 @@
 # checksum mismatch on a user's machine. ArchiSimple's Finding I-82 is four
 # sprints lost to exactly that mistake in a quieter place.
 #
-# If the CLI is ever published, this step becomes `npx @archisimple/cli` and the
-# checkout goes away.
+# `kefrens/archisimple` is **private**, and a workflow's automatic
+# `GITHUB_TOKEN` is scoped to the repository running it — so checking the
+# platform out needs a token of its own. Without one the checkout fails with
+# `Not Found` while retrieving the default branch, which is what GitHub returns
+# for a private repository the caller cannot see; it reads like a typo in the
+# repository name and is not.
+#
+# **Required secret:** `PLATFORM_REPO_TOKEN` — a fine-grained personal access
+# token with **read-only** `Contents` access to `kefrens/archisimple` and
+# nothing else. Read-only is sufficient: this workflow only ever reads the
+# platform, and writes solely to this repository's Pages.
+#
+# If `@archisimple/cli` is ever published, the checkout, the token and this
+# paragraph all go away and the build step becomes `npx @archisimple/cli`.
 
 name: Publish plugin index
 
@@ -43,17 +55,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the plugins
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Check the platform token is present
+        # Without this, a missing secret reaches `actions/checkout` as an empty
+        # token and fails with `Not Found - .../repos#get-a-repository` after
+        # three retries — which reads as "that repository does not exist" rather
+        # than "this workflow may not read it". Say the true thing first.
+        run: |
+          if [ -z "${{ secrets.PLATFORM_REPO_TOKEN }}" ]; then
+            echo "::error::PLATFORM_REPO_TOKEN is not set. kefrens/archisimple is private, and a workflow's automatic GITHUB_TOKEN cannot read another repository. Create a fine-grained PAT with read-only Contents access to kefrens/archisimple and add it as this repository's PLATFORM_REPO_TOKEN secret."
+            exit 1
+          fi
 
       - name: Check out the platform, for its package builder
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: kefrens/archisimple
           path: .platform
+          # The platform is private; the automatic token cannot read it.
+          token: ${{ secrets.PLATFORM_REPO_TOKEN }}
 
       - uses: pnpm/action-setup@v4
+        with:
+          # Pinned, because this repository has no root `package.json` for the
+          # action to read a `packageManager` field from — it is a folder of
+          # plugins, not a workspace. Matches the platform's own declaration, so
+          # `--frozen-lockfile` below is resolved by the pnpm that wrote the
+          # lockfile.
+          version: 10.13.1
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 20
           cache: pnpm
@@ -76,7 +108,7 @@ jobs:
         # cheaper to find out now.
         run: node tools/check-index.mjs --platform .platform
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: dist
 

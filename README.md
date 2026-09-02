@@ -189,6 +189,25 @@ node tools/check-index.mjs --platform ../archisimple
 `.github/workflows/publish-index.yml` does both on every push to `main` and
 publishes `dist/` to GitHub Pages.
 
+**It needs one secret.** `kefrens/archisimple` is private, and a workflow's
+automatic `GITHUB_TOKEN` is scoped to the repository running it — so the
+platform checkout needs a token of its own:
+
+| | |
+| --- | --- |
+| Secret | `PLATFORM_REPO_TOKEN` |
+| Kind | fine-grained personal access token |
+| Access | **read-only** `Contents` on `kefrens/archisimple`, nothing else |
+
+Read-only is enough: the workflow only reads the platform, and writes solely to
+this repository's Pages. Also enable **Settings → Pages → Source: GitHub
+Actions** here.
+
+Without the secret the checkout fails with `Not Found` while retrieving the
+default branch — GitHub's answer for a private repository the caller cannot see,
+which reads like a misspelled repository name and is not. The workflow checks for
+the secret first and says so plainly.
+
 **The builder is not reimplemented here, and must not be.** The archive format,
 its determinism and its SHA-256 belong to `@archisimple/package-builder`, reached
 through `@archisimple/cli` — which is why the workflow checks out the platform
