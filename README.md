@@ -121,9 +121,14 @@ nothing.
 | `components` | Registering components and entity kinds                 |
 | `geo`        | Contributing base-map layers                            |
 | `ai`         | Contributing Skills and planning stages (ADR-0028)      |
+| `import`     | `registerImporter()` — listing importers is ambient     |
+| `export`     | `registerExporter()` — listing exporters is ambient     |
 
-`import`, `export`, `rendering`, `properties`, `object-types` and `generators`
-are reserved: valid in a manifest, but no service is gated on them yet.
+`rendering`, `properties`, `object-types` and `generators` are reserved: valid in
+a manifest, but no service is gated on them yet. `import` and `export` were on
+that list until the importer (Sprint 041.1, ADR-0037) and exporter (Sprint 044.0,
+ADR-0041) services shipped — `sh3f-importer` declares `import` for exactly this
+reason, and without it its `registerImporter` call is dropped and reported.
 
 Using an **undeclared** capability drops that call and reports it; the extension
 keeps running. Declaring an **unknown** one refuses the manifest outright, so a
@@ -135,7 +140,9 @@ typo fails loudly at parse time.
 
 1. **Add the repository, once.** ArchiSimple → Preferences → Repositories → Add
    local folder → pick this folder. _Requires a Chromium-based browser_ (File
-   System Access API).
+   System Access API). A local folder is code you wrote, so it needs no
+   permission to run — that question is asked of remote repositories only
+   (ADR-0059 Rule 4).
 2. **Edit `src/index.js` and save.** A poller notices, re-reads the manifest,
    reinstalls the package, deactivates the running extension and activates the
    new one.
@@ -177,6 +184,16 @@ Preferences → Repositories and installs from it. ADR-0025's position is that "
 Marketplace is simply another implementation of `PackageRepository`", so nothing
 about the install path is special — the pipeline that installs a bundled theme
 installs a downloaded one.
+
+**Installing is not running** (ADR-0059, platform Sprint 058.0). That sentence
+about the install path is true of *distribution* and says nothing about
+execution: until 058.0 a downloaded extension installed correctly and was
+silently dropped at startup, because nothing evaluated its code. It now runs —
+when the user allows that repository to run code. The add-repository form asks,
+pre-ticked; a repository added before that existed starts as **not** allowed and
+has a control on its row. Somebody reporting "I installed it and nothing
+happened" on an older client is describing the bug this fixed; on a current one,
+check that checkbox first.
 
 ```bash
 # Build every plugin here, and the index that advertises them.
@@ -235,7 +252,8 @@ Not this repo's preferences — what the host enforces.
   else_. Don't write defensive scaffolding for this; it already exists.
 - **Distribution and execution are separate.** The Package Manager installs; the
   Extension Host runs. A package is valid or not independently of whether its
-  code works.
+  code works — and being installed does not by itself mean being executed
+  (ADR-0059): a remote repository runs code only once the user allows it.
 
 ---
 
