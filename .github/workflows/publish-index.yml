@@ -1,0 +1,91 @@
+# Builds every plugin here into an `.aspkg` and publishes them, with an
+# `index.json`, as an ArchiSimple **remote repository** (ADR-0025).
+#
+# A user adds the published URL under Preferences → Repositories and installs
+# from it. Nothing about the install path is special: ADR-0025's position is
+# that "a Marketplace is simply another implementation of PackageRepository",
+# and the pipeline that installs a bundled theme installs a downloaded one.
+#
+# ## Why this checks out the platform
+#
+# The builder is `@archisimple/package-builder`, reached through
+# `@archisimple/cli` — both **private and unpublished**, so there is nothing to
+# `npm install`. The alternative is a second implementation of the `.aspkg`
+# format living here, which would drift from the real one and surface as a
+# checksum mismatch on a user's machine. ArchiSimple's Finding I-82 is four
+# sprints lost to exactly that mistake in a quieter place.
+#
+# If the CLI is ever published, this step becomes `npx @archisimple/cli` and the
+# checkout goes away.
+
+name: Publish plugin index
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Pages needs these; nothing else in this workflow writes to the repository.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One publish at a time. A second push mid-run would otherwise race to replace
+# the same index, and the loser's archives would be advertised by the winner's
+# checksums.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the plugins
+        uses: actions/checkout@v4
+
+      - name: Check out the platform, for its package builder
+        uses: actions/checkout@v4
+        with:
+          repository: kefrens/archisimple
+          path: .platform
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: .platform/pnpm-lock.yaml
+
+      - name: Install the platform's dependencies
+        working-directory: .platform
+        run: pnpm install --frozen-lockfile
+
+      - name: Build the CLI
+        working-directory: .platform
+        run: pnpm --filter @archisimple/cli build
+
+      - name: Build every plugin, and the index
+        run: node tools/build-index.mjs --cli .platform/tools/cli/dist/archisimple.js
+
+      - name: Check the index against the platform's own parser
+        # The reader the application will use, not a schema restated here. An
+        # index this refuses is one a user's Preferences would refuse, and it is
+        # cheaper to find out now.
+        run: node tools/check-index.mjs --platform .platform
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

@@ -164,6 +164,44 @@ archisimple create package          # interactive manifest wizard
 
 ---
 
+## Publishing, so a deployment can install these
+
+The development loop above needs a local folder and a Chromium file picker, so it
+reaches exactly one machine. A **deployed** ArchiSimple — a Docker image on a NAS,
+say — has no folder to point at, and with no importer installed
+`File → Import library` is correctly greyed out: nothing there can read a library.
+
+The answer is a **remote repository** (ADR-0025). These plugins are built into
+`.aspkg` archives and published with an `index.json`; a user adds that URL under
+Preferences → Repositories and installs from it. ADR-0025's position is that "a
+Marketplace is simply another implementation of `PackageRepository`", so nothing
+about the install path is special — the pipeline that installs a bundled theme
+installs a downloaded one.
+
+```bash
+# Build every plugin here, and the index that advertises them.
+node tools/build-index.mjs --cli ../archisimple/tools/cli/dist/archisimple.js
+
+# Check the result with the platform's own parser, not a schema restated here.
+node tools/check-index.mjs --platform ../archisimple
+```
+
+`.github/workflows/publish-index.yml` does both on every push to `main` and
+publishes `dist/` to GitHub Pages.
+
+**The builder is not reimplemented here, and must not be.** The archive format,
+its determinism and its SHA-256 belong to `@archisimple/package-builder`, reached
+through `@archisimple/cli` — which is why the workflow checks out the platform
+rather than installing something: both are private and unpublished. A second
+implementation of the `.aspkg` format would drift from the real one and surface
+as a checksum mismatch on a user's machine. The platform's Finding I-82 is four
+sprints lost to that mistake in a quieter place.
+
+`download` in the index is **relative**, and the platform resolves it against the
+URL the index was fetched from. So the same `dist/` works from GitHub Pages, from
+a release, or from any folder something serves — no build-time knowledge of where
+it will live.
+
 ## Rules inherited from the platform
 
 Not this repo's preferences — what the host enforces.
