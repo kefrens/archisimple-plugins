@@ -1,0 +1,115 @@
+{
+  "query": {
+    "outline": "withRoofOverhangs",
+    "targets": [
+      {
+        "kind": "line",
+        "points": [
+          {
+            "easting": 863538.5590871756,
+            "northing": 6937363.33134574
+          },
+          {
+            "easting": 863588.5590871756,
+            "northing": 6937363.33134574
+          }
+        ]
+      }
+    ],
+    "ratios": [
+      1
+    ]
+  },
+  "date": "2026-10-20T06:26:25.609Z",
+  "boundary": {
+    "ring": [
+      {
+        "easting": 863538.5590871756,
+        "northing": 6937509.33134574
+      },
+      {
+        "easting": 863588.5590871756,
+        "northing": 6937509.33134574
+      },
+      {
+        "easting": 863588.5590871756,
+        "northing": 6937543.33134574
+      },
+      {
+        "easting": 863538.5590871756,
+        "northing": 6937543.33134574
+      }
+    ]
+  },
+  "projection": {
+    "available": true,
+    "buildingId": "building-main",
+    "height": {
+      "frame": "datum",
+      "groundAtFoot": {
+        "min": 0,
+        "max": 0
+      },
+      "top": 8.4,
+      "topAboveGround": {
+        "fromLowest": 8.4,
+        "fromHighest": 8.4
+      },
+      "eaves": 6,
+      "eavesAboveGround": {
+        "fromLowest": 6,
+        "fromHighest": 6
+      },
+      "notModelled": [
+        "chimney",
+        "antenna"
+      ]
+    }
+  },
+  "answer": {
+    "available": true,
+    "buildingId": "building-main",
+    "outline": "withRoofOverhangs",
+    "step": 0.25,
+    "targets": [
+      {
+        "target": {
+          "kind": "line",
+          "points": [
+            {
+              "easting": 863538.5590871756,
+              "northing": 6937363.33134574
+            },
+            {
+              "easting": 863588.5590871756,
+              "northing": 6937363.33134574
+            }
+          ]
+        },
+        "nearest": {
+          "building": {
+            "easting": 863558.5590871756,
+            "northing": 6937513.33134574
+          },
+          "target": {
+            "easting": 863558.5590871756,
+            "northing": 6937363.33134574
+          },
+          "distance": 150
+        },
+        "worst": [
+          {
+            "ratio": 1,
+            "rise": {
+              "unavailable": "outside-terrain"
+            }
+          }
+        ]
+      }
+    ],
+    "notModelled": [
+      "chimney",
+      "antenna"
+    ]
+  }
+}

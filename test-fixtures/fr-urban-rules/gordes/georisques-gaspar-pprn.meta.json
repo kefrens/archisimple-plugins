@@ -1,0 +1,6 @@
+{
+  "url": "https://georisques.gouv.fr/api/v1/gaspar/pprn?longitude=5.205735&latitude=43.905018",
+  "method": "GET",
+  "status": 200,
+  "date": "2026-10-20T05:28:33.796Z"
+}

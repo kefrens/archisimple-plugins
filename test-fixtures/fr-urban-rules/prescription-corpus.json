@@ -1,0 +1,675 @@
+{
+  "recorded": "2026-10-20",
+  "how": "API Carto prescription-surf and prescription-lin over a 0.004° box (≈ 400 × 300 m) around a dense central point of each commune; pairs of typepsc 38, 39, 42, 44, 15, deduplicated. Lyon and Gordes from 002.0’s recordings. Each expected parse reviewed by hand on 2026-10-20 (Sprint 002.2 step 1). Re-reviewed 2026-10-20 (002.2 review fix S3): Bordeaux’s bare figures under « hauteur » are confidence low, DEC-1’s rule for a bare number.",
+  "communes": {
+    "paris": {
+      "point": [
+        2.3488,
+        48.8534
+      ],
+      "pairs": [
+        {
+          "typepsc": "42",
+          "stypepsc": "00",
+          "libelle": "Sous-secteur de maintien des constinuités écologiques",
+          "txt": "",
+          "expected": {
+            "kind": "green_ratio",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "Hauteur plafond",
+          "txt": "",
+          "expected": {
+            "kind": "height_total",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "42",
+          "stypepsc": "00",
+          "libelle": "Sous-secteur de déficit en arbres et espaces végétalisés",
+          "txt": "",
+          "expected": {
+            "kind": "green_ratio",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "44",
+          "stypepsc": "98",
+          "libelle": "Voie sur laquelle la création d'accès à un parc des stationnement est interdit",
+          "txt": "",
+          "expected": {
+            "kind": "parking",
+            "conditions": []
+          }
+        }
+      ]
+    },
+    "marseille": {
+      "point": [
+        5.3698,
+        43.2965
+      ],
+      "pairs": [
+        {
+          "typepsc": "39",
+          "stypepsc": "97",
+          "libelle": "Prescription de vue de hauteur mini 18.0m et de hauteur max 26.0m",
+          "txt": "18",
+          "expected": {
+            "kind": "height_total",
+            "value": 26,
+            "unit": "m",
+            "confidence": "low",
+            "conditions": [
+              "Prescription de vue de hauteur mini 18.0m et de hauteur max 26.0m"
+            ]
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "97",
+          "libelle": "Prescription de vue de hauteur mini 2.0m et de hauteur max 10.0m",
+          "txt": "2",
+          "expected": {
+            "kind": "height_total",
+            "value": 10,
+            "unit": "m",
+            "confidence": "low",
+            "conditions": [
+              "Prescription de vue de hauteur mini 2.0m et de hauteur max 10.0m"
+            ]
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "97",
+          "libelle": "Prescription de vue de hauteur mini 10.0m et de hauteur max 18.0m",
+          "txt": "10",
+          "expected": {
+            "kind": "height_total",
+            "value": 18,
+            "unit": "m",
+            "confidence": "low",
+            "conditions": [
+              "Prescription de vue de hauteur mini 10.0m et de hauteur max 18.0m"
+            ]
+          }
+        }
+      ]
+    },
+    "toulouse": {
+      "point": [
+        1.4442,
+        43.6047
+      ],
+      "pairs": [
+        {
+          "typepsc": "39",
+          "stypepsc": "50",
+          "libelle": "Hauteur maximale de façade",
+          "txt": "HAUT MAX",
+          "expected": {
+            "kind": "height_facade",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "52",
+          "libelle": "Hauteur imposée de façade",
+          "txt": "HAUT IMP",
+          "expected": {
+            "kind": "height_facade",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "51",
+          "libelle": "Hauteur imposée de faitage",
+          "txt": "HAUT FAIT",
+          "expected": {
+            "kind": "height_total",
+            "conditions": []
+          }
+        }
+      ]
+    },
+    "nantes": {
+      "point": [
+        -1.5536,
+        47.2184
+      ],
+      "pairs": [
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "hauteur par niveaux, hors tout",
+          "txt": "R+1+C",
+          "expected": {
+            "kind": "height_total",
+            "conditions": [
+              "R+1+C"
+            ]
+          }
+        },
+        {
+          "typepsc": "44",
+          "stypepsc": "02",
+          "libelle": "norme plafond applicable à la sous-destination Bureau pour les véhicules à moteur",
+          "txt": "",
+          "expected": {
+            "kind": "parking",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "15",
+          "stypepsc": "00",
+          "libelle": "Constructibilité des espaces",
+          "txt": "",
+          "expected": {
+            "kind": "road_setback",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "44",
+          "stypepsc": "01",
+          "libelle": "norme plancher applicable à la sous-destination Logement collectif pour les véhicules à moteur",
+          "txt": "",
+          "expected": {
+            "kind": "parking",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "44",
+          "stypepsc": "00",
+          "libelle": "norme de stationnement applicable à la sous-destination Artisanat et commerce de détail",
+          "txt": "",
+          "expected": {
+            "kind": "parking",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "44",
+          "stypepsc": "00",
+          "libelle": "périmètre indicatif de 500 m autour des stations de transport collectif structurant",
+          "txt": "",
+          "expected": {
+            "kind": "parking",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "hauteur par niveaux, hors tout",
+          "txt": "R+5+C",
+          "expected": {
+            "kind": "height_total",
+            "conditions": [
+              "R+5+C"
+            ]
+          }
+        }
+      ]
+    },
+    "bordeaux": {
+      "point": [
+        -0.5792,
+        44.8378
+      ],
+      "pairs": [
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "Filet de hauteur de façade d'une construction (VDP)",
+          "txt": "",
+          "expected": {
+            "kind": "height_facade",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "44",
+          "stypepsc": "00",
+          "libelle": "Indice de stationnement",
+          "txt": "VRE",
+          "expected": {
+            "kind": "parking",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "38",
+          "stypepsc": "02",
+          "libelle": "Emprise constructible 100 (VDP)",
+          "txt": "",
+          "expected": {
+            "kind": "footprint_ratio",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "44",
+          "stypepsc": "00",
+          "libelle": "Indice de stationnement",
+          "txt": "1",
+          "expected": {
+            "kind": "parking",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "Filet de hauteur de façade d'une construction (VDP)",
+          "txt": "5.00",
+          "expected": {
+            "kind": "height_facade",
+            "value": 5,
+            "unit": "m",
+            "confidence": "low",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "Périmètre d'application de la hauteur de façade (VDP)",
+          "txt": "14.00",
+          "expected": {
+            "kind": "height_facade",
+            "value": 14,
+            "unit": "m",
+            "confidence": "low",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "Filet de hauteur de façade d'une construction (VDP)",
+          "txt": "2,50",
+          "expected": {
+            "kind": "height_facade",
+            "value": 2.5,
+            "unit": "m",
+            "confidence": "low",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "38",
+          "stypepsc": "02",
+          "libelle": "Emprise constructible 50 (VDP)",
+          "txt": "",
+          "expected": {
+            "kind": "footprint_ratio",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "Filet de hauteur de façade d'une construction (VDP)",
+          "txt": "12.00",
+          "expected": {
+            "kind": "height_facade",
+            "value": 12,
+            "unit": "m",
+            "confidence": "low",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "Filet de hauteur de façade d'une construction (VDP)",
+          "txt": "4.00",
+          "expected": {
+            "kind": "height_facade",
+            "value": 4,
+            "unit": "m",
+            "confidence": "low",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "Filet de hauteur de façade d'une construction (VDP)",
+          "txt": "3.00",
+          "expected": {
+            "kind": "height_facade",
+            "value": 3,
+            "unit": "m",
+            "confidence": "low",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "Filet de hauteur de façade d'une construction (VDP)",
+          "txt": "9.00",
+          "expected": {
+            "kind": "height_facade",
+            "value": 9,
+            "unit": "m",
+            "confidence": "low",
+            "conditions": []
+          }
+        }
+      ]
+    },
+    "strasbourg": {
+      "point": [
+        7.7521,
+        48.5734
+      ],
+      "pairs": [
+        {
+          "typepsc": "15",
+          "stypepsc": "00",
+          "libelle": "Périmètre de la Ceinture verte étendue",
+          "txt": "CV_etendue",
+          "expected": {
+            "kind": "road_setback",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "Hauteur maximale",
+          "txt": "10mET",
+          "expected": {
+            "kind": "height_facade",
+            "value": 10,
+            "unit": "m",
+            "confidence": "high",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "Hauteur maximale",
+          "txt": "25mHT",
+          "expected": {
+            "kind": "height_total",
+            "value": 25,
+            "unit": "m",
+            "confidence": "high",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "Hauteur maximale",
+          "txt": "18mET",
+          "expected": {
+            "kind": "height_facade",
+            "value": 18,
+            "unit": "m",
+            "confidence": "high",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "Hauteur maximale",
+          "txt": "15mET",
+          "expected": {
+            "kind": "height_facade",
+            "value": 15,
+            "unit": "m",
+            "confidence": "high",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "15",
+          "stypepsc": "00",
+          "libelle": "Périmètre de la loi de 1990",
+          "txt": "Loi90",
+          "expected": {
+            "kind": "road_setback",
+            "conditions": []
+          }
+        }
+      ]
+    },
+    "grenoble": {
+      "point": [
+        5.7245,
+        45.1885
+      ],
+      "pairs": [
+        {
+          "typepsc": "15",
+          "stypepsc": "03",
+          "libelle": "4m",
+          "txt": "",
+          "expected": {
+            "kind": "road_setback",
+            "value": 4,
+            "unit": "m",
+            "confidence": "medium",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "44",
+          "stypepsc": "00",
+          "libelle": "Zonage stationnement : Centre-ville élargi de Grenoble ; S1",
+          "txt": "S1",
+          "expected": {
+            "kind": "parking",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "23m",
+          "txt": "",
+          "expected": {
+            "kind": "height_total",
+            "value": 23,
+            "unit": "m",
+            "confidence": "medium",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "17m",
+          "txt": "",
+          "expected": {
+            "kind": "height_total",
+            "value": 17,
+            "unit": "m",
+            "confidence": "medium",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "20m",
+          "txt": "",
+          "expected": {
+            "kind": "height_total",
+            "value": 20,
+            "unit": "m",
+            "confidence": "medium",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "11m",
+          "txt": "",
+          "expected": {
+            "kind": "height_total",
+            "value": 11,
+            "unit": "m",
+            "confidence": "medium",
+            "conditions": []
+          }
+        }
+      ]
+    },
+    "rennes": {
+      "point": [
+        -1.6778,
+        48.1173
+      ],
+      "pairs": [
+        {
+          "typepsc": "39",
+          "stypepsc": "00",
+          "libelle": "Hauteur",
+          "txt": "",
+          "expected": {
+            "kind": "height_total",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "44",
+          "stypepsc": "00",
+          "libelle": "Stationnement",
+          "txt": "",
+          "expected": {
+            "kind": "parking",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "42",
+          "stypepsc": "00",
+          "libelle": "Coefficient de biotope par surface",
+          "txt": "",
+          "expected": {
+            "kind": "green_ratio",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "15",
+          "stypepsc": "00",
+          "libelle": "Règles d'implantation des constructions",
+          "txt": "",
+          "expected": {
+            "kind": "road_setback",
+            "conditions": []
+          }
+        }
+      ]
+    },
+    "lille": {
+      "point": [
+        3.0573,
+        50.6292
+      ],
+      "pairs": [
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "Hauteur : Hauteur façade / hauteur absolue : NR/22",
+          "txt": "NR/22",
+          "expected": {
+            "kind": "height_total",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "44",
+          "stypepsc": "00",
+          "libelle": "Stationnement : Règles de stationnement S0.1 (Dispositions générales)",
+          "txt": "S0.1",
+          "expected": {
+            "kind": "parking",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "42",
+          "stypepsc": "00",
+          "libelle": "CBS1 : Coefficient de biotope par surface 1",
+          "txt": "CBS1",
+          "expected": {
+            "kind": "green_ratio",
+            "conditions": []
+          }
+        }
+      ]
+    },
+    "montpellier": {
+      "point": [
+        3.8767,
+        43.6108
+      ],
+      "pairs": [
+        {
+          "typepsc": "44",
+          "stypepsc": "00",
+          "libelle": "secteur S1",
+          "txt": "",
+          "expected": {
+            "kind": "parking",
+            "conditions": []
+          }
+        }
+      ]
+    },
+    "lyon": {
+      "point": null,
+      "pairs": [
+        {
+          "typepsc": "39",
+          "stypepsc": "02",
+          "libelle": "Hauteur Max-22",
+          "txt": "22",
+          "expected": {
+            "kind": "height_total",
+            "value": 22,
+            "unit": "m",
+            "confidence": "high",
+            "conditions": []
+          }
+        },
+        {
+          "typepsc": "44",
+          "stypepsc": "00",
+          "libelle": "Secteur de stationnement-Aa",
+          "txt": "Aa",
+          "expected": {
+            "kind": "parking",
+            "conditions": []
+          }
+        }
+      ]
+    },
+    "gordes": {
+      "point": null,
+      "pairs": []
+    }
+  }
+}

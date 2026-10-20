@@ -1,0 +1,1511 @@
+{
+ "recordedAt": "2026-10-20T14:57:57.148Z",
+ "body": {
+  "partition": "DU_200046977",
+  "idurba": "200046977_PLUI_20260326",
+  "nomfic": "200046977_reglement_20260326.pdf",
+  "zone": "UCe1b"
+ },
+ "seconds": 234,
+ "calls": [
+  {
+   "request": {
+    "chunk": 1,
+    "attempt": 1,
+    "base": 0,
+    "textLength": 7731,
+    "aiServiceUrl": "http://127.0.0.1:4391"
+   },
+   "response": {
+    "providerId": "lmstudio",
+    "model": "qwen/qwen3-vl-8b",
+    "items": [
+     {
+      "value": {
+       "kind": "road_setback",
+       "sector": "UCe1a",
+       "statement": "limit",
+       "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 17,
+        "unit": "m"
+       },
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "La profondeur de la bande de constructibilité principale* est fixée à : - 17 mètres dans le secteur UCe1a",
+       "start": 5686,
+       "end": 5791,
+       "occurrences": 1
+      }
+     }
+    ],
+    "rejected": [
+     {
+      "index": 1,
+      "reason": "passage-not-found",
+      "detail": "/items/1/passage the passage does not occur in the text, even after normalisation"
+     }
+    ],
+    "finishReason": "stop",
+    "attempts": 1,
+    "constraint": "schema"
+   }
+  },
+  {
+   "request": {
+    "chunk": 2,
+    "attempt": 1,
+    "base": 7731,
+    "textLength": 4738,
+    "aiServiceUrl": "http://127.0.0.1:4391"
+   },
+   "response": {
+    "providerId": "lmstudio",
+    "model": "qwen/qwen3-vl-8b",
+    "items": [
+     {
+      "value": {
+       "kind": "boundary_setback",
+       "sector": "UCe1a",
+       "statement": "limit",
+       "limit": {
+        "kind": "height_relative",
+        "reference": "facade_height",
+        "factor": 1,
+        "offsetMetres": -4,
+        "minimumMetres": 2
+       },
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "En cas de retrait*, ce dernier est au moins égal à la hauteur de façade* de la construction moins 4 mètres (R ≥ Hf - 4 m), avec un minimum de 2 mètres.",
+       "start": 4447,
+       "end": 4598,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "boundary_setback",
+       "sector": "UCe1b",
+       "statement": "limit",
+       "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 4,
+        "unit": "m"
+       },
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Le retrait* est au moins égal à 4 mètres.",
+       "start": 4696,
+       "end": 4737,
+       "occurrences": 1
+      }
+     }
+    ],
+    "rejected": [],
+    "finishReason": "stop",
+    "attempts": 1,
+    "constraint": "schema"
+   }
+  },
+  {
+   "request": {
+    "chunk": 3,
+    "attempt": 1,
+    "base": 12469,
+    "textLength": 7448,
+    "aiServiceUrl": "http://127.0.0.1:4391"
+   },
+   "response": {
+    "providerId": "lmstudio",
+    "model": "qwen/qwen3-vl-8b",
+    "items": [
+     {
+      "value": {
+       "kind": "building_distance",
+       "sector": "UCe1a",
+       "statement": "limit",
+       "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 50,
+        "base": "surface_de_plancher"
+       },
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "La distance* minimale entre constructions ou parties de construction non contiguës* implantées sur un même terrain* est, hors césures* et fractionnements*, au moins égale : - dans le secteur UCe1a, à la moitié de la hauteur de façade* la plus élevée (D ≥ Hf/2) ;",
+       "start": 4072,
+       "end": 4334,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "annex_max",
+       "sector": "null",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "La distance* entre une annexe* et une autre construction n'est pas réglementée.",
+       "start": 4372,
+       "end": 4451,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "other",
+       "sector": "null",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "La distance* entre une construction à destination d'équipements d'intérêt collectif et services publics et une autre construction n'est pas réglementée.",
+       "start": 4452,
+       "end": 4604,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "footprint_ratio",
+       "sector": "null",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "L'emprise au sol* des constructions n'est pas réglementée.",
+       "start": 5993,
+       "end": 6051,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "footprint_ratio",
+       "sector": "null",
+       "statement": "see_graphic",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Dès lors que figure aux documents graphiques du règlement un coefficient d'emprise au sol*, sa valeur se substitue aux dispositions du paragraphe 2.4.1, sauf pour les constructions à destination d'équipements d'intérêt collectif et services publics.",
+       "start": 6078,
+       "end": 6327,
+       "occurrences": 1
+      }
+     }
+    ],
+    "rejected": [
+     {
+      "index": 1,
+      "reason": "passage-not-found",
+      "detail": "/items/1/passage the passage does not occur in the text, even after normalisation"
+     },
+     {
+      "index": 6,
+      "reason": "passage-not-found",
+      "detail": "/items/6/passage the passage does not occur in the text, even after normalisation"
+     }
+    ],
+    "finishReason": "stop",
+    "attempts": 1,
+    "constraint": "schema"
+   }
+  },
+  {
+   "request": {
+    "chunk": 4,
+    "attempt": 1,
+    "base": 19917,
+    "textLength": 6178,
+    "aiServiceUrl": "http://127.0.0.1:4391"
+   },
+   "response": {
+    "providerId": "lmstudio",
+    "model": "qwen/qwen3-vl-8b",
+    "items": [],
+    "rejected": [],
+    "finishReason": "stop",
+    "attempts": 1,
+    "constraint": "schema"
+   }
+  },
+  {
+   "request": {
+    "chunk": 5,
+    "attempt": 1,
+    "base": 26095,
+    "textLength": 4290,
+    "aiServiceUrl": "http://127.0.0.1:4391"
+   },
+   "response": {
+    "providerId": "lmstudio",
+    "model": "qwen/qwen3-vl-8b",
+    "items": [
+     {
+      "value": {
+       "kind": "green_ratio",
+       "sector": null,
+       "statement": "limit",
+       "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 15,
+        "base": "plot_area"
+       },
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Le coefficient de pleine terre* est au minimum de 15%.",
+       "start": 2511,
+       "end": 2565,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "green_ratio",
+       "sector": "equipements d'intérêt collectif et serv.",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "medium"
+      },
+      "passage": {
+       "text": "Pour les constructions à destination d'équipements d'intérêt collectif et services publics le coefficient de pleine terre* ne leur est pas applicable dès lors qu'existent des contraintes ou spécificités architecturales, techniques ou fonctionnelles.",
+       "start": 2566,
+       "end": 2815,
+       "occurrences": 1
+      }
+     }
+    ],
+    "rejected": [],
+    "finishReason": "stop",
+    "attempts": 1,
+    "constraint": "schema"
+   }
+  },
+  {
+   "request": {
+    "chunk": 6,
+    "attempt": 1,
+    "base": 30385,
+    "textLength": 7738,
+    "aiServiceUrl": "http://127.0.0.1:4391"
+   },
+   "response": {
+    "providerId": "lmstudio",
+    "model": "qwen/qwen3-vl-8b",
+    "items": [
+     {
+      "value": {
+       "kind": "green_ratio",
+       "sector": null,
+       "statement": "limit",
+       "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 1,
+        "unit": "percent"
+       },
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Une végétalisation intensive est à privilégier.",
+       "start": 597,
+       "end": 644,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": null,
+       "statement": "limit",
+       "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 1,
+        "unit": "m2"
+       },
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Sur les nouvelles aires de stationnement en surface et les aires de stationnement en surface existantes, d'une superficie inférieure ou égale à 1 500 m2, il est exigé la plantation d'au moins un arbre pour quatre places de stationnement.",
+       "start": 962,
+       "end": 1199,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": null,
+       "statement": "limit",
+       "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 1,
+        "unit": "m2"
+       },
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Sur les nouvelles aires de stationnement en surface d'une superficie supérieure à 1 500 m2, il est exigé la plantation d'au moins un arbre pour 8 places de stationnement.",
+       "start": 1291,
+       "end": 1461,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": null,
+       "statement": "limit",
+       "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 1,
+        "unit": "m2"
+       },
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Sur les aires de stationnement en surface existantes à la date d'approbation du PLU-H, réhabilitées entièrement ou par moitié, d'une superficie supérieure à 1 500 m2, il est exigé la plantation d'au moins un arbre pour 8 places de stationnement.",
+       "start": 2139,
+       "end": 2384,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "height_total",
+       "sector": null,
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "Les constructions, travaux, ouvrages, compris dans le périmètre de l’Orientation d’Aménagement et de Programmation « UNESCO », doivent être compatibles avec les orientations définies par celle-ci.",
+       "start": 3739,
+       "end": 3935,
+       "occurrences": 1
+      }
+     }
+    ],
+    "rejected": [],
+    "finishReason": "stop",
+    "attempts": 1,
+    "constraint": "schema"
+   }
+  },
+  {
+   "request": {
+    "chunk": 7,
+    "attempt": 1,
+    "base": 38123,
+    "textLength": 7755,
+    "aiServiceUrl": "http://127.0.0.1:4391"
+   },
+   "response": {
+    "providerId": "lmstudio",
+    "model": "qwen/qwen3-vl-8b",
+    "items": [],
+    "rejected": [],
+    "finishReason": "stop",
+    "attempts": 1,
+    "constraint": "schema"
+   }
+  },
+  {
+   "request": {
+    "chunk": 8,
+    "attempt": 1,
+    "base": 45878,
+    "textLength": 7367,
+    "aiServiceUrl": "http://127.0.0.1:4391"
+   },
+   "response": {
+    "providerId": "lmstudio",
+    "model": "qwen/qwen3-vl-8b",
+    "items": [],
+    "rejected": [],
+    "finishReason": "stop",
+    "attempts": 1,
+    "constraint": "schema"
+   }
+  },
+  {
+   "request": {
+    "chunk": 9,
+    "attempt": 1,
+    "base": 53245,
+    "textLength": 4060,
+    "aiServiceUrl": "http://127.0.0.1:4391"
+   },
+   "response": {
+    "providerId": "lmstudio",
+    "model": "qwen/qwen3-vl-8b",
+    "items": [
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Aa",
+       "statement": "limit",
+       "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 0,
+        "unit": "m2"
+       },
+       "conditions": [
+        "dans les secteurs de stationnement Aa, Ab, B, C et Cbis"
+       ],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "dans les secteurs de stationnement Aa, Ab, B, C et Cbis: les places de stationnement sont réalisées en sous-sol",
+       "start": 646,
+       "end": 757,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Ab",
+       "statement": "limit",
+       "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 0,
+        "unit": "m2"
+       },
+       "conditions": [
+        "dans les secteurs de stationnement Aa, Ab, B, C et Cbis"
+       ],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "dans les secteurs de stationnement Aa, Ab, B, C et Cbis: les places de stationnement sont réalisées en sous-sol",
+       "start": 646,
+       "end": 757,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "B",
+       "statement": "limit",
+       "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 0,
+        "unit": "m2"
+       },
+       "conditions": [
+        "dans les secteurs de stationnement Aa, Ab, B, C et Cbis"
+       ],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "dans les secteurs de stationnement Aa, Ab, B, C et Cbis: les places de stationnement sont réalisées en sous-sol",
+       "start": 646,
+       "end": 757,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "C",
+       "statement": "limit",
+       "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 0,
+        "unit": "m2"
+       },
+       "conditions": [
+        "dans les secteurs de stationnement Aa, Ab, B, C et Cbis"
+       ],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "dans les secteurs de stationnement Aa, Ab, B, C et Cbis: les places de stationnement sont réalisées en sous-sol",
+       "start": 646,
+       "end": 757,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Cbis",
+       "statement": "limit",
+       "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 0,
+        "unit": "m2"
+       },
+       "conditions": [
+        "dans les secteurs de stationnement Aa, Ab, B, C et Cbis"
+       ],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "dans les secteurs de stationnement Aa, Ab, B, C et Cbis: les places de stationnement sont réalisées en sous-sol",
+       "start": 646,
+       "end": 757,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Da",
+       "statement": "limit",
+       "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 0,
+        "unit": "m2"
+       },
+       "conditions": [
+        "dans les secteurs de stationnement Da, Dab, Db, et Dc"
+       ],
+       "exceptions": [
+        "soit de contraintes techniques ou liées aux caractéristiques de l'opération et de la configuration de son terrain d'assiette (terrain de faible superficie...), soit d'une insertion urbaine complexe, soit du respect de caractéristiques patrimoniales"
+       ],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "dans les secteurs de stationnement Da, Dab, Db, et Dc : les places de stationnement sont réalisées en sous-sol, sauf en cas soit de contraintes techniques ou liées aux caractéristiques de l'opération et de la configuration de son terrain d'assiette (terrain de faible superficie...), soit d'une insertion urbaine complexe, soit du respect de caractéristiques patrimoniales",
+       "start": 762,
+       "end": 1134,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Dab",
+       "statement": "limit",
+       "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 0,
+        "unit": "m2"
+       },
+       "conditions": [
+        "dans les secteurs de stationnement Da, Dab, Db, et Dc"
+       ],
+       "exceptions": [
+        "soit de contraintes techniques ou liées aux caractéristiques de l'opération et de la configuration de son terrain d'assiette (terrain de faible superficie...), soit d'une insertion urbaine complexe, soit du respect de caractéristiques patrimoniales"
+       ],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "dans les secteurs de stationnement Da, Dab, Db, et Dc : les places de stationnement sont réalisées en sous-sol, sauf en cas soit de contraintes techniques ou liées aux caractéristiques de l'opération et de la configuration de son terrain d'assiette (terrain de faible superficie...), soit d'une insertion urbaine complexe, soit du respect de caractéristiques patrimoniales",
+       "start": 762,
+       "end": 1134,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Db",
+       "statement": "limit",
+       "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 0,
+        "unit": "m2"
+       },
+       "conditions": [
+        "dans les secteurs de stationnement Da, Dab, Db, et Dc"
+       ],
+       "exceptions": [
+        "soit de contraintes techniques ou liées aux caractéristiques de l'opération et de la configuration de son terrain d'assiette (terrain de faible superficie...), soit d'une insertion urbaine complexe, soit du respect de caractéristiques patrimoniales"
+       ],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "dans les secteurs de stationnement Da, Dab, Db, et Dc : les places de stationnement sont réalisées en sous-sol, sauf en cas soit de contraintes techniques ou liées aux caractéristiques de l'opération et de la configuration de son terrain d'assiette (terrain de faible superficie...), soit d'une insertion urbaine complexe, soit du respect de caractéristiques patrimoniales",
+       "start": 762,
+       "end": 1134,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Dc",
+       "statement": "limit",
+       "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 0,
+        "unit": "m2"
+       },
+       "conditions": [
+        "dans les secteurs de stationnement Da, Dab, Db, et Dc"
+       ],
+       "exceptions": [
+        "soit de contraintes techniques ou liées aux caractéristiques de l'opération et de la configuration de son terrain d'assiette (terrain de faible superficie...), soit d'une insertion urbaine complexe, soit du respect de caractéristiques patrimoniales"
+       ],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "dans les secteurs de stationnement Da, Dab, Db, et Dc : les places de stationnement sont réalisées en sous-sol, sauf en cas soit de contraintes techniques ou liées aux caractéristiques de l'opération et de la configuration de son terrain d'assiette (terrain de faible superficie...), soit d'une insertion urbaine complexe, soit du respect de caractéristiques patrimoniales",
+       "start": 762,
+       "end": 1134,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "E",
+       "statement": "limit",
+       "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 0,
+        "unit": "m2"
+       },
+       "conditions": [
+        "dans le secteur de stationnement E"
+       ],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "dans le secteur de stationnement E : les places de stationnement peuvent être réalisées soit en sous-sol, soit dans le volume de la construction, soit en surface",
+       "start": 1139,
+       "end": 1300,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Aa",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Ab",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "B",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "C",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Cbis",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Da",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Dab",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Db",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Dc",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "E",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Aa",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Ab",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "B",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "C",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Cbis",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Da",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Dab",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Db",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "Dc",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     },
+     {
+      "value": {
+       "kind": "parking",
+       "sector": "E",
+       "statement": "not_regulated",
+       "limit": null,
+       "conditions": [],
+       "exceptions": [],
+       "confidence": "high"
+      },
+      "passage": {
+       "text": "les modalités de réalisation des places de stationnement ne sont pas règlementées",
+       "start": 1789,
+       "end": 1870,
+       "occurrences": 1
+      }
+     }
+    ],
+    "rejected": [],
+    "finishReason": "stop",
+    "attempts": 1,
+    "constraint": "schema"
+   }
+  }
+ ]
+}

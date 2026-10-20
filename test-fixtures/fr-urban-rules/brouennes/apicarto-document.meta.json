@@ -1,0 +1,6 @@
+{
+  "url": "https://apicarto.ign.fr/api/gpu/document?geom=%7B%22type%22%3A%22MultiPolygon%22%2C%22coordinates%22%3A%5B%5B%5B%5B5.257643%2C49.5157848%5D%2C%5B5.2583821%2C49.515997%5D%2C%5B5.2584268%2C49.5158666%5D%2C%5B5.257643%2C49.5157848%5D%5D%5D%5D%7D",
+  "method": "GET",
+  "status": 200,
+  "date": "2026-10-20T05:28:33.796Z"
+}

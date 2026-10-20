@@ -1,0 +1,96 @@
+{
+  "$comment": "Sprint 096.7, DEC-12. One POST /api/ai/extract request, the answer the provider gave it, and the response the service returns. The other repository copies this file into its tests and asserts its client builds this request and reads this response; regenerate it there whenever this contract changes. The text is an invented English by-law.",
+  "contractVersion": "1.2.0",
+  "request": {
+    "providerId": "lmstudio",
+    "instructions": "List each numeric limit the by-law sets on a building, as a kind and a value in metres. Leave out anything that is not a limit.",
+    "text": "Harbour Lane by-law, section 4: a building stands at least 3.5 metres from the rear boundary.\n\nSection 5. No building on the lane rises above 9 metres at its eaves, and a roof terrace counts as a storey.\n\nSection 6. The “garden zone” is the land behind the rear building line.",
+    "itemSchema": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["rear-setback", "eaves-height", "other"],
+          "description": "Which limit."
+        },
+        "metres": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 120
+        }
+      },
+      "required": ["kind", "metres", "note"],
+      "additionalProperties": false
+    },
+    "maxItems": 10
+  },
+  "providerAnswer": {
+    "model": "qwen2.5-7b-instruct",
+    "content": "{\"items\":[{\"value\":{\"kind\":\"rear-setback\",\"metres\":3.5,\"note\":\"From the rear boundary.\"},\"passage\":\"a building stands at least 3.5 metres from the rear boundary\"},{\"value\":{\"kind\":\"eaves-height\",\"metres\":9,\"note\":\"At the eaves.\"},\"passage\":\"No building on the lane rises above 9 metres at its eaves\"},{\"value\":{\"kind\":\"garden\",\"metres\":null,\"note\":\"\"},\"passage\":\"The \\\"garden zone\\\" is the land behind the rear building line.\"},{\"value\":{\"kind\":\"other\",\"metres\":null,\"note\":\"A roof terrace is a storey.\"},\"passage\":\"a roof terrace counts as a storey\"},{\"value\":{\"kind\":\"other\",\"metres\":12,\"note\":\"Invented.\"},\"passage\":\"no building rises above 12 metres\"}]}",
+    "finishReason": "stop",
+    "constraint": "schema"
+  },
+  "response": {
+    "providerId": "lmstudio",
+    "model": "qwen2.5-7b-instruct",
+    "items": [
+      {
+        "value": {
+          "kind": "rear-setback",
+          "metres": 3.5,
+          "note": "From the rear boundary."
+        },
+        "passage": {
+          "text": "a building stands at least 3.5 metres from the rear boundary",
+          "start": 32,
+          "end": 92,
+          "occurrences": 1
+        }
+      },
+      {
+        "value": {
+          "kind": "eaves-height",
+          "metres": 9,
+          "note": "At the eaves."
+        },
+        "passage": {
+          "text": "No building on the lane rises above 9 metres at its eaves",
+          "start": 106,
+          "end": 163,
+          "occurrences": 1
+        }
+      },
+      {
+        "value": {
+          "kind": "other",
+          "metres": null,
+          "note": "A roof terrace is a storey."
+        },
+        "passage": {
+          "text": "a roof terrace counts as a storey",
+          "start": 169,
+          "end": 202,
+          "occurrences": 1
+        }
+      }
+    ],
+    "rejected": [
+      {
+        "index": 2,
+        "reason": "schema-invalid",
+        "detail": "/items/2/value/kind enum: not one of the 3 allowed values"
+      },
+      {
+        "index": 4,
+        "reason": "passage-not-found",
+        "detail": "/items/4/passage the passage does not occur in the text, even after normalisation"
+      }
+    ],
+    "finishReason": "stop",
+    "attempts": 1,
+    "constraint": "schema"
+  }
+}

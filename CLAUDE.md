@@ -8,10 +8,10 @@ distributable package:
 ```text
 archisimple-plugins/
   CLAUDE.md
-  assistant-builder/       one package
+  fr-urban-rules/          one package
     package.json           the manifest
     src/index.js           the entry point
-  urban-rules/             another package
+  sh3f-importer/           another package
     package.json
     src/index.js
 ```
@@ -94,24 +94,42 @@ const ThemeServiceToken = { name: 'theme' };
 const theme = context.services.get(ThemeServiceToken);
 ```
 
-Well-known token names:
+Well-known token names — read from `defineServiceToken(...)` in
+`../archisimple/packages/extension-sdk/src/services.ts` (SDK 1.28, 2026-10-20) and
+`plugin-services.ts` beside it; diff against them when this table looks short:
 
-| Service            | Token name        | Notes                                                   |
-| ------------------ | ----------------- | ------------------------------------------------------- |
-| Logging            | `logging`         | also on `context.logger`                                |
-| Document           | `document`        | reads ambient; writes need the `document` capability    |
-| Selection          | `selection`       | read-only                                               |
-| Commands           | `command`         | also on `context.commands`                              |
-| Resources          | `resource`        |                                                         |
-| Theme              | `theme`           | read + `onDidChange`; cannot switch the theme           |
-| Localization       | `i18n`            | `translate(key, params)`                                |
-| Installed packages | `package`         |                                                         |
-| Preferences        | `preferences`     | `get` / `set` / `delete`                                |
-| Component Model    | `component-model` | writes need the `components` capability                 |
-| Geo Map            | `geo-map`         | writes need the `geo` capability                        |
-| AI contributions   | `ai`              | registering needs the `ai` capability; listing does not |
-| Asset catalogue    | `assets`          | registering needs the `assets` capability; listing does not |
-| Importers          | `importer`        | registering needs the `import` capability; listing does not |
+| Service              | Token name          | Notes                                                                     |
+| -------------------- | ------------------- | ------------------------------------------------------------------------- |
+| Logging              | `logging`           | also on `context.logger`                                                  |
+| Document             | `document`          | reads ambient; writes need the `document` capability                      |
+| Selection            | `selection`         | read-only                                                                 |
+| Commands             | `command`           | also on `context.commands`                                                |
+| Resources            | `resource`          |                                                                           |
+| Theme                | `theme`             | read + `onDidChange`; cannot switch the theme                             |
+| Localization         | `i18n`              | `translate(key, params)`                                                  |
+| Installed packages   | `package`           |                                                                           |
+| Preferences          | `preferences`       | `get` / `set` / `delete`                                                  |
+| Component Model      | `component-model`   | writes need the `components` capability                                   |
+| Geo Map              | `geo-map`           | writes need the `geo` capability                                          |
+| Map features         | `map-features`      | registering needs `map-features`; listing and querying do not (Sprint 081.1) |
+| Terrain              | `terrain`           | registering needs `terrain`; listing does not                             |
+| Vegetation (canopy)  | `vegetation`        | registering needs `vegetation`; listing does not (SDK 1.22)               |
+| Roads                | `roads`             | registering needs `map-features`; listing and querying do not (SDK 1.23)  |
+| Site                 | `site`              | **ambient**, read-only; resolve with `getOptional` (SDK 1.24)             |
+| Regulations          | `regulations`       | registering needs `regulations`; listing does not (SDK 1.25)              |
+| Site package data    | `site-package-data` | your own section only; reading ambient, `write` needs `document` (1.27)   |
+| Plugin service       | `plugin-service`    | **ambient**, bound to your package; `locate()` → your companion's base URL or `undefined` (1.28) |
+| Country profiles     | `country-profile`   | registering needs `country-profile`; listing does not                     |
+| AI contributions     | `ai`                | registering needs the `ai` capability; listing does not                   |
+| Asset catalogue      | `assets`            | registering needs the `assets` capability; listing does not               |
+| Importers            | `importer`          | registering needs the `import` capability; listing does not               |
+| Exporters            | `exporter`          | registering needs the `export` capability; listing does not               |
+| Sheet exporters      | `sheet-exporter`    | registering needs the `export` capability; listing does not               |
+
+`'site'`, `'regulations'`, `'site-package-data'`, `'sheet-exporter'` and
+`'plugin-service'` are declared public ABI: an extension here writes them by hand.
+[fr-urban-rules/](fr-urban-rules/) (0.5.0, Sprint 002.6a) is the reference for
+finding its companion service with `getOptional` and `locate()` on each read.
 
 `context.commands` and `context.events` arrive **directly on the context** — no
 token, no lookup.
@@ -144,7 +162,7 @@ my-plugin/
 ```json
 {
   "schemaVersion": 1,
-  "id": "com.example.urban-rules",
+  "id": "com.example.my-plugin",
   "name": "Urban Rules",
   "version": "1.0.0",
   "author": "Arnaud",
@@ -164,11 +182,14 @@ my-plugin/
 - `id` is dot/dash-separated alphanumeric segments; `version` is semver.
 - `type`: `extension` when it carries code, `resource` when it carries only
   content (themes, translations, materials, templates, icons, textures).
-- `sdkVersion` is `major.minor`, **not** semver. Current SDK is **`1.1`**, which
-  added the importer contract (Sprint 041.1). A `1.0` extension runs on a `1.4`
-  host (additive only); a different major is refused outright. Declare `1.1` if
-  you register an importer — a `1.0` host has no `importer` token, and saying so
-  in the manifest turns a runtime `undefined` into a refusal with a reason.
+- `sdkVersion` is `major.minor`, **not** semver. Read the current one from
+  `SDK_VERSION` in `../archisimple/packages/extension-sdk/src/sdk-version.ts`
+  rather than from this line (it said `1.1` long after `1.23`; it is **`1.28`**
+  on 2026-10-20). A `1.0` extension runs on a `1.4` host (additive only); a
+  different major is refused outright. Declare the minor that added the seam you
+  use — `1.1` for an importer, `1.24` for the Site view, `1.25` for
+  `regulations`, `1.27` for Site package data, `1.28` for the plugin service — so an older host refuses the
+  manifest with a reason instead of handing you a runtime `undefined`.
 - `entryPoint` here is a **path relative to the package root** (`src/index.js`),
   because that is what the Development Repository reads.
 - A package declaring a **role** rather than content uses a `provides` block —
@@ -195,9 +216,9 @@ export function activate(context) {
 
   subscriptions.add(
     commands.register({
-      id: 'urban-rules.checkSetback',
-      titleKey: 'urban-rules.checkSetback.title',
-      categoryKey: 'urban-rules.category',
+      id: 'my-plugin.checkSetback',
+      titleKey: 'my-plugin.checkSetback.title',
+      categoryKey: 'my-plugin.category',
       keywords: ['setback', 'zoning'],
       run: () => logger.info('checking setbacks')
     })
@@ -252,24 +273,39 @@ the model, and reaching around this is not possible from an extension.
 
 ## Capabilities — declare exactly what you use
 
-| Capability   | Actually grants something today                          |
-| ------------ | -------------------------------------------------------- |
-| `commands`   | ✅ `context.commands.register()`                         |
-| `events`     | ✅ `context.events.on()`                                 |
-| `document`   | ✅ document **writes** (`transact`). Reading is ambient. |
-| `components` | ✅ registering components and entity kinds               |
-| `geo`        | ✅ contributing base-map layers                          |
-| `ai`         | ✅ contributing Skills and planning stages (Sprint 28.3) |
-| `assets`     | ✅ contributing Library asset definitions (Sprint 040.4) |
-| `import`     | ✅ registering an importer (Sprint 041.1)                |
+Read from `EXTENSION_CAPABILITIES` in
+`../archisimple/packages/extension-sdk/src/capabilities.ts` (SDK 1.28, unchanged since 1.25;
+2026-10-20):
 
-**Reserved, and grant nothing yet**: `export`, `rendering`, `properties`,
-`object-types`, `generators`. They are valid in a manifest and parse fine — but
-no service is gated on them, so declaring one buys you nothing today. Do not
-design a package around one of these expecting it to work.
+| Capability        | Actually grants something today                                                     |
+| ----------------- | ----------------------------------------------------------------------------------- |
+| `commands`        | ✅ `context.commands.register()`                                                    |
+| `events`          | ✅ `context.events.on()`                                                            |
+| `document`        | ✅ document **writes** (`transact`), and since SDK 1.27 your Site section's `write` |
+| `components`      | ✅ registering components and entity kinds                                          |
+| `geo`             | ✅ contributing base-map layers (and a profile's geocoder)                          |
+| `ai`              | ✅ contributing Skills and planning stages (Sprint 28.3)                            |
+| `assets`          | ✅ contributing Library asset definitions (Sprint 040.4)                            |
+| `import`          | ✅ registering an importer (Sprint 041.1)                                           |
+| `export`          | ✅ registering an exporter or a sheet exporter (Sprint 044.0, 080.5)                |
+| `map-features`    | ✅ registering queryable feature sources, and road sources (Sprint 081.1, 095.15)   |
+| `terrain`         | ✅ registering elevation providers (Sprint 081.3)                                   |
+| `country-profile` | ✅ registering a country profile (Sprint 082.3); grants no network of its own       |
+| `vegetation`      | ✅ registering canopy sources (Sprint 095.11)                                       |
+| `regulations`     | ✅ registering a regulation source (Sprint 096.2, SDK 1.25)                         |
 
-> `import` was on that list until Sprint 041.1. It now gates
-> `importer.registerImporter`; listing what is registered stays ambient.
+**Reserved, and grant nothing yet**: `rendering`, `properties`, `object-types`,
+`generators`. They are valid in a manifest and parse fine — but no service is
+gated on them, so declaring one buys you nothing today. Do not design a package
+around one of these expecting it to work.
+
+> `import` and `export` were on that list until Sprints 041.1 and 044.0. Each
+> now gates its registration; listing what is registered stays ambient.
+
+The **Site** (`site`, SDK 1.24) is read-only and ambient: no capability. A
+regulation source (`regulations`, SDK 1.25) gets the Site view in each read and
+converts through the Site service; [fr-urban-rules/](fr-urban-rules/) is the
+working reference.
 
 Read-only observation (logging, preferences, package, document, selection,
 resource, theme, i18n, component model, geo map) is **ambient** — always
@@ -362,7 +398,7 @@ export function activate(context) {
   // A Skill: pure, synchronous, resolved by id like any built-in.
   context.subscriptions.add(
     ai.registerSkill({
-      id: 'urban-rules.maxBuildableArea',
+      id: 'my-plugin.maxBuildableArea',
       summary: 'Compute the maximum buildable floor area on a plot.',
       execute: (input, skillContext) => ({ ok: true, value: input.plot * 0.4 })
     })
@@ -371,7 +407,7 @@ export function activate(context) {
   // A planning-stage enricher: artefact in, richer artefact out.
   context.subscriptions.add(
     ai.registerPlanningStage({
-      id: 'urban-rules.programme',
+      id: 'my-plugin.programme',
       stage: 'programme', // 'brief' | 'programme' | 'layout' | 'geometry'
       enrich: (programme, knowledge) => ({
         ...programme,
@@ -394,7 +430,7 @@ Rules the host enforces, not suggests:
 - **You get a snapshot, not a service.** `knowledge` is frozen plain data —
   `roomCount`, `rooms`, `totalFloorAreaSquareMetres`, `wallCount`,
   `loadBearingWallCount`, `storeyCount`. There is nothing callable on it.
-- **Ids are namespaced by convention** (`urban-rules.programme`); duplicates are
+- **Ids are namespaced by convention** (`fr-urban-rules.programme`); duplicates are
   refused across every registered provider.
 - **Listing is ambient.** `listSkills()` / `listPlanningStages()` work without the
   `ai` capability; only registering needs it.
@@ -403,7 +439,9 @@ Enrichment always runs **before** the user sees the proposal, and the ids that
 touched an artefact are recorded on it, so the card can name you. You contribute
 what you know — never what happens.
 
-[urban-rules/](urban-rules/) is the working reference for both seams.
+[fr-urban-rules/](fr-urban-rules/) is the working reference for the planning-stage
+seam (`fr-urban-rules.programme`, Sprint 002.3); no package here contributes a
+Skill since `urban-rules` was retired (002.3 DEC-7, DEC-8).
 
 ---
 
@@ -417,8 +455,9 @@ Check this list before promising a capability:
   contributes knowledge, not providers.
 - **A custom renderer.** `packages/rendering` publishes no provider interface and
   the `rendering` capability has no service behind it.
-- **Import/export formats, property panels, object types, generators.** Reserved
-  capabilities, no extension point wired yet.
+- **Property panels, object types, generators.** Reserved capabilities, no
+  extension point wired yet. (Import and export formats are wired: see the
+  capability table.)
 - **An `ArchitecturalOperationProvider`.** Stage providers enrich; operation
   providers emit `CommandRequest`s. Sprint 28.3 exposed the first and
   deliberately not the second (ADR-0028 Rule 4).
@@ -451,13 +490,55 @@ Everything below is at `../archisimple`:
 
 ---
 
+## Services — server-side code that is not a package
+
+Since Sprint 002.5a, [services/](services/) holds the repository's
+**companion services** (platform ADR-0114): Node programs the deployment runs
+in one `plugin-services` container, never zipped, installed or loaded into the
+editor. A package and its service meet only over HTTP, at
+`/plugins-api/<package id>/` on the editor's origin.
+
+```text
+services/
+  Dockerfile                  the plugin-services image, built from the PARENT folder
+  gateway/                    mounts each service by package id; health; path safety
+  fr-urban-rules-service/     com.archisimple.fr-urban-rules's service (pdfjs-dist)
+```
+
+- **Two levels down, on purpose.** The Development Repository treats every
+  _immediate_ subfolder holding a `package.json` as a package, and
+  `tools/build-index.mjs` every one whose `package.json` has an `id`. So
+  `services/` itself has no `package.json`, a service's is a plain npm
+  manifest (`"private": true`, no `id`, `"archisimple": { "packageId" }`),
+  and there is **never** a root `package.json`.
+  `services/gateway/tests/discovery.test.mjs` copies both rules and checks.
+- **Node ≥ 22.13**, not the browser's rules: a service may have npm
+  dependencies (exact pins, committed lockfile, installed with
+  `npm ci --omit=dev --omit=optional`). Still plain `.mjs`, no build step.
+  `publish-index.yml` runs on Node 22 for this reason, and runs the services'
+  tests and `npm audit` on every push to `main`.
+- **Tests use globs**: `node --test 'services/*/tests/*.test.mjs'`, from this
+  folder. No test touches the network.
+- **A service holds no model key** and reads no `AI_PROVIDER_*` variable; it
+  reaches `ai-service` by `ARCHISIMPLE_AI_SERVICE_URL` (ADR-0114 Rule 7).
+- **Its hosts are its own allow-list**: the deployment does not filter
+  egress. The service's README lists them, with its limits and variables.
+- Recorded fixtures live in `test-fixtures/<package>/`, as for packages.
+
 ## Conventions for this repo
 
+- **`test-fixtures/` is deliberately not a package.** It holds recorded answers a
+  package's tests read (`test-fixtures/<package>/…`), kept outside the package
+  folder because the package builder has no exclude list: inside, they would
+  ship in the `.aspkg` (3.3 MB for `fr-urban-rules`, against 0.16 MB without).
+  It carries no `package.json`, so neither the Development Repository nor
+  `tools/build-index.mjs` treats it as one. Never add a manifest there.
+
 - **Folder name = the package's short name**, kebab-case: `assistant-builder`,
-  `urban-rules`. The manifest `id` is the reverse-DNS form.
-- **Command ids are namespaced by package**: `urban-rules.checkSetback`. Same for
+  `fr-urban-rules`. The manifest `id` is the reverse-DNS form.
+- **Command ids are namespaced by package**: `fr-urban-rules.…`. Same for
   translation keys.
 - Each package is self-contained: no shared `node_modules`, no cross-folder
   imports, no build step. If two packages need the same helper, copy it — a
   package that cannot be zipped and installed on its own is not a package.
-- Conventional Commits, scoped by package: `feat(urban-rules): …`.
+- Conventional Commits, scoped by package: `feat(fr-urban-rules): …`.

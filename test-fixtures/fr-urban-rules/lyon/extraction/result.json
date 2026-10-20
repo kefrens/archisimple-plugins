@@ -1,0 +1,836 @@
+{
+ "schemaVersion": 1,
+ "promptVersion": 1,
+ "document": {
+  "documentId": "4f3ddc27a9611b4bc94fa161443b8e86",
+  "partition": "DU_200046977",
+  "idurba": "200046977_PLUi_20260326",
+  "nomfic": "200046977_reglement_20260326.pdf",
+  "sha256": "2aee20bf0dc394e1a23bab0a3f2906498bfaacefc50bd773d1e6d50fd3655920",
+  "pages": 803,
+  "retrievedAt": "2026-10-20T14:54:08.391Z"
+ },
+ "chapter": {
+  "pages": [
+   121,
+   144
+  ],
+  "found": "outline",
+  "match": "prefix",
+  "title": "Zone UCe1"
+ },
+ "rules": [
+  {
+   "kind": "road_setback",
+   "sector": "UCe1a",
+   "statement": "limit",
+   "limit": {
+    "kind": "value",
+    "comparison": "max",
+    "value": 17,
+    "unit": "m"
+   },
+   "page": 123,
+   "article": "1.2.2.1",
+   "passage": "La profondeur de la bande de constructibilité principale* est fixée à :\n- 17 mètres dans le secteur UCe1a",
+   "offset": {
+    "start": 5686,
+    "end": 5791
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": false,
+   "confidence": "low"
+  },
+  {
+   "kind": "boundary_setback",
+   "sector": "UCe1a",
+   "statement": "limit",
+   "limit": {
+    "kind": "height_relative",
+    "reference": "facade_height",
+    "factor": 1,
+    "offsetMetres": -4,
+    "minimumMetres": 2
+   },
+   "page": 126,
+   "article": "2.2.1.2",
+   "passage": "En cas de retrait*, ce dernier est au moins égal à la hauteur de façade* de la\nconstruction moins 4 mètres (R ≥ Hf - 4 m), avec un minimum de 2 mètres.",
+   "offset": {
+    "start": 12178,
+    "end": 12329
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": false,
+   "confidence": "high"
+  },
+  {
+   "kind": "boundary_setback",
+   "sector": "UCe1b",
+   "statement": "limit",
+   "limit": {
+    "kind": "value",
+    "comparison": "min",
+    "value": 4,
+    "unit": "m"
+   },
+   "page": 126,
+   "article": "2.2.1.2",
+   "passage": "Le retrait* est au moins égal à 4 mètres.",
+   "offset": {
+    "start": 12427,
+    "end": 12468
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": false,
+   "confidence": "high"
+  },
+  {
+   "kind": "annex_max",
+   "sector": null,
+   "statement": "not_regulated",
+   "limit": null,
+   "page": 127,
+   "article": "2.3.1",
+   "passage": "La distance* entre une annexe* et une autre construction n'est pas réglementée.",
+   "offset": {
+    "start": 16841,
+    "end": 16920
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": false,
+   "confidence": "high"
+  },
+  {
+   "kind": "other",
+   "sector": null,
+   "statement": "not_regulated",
+   "limit": null,
+   "page": 127,
+   "article": "2.3.1",
+   "passage": "La distance* entre une construction à destination d'équipements d'intérêt collectif et\nservices publics et une autre construction n'est pas réglementée.",
+   "offset": {
+    "start": 16921,
+    "end": 17073
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": false,
+   "confidence": "high"
+  },
+  {
+   "kind": "footprint_ratio",
+   "sector": null,
+   "statement": "not_regulated",
+   "limit": null,
+   "page": 128,
+   "article": "2.4.1",
+   "passage": "L'emprise au sol* des constructions n'est pas réglementée.",
+   "offset": {
+    "start": 18462,
+    "end": 18520
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": false,
+   "confidence": "high"
+  },
+  {
+   "kind": "footprint_ratio",
+   "sector": null,
+   "statement": "see_graphic",
+   "limit": null,
+   "page": 128,
+   "article": "2.4.2",
+   "passage": "Dès lors que figure aux documents graphiques du règlement un coefficient d'emprise\nau sol*, sa valeur se substitue aux dispositions du paragraphe 2.4.1, sauf pour les\nconstructions à destination d'équipements d'intérêt collectif et services publics.",
+   "offset": {
+    "start": 18547,
+    "end": 18796
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": false,
+   "confidence": "high"
+  },
+  {
+   "kind": "green_ratio",
+   "sector": null,
+   "statement": "limit",
+   "limit": {
+    "kind": "ratio",
+    "comparison": "min",
+    "percent": 15,
+    "base": "plot_area"
+   },
+   "page": 133,
+   "article": "3.2.1",
+   "passage": "Le coefficient de pleine terre* est au minimum de 15%.",
+   "offset": {
+    "start": 28606,
+    "end": 28660
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": false,
+   "confidence": "high"
+  },
+  {
+   "kind": "green_ratio",
+   "sector": null,
+   "statement": "limit",
+   "limit": {
+    "kind": "value",
+    "comparison": "min",
+    "value": 1,
+    "unit": "percent"
+   },
+   "page": 133,
+   "article": "3.3.2",
+   "passage": "Une végétalisation intensive est à privilégier.",
+   "offset": {
+    "start": 30982,
+    "end": 31029
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": false,
+   "confidence": "low"
+  },
+  {
+   "kind": "parking",
+   "sector": null,
+   "statement": "limit",
+   "limit": {
+    "kind": "value",
+    "comparison": "min",
+    "value": 1,
+    "unit": "m2"
+   },
+   "page": 133,
+   "article": "3.3.2",
+   "passage": "Sur les nouvelles aires de stationnement en surface et les aires de\nstationnement en surface existantes, d'une superficie inférieure ou égale à\n1 500 m2, il est exigé la plantation d'au moins un arbre pour quatre places de\nstationnement.",
+   "offset": {
+    "start": 31347,
+    "end": 31584
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": false,
+   "confidence": "low"
+  },
+  {
+   "kind": "parking",
+   "sector": null,
+   "statement": "limit",
+   "limit": {
+    "kind": "value",
+    "comparison": "min",
+    "value": 1,
+    "unit": "m2"
+   },
+   "page": 134,
+   "article": "3.3.2",
+   "passage": "Sur les nouvelles aires de stationnement en surface d'une superficie supérieure\nà 1 500 m2, il est exigé la plantation d'au moins un arbre pour 8 places de\nstationnement.",
+   "offset": {
+    "start": 31676,
+    "end": 31846
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": false,
+   "confidence": "low"
+  },
+  {
+   "kind": "parking",
+   "sector": null,
+   "statement": "limit",
+   "limit": {
+    "kind": "value",
+    "comparison": "min",
+    "value": 1,
+    "unit": "m2"
+   },
+   "page": 134,
+   "article": "3.3.2",
+   "passage": "Sur les aires de stationnement en surface existantes à la date d'approbation du\nPLU-H, réhabilitées entièrement ou par moitié, d'une superficie supérieure à\n1 500 m2, il est exigé la plantation d'au moins un arbre pour 8 places de\nstationnement.",
+   "offset": {
+    "start": 32524,
+    "end": 32769
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": false,
+   "confidence": "low"
+  },
+  {
+   "kind": "parking",
+   "sector": "Aa",
+   "statement": "limit",
+   "limit": {
+    "kind": "value",
+    "comparison": "min",
+    "value": 0,
+    "unit": "m2"
+   },
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "dans les secteurs de stationnement Aa, Ab, B, C et Cbis: les places\nde stationnement sont réalisées en sous-sol",
+   "offset": {
+    "start": 53891,
+    "end": 54002
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [
+    "dans les secteurs de stationnement Aa, Ab, B, C et Cbis"
+   ],
+   "exceptions": [],
+   "sectorUnplaced": true,
+   "confidence": "low"
+  },
+  {
+   "kind": "parking",
+   "sector": "Ab",
+   "statement": "limit",
+   "limit": {
+    "kind": "value",
+    "comparison": "min",
+    "value": 0,
+    "unit": "m2"
+   },
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "dans les secteurs de stationnement Aa, Ab, B, C et Cbis: les places\nde stationnement sont réalisées en sous-sol",
+   "offset": {
+    "start": 53891,
+    "end": 54002
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [
+    "dans les secteurs de stationnement Aa, Ab, B, C et Cbis"
+   ],
+   "exceptions": [],
+   "sectorUnplaced": true,
+   "confidence": "low"
+  },
+  {
+   "kind": "parking",
+   "sector": "B",
+   "statement": "limit",
+   "limit": {
+    "kind": "value",
+    "comparison": "min",
+    "value": 0,
+    "unit": "m2"
+   },
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "dans les secteurs de stationnement Aa, Ab, B, C et Cbis: les places\nde stationnement sont réalisées en sous-sol",
+   "offset": {
+    "start": 53891,
+    "end": 54002
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [
+    "dans les secteurs de stationnement Aa, Ab, B, C et Cbis"
+   ],
+   "exceptions": [],
+   "sectorUnplaced": true,
+   "confidence": "low"
+  },
+  {
+   "kind": "parking",
+   "sector": "C",
+   "statement": "limit",
+   "limit": {
+    "kind": "value",
+    "comparison": "min",
+    "value": 0,
+    "unit": "m2"
+   },
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "dans les secteurs de stationnement Aa, Ab, B, C et Cbis: les places\nde stationnement sont réalisées en sous-sol",
+   "offset": {
+    "start": 53891,
+    "end": 54002
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [
+    "dans les secteurs de stationnement Aa, Ab, B, C et Cbis"
+   ],
+   "exceptions": [],
+   "sectorUnplaced": true,
+   "confidence": "low"
+  },
+  {
+   "kind": "parking",
+   "sector": "Cbis",
+   "statement": "limit",
+   "limit": {
+    "kind": "value",
+    "comparison": "min",
+    "value": 0,
+    "unit": "m2"
+   },
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "dans les secteurs de stationnement Aa, Ab, B, C et Cbis: les places\nde stationnement sont réalisées en sous-sol",
+   "offset": {
+    "start": 53891,
+    "end": 54002
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [
+    "dans les secteurs de stationnement Aa, Ab, B, C et Cbis"
+   ],
+   "exceptions": [],
+   "sectorUnplaced": true,
+   "confidence": "low"
+  },
+  {
+   "kind": "parking",
+   "sector": "Da",
+   "statement": "limit",
+   "limit": {
+    "kind": "value",
+    "comparison": "min",
+    "value": 0,
+    "unit": "m2"
+   },
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "dans les secteurs de stationnement Da, Dab, Db, et Dc : les places\nde stationnement sont réalisées en sous-sol, sauf en cas soit de\ncontraintes techniques ou liées aux caractéristiques de l'opération\net de la configuration de son terrain d'assiette (terrain de faible\nsuperficie...), soit d'une insertion urbaine complexe, soit du respect\nde caractéristiques patrimoniales",
+   "offset": {
+    "start": 54007,
+    "end": 54379
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [
+    "dans les secteurs de stationnement Da, Dab, Db, et Dc"
+   ],
+   "exceptions": [
+    "soit de\ncontraintes techniques ou liées aux caractéristiques de l'opération\net de la configuration de son terrain d'assiette (terrain de faible\nsuperficie...), soit d'une insertion urbaine complexe, soit du respect\nde caractéristiques patrimoniales"
+   ],
+   "sectorUnplaced": true,
+   "confidence": "low"
+  },
+  {
+   "kind": "parking",
+   "sector": "Dab",
+   "statement": "limit",
+   "limit": {
+    "kind": "value",
+    "comparison": "min",
+    "value": 0,
+    "unit": "m2"
+   },
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "dans les secteurs de stationnement Da, Dab, Db, et Dc : les places\nde stationnement sont réalisées en sous-sol, sauf en cas soit de\ncontraintes techniques ou liées aux caractéristiques de l'opération\net de la configuration de son terrain d'assiette (terrain de faible\nsuperficie...), soit d'une insertion urbaine complexe, soit du respect\nde caractéristiques patrimoniales",
+   "offset": {
+    "start": 54007,
+    "end": 54379
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [
+    "dans les secteurs de stationnement Da, Dab, Db, et Dc"
+   ],
+   "exceptions": [
+    "soit de\ncontraintes techniques ou liées aux caractéristiques de l'opération\net de la configuration de son terrain d'assiette (terrain de faible\nsuperficie...), soit d'une insertion urbaine complexe, soit du respect\nde caractéristiques patrimoniales"
+   ],
+   "sectorUnplaced": true,
+   "confidence": "low"
+  },
+  {
+   "kind": "parking",
+   "sector": "Db",
+   "statement": "limit",
+   "limit": {
+    "kind": "value",
+    "comparison": "min",
+    "value": 0,
+    "unit": "m2"
+   },
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "dans les secteurs de stationnement Da, Dab, Db, et Dc : les places\nde stationnement sont réalisées en sous-sol, sauf en cas soit de\ncontraintes techniques ou liées aux caractéristiques de l'opération\net de la configuration de son terrain d'assiette (terrain de faible\nsuperficie...), soit d'une insertion urbaine complexe, soit du respect\nde caractéristiques patrimoniales",
+   "offset": {
+    "start": 54007,
+    "end": 54379
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [
+    "dans les secteurs de stationnement Da, Dab, Db, et Dc"
+   ],
+   "exceptions": [
+    "soit de\ncontraintes techniques ou liées aux caractéristiques de l'opération\net de la configuration de son terrain d'assiette (terrain de faible\nsuperficie...), soit d'une insertion urbaine complexe, soit du respect\nde caractéristiques patrimoniales"
+   ],
+   "sectorUnplaced": true,
+   "confidence": "low"
+  },
+  {
+   "kind": "parking",
+   "sector": "Dc",
+   "statement": "limit",
+   "limit": {
+    "kind": "value",
+    "comparison": "min",
+    "value": 0,
+    "unit": "m2"
+   },
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "dans les secteurs de stationnement Da, Dab, Db, et Dc : les places\nde stationnement sont réalisées en sous-sol, sauf en cas soit de\ncontraintes techniques ou liées aux caractéristiques de l'opération\net de la configuration de son terrain d'assiette (terrain de faible\nsuperficie...), soit d'une insertion urbaine complexe, soit du respect\nde caractéristiques patrimoniales",
+   "offset": {
+    "start": 54007,
+    "end": 54379
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [
+    "dans les secteurs de stationnement Da, Dab, Db, et Dc"
+   ],
+   "exceptions": [
+    "soit de\ncontraintes techniques ou liées aux caractéristiques de l'opération\net de la configuration de son terrain d'assiette (terrain de faible\nsuperficie...), soit d'une insertion urbaine complexe, soit du respect\nde caractéristiques patrimoniales"
+   ],
+   "sectorUnplaced": true,
+   "confidence": "low"
+  },
+  {
+   "kind": "parking",
+   "sector": "E",
+   "statement": "limit",
+   "limit": {
+    "kind": "value",
+    "comparison": "min",
+    "value": 0,
+    "unit": "m2"
+   },
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "dans le secteur de stationnement E : les places de stationnement\npeuvent être réalisées soit en sous-sol, soit dans le volume de la\nconstruction, soit en surface",
+   "offset": {
+    "start": 54384,
+    "end": 54545
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [
+    "dans le secteur de stationnement E"
+   ],
+   "exceptions": [],
+   "sectorUnplaced": true,
+   "confidence": "low"
+  },
+  {
+   "kind": "parking",
+   "sector": "Aa",
+   "statement": "not_regulated",
+   "limit": null,
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "les modalités de réalisation des places de\nstationnement ne sont pas règlementées",
+   "offset": {
+    "start": 55034,
+    "end": 55115
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": true,
+   "confidence": "high"
+  },
+  {
+   "kind": "parking",
+   "sector": "Ab",
+   "statement": "not_regulated",
+   "limit": null,
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "les modalités de réalisation des places de\nstationnement ne sont pas règlementées",
+   "offset": {
+    "start": 55034,
+    "end": 55115
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": true,
+   "confidence": "high"
+  },
+  {
+   "kind": "parking",
+   "sector": "B",
+   "statement": "not_regulated",
+   "limit": null,
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "les modalités de réalisation des places de\nstationnement ne sont pas règlementées",
+   "offset": {
+    "start": 55034,
+    "end": 55115
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": true,
+   "confidence": "high"
+  },
+  {
+   "kind": "parking",
+   "sector": "C",
+   "statement": "not_regulated",
+   "limit": null,
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "les modalités de réalisation des places de\nstationnement ne sont pas règlementées",
+   "offset": {
+    "start": 55034,
+    "end": 55115
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": true,
+   "confidence": "high"
+  },
+  {
+   "kind": "parking",
+   "sector": "Cbis",
+   "statement": "not_regulated",
+   "limit": null,
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "les modalités de réalisation des places de\nstationnement ne sont pas règlementées",
+   "offset": {
+    "start": 55034,
+    "end": 55115
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": true,
+   "confidence": "high"
+  },
+  {
+   "kind": "parking",
+   "sector": "Da",
+   "statement": "not_regulated",
+   "limit": null,
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "les modalités de réalisation des places de\nstationnement ne sont pas règlementées",
+   "offset": {
+    "start": 55034,
+    "end": 55115
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": true,
+   "confidence": "high"
+  },
+  {
+   "kind": "parking",
+   "sector": "Dab",
+   "statement": "not_regulated",
+   "limit": null,
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "les modalités de réalisation des places de\nstationnement ne sont pas règlementées",
+   "offset": {
+    "start": 55034,
+    "end": 55115
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": true,
+   "confidence": "high"
+  },
+  {
+   "kind": "parking",
+   "sector": "Db",
+   "statement": "not_regulated",
+   "limit": null,
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "les modalités de réalisation des places de\nstationnement ne sont pas règlementées",
+   "offset": {
+    "start": 55034,
+    "end": 55115
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": true,
+   "confidence": "high"
+  },
+  {
+   "kind": "parking",
+   "sector": "Dc",
+   "statement": "not_regulated",
+   "limit": null,
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "les modalités de réalisation des places de\nstationnement ne sont pas règlementées",
+   "offset": {
+    "start": 55034,
+    "end": 55115
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": true,
+   "confidence": "high"
+  },
+  {
+   "kind": "parking",
+   "sector": "E",
+   "statement": "not_regulated",
+   "limit": null,
+   "page": 142,
+   "article": "5.2.2.1",
+   "passage": "les modalités de réalisation des places de\nstationnement ne sont pas règlementées",
+   "offset": {
+    "start": 55034,
+    "end": 55115
+   },
+   "occurrence": {
+    "of": 1,
+    "chosenBy": "only"
+   },
+   "conditions": [],
+   "exceptions": [],
+   "sectorUnplaced": true,
+   "confidence": "high"
+  }
+ ],
+ "dropped": {
+  "passageNotFound": 3,
+  "schemaInvalid": 0,
+  "overLimit": 0,
+  "conditionNotVerbatim": 0,
+  "incoherent": 28,
+  "valueNotInPassage": 14,
+  "droppedConditions": 0
+ },
+ "chunks": {
+  "of": 9,
+  "failed": 0
+ },
+ "model": {
+  "providerId": "lmstudio",
+  "model": "qwen/qwen3-vl-8b",
+  "constraint": "schema"
+ },
+ "extractedAt": "2026-10-20T14:57:57.138Z",
+ "replayedAt": "2026-10-20T15:56:10.598Z",
+ "replayNote": "The recorded 096.7 answers (calls.json, promptVersion 1) replayed through the pipeline after the 002.5b review (post-validation of promptVersion 2); the instructions sent live were promptVersion 1."
+}

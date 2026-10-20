@@ -87,9 +87,25 @@ jobs:
 
       - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          # 22, not 20: the companion services need Node >= 22.13
+          # (pdfjs-dist 6's engines; Sprint 002.5a DEC-1).
+          node-version: 22
           cache: pnpm
           cache-dependency-path: .platform/pnpm-lock.yaml
+
+      # The companion services (Sprint 002.5a) are not packages and are not
+      # published here, but they are tested here: cheap, and nothing else runs
+      # them. Installed as the image installs them.
+      - name: Install the services' dependencies, as the image does
+        working-directory: services/fr-urban-rules-service
+        run: npm ci --omit=dev --omit=optional --ignore-scripts
+
+      - name: Audit the services' shipped dependencies
+        working-directory: services/fr-urban-rules-service
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Test the services
+        run: node --test 'services/*/tests/*.test.mjs'
 
       - name: Install the platform's dependencies
         working-directory: .platform

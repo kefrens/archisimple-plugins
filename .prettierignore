@@ -1,0 +1,6 @@
+# Byte-identical copy of the platform's
+# apps/ai-service/src/__tests__/fixtures/normalise-vectors.json (096.7's
+# follow-up, 2026-10-20): the two change together, and a reformat here would
+# end the byte identity the platform's normalise-vectors.test.ts relies on.
+# The platform's .prettierignore names its own copy.
+test-fixtures/fr-urban-rules/ai-service/normalise-vectors.json

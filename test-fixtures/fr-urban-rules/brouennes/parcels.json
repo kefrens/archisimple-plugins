@@ -1,0 +1,1798 @@
+{
+  "date": "2026-10-20T06:25:49.133Z",
+  "kind": "parcel",
+  "query": {
+    "crs": "EPSG:2154",
+    "minEasting": 863493.06986863,
+    "minNorthing": 6937459.77459362,
+    "maxEasting": 863629.56986858,
+    "maxNorthing": 6937564.9145936,
+    "limit": 200
+  },
+  "answer": [
+    {
+      "id": "55083000ZD0001",
+      "kind": "parcel",
+      "label": "Section ZD n° 0001",
+      "summary": "Brouennes · 76 240 m²",
+      "shortLabel": "ZD 0001",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "ZD"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0001"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 ZD 0001"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "76 240 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863486.65986867,
+            "northing": 6937175.52459382
+          },
+          {
+            "easting": 863484.19986867,
+            "northing": 6937186.47459381
+          },
+          {
+            "easting": 863483.03986867,
+            "northing": 6937188.31459381
+          },
+          {
+            "easting": 863474.32986868,
+            "northing": 6937230.82459378
+          },
+          {
+            "easting": 863471.83986868,
+            "northing": 6937254.60459377
+          },
+          {
+            "easting": 863471.08986868,
+            "northing": 6937266.69459376
+          },
+          {
+            "easting": 863470.73986868,
+            "northing": 6937294.17459375
+          },
+          {
+            "easting": 863471.53986868,
+            "northing": 6937309.54459374
+          },
+          {
+            "easting": 863474.04986867,
+            "northing": 6937322.12459373
+          },
+          {
+            "easting": 863485.97986867,
+            "northing": 6937352.11459371
+          },
+          {
+            "easting": 863492.01986866,
+            "northing": 6937367.7945937
+          },
+          {
+            "easting": 863498.25986866,
+            "northing": 6937383.59459369
+          },
+          {
+            "easting": 863506.94986865,
+            "northing": 6937397.42459368
+          },
+          {
+            "easting": 863524.01986863,
+            "northing": 6937413.27459367
+          },
+          {
+            "easting": 863571.8198686,
+            "northing": 6937443.19459365
+          },
+          {
+            "easting": 863575.59986859,
+            "northing": 6937445.92459365
+          },
+          {
+            "easting": 863604.21986857,
+            "northing": 6937468.12459364
+          },
+          {
+            "easting": 863605.37986857,
+            "northing": 6937462.92459364
+          },
+          {
+            "easting": 863609.61986857,
+            "northing": 6937444.09459365
+          },
+          {
+            "easting": 863611.16986856,
+            "northing": 6937436.09459366
+          },
+          {
+            "easting": 863634.28986855,
+            "northing": 6937436.35459366
+          },
+          {
+            "easting": 863646.34986854,
+            "northing": 6937437.17459366
+          },
+          {
+            "easting": 863682.03986851,
+            "northing": 6937432.46459366
+          },
+          {
+            "easting": 863684.44986851,
+            "northing": 6937434.26459366
+          },
+          {
+            "easting": 863685.1298685,
+            "northing": 6937431.34459366
+          },
+          {
+            "easting": 863705.60986849,
+            "northing": 6937425.35459366
+          },
+          {
+            "easting": 863704.35986849,
+            "northing": 6937371.2045937
+          },
+          {
+            "easting": 863724.02986847,
+            "northing": 6937371.1345937
+          },
+          {
+            "easting": 863720.89986848,
+            "northing": 6937363.5145937
+          },
+          {
+            "easting": 863717.73986848,
+            "northing": 6937346.87459371
+          },
+          {
+            "easting": 863734.25986847,
+            "northing": 6937348.87459371
+          },
+          {
+            "easting": 863749.02986845,
+            "northing": 6937348.72459371
+          },
+          {
+            "easting": 863779.40986843,
+            "northing": 6937347.99459371
+          },
+          {
+            "easting": 863832.87986839,
+            "northing": 6937342.15459372
+          },
+          {
+            "easting": 863831.74986839,
+            "northing": 6937336.42459372
+          },
+          {
+            "easting": 863830.22986839,
+            "northing": 6937328.79459372
+          },
+          {
+            "easting": 863826.41986839,
+            "northing": 6937312.06459373
+          },
+          {
+            "easting": 863854.80986837,
+            "northing": 6937308.73459373
+          },
+          {
+            "easting": 863951.08986829,
+            "northing": 6937297.38459374
+          },
+          {
+            "easting": 863952.38986829,
+            "northing": 6937292.86459374
+          },
+          {
+            "easting": 863949.81986829,
+            "northing": 6937253.58459377
+          },
+          {
+            "easting": 863840.72986838,
+            "northing": 6937235.65459378
+          },
+          {
+            "easting": 863660.34986853,
+            "northing": 6937204.8345938
+          },
+          {
+            "easting": 863486.65986867,
+            "northing": 6937175.52459382
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 244044,
+        "numero": "0001",
+        "feuille": 1,
+        "section": "ZD",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000ZD0001",
+        "contenance": 76240,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55083000AB0154",
+      "kind": "parcel",
+      "label": "Section AB n° 0154",
+      "summary": "Brouennes · 2 630 m²",
+      "shortLabel": "AB 0154",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0154"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 AB 0154"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "2 630 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863687.6098685,
+            "northing": 6937482.06459363
+          },
+          {
+            "easting": 863658.25986853,
+            "northing": 6937482.59459363
+          },
+          {
+            "easting": 863646.61986854,
+            "northing": 6937482.81459363
+          },
+          {
+            "easting": 863621.66986856,
+            "northing": 6937484.55459362
+          },
+          {
+            "easting": 863619.22986856,
+            "northing": 6937484.86459363
+          },
+          {
+            "easting": 863645.07986854,
+            "northing": 6937517.50459361
+          },
+          {
+            "easting": 863650.22986853,
+            "northing": 6937523.6845936
+          },
+          {
+            "easting": 863663.38986852,
+            "northing": 6937536.19459359
+          },
+          {
+            "easting": 863667.26986852,
+            "northing": 6937539.19459359
+          },
+          {
+            "easting": 863671.89986851,
+            "northing": 6937542.29459359
+          },
+          {
+            "easting": 863683.39986851,
+            "northing": 6937547.37459359
+          },
+          {
+            "easting": 863683.45986851,
+            "northing": 6937546.67459359
+          },
+          {
+            "easting": 863682.26986851,
+            "northing": 6937514.03459361
+          },
+          {
+            "easting": 863690.9998685,
+            "northing": 6937515.16459361
+          },
+          {
+            "easting": 863687.6098685,
+            "northing": 6937482.06459363
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 18003696,
+        "numero": "0154",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000AB0154",
+        "contenance": 2630,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55083000AB0180",
+      "kind": "parcel",
+      "label": "Section AB n° 0180",
+      "summary": "Brouennes · 725 m²",
+      "shortLabel": "AB 0180",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0180"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 AB 0180"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "725 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863522.31986863,
+            "northing": 6937587.51459356
+          },
+          {
+            "easting": 863527.34986863,
+            "northing": 6937554.61459358
+          },
+          {
+            "easting": 863506.67986865,
+            "northing": 6937544.56459359
+          },
+          {
+            "easting": 863503.94986865,
+            "northing": 6937584.11459357
+          },
+          {
+            "easting": 863522.31986863,
+            "northing": 6937587.51459356
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 24190064,
+        "numero": "0180",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000AB0180",
+        "contenance": 725,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55083000AB0194",
+      "kind": "parcel",
+      "label": "Section AB n° 0194",
+      "summary": "Brouennes · 380 m²",
+      "shortLabel": "AB 0194",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0194"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 AB 0194"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "380 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863620.62986856,
+            "northing": 6937578.04459357
+          },
+          {
+            "easting": 863626.05986855,
+            "northing": 6937578.75459357
+          },
+          {
+            "easting": 863627.10986855,
+            "northing": 6937569.44459357
+          },
+          {
+            "easting": 863627.23986855,
+            "northing": 6937568.47459357
+          },
+          {
+            "easting": 863637.16986854,
+            "northing": 6937522.7245936
+          },
+          {
+            "easting": 863632.06986855,
+            "northing": 6937517.11459361
+          },
+          {
+            "easting": 863621.19986856,
+            "northing": 6937567.58459357
+          },
+          {
+            "easting": 863620.62986856,
+            "northing": 6937578.04459357
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 26954257,
+        "numero": "0194",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000AB0194",
+        "contenance": 380,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55083000AB0247",
+      "kind": "parcel",
+      "label": "Section AB n° 0247",
+      "summary": "Brouennes · 305 m²",
+      "shortLabel": "AB 0247",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0247"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 AB 0247"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "305 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863616.55986856,
+            "northing": 6937577.27459357
+          },
+          {
+            "easting": 863616.46986856,
+            "northing": 6937577.91459357
+          },
+          {
+            "easting": 863620.62986856,
+            "northing": 6937578.04459357
+          },
+          {
+            "easting": 863621.19986856,
+            "northing": 6937567.58459357
+          },
+          {
+            "easting": 863632.06986855,
+            "northing": 6937517.11459361
+          },
+          {
+            "easting": 863626.73986855,
+            "northing": 6937509.76459361
+          },
+          {
+            "easting": 863626.69986855,
+            "northing": 6937510.03459361
+          },
+          {
+            "easting": 863616.55986856,
+            "northing": 6937577.27459357
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 36503093,
+        "numero": "0247",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000AB0247",
+        "contenance": 305,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55083000AB0258",
+      "kind": "parcel",
+      "label": "Section AB n° 0258",
+      "summary": "Brouennes · 168 m²",
+      "shortLabel": "AB 0258",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0258"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 AB 0258"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "168 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863480.11986867,
+            "northing": 6937575.85459357
+          },
+          {
+            "easting": 863486.35986866,
+            "northing": 6937577.93459357
+          },
+          {
+            "easting": 863490.76986866,
+            "northing": 6937562.37459358
+          },
+          {
+            "easting": 863492.13986866,
+            "northing": 6937557.54459358
+          },
+          {
+            "easting": 863490.06986866,
+            "northing": 6937556.91459358
+          },
+          {
+            "easting": 863484.09986867,
+            "northing": 6937555.08459358
+          },
+          {
+            "easting": 863480.32986867,
+            "northing": 6937570.38459357
+          },
+          {
+            "easting": 863480.11986867,
+            "northing": 6937575.85459357
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 38160696,
+        "numero": "0258",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000AB0258",
+        "contenance": 168,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55083000AB0270",
+      "kind": "parcel",
+      "label": "Section AB n° 0270",
+      "summary": "Brouennes · 1 984 m²",
+      "shortLabel": "AB 0270",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0270"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 AB 0270"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "1 984 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863600.01986857,
+            "northing": 6937571.75459357
+          },
+          {
+            "easting": 863606.32986857,
+            "northing": 6937546.42459359
+          },
+          {
+            "easting": 863608.45986857,
+            "northing": 6937537.59459359
+          },
+          {
+            "easting": 863617.62986856,
+            "northing": 6937500.11459362
+          },
+          {
+            "easting": 863597.67986857,
+            "northing": 6937478.40459363
+          },
+          {
+            "easting": 863589.56986858,
+            "northing": 6937510.50459361
+          },
+          {
+            "easting": 863585.91986858,
+            "northing": 6937524.9145936
+          },
+          {
+            "easting": 863576.17986859,
+            "northing": 6937563.72459358
+          },
+          {
+            "easting": 863600.01986857,
+            "northing": 6937571.75459357
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 40172206,
+        "numero": "0270",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000AB0270",
+        "contenance": 1984,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55083000AB0272",
+      "kind": "parcel",
+      "label": "Section AB n° 0272",
+      "summary": "Brouennes · 996 m²",
+      "shortLabel": "AB 0272",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0272"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 AB 0272"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "996 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863600.01986857,
+            "northing": 6937571.75459357
+          },
+          {
+            "easting": 863616.55986856,
+            "northing": 6937577.27459357
+          },
+          {
+            "easting": 863626.69986855,
+            "northing": 6937510.03459361
+          },
+          {
+            "easting": 863617.62986856,
+            "northing": 6937500.11459362
+          },
+          {
+            "easting": 863608.45986857,
+            "northing": 6937537.59459359
+          },
+          {
+            "easting": 863606.32986857,
+            "northing": 6937546.42459359
+          },
+          {
+            "easting": 863600.01986857,
+            "northing": 6937571.75459357
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 40398706,
+        "numero": "0272",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000AB0272",
+        "contenance": 996,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55083000AB0280",
+      "kind": "parcel",
+      "label": "Section AB n° 0280",
+      "summary": "Brouennes · 423 m²",
+      "shortLabel": "AB 0280",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0280"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 AB 0280"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "423 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863533.06986863,
+            "northing": 6937499.77459362
+          },
+          {
+            "easting": 863585.91986858,
+            "northing": 6937524.9145936
+          },
+          {
+            "easting": 863589.56986858,
+            "northing": 6937510.50459361
+          },
+          {
+            "easting": 863533.06986863,
+            "northing": 6937499.77459362
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 41588042,
+        "numero": "0280",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000AB0280",
+        "contenance": 423,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55083000AB0153",
+      "kind": "parcel",
+      "label": "Section AB n° 0153",
+      "summary": "Brouennes · 1 175 m²",
+      "shortLabel": "AB 0153",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0153"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 AB 0153"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "1 175 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863645.58986854,
+            "northing": 6937448.24459365
+          },
+          {
+            "easting": 863609.61986857,
+            "northing": 6937444.09459365
+          },
+          {
+            "easting": 863605.37986857,
+            "northing": 6937462.92459364
+          },
+          {
+            "easting": 863604.21986857,
+            "northing": 6937468.12459364
+          },
+          {
+            "easting": 863607.91986857,
+            "northing": 6937470.89459363
+          },
+          {
+            "easting": 863609.97986856,
+            "northing": 6937471.91459363
+          },
+          {
+            "easting": 863624.80986855,
+            "northing": 6937478.55459363
+          },
+          {
+            "easting": 863632.19986855,
+            "northing": 6937479.63459363
+          },
+          {
+            "easting": 863643.78986854,
+            "northing": 6937479.48459363
+          },
+          {
+            "easting": 863645.58986854,
+            "northing": 6937448.24459365
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 17780249,
+        "numero": "0153",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000AB0153",
+        "contenance": 1175,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55083000AB0181",
+      "kind": "parcel",
+      "label": "Section AB n° 0181",
+      "summary": "Brouennes · 1 595 m²",
+      "shortLabel": "AB 0181",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0181"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 AB 0181"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "1 595 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863592.24986858,
+            "northing": 6937582.46459356
+          },
+          {
+            "easting": 863587.81986858,
+            "northing": 6937580.99459357
+          },
+          {
+            "easting": 863563.9298686,
+            "northing": 6937572.20459357
+          },
+          {
+            "easting": 863552.05986861,
+            "northing": 6937567.26459357
+          },
+          {
+            "easting": 863527.34986863,
+            "northing": 6937554.61459358
+          },
+          {
+            "easting": 863522.31986863,
+            "northing": 6937587.51459356
+          },
+          {
+            "easting": 863540.87986862,
+            "northing": 6937589.09459356
+          },
+          {
+            "easting": 863573.25986859,
+            "northing": 6937596.66459356
+          },
+          {
+            "easting": 863589.35986858,
+            "northing": 6937597.57459356
+          },
+          {
+            "easting": 863589.85986858,
+            "northing": 6937594.93459356
+          },
+          {
+            "easting": 863590.80986858,
+            "northing": 6937589.77459356
+          },
+          {
+            "easting": 863592.24986858,
+            "northing": 6937582.46459356
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 24372549,
+        "numero": "0181",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000AB0181",
+        "contenance": 1595,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55083000AB0193",
+      "kind": "parcel",
+      "label": "Section AB n° 0193",
+      "summary": "Brouennes · 480 m²",
+      "shortLabel": "AB 0193",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0193"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 AB 0193"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "480 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863626.05986855,
+            "northing": 6937578.75459357
+          },
+          {
+            "easting": 863635.45986854,
+            "northing": 6937580.09459357
+          },
+          {
+            "easting": 863637.01986854,
+            "northing": 6937570.66459357
+          },
+          {
+            "easting": 863637.25986854,
+            "northing": 6937569.24459357
+          },
+          {
+            "easting": 863644.03986854,
+            "northing": 6937530.0245936
+          },
+          {
+            "easting": 863637.16986854,
+            "northing": 6937522.7245936
+          },
+          {
+            "easting": 863627.23986855,
+            "northing": 6937568.47459357
+          },
+          {
+            "easting": 863627.10986855,
+            "northing": 6937569.44459357
+          },
+          {
+            "easting": 863626.05986855,
+            "northing": 6937578.75459357
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 26786627,
+        "numero": "0193",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000AB0193",
+        "contenance": 480,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55083000AB0197",
+      "kind": "parcel",
+      "label": "Section AB n° 0197",
+      "summary": "Brouennes · 2 910 m²",
+      "shortLabel": "AB 0197",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0197"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 AB 0197"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "2 910 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863467.99986868,
+            "northing": 6937534.40459359
+          },
+          {
+            "easting": 863465.88986868,
+            "northing": 6937542.42459359
+          },
+          {
+            "easting": 863464.55986868,
+            "northing": 6937546.26459359
+          },
+          {
+            "easting": 863475.47986867,
+            "northing": 6937518.6445936
+          },
+          {
+            "easting": 863513.25986864,
+            "northing": 6937423.06459366
+          },
+          {
+            "easting": 863508.16986865,
+            "northing": 6937418.93459367
+          },
+          {
+            "easting": 863500.99986865,
+            "northing": 6937411.21459367
+          },
+          {
+            "easting": 863495.91986866,
+            "northing": 6937404.00459368
+          },
+          {
+            "easting": 863489.40986866,
+            "northing": 6937391.34459368
+          },
+          {
+            "easting": 863485.17986867,
+            "northing": 6937381.09459369
+          },
+          {
+            "easting": 863478.26986867,
+            "northing": 6937359.90459371
+          },
+          {
+            "easting": 863470.37986868,
+            "northing": 6937337.00459372
+          },
+          {
+            "easting": 863471.47986868,
+            "northing": 6937348.62459371
+          },
+          {
+            "easting": 863472.31986868,
+            "northing": 6937360.56459371
+          },
+          {
+            "easting": 863473.71986867,
+            "northing": 6937368.2745937
+          },
+          {
+            "easting": 863475.06986867,
+            "northing": 6937383.71459369
+          },
+          {
+            "easting": 863473.86986867,
+            "northing": 6937412.49459367
+          },
+          {
+            "easting": 863475.16986867,
+            "northing": 6937422.95459366
+          },
+          {
+            "easting": 863478.64986867,
+            "northing": 6937452.17459365
+          },
+          {
+            "easting": 863479.26986867,
+            "northing": 6937459.95459364
+          },
+          {
+            "easting": 863479.06986867,
+            "northing": 6937463.24459364
+          },
+          {
+            "easting": 863472.96986867,
+            "northing": 6937516.8545936
+          },
+          {
+            "easting": 863467.99986868,
+            "northing": 6937534.40459359
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 27451299,
+        "numero": "0197",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000AB0197",
+        "contenance": 2910,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55083000AB0273",
+      "kind": "parcel",
+      "label": "Section AB n° 0273",
+      "summary": "Brouennes · 13 m²",
+      "shortLabel": "AB 0273",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0273"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 AB 0273"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "13 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863626.69986855,
+            "northing": 6937510.03459361
+          },
+          {
+            "easting": 863626.73986855,
+            "northing": 6937509.76459361
+          },
+          {
+            "easting": 863618.00986856,
+            "northing": 6937497.85459362
+          },
+          {
+            "easting": 863617.62986856,
+            "northing": 6937500.11459362
+          },
+          {
+            "easting": 863626.69986855,
+            "northing": 6937510.03459361
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 40511321,
+        "numero": "0273",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000AB0273",
+        "contenance": 13,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55083000AB0276",
+      "kind": "parcel",
+      "label": "Section AB n° 0276",
+      "summary": "Brouennes · 2 500 m²",
+      "shortLabel": "AB 0276",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0276"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 AB 0276"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "2 500 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863576.17986859,
+            "northing": 6937563.72459358
+          },
+          {
+            "easting": 863585.91986858,
+            "northing": 6937524.9145936
+          },
+          {
+            "easting": 863533.06986863,
+            "northing": 6937499.77459362
+          },
+          {
+            "easting": 863518.93986864,
+            "northing": 6937537.81459359
+          },
+          {
+            "easting": 863557.01986861,
+            "northing": 6937557.40459358
+          },
+          {
+            "easting": 863576.17986859,
+            "northing": 6937563.72459358
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 40846463,
+        "numero": "0276",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000AB0276",
+        "contenance": 2500,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55083000AB0288",
+      "kind": "parcel",
+      "label": "Section AB n° 0288",
+      "summary": "Brouennes · 1 013 m²",
+      "shortLabel": "AB 0288",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0288"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 AB 0288"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "1 013 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863475.47986867,
+            "northing": 6937518.6445936
+          },
+          {
+            "easting": 863485.17986866,
+            "northing": 6937524.6145936
+          },
+          {
+            "easting": 863493.70986866,
+            "northing": 6937529.8945936
+          },
+          {
+            "easting": 863508.31986865,
+            "northing": 6937539.30459359
+          },
+          {
+            "easting": 863533.95986863,
+            "northing": 6937552.34459358
+          },
+          {
+            "easting": 863556.35986861,
+            "northing": 6937563.54459358
+          },
+          {
+            "easting": 863581.36986859,
+            "northing": 6937572.96459357
+          },
+          {
+            "easting": 863598.77986857,
+            "northing": 6937576.94459357
+          },
+          {
+            "easting": 863600.01986857,
+            "northing": 6937571.75459357
+          },
+          {
+            "easting": 863576.17986859,
+            "northing": 6937563.72459358
+          },
+          {
+            "easting": 863557.01986861,
+            "northing": 6937557.40459358
+          },
+          {
+            "easting": 863518.93986864,
+            "northing": 6937537.81459359
+          },
+          {
+            "easting": 863495.60986866,
+            "northing": 6937526.8445936
+          },
+          {
+            "easting": 863498.47986865,
+            "northing": 6937519.44459361
+          },
+          {
+            "easting": 863479.75986867,
+            "northing": 6937512.28459361
+          },
+          {
+            "easting": 863491.03986866,
+            "northing": 6937483.13459363
+          },
+          {
+            "easting": 863514.01986864,
+            "northing": 6937423.70459367
+          },
+          {
+            "easting": 863513.25986864,
+            "northing": 6937423.06459366
+          },
+          {
+            "easting": 863475.47986867,
+            "northing": 6937518.6445936
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 42448788,
+        "numero": "0288",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000AB0288",
+        "contenance": 1013,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55083000AB0290",
+      "kind": "parcel",
+      "label": "Section AB n° 0290",
+      "summary": "Brouennes · 107 m²",
+      "shortLabel": "AB 0290",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0290"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 AB 0290"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "107 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863597.67986857,
+            "northing": 6937478.40459363
+          },
+          {
+            "easting": 863617.62986856,
+            "northing": 6937500.11459362
+          },
+          {
+            "easting": 863618.00986856,
+            "northing": 6937497.85459362
+          },
+          {
+            "easting": 863604.58986857,
+            "northing": 6937481.05459363
+          },
+          {
+            "easting": 863594.25986858,
+            "northing": 6937474.08459363
+          },
+          {
+            "easting": 863561.2798686,
+            "northing": 6937455.05459364
+          },
+          {
+            "easting": 863545.87986862,
+            "northing": 6937446.28459365
+          },
+          {
+            "easting": 863585.46986858,
+            "northing": 6937469.69459364
+          },
+          {
+            "easting": 863597.67986857,
+            "northing": 6937478.40459363
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 42959142,
+        "numero": "0290",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000AB0290",
+        "contenance": 107,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55083000AB0292",
+      "kind": "parcel",
+      "label": "Section AB n° 0292",
+      "summary": "Brouennes · 4 970 m²",
+      "shortLabel": "AB 0292",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0292"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 AB 0292"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "4 970 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863491.03986866,
+            "northing": 6937483.13459363
+          },
+          {
+            "easting": 863533.06986863,
+            "northing": 6937499.77459362
+          },
+          {
+            "easting": 863589.56986858,
+            "northing": 6937510.50459361
+          },
+          {
+            "easting": 863597.67986857,
+            "northing": 6937478.40459363
+          },
+          {
+            "easting": 863585.46986858,
+            "northing": 6937469.69459364
+          },
+          {
+            "easting": 863545.87986862,
+            "northing": 6937446.28459365
+          },
+          {
+            "easting": 863526.93986863,
+            "northing": 6937434.09459366
+          },
+          {
+            "easting": 863521.17986864,
+            "northing": 6937429.70459366
+          },
+          {
+            "easting": 863514.01986864,
+            "northing": 6937423.70459367
+          },
+          {
+            "easting": 863491.03986866,
+            "northing": 6937483.13459363
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 43167467,
+        "numero": "0292",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000AB0292",
+        "contenance": 4970,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55083000AB0291",
+      "kind": "parcel",
+      "label": "Section AB n° 0291",
+      "summary": "Brouennes · 1 642 m²",
+      "shortLabel": "AB 0291",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0291"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Brouennes (55083)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55083 000 AB 0291"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "1 642 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 863518.93986864,
+            "northing": 6937537.81459359
+          },
+          {
+            "easting": 863533.06986863,
+            "northing": 6937499.77459362
+          },
+          {
+            "easting": 863491.03986866,
+            "northing": 6937483.13459363
+          },
+          {
+            "easting": 863479.75986867,
+            "northing": 6937512.28459361
+          },
+          {
+            "easting": 863498.47986865,
+            "northing": 6937519.44459361
+          },
+          {
+            "easting": 863495.60986866,
+            "northing": 6937526.8445936
+          },
+          {
+            "easting": 863518.93986864,
+            "northing": 6937537.81459359
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 43063490,
+        "numero": "0291",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Brouennes",
+        "code_com": "083",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55083000AB0291",
+        "contenance": 1642,
+        "code_insee": "55083"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    }
+  ]
+}

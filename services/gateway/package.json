@@ -1,0 +1,17 @@
+{
+  "name": "plugin-services-gateway",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Mounts each companion service of this repository at /plugins-api/<package id>/ (Sprint 002.5a DEC-10, ADR-0114).",
+  "type": "module",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "main": "src/gateway.mjs",
+  "scripts": {
+    "start": "node src/gateway.mjs",
+    "dev": "PLUGIN_SERVICES_DATA_DIR=./.data node --watch src/gateway.mjs",
+    "test": "node --test \"tests/*.test.mjs\""
+  }
+}

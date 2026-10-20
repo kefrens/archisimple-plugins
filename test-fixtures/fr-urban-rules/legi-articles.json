@@ -1,0 +1,198 @@
+{
+  "read": "2026-10-20",
+  "channels": {
+    "text": "DILA open data LEGI (the Légifrance database), Freemium_legi_global_20250713-140000.tar.gz, https://echanges.dila.gouv.fr/OPENDATA/LEGI/ — the article XML of each LEGIARTI version, <CONTENU> verbatim (markup removed, paragraphs kept)",
+    "inForce": "https://www.legifrance.gouv.fr/codes/article_lc/<LEGIARTI> read 2026-10-20: number, \"Version en vigueur depuis le\", no later version, the opening words matching"
+  },
+  "articles": {
+    "R.111-1": {
+      "legiarti": "LEGIARTI000034355056",
+      "versionFrom": "2017-04-01",
+      "etat": "VIGUEUR",
+      "text": "Le règlement national d'urbanisme est applicable aux constructions et aménagements faisant l'objet d'un permis de construire, d'un permis d'aménager ou d'une déclaration préalable ainsi qu'aux autres utilisations du sol régies par le présent code.\nToutefois les dispositions des articles R. 111-3, R. 111-5 à R. 111-19 et R. 111-28 à R. 111-30 ne sont pas applicables dans les territoires dotés d'un plan local d'urbanisme ou d'un document d'urbanisme en tenant lieu.\nLes termes utilisés par le règlement national d'urbanisme peuvent être définis par un lexique national d'urbanisme, pris par arrêté du ministre chargé de l'urbanisme.",
+      "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000034355056"
+    },
+    "R.111-15": {
+      "legiarti": "LEGIARTI000031721290",
+      "versionFrom": "2016-01-01",
+      "etat": "VIGUEUR",
+      "text": "Une distance d'au moins trois mètres peut être imposée entre deux bâtiments non contigus situés sur un terrain appartenant au même propriétaire.",
+      "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031721290"
+    },
+    "R.111-16": {
+      "legiarti": "LEGIARTI000031721288",
+      "versionFrom": "2016-01-01",
+      "etat": "VIGUEUR",
+      "text": "Lorsque le bâtiment est édifié en bordure d'une voie publique, la distance comptée horizontalement de tout point de l'immeuble au point le plus proche de l'alignement opposé doit être au moins égale à la différence d'altitude entre ces deux points. Lorsqu'il existe une obligation de construire au retrait de l'alignement, la limite de ce retrait se substitue à l'alignement. Il en sera de même pour les constructions élevées en bordure des voies privées, la largeur effective de la voie privée étant assimilée à la largeur réglementaire des voies publiques.\nToutefois une implantation de la construction à l'alignement ou dans le prolongement des constructions existantes peut être imposée.",
+      "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031721288"
+    },
+    "R.111-17": {
+      "legiarti": "LEGIARTI000031721286",
+      "versionFrom": "2016-01-01",
+      "etat": "VIGUEUR",
+      "text": "A moins que le bâtiment à construire ne jouxte la limite parcellaire, la distance comptée horizontalement de tout point de ce bâtiment au point de la limite parcellaire qui en est le plus rapproché doit être au moins égale à la moitié de la différence d'altitude entre ces deux points, sans pouvoir être inférieure à trois mètres.",
+      "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031721286"
+    },
+    "R.111-18": {
+      "legiarti": "LEGIARTI000031721284",
+      "versionFrom": "2016-01-01",
+      "etat": "VIGUEUR",
+      "text": "Lorsque, par son gabarit ou son implantation, un immeuble bâti existant n'est pas conforme aux prescriptions de l'article R. 111-17, le permis de construire ne peut être accordé que pour des travaux qui ont pour objet d'améliorer la conformité de l'implantation ou du gabarit de cet immeuble avec ces prescriptions, ou pour des travaux qui sont sans effet sur l'implantation ou le gabarit de l'immeuble.",
+      "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031721284"
+    },
+    "R.111-19": {
+      "legiarti": "LEGIARTI000031721282",
+      "versionFrom": "2016-01-01",
+      "etat": "VIGUEUR",
+      "text": "Des dérogations aux règles édictées aux articles R. 111-15 à R. 111-18 peuvent être accordées par décision motivée de l'autorité compétente mentionnée aux articles L. 422-1 à L. 422-3, après avis du maire de la commune lorsque celui-ci n'est pas l'autorité compétente.\nEn outre, le préfet peut, après avis du maire, apporter des aménagements aux règles prescrites aux articles R. 111-15 à R. 111-18, sur les territoires où l'établissement de plans locaux d'urbanisme a été prescrit, mais où ces plans n'ont pas encore été approuvés.",
+      "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031721282"
+    },
+    "R.111-28": {
+      "legiarti": "LEGIARTI000031721256",
+      "versionFrom": "2016-01-01",
+      "etat": "VIGUEUR",
+      "text": "Dans les secteurs déjà partiellement bâtis, présentant une unité d'aspect et non compris dans des programmes de rénovation, l'autorisation de construire à une hauteur supérieure à la hauteur moyenne des constructions avoisinantes peut être refusée ou subordonnée à des prescriptions particulières.",
+      "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031721256"
+    },
+    "L.111-3": {
+      "legiarti": "LEGIARTI000031210179",
+      "versionFrom": "2016-01-01",
+      "etat": "VIGUEUR",
+      "text": "En l'absence de plan local d'urbanisme, de tout document d'urbanisme en tenant lieu ou de carte communale, les constructions ne peuvent être autorisées que dans les parties urbanisées de la commune.",
+      "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031210179"
+    },
+    "L.111-4": {
+      "legiarti": "LEGIARTI000047303702",
+      "versionFrom": "2023-03-12",
+      "etat": "VIGUEUR",
+      "text": "Peuvent toutefois être autorisés en dehors des parties urbanisées de la commune :\n1° L'adaptation, le changement de destination, la réfection, l'extension des constructions existantes ou la construction de bâtiments nouveaux à usage d'habitation à l'intérieur du périmètre regroupant les bâtiments d'une ancienne exploitation agricole, dans le respect des traditions architecturales locales ;\n2° Les constructions et installations nécessaires à l'exploitation agricole, à des équipements collectifs dès lors qu'elles ne sont pas incompatibles avec l'exercice d'une activité agricole, pastorale ou forestière sur le terrain sur lequel elles sont implantées, à la réalisation d'aires d'accueil ou de terrains de passage des gens du voyage, à la mise en valeur des ressources naturelles et à la réalisation d'opérations d'intérêt national ;\n2° bis Les constructions et installations nécessaires à la transformation, au conditionnement et à la commercialisation des produits agricoles, lorsque ces activités constituent le prolongement de l'acte de production et dès lors qu'elles ne sont pas incompatibles avec l'exercice d'une activité agricole, pastorale ou forestière sur le terrain sur lequel elles sont implantées. Ces constructions et installations ne peuvent pas être autorisées dans les zones naturelles, ni porter atteinte à la sauvegarde des espaces naturels et des paysages. L'autorisation d'urbanisme est soumise pour avis à la commission départementale de la préservation des espaces naturels, agricoles et forestiers ;\n3° Les constructions et installations incompatibles avec le voisinage des zones habitées et l'extension mesurée des constructions et installations existantes ;\n4° Les constructions ou installations, sur délibération motivée du conseil municipal, si celui-ci considère que l'intérêt de la commune, en particulier pour éviter une diminution de la population communale, le justifie, dès lors qu'elles ne portent pas atteinte à la sauvegarde des espaces naturels et des paysages, à la salubrité et à la sécurité publiques, qu'elles n'entraînent pas un surcroît important de dépenses publiques et que le projet n'est pas contraire aux objectifs visés à l'article L. 101-2 et aux dispositions des chapitres I et II du titre II du livre Ier ou aux directives territoriales d'aménagement précisant leurs modalités d'application.\nPour l'application du présent article, les installations de production et, le cas échéant, de commercialisation, par un ou plusieurs exploitants agricoles, de biogaz, d'électricité et de chaleur par la méthanisation qui respectent les conditions fixées à l'article L. 311-1 du code rural et de la pêche maritime sont considérées comme des constructions ou des installations nécessaires à l'exploitation agricole mentionnées au 2° du présent article.",
+      "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047303702"
+    },
+    "L.161-4": {
+      "legiarti": "LEGIARTI000047303314",
+      "versionFrom": "2023-03-12",
+      "etat": "VIGUEUR",
+      "text": "I.-La carte communale délimite les secteurs où les constructions sont autorisées et les secteurs où les constructions ne sont pas admises, à l'exception :\n1° De l'adaptation, du changement de destination, de la réfection ou de l'extension des constructions existantes ainsi que de l'édification d'annexes à proximité d'un bâtiment existant ;\n2° Des constructions et installations nécessaires :\na) A des équipements collectifs ;\nb) A l'exploitation agricole ou forestière, à la transformation, au conditionnement et à la commercialisation des produits agricoles lorsque ces activités constituent le prolongement de l'acte de production ;\nc) A la mise en valeur des ressources naturelles ;\nd) Au stockage et à l'entretien du matériel des coopératives d'utilisation de matériel agricole.\nLes constructions et installations mentionnées au 2° ne peuvent être autorisées que lorsqu'elles ne sont pas incompatibles avec l'exercice d'une activité agricole, pastorale ou forestière sur le terrain sur lequel elles sont implantées et qu'elles ne portent pas atteinte à la sauvegarde des espaces naturels ou des paysages.\nLes constructions et installations mentionnées aux b et d du même 2° sont soumises à l'avis de la commission départementale de la préservation des espaces naturels, agricoles et forestiers.\nPour l'application du présent article, les installations de méthanisation mentionnées à l'article L. 111-4 sont considérées comme des constructions ou des installations nécessaires à l'exploitation agricole au sens du b du 2° du présent article.\nDans les communes non couvertes par un schéma de cohérence territoriale, la carte communale peut délimiter les zones d'accélération pour l'implantation d'installations terrestres de production d'énergies renouvelables arrêtées en application de l'article L. 141-5-3 du code de l'énergie.\nII.-La carte communale peut délimiter des secteurs dans lesquels est soumise à conditions l'implantation d'installations de production d'énergies renouvelables, dès lors qu'elles sont incompatibles avec le voisinage habité ou avec l'usage des terrains situés à proximité ou qu'elles portent atteinte à la sauvegarde des espaces naturels et des paysages, à la qualité architecturale, urbaine et paysagère, à la mise en valeur du patrimoine et à l'insertion des installations dans le milieu environnant.\nDans les communes des départements pour lesquels a préalablement été arrêtée une cartographie des zones d'accélération pour l'implantation d'installations terrestres de production d'énergies renouvelables en application de l'article L. 141-5-3 du code de l'énergie et lorsque l'avis du comité régional de l'énergie a estimé, dans les conditions prévues au même article L. 141-5-3, que les zones d'accélération identifiées par ladite cartographie sont suffisantes pour l'atteinte des objectifs régionaux établis en application de l'article L. 141-5-1 du même code, la carte communale peut également délimiter des secteurs où est exclue l'implantation d'installations de production d'énergies renouvelables, dès lors qu'elles sont incompatibles avec le voisinage habité ou avec l'usage des terrains situés à proximité ou qu'elles portent atteinte à la sauvegarde des espaces naturels et des paysages, à la qualité architecturale, urbaine et paysagère, à la mise en valeur du patrimoine et à l'insertion des installations dans le milieu environnant. Les secteurs délimités en application du présent alinéa sont applicables uniquement aux projets dont la demande d'autorisation auprès de l'autorité compétente est déposée après l'approbation de la carte communale délimitant de tels secteurs. Les secteurs délimités en application du présent alinéa ne sont pas applicables aux procédés de production d'énergies renouvelables en toiture ou aux procédés de chaleur à usage individuel.",
+      "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047303314"
+    }
+  },
+  "sprint002_3": {
+    "read": "2026-10-20",
+    "channels": {
+      "text": "DILA open data LEGI (the Légifrance database), Freemium_legi_global_20250713-140000.tar.gz, https://echanges.dila.gouv.fr/OPENDATA/LEGI/ — the article XML of each LEGIARTI version, <CONTENU> verbatim (markup removed, paragraphs kept)",
+      "inForce": "https://www.legifrance.gouv.fr/codes/article_lc/<LEGIARTI> read 2026-10-20: number, \"Version en vigueur depuis le\", no later version, the opening words matching"
+    },
+    "findings": [
+      "R.431-2 a) (in force since 2019-06-23, and in the 2016-12-17 version of décret 2016-1738): an individual building for themselves needs an architect when the surface de plancher of a non-agricultural construction exceeds 150 m²; the \"both surface de plancher and emprise\" wording is in b) (agricultural, 800 m²) and c) (greenhouses, 2 000 m²) only. Sprint 002.3 correction 1 was wrong.",
+      "R.431-2, last paragraph: works on an existing building need an architect when \"soit la surface de plancher, soit l’emprise au sol de l’ensemble\" passes \"l’un des plafonds fixés par le présent article\"; a)’s only ceiling is a surface de plancher — whether 150 m² of emprise alone triggers it is to verify.",
+      "R.421-14 b) and R.421-17 f): 40 m² in a zone urbaine of a PLU or a document in its place, except 20–40 m² taking the whole past an R.431-2 ceiling (both verified).",
+      "R.421-9 a), R.421-2 a), R.421-11 I a): 5 m², 20 m², 12 m (emprise or surface de plancher), verified in their 2024-11-16 versions (décret 2024-1023)."
+    ],
+    "articles": {
+      "R.420-1": {
+        "legiarti": "LEGIARTI000028678466",
+        "versionFrom": "2014-04-01",
+        "etat": "VIGUEUR",
+        "text": "L'emprise au sol au sens du présent livre est la projection verticale du volume de la construction, tous débords et surplombs inclus.\nToutefois, les ornements tels que les éléments de modénature et les marquises sont exclus, ainsi que les débords de toiture lorsqu'ils ne sont pas soutenus par des poteaux ou des encorbellements.",
+        "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000028678466",
+        "live": "same LEGIARTI and version date on Légifrance, 2026-10-20; opening words match"
+      },
+      "R.111-22": {
+        "legiarti": "LEGIARTI000031721274",
+        "versionFrom": "2016-01-01",
+        "etat": "VIGUEUR",
+        "text": "La surface de plancher de la construction est égale à la somme des surfaces de plancher de chaque niveau clos et couvert, calculée à partir du nu intérieur des façades après déduction :\n1° Des surfaces correspondant à l'épaisseur des murs entourant les embrasures des portes et fenêtres donnant sur l'extérieur ;\n2° Des vides et des trémies afférentes aux escaliers et ascenseurs ;\n3° Des surfaces de plancher d'une hauteur sous plafond inférieure ou égale à 1,80 mètre ;\n4° Des surfaces de plancher aménagées en vue du stationnement des véhicules motorisés ou non, y compris les rampes d'accès et les aires de manœuvres ;\n5° Des surfaces de plancher des combles non aménageables pour l'habitation ou pour des activités à caractère professionnel, artisanal, industriel ou commercial ;\n6° Des surfaces de plancher des locaux techniques nécessaires au fonctionnement d'un groupe de bâtiments ou d'un immeuble autre qu'une maison individuelle au sens de l'article L. 231-1 du code de la construction et de l'habitation, y compris les locaux de stockage des déchets ;\n7° Des surfaces de plancher des caves ou des celliers, annexes à des logements, dès lors que ces locaux sont desservis uniquement par une partie commune ;\n8° D'une surface égale à 10 % des surfaces de plancher affectées à l'habitation telles qu'elles résultent le cas échéant de l'application des alinéas précédents, dès lors que les logements sont desservis par des parties communes intérieures.",
+        "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031721274",
+        "live": "same LEGIARTI and version date on Légifrance, 2026-10-20; opening words match"
+      },
+      "R.421-1": {
+        "legiarti": "LEGIARTI000051190132",
+        "versionFrom": "2025-02-19",
+        "etat": "VIGUEUR",
+        "text": "Les constructions nouvelles doivent être précédées de la délivrance d'un permis de construire, à l'exception :\na) Des constructions mentionnées aux articles R. 421-2 à R. 421-8-2 qui sont dispensées de toute formalité au titre du code de l'urbanisme ;\nb) Des constructions mentionnées aux articles R. 421-9 à R. 421-12 ainsi qu'à l'article R. 427-7 qui doivent faire l'objet d'une déclaration préalable.",
+        "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000051190132",
+        "live": "same LEGIARTI and version date on Légifrance, 2026-10-20; opening words match"
+      },
+      "R.421-2": {
+        "legiarti": "LEGIARTI000050497056",
+        "versionFrom": "2024-11-16",
+        "etat": "VIGUEUR",
+        "text": "Sont dispensées de toute formalité au titre du présent code, en raison de leur nature ou de leur très faible importance, sauf lorsqu'ils sont implantés dans le périmètre d'un site patrimonial remarquable, dans les abords des monuments historiques ou dans un site classé ou en instance de classement :\na) Les constructions nouvelles répondant aux critères cumulatifs suivants :\n-une hauteur au-dessus du sol inférieure ou égale à douze mètres ;\n-une emprise au sol inférieure ou égale à cinq mètres carrés ;\n-une surface de plancher inférieure ou égale à cinq mètres carrés ;\nb) Les habitations légères de loisirs implantées dans les emplacements mentionnés à l'article R. 111-38 et dont la surface de plancher est inférieure ou égale à trente-cinq mètres carrés ;\nc) Les éoliennes terrestres dont la hauteur du mât et de la nacelle au-dessus du sol est inférieure à douze mètres ainsi que les ouvrages de production d'électricité à partir de l'énergie solaire installés sur le sol et les ombrières intégrant un procédé de production d'énergies renouvelables, dont la puissance crête est inférieure à trois kilowatts et dont la hauteur maximum au-dessus du sol ne peut pas dépasser un mètre quatre-vingt ;\nd) Les piscines dont le bassin a une superficie inférieure ou égale à dix mètres carrés ;\ne) Les châssis et serres dont la hauteur au-dessus du sol est inférieure ou égale à un mètre quatre-vingts ;\nf) Les murs dont la hauteur au-dessus du sol est inférieure à deux mètres, sauf s'ils constituent des clôtures régies par l'article R. 421-12 ;\ng) Les clôtures, en dehors des cas prévus à l'article R. 421-12, ainsi que les clôtures nécessaires à l'activité agricole ou forestière ;\nh) Le mobilier urbain ;\ni) Les caveaux et monuments funéraires situés dans l'enceinte d'un cimetière ;\nj) Les terrasses de plain-pied ;\nk) Les plates-formes nécessaires à l'activité agricole ;\nl) Les fosses nécessaires à l'activité agricole dont le bassin a une superficie inférieure ou égale à dix mètres carrés ;\nm) Les travaux de ravalement, en dehors des cas prévus à l'article R. 421-17-1.",
+        "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000050497056",
+        "live": "same LEGIARTI and version date on Légifrance, 2026-10-20; opening words match"
+      },
+      "R.421-9": {
+        "legiarti": "LEGIARTI000050497051",
+        "versionFrom": "2024-11-16",
+        "etat": "VIGUEUR",
+        "text": "En dehors du périmètre des sites patrimoniaux remarquables, des abords des monuments historiques et des sites classés ou en instance de classement, les constructions nouvelles suivantes doivent être précédées d'une déclaration préalable, à l'exception des cas mentionnés à la sous-section 2 ci-dessus :\na) Les constructions dont soit l'emprise au sol, soit la surface de plancher est supérieure à cinq mètres carrés et répondant aux critères cumulatifs suivants :\n- une hauteur au-dessus du sol inférieure ou égale à douze mètres ;\n- une emprise au sol inférieure ou égale à vingt mètres carrés ;\n- une surface de plancher inférieure ou égale à vingt mètres carrés ;\nb) Les habitations légères de loisirs implantées dans les conditions définies à l'article R. 111-38, dont la surface de plancher est supérieure à trente-cinq mètres carrés ;\nc) Les constructions répondant aux critères cumulatifs suivants :\n- une hauteur au-dessus du sol supérieure à douze mètres ;\n- une emprise au sol inférieure ou égale à cinq mètres carrés ;\n- une surface de plancher inférieure ou égale à cinq mètres carrés.\nToutefois, ces dispositions ne sont applicables ni aux éoliennes, ni aux ouvrages de production d'électricité à partir de l'énergie solaire installés au sol, ni aux ombrières intégrant un procédé de production d'énergies renouvelables, ni aux antennes-relais de radiotéléphonie mobile ;\nd) Les ouvrages et accessoires des lignes de distribution d'énergie électrique dont la tension est inférieure à soixante-trois mille volts ;\ne) Les murs dont la hauteur au-dessus du sol est supérieure ou égale à deux mètres ;\nf) Les piscines dont le bassin a une superficie inférieure ou égale à cent mètres carrés et qui ne sont pas couvertes ou dont la couverture, fixe ou mobile, a une hauteur au-dessus du sol inférieure à un mètre quatre-vingts ;\ng) Les châssis et serres dont la hauteur au-dessus du sol est comprise entre un mètre quatre-vingts et quatre mètres, et dont la surface au sol n'excède pas deux mille mètres carrés sur une même unité foncière ;\nh) Les ouvrages de production d'électricité à partir de l'énergie solaire installés sur le sol et les ombrières intégrant un procédé de production d'énergies renouvelables, dont la puissance crête est inférieure à trois kilowatts et dont la hauteur maximum au-dessus du sol peut dépasser un mètre quatre-vingts ainsi que ceux dont la puissance crête est supérieure ou égale à trois kilowatts et inférieure à trois mégawatts quelle que soit leur hauteur ;\ni) Les fosses nécessaires à l'activité agricole dont le bassin a une superficie supérieure à dix mètres carrés et inférieure ou égale à cent mètres carrés ;\nj) Les antennes-relais de radiotéléphonie mobile et leurs systèmes d'accroche, quelle que soit leur hauteur, et les locaux ou installations techniques nécessaires à leur fonctionnement dès lors que ces locaux ou installations techniques ont une surface de plancher et une emprise au sol supérieures à 5 m2 et inférieures ou égales à 20 m2.",
+        "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000050497051",
+        "live": "same LEGIARTI and version date on Légifrance, 2026-10-20; opening words match"
+      },
+      "R.421-11": {
+        "legiarti": "LEGIARTI000050497040",
+        "versionFrom": "2024-11-16",
+        "etat": "VIGUEUR",
+        "text": "I.-Dans le périmètre des sites patrimoniaux remarquables, dans les abords des monuments historiques, dans un site classé ou en instance de classement, dans les réserves naturelles, dans les espaces ayant vocation à être classés dans le cœur d'un futur parc national dont la création a été prise en considération en application de l'article R. 331-4 du code de l'environnement et à l'intérieur du cœur des parcs nationaux délimités en application de l'article L. 331-2 du même code, les constructions nouvelles suivantes doivent être précédés d'une déclaration préalable :\na) Les constructions nouvelles répondant aux critères cumulatifs suivants :\n-une hauteur au-dessus du sol inférieure ou égale à douze mètres ;\n-une emprise au sol inférieure ou égale à vingt mètres carrés ;\n-une surface de plancher inférieure ou égale à vingt mètres carrés ;\nb) Les ouvrages de production d'électricité à partir de l'énergie solaire installés sur le sol et les ombrières intégrant un procédé de production d'énergies renouvelables, dont la puissance crête est inférieure à trois kilowatts ;\nc) Les murs, quelle que soit leur hauteur.\nII.-En outre, dans les sites classés ou en instance de classement, dans les sites patrimoniaux remarquables et dans les abords des monuments historiques, doivent être précédés d'une déclaration préalable :\na) Les habitations légères de loisirs implantées dans les emplacements mentionnés à l'article R. 111-38, quelle que soit leur surface de plancher ;\nb) Les éoliennes terrestres dont la hauteur du mât et de la nacelle au-dessus du sol est inférieure à douze mètres ;\nc) Les ouvrages et accessoires des lignes de distribution d'énergie électrique dont la tension est inférieure à soixante-trois mille volts ;\nd) Les piscines dont le bassin a une superficie inférieure ou égale à cent mètres carrés et qui ne sont pas couvertes ou dont la couverture, fixe ou mobile, a une hauteur au-dessus du sol inférieure à un mètre quatre-vingts ;\ne) Les châssis et serres dont la hauteur au-dessus du sol est inférieure à quatre mètres et dont la surface au sol n'excède pas deux mille mètres carrés sur une même unité foncière ;\nf) Les caveaux et monuments funéraires situés dans l'enceinte d'un cimetière ;\ng) Les terrasses de plain-pied ;\nh) Les plates-formes nécessaires à l'activité agricole ;\ni) Les fosses nécessaires à l'activité agricole dont le bassin a une superficie supérieure à dix mètres carrés et inférieure ou égale à cent mètres carrés.",
+        "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000050497040",
+        "live": "same LEGIARTI and version date on Légifrance, 2026-10-20; opening words match"
+      },
+      "R.421-14": {
+        "legiarti": "LEGIARTI000031764577",
+        "versionFrom": "2016-01-01",
+        "etat": "VIGUEUR",
+        "text": "Sont soumis à permis de construire les travaux suivants, exécutés sur des constructions existantes, à l'exception des travaux d'entretien ou de réparations ordinaires :\na) Les travaux ayant pour effet la création d'une surface de plancher ou d'une emprise au sol supérieure à vingt mètres carrés ;\nb) Dans les zones urbaines d'un plan local d'urbanisme ou d'un document d'urbanisme en tenant lieu, les travaux ayant pour effet la création d'une surface de plancher ou d'une emprise au sol supérieure à quarante mètres carrés ; toutefois, demeurent soumis à permis de construire les travaux ayant pour effet la création de plus de vingt mètres carrés et d'au plus quarante mètres carrés de surface de plancher ou d'emprise au sol, lorsque leur réalisation aurait pour effet de porter la surface ou l'emprise totale de la construction au-delà de l'un des seuils fixés à l'article R. 431-2 ;\nc) Les travaux ayant pour effet de modifier les structures porteuses ou la façade du bâtiment, lorsque ces travaux s'accompagnent d'un changement de destination entre les différentes destinations et sous-destinations définies aux articles R. 151-27 et R. 151-28 ;\nd) Les travaux nécessaires à la réalisation d'une opération de restauration immobilière au sens de l'article L. 313-4.\nPour l'application du c du présent article, les locaux accessoires d'un bâtiment sont réputés avoir la même destination que le local principal.",
+        "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031764577",
+        "live": "same LEGIARTI and version date on Légifrance, 2026-10-20; opening words match"
+      },
+      "R.421-17": {
+        "legiarti": "LEGIARTI000053561259",
+        "versionFrom": "2026-02-22",
+        "etat": "VIGUEUR",
+        "text": "f) Les travaux qui ont pour effet la création soit d'une emprise au sol, soit d'une surface de plancher supérieure à cinq mètres carrés et qui répondent aux critères cumulatifs suivants :\n– une emprise au sol créée inférieure ou égale à vingt mètres carrés ;\n– une surface de plancher créée inférieure ou égale à vingt mètres carrés.\nCes seuils sont portés à quarante mètres carrés pour les projets situés en zone urbaine d'un plan local d'urbanisme ou d'un document d'urbanisme en tenant lieu, à l'exclusion de ceux impliquant la création d'au moins vingt mètres carrés et d'au plus quarante mètres carrés de surface de plancher ou d'emprise au sol lorsque cette création conduit au dépassement de l'un des seuils fixés à l'article R*431-2 du présent code.",
+        "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000053561259",
+        "live": "Légifrance 2026-10-20: a newer version than the LEGI export (décret n° 2026-117 du 20 février 2026, art. 16, in force 2026-02-22, LEGIARTI000053561259). Its f) — the only paragraph 002.3 reads — compared with the export’s f) (LEGIARTI000034355355, 2017-04-01): unchanged. The rest of the article is not recorded here.",
+        "exportVersion": {
+          "legiarti": "LEGIARTI000034355355",
+          "versionFrom": "2017-04-01"
+        }
+      },
+      "L.431-1": {
+        "legiarti": "LEGIARTI000006815974",
+        "versionFrom": "2007-10-01",
+        "etat": "VIGUEUR",
+        "text": "Conformément aux dispositions de l'article 3 de la loi n° 77-2 du 3 janvier 1977 sur l'architecture, la demande de permis de construire ne peut être instruite que si la personne qui désire entreprendre des travaux soumis à une autorisation a fait appel à un architecte pour établir le projet architectural faisant l'objet de la demande de permis de construire.",
+        "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006815974",
+        "live": "same LEGIARTI and version date on Légifrance, 2026-10-20; opening words match"
+      },
+      "L.431-3": {
+        "legiarti": "LEGIARTI000037667650",
+        "versionFrom": "2018-11-25",
+        "etat": "VIGUEUR",
+        "text": "Conformément aux dispositions de l'article 4 de la loi n° 77-2 du 3 janvier 1977 sur l'architecture, par dérogation à l'article L. 431-1, ne sont pas tenues de recourir à un architecte les personnes physiques ou exploitations agricoles et les coopératives d'utilisation de matériel agricole qui déclarent vouloir édifier ou modifier, pour elles-mêmes, une construction de faible importance dont les caractéristiques, notamment la surface maximale de plancher, sont déterminées par décret en Conseil d'Etat. Ces caractéristiques peuvent être différentes selon la destination des constructions. Pour les constructions édifiées ou modifiées par les personnes physiques, à l'exception des constructions à usage agricole, la surface maximale de plancher déterminée par ce décret ne peut être supérieure à 150 mètres carrés.\nLe recours à l'architecte n'est pas non plus obligatoire pour les travaux soumis au permis de construire qui portent exclusivement sur l'aménagement et l'équipement des espaces intérieurs des constructions et des vitrines commerciales ou qui sont limités à des reprises n'entraînant pas de modifications visibles de l'extérieur.\nConformément aux dispositions de l'article 5 de la loi n° 77-2 du 3 janvier 1977 sur l'architecture, les modèles types de construction et leurs variantes, industrialisées ou non, susceptibles d'utilisation répétée, doivent, avant toute commercialisation, être établis par un architecte dans les conditions prévues à l'article 3 de ladite loi et ce quel que soit le maître d'ouvrage qui les utilise.",
+        "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000037667650",
+        "live": "same LEGIARTI and version date on Légifrance, 2026-10-20; opening words match"
+      },
+      "R.431-2": {
+        "legiarti": "LEGIARTI000038682379",
+        "versionFrom": "2019-06-23",
+        "etat": "VIGUEUR",
+        "text": "Pour l'application de l'article 4 de la loi n° 77-2 du 3 janvier 1977 sur l'architecture, ne sont toutefois pas tenues de recourir à un architecte les personnes physiques, les exploitations agricoles ou les coopératives d'utilisation de matériel agricole agréées au titre de l'article L. 525-1 du code rural et de la pêche maritime qui déclarent vouloir édifier ou modifier pour elles-mêmes :\na) Une construction à usage autre qu'agricole dont la surface de plancher n'excède pas cent cinquante mètres carrés ;\nb) Une construction à usage agricole ou les constructions nécessaires au stockage et à l'entretien de matériel agricole par les coopératives d'utilisation de matériel agricole dont à la fois la surface de plancher et l'emprise au sol au sens de l'article R. 420-1 n'excèdent pas huit cents mètres carrés ;\nc) Des serres de production dont le pied-droit a une hauteur inférieure à quatre mètres et dont à la fois la surface de plancher et l'emprise au sol au sens de l'article R. 420-1 n'excèdent pas deux mille mètres carrés.\nLa demande précise que le demandeur et, le cas échéant, l'architecte, ont connaissance de l'existence de règles générales de construction prévues par le chapitre Ier du titre Ier du livre Ier du code de la construction et de l'habitation et notamment, lorsque la construction y est soumise, des règles d'accessibilité fixées en application de l'article L. 111-7 de ce code et de l'obligation de respecter ces règles.\nLes demandeurs d'un permis de construire sont tenus de recourir à un architecte pour les projets de travaux sur construction existante conduisant soit la surface de plancher, soit l'emprise au sol de l'ensemble à dépasser l'un des plafonds fixés par le présent article.",
+        "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038682379",
+        "live": "same LEGIARTI and version date on Légifrance, 2026-10-20; opening words match"
+      },
+      "R.421-13": {
+        "legiarti": "LEGIARTI000053561283",
+        "versionFrom": "2026-02-22",
+        "etat": "VIGUEUR",
+        "text": "Les travaux exécutés sur des constructions existantes sont dispensés de toute formalité au titre du code de l'urbanisme à l'exception :\na) Des travaux mentionnés aux articles R. 421-14 à R. 421-16, qui sont soumis à permis de construire ;\nb) Des travaux mentionnés à l'article R. 421-17, qui doivent faire l'objet d'une déclaration préalable.",
+        "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000053561283",
+        "live": "Added by the review of 002.3 (2026-10-20). Légifrance 2026-10-20: a newer version than the LEGI export (décret n° 2026-117 du 20 février 2026, art. 16, in force 2026-02-22, LEGIARTI000053561283). Its opening paragraph and a) b) — what is cited — compared word for word with the export (LEGIARTI000045938774, 2022-06-19): unchanged. The rest is not recorded here.",
+        "exportVersion": {
+          "legiarti": "LEGIARTI000045938774",
+          "versionFrom": "2022-06-19"
+        }
+      }
+    }
+  }
+}

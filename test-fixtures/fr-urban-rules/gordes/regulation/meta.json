@@ -1,0 +1,27 @@
+{
+  "documentId": "703e6c2a3130ed9396d8100fde318c2e",
+  "partition": "DU_84050",
+  "idurba": "84050_PLU_20241017",
+  "nomfic": "84050_reglement_20220411.pdf",
+  "sha256": "7daad1fb6d26202bd70153df29d1e52095c160fc2fba57dea609067f7c851eae",
+  "bytes": 7431888,
+  "pdfVersion": "%PDF-1.6",
+  "pages": 60,
+  "etag": "\"517d7ada9dc6c6eabead1e28912910fe-1\"",
+  "retrievedAt": "2026-10-20T13:49:44.238Z",
+  "recordedPages": [
+    1,
+    2,
+    3,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52
+  ],
+  "note": "Recorded by scripts/record-fixture.mjs (Sprint 002.5a DEC-12). The PDF is not committed."
+}

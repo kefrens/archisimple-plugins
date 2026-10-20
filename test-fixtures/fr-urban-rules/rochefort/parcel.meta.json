@@ -1,0 +1,6 @@
+{
+  "url": "https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle&SRSNAME=EPSG:2154&CQL_FILTER=idu%3D'56196000AB0235'&OUTPUTFORMAT=application/json",
+  "method": "GET",
+  "status": 200,
+  "date": "2026-10-20T05:28:33.796Z"
+}

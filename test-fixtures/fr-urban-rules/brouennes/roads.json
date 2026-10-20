@@ -1,0 +1,348 @@
+{
+  "date": "2026-10-20T06:01:12.517Z",
+  "boundary": {
+    "ring": [
+      {
+        "easting": 863589.56986858,
+        "northing": 6937510.50459361
+      },
+      {
+        "easting": 863585.91986858,
+        "northing": 6937524.9145936
+      },
+      {
+        "easting": 863533.06986863,
+        "northing": 6937499.77459362
+      }
+    ]
+  },
+  "query": {
+    "crs": "EPSG:2154",
+    "minEasting": 863503.06986863,
+    "minNorthing": 6937469.77459362,
+    "maxEasting": 863619.56986858,
+    "maxNorthing": 6937554.9145936,
+    "limit": 500
+  },
+  "answer": [
+    {
+      "id": "TRONROUT0000000066103950",
+      "line": [
+        {
+          "easting": 863527.39986863,
+          "northing": 6936768.70459407
+        },
+        {
+          "easting": 863524.79986864,
+          "northing": 6936794.30459406
+        },
+        {
+          "easting": 863518.49986864,
+          "northing": 6936823.60459404
+        },
+        {
+          "easting": 863515.29986864,
+          "northing": 6936855.60459402
+        },
+        {
+          "easting": 863513.09986865,
+          "northing": 6936896.80459399
+        },
+        {
+          "easting": 863510.09986865,
+          "northing": 6936939.50459397
+        },
+        {
+          "easting": 863506.59986865,
+          "northing": 6936993.40459393
+        },
+        {
+          "easting": 863503.89986865,
+          "northing": 6937048.8045939
+        },
+        {
+          "easting": 863500.79986865,
+          "northing": 6937085.60459388
+        },
+        {
+          "easting": 863494.89986866,
+          "northing": 6937114.80459386
+        },
+        {
+          "easting": 863485.19986867,
+          "northing": 6937156.90459383
+        },
+        {
+          "easting": 863477.89986867,
+          "northing": 6937186.80459381
+        },
+        {
+          "easting": 863470.49986868,
+          "northing": 6937223.30459379
+        },
+        {
+          "easting": 863465.59986868,
+          "northing": 6937252.20459377
+        },
+        {
+          "easting": 863464.09986868,
+          "northing": 6937277.00459376
+        },
+        {
+          "easting": 863464.29986868,
+          "northing": 6937301.40459374
+        },
+        {
+          "easting": 863466.99986868,
+          "northing": 6937323.10459373
+        },
+        {
+          "easting": 863473.59986868,
+          "northing": 6937344.20459371
+        },
+        {
+          "easting": 863489.29986866,
+          "northing": 6937385.30459369
+        },
+        {
+          "easting": 863499.99986865,
+          "northing": 6937405.40459368
+        },
+        {
+          "easting": 863510.89986864,
+          "northing": 6937418.00459367
+        },
+        {
+          "easting": 863525.19986863,
+          "northing": 6937429.30459366
+        },
+        {
+          "easting": 863548.49986861,
+          "northing": 6937445.10459365
+        },
+        {
+          "easting": 863578.19986859,
+          "northing": 6937462.40459364
+        },
+        {
+          "easting": 863596.19986858,
+          "northing": 6937473.70459363
+        },
+        {
+          "easting": 863609.89986856,
+          "northing": 6937485.30459363
+        },
+        {
+          "easting": 863610.99986856,
+          "northing": 6937486.60459362
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 4,
+      "widthBasis": "measured",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000000219788757",
+      "line": [
+        {
+          "easting": 863815.5998684,
+          "northing": 6937471.20459363
+        },
+        {
+          "easting": 863811.7998684,
+          "northing": 6937473.50459363
+        },
+        {
+          "easting": 863804.89986841,
+          "northing": 6937474.70459363
+        },
+        {
+          "easting": 863801.29986841,
+          "northing": 6937474.30459363
+        },
+        {
+          "easting": 863792.29986842,
+          "northing": 6937475.30459363
+        },
+        {
+          "easting": 863790.59986842,
+          "northing": 6937475.50459363
+        },
+        {
+          "easting": 863756.39986845,
+          "northing": 6937477.90459363
+        },
+        {
+          "easting": 863720.39986848,
+          "northing": 6937475.90459363
+        },
+        {
+          "easting": 863688.3998685,
+          "northing": 6937478.30459363
+        },
+        {
+          "easting": 863668.09986852,
+          "northing": 6937482.00459363
+        },
+        {
+          "easting": 863646.09986854,
+          "northing": 6937484.00459363
+        },
+        {
+          "easting": 863630.69986855,
+          "northing": 6937485.60459362
+        },
+        {
+          "easting": 863621.09986856,
+          "northing": 6937485.40459363
+        },
+        {
+          "easting": 863610.99986856,
+          "northing": 6937486.60459362
+        }
+      ],
+      "kind": "track",
+      "level": "ground",
+      "widthMetres": 3,
+      "widthBasis": "estimated",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000000257640142",
+      "line": [
+        {
+          "easting": 863503.69986865,
+          "northing": 6937541.90459359
+        },
+        {
+          "easting": 863513.89986864,
+          "northing": 6937546.30459359
+        },
+        {
+          "easting": 863562.0998686,
+          "northing": 6937570.00459357
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 4,
+      "widthBasis": "measured",
+      "name": "Rue du Haut Pâquis",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000000323782941",
+      "line": [
+        {
+          "easting": 863610.99986856,
+          "northing": 6937486.60459362
+        },
+        {
+          "easting": 863614.69986856,
+          "northing": 6937491.20459362
+        },
+        {
+          "easting": 863623.89986855,
+          "northing": 6937502.50459361
+        },
+        {
+          "easting": 863647.99986853,
+          "northing": 6937529.7045936
+        },
+        {
+          "easting": 863661.09986852,
+          "northing": 6937543.30459359
+        },
+        {
+          "easting": 863671.99986851,
+          "northing": 6937551.80459358
+        },
+        {
+          "easting": 863689.2998685,
+          "northing": 6937560.30459358
+        },
+        {
+          "easting": 863713.29986848,
+          "northing": 6937571.50459357
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 4,
+      "widthBasis": "measured",
+      "name": "Chemin de Baalon",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000002012325435",
+      "line": [
+        {
+          "easting": 863503.69986865,
+          "northing": 6937541.90459359
+        },
+        {
+          "easting": 863502.59986865,
+          "northing": 6937544.50459359
+        },
+        {
+          "easting": 863502.39986865,
+          "northing": 6937546.60459359
+        },
+        {
+          "easting": 863502.09986865,
+          "northing": 6937552.40459358
+        },
+        {
+          "easting": 863501.49986865,
+          "northing": 6937558.70459358
+        },
+        {
+          "easting": 863501.19986865,
+          "northing": 6937562.10459358
+        },
+        {
+          "easting": 863500.89986865,
+          "northing": 6937565.30459358
+        },
+        {
+          "easting": 863500.49986865,
+          "northing": 6937570.80459357
+        },
+        {
+          "easting": 863499.59986865,
+          "northing": 6937577.90459357
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 3,
+      "widthBasis": "measured",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000002012325436",
+      "line": [
+        {
+          "easting": 863480.69986867,
+          "northing": 6937529.6045936
+        },
+        {
+          "easting": 863483.89986867,
+          "northing": 6937533.1045936
+        },
+        {
+          "easting": 863503.69986865,
+          "northing": 6937541.90459359
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 4,
+      "widthBasis": "measured",
+      "name": "Rue du Haut Pâquis",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    }
+  ]
+}

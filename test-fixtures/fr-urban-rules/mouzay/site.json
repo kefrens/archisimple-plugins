@@ -1,0 +1,79 @@
+{
+  "anchor": {
+    "latitude": 49.462466542254084,
+    "longitude": 5.217071585464942
+  },
+  "crs": "EPSG:2154",
+  "country": "FR",
+  "parcels": [
+    {
+      "sourceId": "carte-gouv.parcelle",
+      "featureId": "55364000AB0346",
+      "label": "Section AB n° 0346",
+      "rings": [
+        [
+          {
+            "easting": 860760.11987088,
+            "northing": 6931508.05459735
+          },
+          {
+            "easting": 860774.50987087,
+            "northing": 6931494.77459736
+          },
+          {
+            "easting": 860775.73987087,
+            "northing": 6931493.62459737
+          },
+          {
+            "easting": 860771.30987088,
+            "northing": 6931485.43459737
+          },
+          {
+            "easting": 860767.12987088,
+            "northing": 6931477.54459737
+          },
+          {
+            "easting": 860766.53987088,
+            "northing": 6931476.90459738
+          },
+          {
+            "easting": 860759.92987088,
+            "northing": 6931468.25459738
+          },
+          {
+            "easting": 860756.57987089,
+            "northing": 6931471.19459738
+          },
+          {
+            "easting": 860747.89987089,
+            "northing": 6931478.61459737
+          },
+          {
+            "easting": 860737.6898709,
+            "northing": 6931487.57459737
+          },
+          {
+            "easting": 860760.11987088,
+            "northing": 6931508.05459735
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 50054766,
+        "numero": "0346",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0346",
+        "contenance": 766,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    }
+  ],
+  "plotArea": 766
+}

@@ -1,0 +1,2853 @@
+{
+  "query": {
+    "outline": "withRoofOverhangs",
+    "targets": [
+      {
+        "kind": "boundary-edge",
+        "edge": 1
+      },
+      {
+        "kind": "boundary-edge",
+        "edge": 2
+      },
+      {
+        "kind": "boundary-edge",
+        "edge": 3
+      },
+      {
+        "kind": "boundary-edge",
+        "edge": 4
+      }
+    ],
+    "ratios": [
+      0.5
+    ],
+    "byFacade": true
+  },
+  "date": "2026-10-20T06:26:25.601Z",
+  "boundary": {
+    "ring": [
+      {
+        "easting": 863538.5590871756,
+        "northing": 6937509.33134574
+      },
+      {
+        "easting": 863588.5590871756,
+        "northing": 6937509.33134574
+      },
+      {
+        "easting": 863588.5590871756,
+        "northing": 6937543.33134574
+      },
+      {
+        "easting": 863538.5590871756,
+        "northing": 6937543.33134574
+      }
+    ]
+  },
+  "projection": {
+    "available": true,
+    "buildingId": "building-main",
+    "height": {
+      "unavailable": "no-terrain"
+    }
+  },
+  "answer": {
+    "available": true,
+    "buildingId": "building-main",
+    "outline": "withRoofOverhangs",
+    "step": 0.25,
+    "targets": [
+      {
+        "target": {
+          "kind": "boundary-edge",
+          "edge": 1
+        },
+        "nearest": {
+          "building": {
+            "easting": 863558.5590871756,
+            "northing": 6937513.33134574
+          },
+          "target": {
+            "easting": 863558.5590871756,
+            "northing": 6937509.33134574
+          },
+          "distance": 4
+        },
+        "worst": [
+          {
+            "ratio": 0.5,
+            "rise": {
+              "unavailable": "no-terrain"
+            }
+          }
+        ]
+      },
+      {
+        "target": {
+          "kind": "boundary-edge",
+          "edge": 2
+        },
+        "nearest": {
+          "building": {
+            "easting": 863568.5590871756,
+            "northing": 6937513.33134574
+          },
+          "target": {
+            "easting": 863588.5590871756,
+            "northing": 6937513.33134574
+          },
+          "distance": 20
+        },
+        "worst": [
+          {
+            "ratio": 0.5,
+            "rise": {
+              "unavailable": "no-terrain"
+            }
+          }
+        ]
+      },
+      {
+        "target": {
+          "kind": "boundary-edge",
+          "edge": 3
+        },
+        "nearest": {
+          "building": {
+            "easting": 863568.5590871756,
+            "northing": 6937521.33134574
+          },
+          "target": {
+            "easting": 863568.5590871756,
+            "northing": 6937543.33134574
+          },
+          "distance": 22
+        },
+        "worst": [
+          {
+            "ratio": 0.5,
+            "rise": {
+              "unavailable": "no-terrain"
+            }
+          }
+        ]
+      },
+      {
+        "target": {
+          "kind": "boundary-edge",
+          "edge": 4
+        },
+        "nearest": {
+          "building": {
+            "easting": 863558.5590871756,
+            "northing": 6937513.33134574
+          },
+          "target": {
+            "easting": 863538.5590871756,
+            "northing": 6937513.33134574
+          },
+          "distance": 20
+        },
+        "worst": [
+          {
+            "ratio": 0.5,
+            "rise": {
+              "unavailable": "no-terrain"
+            }
+          }
+        ]
+      }
+    ],
+    "facades": [
+      {
+        "facade": "south",
+        "run": 0,
+        "line": [
+          {
+            "easting": 863558.5590871756,
+            "northing": 6937513.33134574
+          },
+          {
+            "easting": 863568.5590871756,
+            "northing": 6937513.33134574
+          }
+        ],
+        "height": {
+          "unavailable": "no-terrain"
+        },
+        "targets": [
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863558.5590871756,
+                "northing": 6937513.33134574
+              },
+              "target": {
+                "easting": 863558.5590871756,
+                "northing": 6937509.33134574
+              },
+              "distance": 4
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 4
+              },
+              {
+                "s": 0.25,
+                "distance": 4
+              },
+              {
+                "s": 0.5,
+                "distance": 4
+              },
+              {
+                "s": 0.75,
+                "distance": 4
+              },
+              {
+                "s": 1,
+                "distance": 4
+              },
+              {
+                "s": 1.25,
+                "distance": 4
+              },
+              {
+                "s": 1.5,
+                "distance": 4
+              },
+              {
+                "s": 1.75,
+                "distance": 4
+              },
+              {
+                "s": 2,
+                "distance": 4
+              },
+              {
+                "s": 2.25,
+                "distance": 4
+              },
+              {
+                "s": 2.5,
+                "distance": 4
+              },
+              {
+                "s": 2.75,
+                "distance": 4
+              },
+              {
+                "s": 3,
+                "distance": 4
+              },
+              {
+                "s": 3.25,
+                "distance": 4
+              },
+              {
+                "s": 3.5,
+                "distance": 4
+              },
+              {
+                "s": 3.75,
+                "distance": 4
+              },
+              {
+                "s": 4,
+                "distance": 4
+              },
+              {
+                "s": 4.25,
+                "distance": 4
+              },
+              {
+                "s": 4.5,
+                "distance": 4
+              },
+              {
+                "s": 4.75,
+                "distance": 4
+              },
+              {
+                "s": 5,
+                "distance": 4
+              },
+              {
+                "s": 5.25,
+                "distance": 4
+              },
+              {
+                "s": 5.5,
+                "distance": 4
+              },
+              {
+                "s": 5.75,
+                "distance": 4
+              },
+              {
+                "s": 6,
+                "distance": 4
+              },
+              {
+                "s": 6.25,
+                "distance": 4
+              },
+              {
+                "s": 6.5,
+                "distance": 4
+              },
+              {
+                "s": 6.75,
+                "distance": 4
+              },
+              {
+                "s": 7,
+                "distance": 4
+              },
+              {
+                "s": 7.25,
+                "distance": 4
+              },
+              {
+                "s": 7.5,
+                "distance": 4
+              },
+              {
+                "s": 7.75,
+                "distance": 4
+              },
+              {
+                "s": 8,
+                "distance": 4
+              },
+              {
+                "s": 8.25,
+                "distance": 4
+              },
+              {
+                "s": 8.5,
+                "distance": 4
+              },
+              {
+                "s": 8.75,
+                "distance": 4
+              },
+              {
+                "s": 9,
+                "distance": 4
+              },
+              {
+                "s": 9.25,
+                "distance": 4
+              },
+              {
+                "s": 9.5,
+                "distance": 4
+              },
+              {
+                "s": 9.75,
+                "distance": 4
+              },
+              {
+                "s": 10,
+                "distance": 4
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863568.5590871756,
+                "northing": 6937513.33134574
+              },
+              "target": {
+                "easting": 863588.5590871756,
+                "northing": 6937513.33134574
+              },
+              "distance": 20
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 30
+              },
+              {
+                "s": 0.25,
+                "distance": 29.75
+              },
+              {
+                "s": 0.5,
+                "distance": 29.5
+              },
+              {
+                "s": 0.75,
+                "distance": 29.25
+              },
+              {
+                "s": 1,
+                "distance": 29
+              },
+              {
+                "s": 1.25,
+                "distance": 28.75
+              },
+              {
+                "s": 1.5,
+                "distance": 28.5
+              },
+              {
+                "s": 1.75,
+                "distance": 28.25
+              },
+              {
+                "s": 2,
+                "distance": 28
+              },
+              {
+                "s": 2.25,
+                "distance": 27.75
+              },
+              {
+                "s": 2.5,
+                "distance": 27.5
+              },
+              {
+                "s": 2.75,
+                "distance": 27.25
+              },
+              {
+                "s": 3,
+                "distance": 27
+              },
+              {
+                "s": 3.25,
+                "distance": 26.75
+              },
+              {
+                "s": 3.5,
+                "distance": 26.5
+              },
+              {
+                "s": 3.75,
+                "distance": 26.25
+              },
+              {
+                "s": 4,
+                "distance": 26
+              },
+              {
+                "s": 4.25,
+                "distance": 25.75
+              },
+              {
+                "s": 4.5,
+                "distance": 25.5
+              },
+              {
+                "s": 4.75,
+                "distance": 25.25
+              },
+              {
+                "s": 5,
+                "distance": 25
+              },
+              {
+                "s": 5.25,
+                "distance": 24.75
+              },
+              {
+                "s": 5.5,
+                "distance": 24.5
+              },
+              {
+                "s": 5.75,
+                "distance": 24.25
+              },
+              {
+                "s": 6,
+                "distance": 24
+              },
+              {
+                "s": 6.25,
+                "distance": 23.75
+              },
+              {
+                "s": 6.5,
+                "distance": 23.5
+              },
+              {
+                "s": 6.75,
+                "distance": 23.25
+              },
+              {
+                "s": 7,
+                "distance": 23
+              },
+              {
+                "s": 7.25,
+                "distance": 22.75
+              },
+              {
+                "s": 7.5,
+                "distance": 22.5
+              },
+              {
+                "s": 7.75,
+                "distance": 22.25
+              },
+              {
+                "s": 8,
+                "distance": 22
+              },
+              {
+                "s": 8.25,
+                "distance": 21.75
+              },
+              {
+                "s": 8.5,
+                "distance": 21.5
+              },
+              {
+                "s": 8.75,
+                "distance": 21.25
+              },
+              {
+                "s": 9,
+                "distance": 21
+              },
+              {
+                "s": 9.25,
+                "distance": 20.75
+              },
+              {
+                "s": 9.5,
+                "distance": 20.5
+              },
+              {
+                "s": 9.75,
+                "distance": 20.25
+              },
+              {
+                "s": 10,
+                "distance": 20
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863558.5590871756,
+                "northing": 6937513.33134574
+              },
+              "target": {
+                "easting": 863558.5590871756,
+                "northing": 6937543.33134574
+              },
+              "distance": 30
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 30
+              },
+              {
+                "s": 0.25,
+                "distance": 30
+              },
+              {
+                "s": 0.5,
+                "distance": 30
+              },
+              {
+                "s": 0.75,
+                "distance": 30
+              },
+              {
+                "s": 1,
+                "distance": 30
+              },
+              {
+                "s": 1.25,
+                "distance": 30
+              },
+              {
+                "s": 1.5,
+                "distance": 30
+              },
+              {
+                "s": 1.75,
+                "distance": 30
+              },
+              {
+                "s": 2,
+                "distance": 30
+              },
+              {
+                "s": 2.25,
+                "distance": 30
+              },
+              {
+                "s": 2.5,
+                "distance": 30
+              },
+              {
+                "s": 2.75,
+                "distance": 30
+              },
+              {
+                "s": 3,
+                "distance": 30
+              },
+              {
+                "s": 3.25,
+                "distance": 30
+              },
+              {
+                "s": 3.5,
+                "distance": 30
+              },
+              {
+                "s": 3.75,
+                "distance": 30
+              },
+              {
+                "s": 4,
+                "distance": 30
+              },
+              {
+                "s": 4.25,
+                "distance": 30
+              },
+              {
+                "s": 4.5,
+                "distance": 30
+              },
+              {
+                "s": 4.75,
+                "distance": 30
+              },
+              {
+                "s": 5,
+                "distance": 30
+              },
+              {
+                "s": 5.25,
+                "distance": 30
+              },
+              {
+                "s": 5.5,
+                "distance": 30
+              },
+              {
+                "s": 5.75,
+                "distance": 30
+              },
+              {
+                "s": 6,
+                "distance": 30
+              },
+              {
+                "s": 6.25,
+                "distance": 30
+              },
+              {
+                "s": 6.5,
+                "distance": 30
+              },
+              {
+                "s": 6.75,
+                "distance": 30
+              },
+              {
+                "s": 7,
+                "distance": 30
+              },
+              {
+                "s": 7.25,
+                "distance": 30
+              },
+              {
+                "s": 7.5,
+                "distance": 30
+              },
+              {
+                "s": 7.75,
+                "distance": 30
+              },
+              {
+                "s": 8,
+                "distance": 30
+              },
+              {
+                "s": 8.25,
+                "distance": 30
+              },
+              {
+                "s": 8.5,
+                "distance": 30
+              },
+              {
+                "s": 8.75,
+                "distance": 30
+              },
+              {
+                "s": 9,
+                "distance": 30
+              },
+              {
+                "s": 9.25,
+                "distance": 30
+              },
+              {
+                "s": 9.5,
+                "distance": 30
+              },
+              {
+                "s": 9.75,
+                "distance": 30
+              },
+              {
+                "s": 10,
+                "distance": 30
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863558.5590871756,
+                "northing": 6937513.33134574
+              },
+              "target": {
+                "easting": 863538.5590871756,
+                "northing": 6937513.33134574
+              },
+              "distance": 20
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 20
+              },
+              {
+                "s": 0.25,
+                "distance": 20.25
+              },
+              {
+                "s": 0.5,
+                "distance": 20.5
+              },
+              {
+                "s": 0.75,
+                "distance": 20.75
+              },
+              {
+                "s": 1,
+                "distance": 21
+              },
+              {
+                "s": 1.25,
+                "distance": 21.25
+              },
+              {
+                "s": 1.5,
+                "distance": 21.5
+              },
+              {
+                "s": 1.75,
+                "distance": 21.75
+              },
+              {
+                "s": 2,
+                "distance": 22
+              },
+              {
+                "s": 2.25,
+                "distance": 22.25
+              },
+              {
+                "s": 2.5,
+                "distance": 22.5
+              },
+              {
+                "s": 2.75,
+                "distance": 22.75
+              },
+              {
+                "s": 3,
+                "distance": 23
+              },
+              {
+                "s": 3.25,
+                "distance": 23.25
+              },
+              {
+                "s": 3.5,
+                "distance": 23.5
+              },
+              {
+                "s": 3.75,
+                "distance": 23.75
+              },
+              {
+                "s": 4,
+                "distance": 24
+              },
+              {
+                "s": 4.25,
+                "distance": 24.25
+              },
+              {
+                "s": 4.5,
+                "distance": 24.5
+              },
+              {
+                "s": 4.75,
+                "distance": 24.75
+              },
+              {
+                "s": 5,
+                "distance": 25
+              },
+              {
+                "s": 5.25,
+                "distance": 25.25
+              },
+              {
+                "s": 5.5,
+                "distance": 25.5
+              },
+              {
+                "s": 5.75,
+                "distance": 25.75
+              },
+              {
+                "s": 6,
+                "distance": 26
+              },
+              {
+                "s": 6.25,
+                "distance": 26.25
+              },
+              {
+                "s": 6.5,
+                "distance": 26.5
+              },
+              {
+                "s": 6.75,
+                "distance": 26.75
+              },
+              {
+                "s": 7,
+                "distance": 27
+              },
+              {
+                "s": 7.25,
+                "distance": 27.25
+              },
+              {
+                "s": 7.5,
+                "distance": 27.5
+              },
+              {
+                "s": 7.75,
+                "distance": 27.75
+              },
+              {
+                "s": 8,
+                "distance": 28
+              },
+              {
+                "s": 8.25,
+                "distance": 28.25
+              },
+              {
+                "s": 8.5,
+                "distance": 28.5
+              },
+              {
+                "s": 8.75,
+                "distance": 28.75
+              },
+              {
+                "s": 9,
+                "distance": 29
+              },
+              {
+                "s": 9.25,
+                "distance": 29.25
+              },
+              {
+                "s": 9.5,
+                "distance": 29.5
+              },
+              {
+                "s": 9.75,
+                "distance": 29.75
+              },
+              {
+                "s": 10,
+                "distance": 30
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "facade": "east",
+        "run": 0,
+        "line": [
+          {
+            "easting": 863568.5590871756,
+            "northing": 6937513.33134574
+          },
+          {
+            "easting": 863568.5590871756,
+            "northing": 6937521.33134574
+          }
+        ],
+        "height": {
+          "unavailable": "no-terrain"
+        },
+        "targets": [
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863568.5590871756,
+                "northing": 6937513.33134574
+              },
+              "target": {
+                "easting": 863568.5590871756,
+                "northing": 6937509.33134574
+              },
+              "distance": 4
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 4
+              },
+              {
+                "s": 0.25,
+                "distance": 4.25
+              },
+              {
+                "s": 0.5,
+                "distance": 4.5
+              },
+              {
+                "s": 0.75,
+                "distance": 4.75
+              },
+              {
+                "s": 1,
+                "distance": 5
+              },
+              {
+                "s": 1.25,
+                "distance": 5.25
+              },
+              {
+                "s": 1.5,
+                "distance": 5.5
+              },
+              {
+                "s": 1.75,
+                "distance": 5.75
+              },
+              {
+                "s": 2,
+                "distance": 6
+              },
+              {
+                "s": 2.25,
+                "distance": 6.25
+              },
+              {
+                "s": 2.5,
+                "distance": 6.5
+              },
+              {
+                "s": 2.75,
+                "distance": 6.75
+              },
+              {
+                "s": 3,
+                "distance": 7
+              },
+              {
+                "s": 3.25,
+                "distance": 7.25
+              },
+              {
+                "s": 3.5,
+                "distance": 7.5
+              },
+              {
+                "s": 3.75,
+                "distance": 7.75
+              },
+              {
+                "s": 4,
+                "distance": 8
+              },
+              {
+                "s": 4.25,
+                "distance": 8.25
+              },
+              {
+                "s": 4.5,
+                "distance": 8.5
+              },
+              {
+                "s": 4.75,
+                "distance": 8.75
+              },
+              {
+                "s": 5,
+                "distance": 9
+              },
+              {
+                "s": 5.25,
+                "distance": 9.25
+              },
+              {
+                "s": 5.5,
+                "distance": 9.5
+              },
+              {
+                "s": 5.75,
+                "distance": 9.75
+              },
+              {
+                "s": 6,
+                "distance": 10
+              },
+              {
+                "s": 6.25,
+                "distance": 10.25
+              },
+              {
+                "s": 6.5,
+                "distance": 10.5
+              },
+              {
+                "s": 6.75,
+                "distance": 10.75
+              },
+              {
+                "s": 7,
+                "distance": 11
+              },
+              {
+                "s": 7.25,
+                "distance": 11.25
+              },
+              {
+                "s": 7.5,
+                "distance": 11.5
+              },
+              {
+                "s": 7.75,
+                "distance": 11.75
+              },
+              {
+                "s": 8,
+                "distance": 12
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863568.5590871756,
+                "northing": 6937513.33134574
+              },
+              "target": {
+                "easting": 863588.5590871756,
+                "northing": 6937513.33134574
+              },
+              "distance": 20
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 20
+              },
+              {
+                "s": 0.25,
+                "distance": 20
+              },
+              {
+                "s": 0.5,
+                "distance": 20
+              },
+              {
+                "s": 0.75,
+                "distance": 20
+              },
+              {
+                "s": 1,
+                "distance": 20
+              },
+              {
+                "s": 1.25,
+                "distance": 20
+              },
+              {
+                "s": 1.5,
+                "distance": 20
+              },
+              {
+                "s": 1.75,
+                "distance": 20
+              },
+              {
+                "s": 2,
+                "distance": 20
+              },
+              {
+                "s": 2.25,
+                "distance": 20
+              },
+              {
+                "s": 2.5,
+                "distance": 20
+              },
+              {
+                "s": 2.75,
+                "distance": 20
+              },
+              {
+                "s": 3,
+                "distance": 20
+              },
+              {
+                "s": 3.25,
+                "distance": 20
+              },
+              {
+                "s": 3.5,
+                "distance": 20
+              },
+              {
+                "s": 3.75,
+                "distance": 20
+              },
+              {
+                "s": 4,
+                "distance": 20
+              },
+              {
+                "s": 4.25,
+                "distance": 20
+              },
+              {
+                "s": 4.5,
+                "distance": 20
+              },
+              {
+                "s": 4.75,
+                "distance": 20
+              },
+              {
+                "s": 5,
+                "distance": 20
+              },
+              {
+                "s": 5.25,
+                "distance": 20
+              },
+              {
+                "s": 5.5,
+                "distance": 20
+              },
+              {
+                "s": 5.75,
+                "distance": 20
+              },
+              {
+                "s": 6,
+                "distance": 20
+              },
+              {
+                "s": 6.25,
+                "distance": 20
+              },
+              {
+                "s": 6.5,
+                "distance": 20
+              },
+              {
+                "s": 6.75,
+                "distance": 20
+              },
+              {
+                "s": 7,
+                "distance": 20
+              },
+              {
+                "s": 7.25,
+                "distance": 20
+              },
+              {
+                "s": 7.5,
+                "distance": 20
+              },
+              {
+                "s": 7.75,
+                "distance": 20
+              },
+              {
+                "s": 8,
+                "distance": 20
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863568.5590871756,
+                "northing": 6937521.33134574
+              },
+              "target": {
+                "easting": 863568.5590871756,
+                "northing": 6937543.33134574
+              },
+              "distance": 22
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 30
+              },
+              {
+                "s": 0.25,
+                "distance": 29.75
+              },
+              {
+                "s": 0.5,
+                "distance": 29.5
+              },
+              {
+                "s": 0.75,
+                "distance": 29.25
+              },
+              {
+                "s": 1,
+                "distance": 29
+              },
+              {
+                "s": 1.25,
+                "distance": 28.75
+              },
+              {
+                "s": 1.5,
+                "distance": 28.5
+              },
+              {
+                "s": 1.75,
+                "distance": 28.25
+              },
+              {
+                "s": 2,
+                "distance": 28
+              },
+              {
+                "s": 2.25,
+                "distance": 27.75
+              },
+              {
+                "s": 2.5,
+                "distance": 27.5
+              },
+              {
+                "s": 2.75,
+                "distance": 27.25
+              },
+              {
+                "s": 3,
+                "distance": 27
+              },
+              {
+                "s": 3.25,
+                "distance": 26.75
+              },
+              {
+                "s": 3.5,
+                "distance": 26.5
+              },
+              {
+                "s": 3.75,
+                "distance": 26.25
+              },
+              {
+                "s": 4,
+                "distance": 26
+              },
+              {
+                "s": 4.25,
+                "distance": 25.75
+              },
+              {
+                "s": 4.5,
+                "distance": 25.5
+              },
+              {
+                "s": 4.75,
+                "distance": 25.25
+              },
+              {
+                "s": 5,
+                "distance": 25
+              },
+              {
+                "s": 5.25,
+                "distance": 24.75
+              },
+              {
+                "s": 5.5,
+                "distance": 24.5
+              },
+              {
+                "s": 5.75,
+                "distance": 24.25
+              },
+              {
+                "s": 6,
+                "distance": 24
+              },
+              {
+                "s": 6.25,
+                "distance": 23.75
+              },
+              {
+                "s": 6.5,
+                "distance": 23.5
+              },
+              {
+                "s": 6.75,
+                "distance": 23.25
+              },
+              {
+                "s": 7,
+                "distance": 23
+              },
+              {
+                "s": 7.25,
+                "distance": 22.75
+              },
+              {
+                "s": 7.5,
+                "distance": 22.5
+              },
+              {
+                "s": 7.75,
+                "distance": 22.25
+              },
+              {
+                "s": 8,
+                "distance": 22
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863568.5590871756,
+                "northing": 6937513.33134574
+              },
+              "target": {
+                "easting": 863538.5590871756,
+                "northing": 6937513.33134574
+              },
+              "distance": 30
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 30
+              },
+              {
+                "s": 0.25,
+                "distance": 30
+              },
+              {
+                "s": 0.5,
+                "distance": 30
+              },
+              {
+                "s": 0.75,
+                "distance": 30
+              },
+              {
+                "s": 1,
+                "distance": 30
+              },
+              {
+                "s": 1.25,
+                "distance": 30
+              },
+              {
+                "s": 1.5,
+                "distance": 30
+              },
+              {
+                "s": 1.75,
+                "distance": 30
+              },
+              {
+                "s": 2,
+                "distance": 30
+              },
+              {
+                "s": 2.25,
+                "distance": 30
+              },
+              {
+                "s": 2.5,
+                "distance": 30
+              },
+              {
+                "s": 2.75,
+                "distance": 30
+              },
+              {
+                "s": 3,
+                "distance": 30
+              },
+              {
+                "s": 3.25,
+                "distance": 30
+              },
+              {
+                "s": 3.5,
+                "distance": 30
+              },
+              {
+                "s": 3.75,
+                "distance": 30
+              },
+              {
+                "s": 4,
+                "distance": 30
+              },
+              {
+                "s": 4.25,
+                "distance": 30
+              },
+              {
+                "s": 4.5,
+                "distance": 30
+              },
+              {
+                "s": 4.75,
+                "distance": 30
+              },
+              {
+                "s": 5,
+                "distance": 30
+              },
+              {
+                "s": 5.25,
+                "distance": 30
+              },
+              {
+                "s": 5.5,
+                "distance": 30
+              },
+              {
+                "s": 5.75,
+                "distance": 30
+              },
+              {
+                "s": 6,
+                "distance": 30
+              },
+              {
+                "s": 6.25,
+                "distance": 30
+              },
+              {
+                "s": 6.5,
+                "distance": 30
+              },
+              {
+                "s": 6.75,
+                "distance": 30
+              },
+              {
+                "s": 7,
+                "distance": 30
+              },
+              {
+                "s": 7.25,
+                "distance": 30
+              },
+              {
+                "s": 7.5,
+                "distance": 30
+              },
+              {
+                "s": 7.75,
+                "distance": 30
+              },
+              {
+                "s": 8,
+                "distance": 30
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "facade": "north",
+        "run": 0,
+        "line": [
+          {
+            "easting": 863568.5590871756,
+            "northing": 6937521.33134574
+          },
+          {
+            "easting": 863558.5590871756,
+            "northing": 6937521.33134574
+          }
+        ],
+        "height": {
+          "unavailable": "no-terrain"
+        },
+        "targets": [
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863568.5590871756,
+                "northing": 6937521.33134574
+              },
+              "target": {
+                "easting": 863568.5590871756,
+                "northing": 6937509.33134574
+              },
+              "distance": 12
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 12
+              },
+              {
+                "s": 0.25,
+                "distance": 12
+              },
+              {
+                "s": 0.5,
+                "distance": 12
+              },
+              {
+                "s": 0.75,
+                "distance": 12
+              },
+              {
+                "s": 1,
+                "distance": 12
+              },
+              {
+                "s": 1.25,
+                "distance": 12
+              },
+              {
+                "s": 1.5,
+                "distance": 12
+              },
+              {
+                "s": 1.75,
+                "distance": 12
+              },
+              {
+                "s": 2,
+                "distance": 12
+              },
+              {
+                "s": 2.25,
+                "distance": 12
+              },
+              {
+                "s": 2.5,
+                "distance": 12
+              },
+              {
+                "s": 2.75,
+                "distance": 12
+              },
+              {
+                "s": 3,
+                "distance": 12
+              },
+              {
+                "s": 3.25,
+                "distance": 12
+              },
+              {
+                "s": 3.5,
+                "distance": 12
+              },
+              {
+                "s": 3.75,
+                "distance": 12
+              },
+              {
+                "s": 4,
+                "distance": 12
+              },
+              {
+                "s": 4.25,
+                "distance": 12
+              },
+              {
+                "s": 4.5,
+                "distance": 12
+              },
+              {
+                "s": 4.75,
+                "distance": 12
+              },
+              {
+                "s": 5,
+                "distance": 12
+              },
+              {
+                "s": 5.25,
+                "distance": 12
+              },
+              {
+                "s": 5.5,
+                "distance": 12
+              },
+              {
+                "s": 5.75,
+                "distance": 12
+              },
+              {
+                "s": 6,
+                "distance": 12
+              },
+              {
+                "s": 6.25,
+                "distance": 12
+              },
+              {
+                "s": 6.5,
+                "distance": 12
+              },
+              {
+                "s": 6.75,
+                "distance": 12
+              },
+              {
+                "s": 7,
+                "distance": 12
+              },
+              {
+                "s": 7.25,
+                "distance": 12
+              },
+              {
+                "s": 7.5,
+                "distance": 12
+              },
+              {
+                "s": 7.75,
+                "distance": 12
+              },
+              {
+                "s": 8,
+                "distance": 12
+              },
+              {
+                "s": 8.25,
+                "distance": 12
+              },
+              {
+                "s": 8.5,
+                "distance": 12
+              },
+              {
+                "s": 8.75,
+                "distance": 12
+              },
+              {
+                "s": 9,
+                "distance": 12
+              },
+              {
+                "s": 9.25,
+                "distance": 12
+              },
+              {
+                "s": 9.5,
+                "distance": 12
+              },
+              {
+                "s": 9.75,
+                "distance": 12
+              },
+              {
+                "s": 10,
+                "distance": 12
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863568.5590871756,
+                "northing": 6937521.33134574
+              },
+              "target": {
+                "easting": 863588.5590871756,
+                "northing": 6937521.33134574
+              },
+              "distance": 20
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 20
+              },
+              {
+                "s": 0.25,
+                "distance": 20.25
+              },
+              {
+                "s": 0.5,
+                "distance": 20.5
+              },
+              {
+                "s": 0.75,
+                "distance": 20.75
+              },
+              {
+                "s": 1,
+                "distance": 21
+              },
+              {
+                "s": 1.25,
+                "distance": 21.25
+              },
+              {
+                "s": 1.5,
+                "distance": 21.5
+              },
+              {
+                "s": 1.75,
+                "distance": 21.75
+              },
+              {
+                "s": 2,
+                "distance": 22
+              },
+              {
+                "s": 2.25,
+                "distance": 22.25
+              },
+              {
+                "s": 2.5,
+                "distance": 22.5
+              },
+              {
+                "s": 2.75,
+                "distance": 22.75
+              },
+              {
+                "s": 3,
+                "distance": 23
+              },
+              {
+                "s": 3.25,
+                "distance": 23.25
+              },
+              {
+                "s": 3.5,
+                "distance": 23.5
+              },
+              {
+                "s": 3.75,
+                "distance": 23.75
+              },
+              {
+                "s": 4,
+                "distance": 24
+              },
+              {
+                "s": 4.25,
+                "distance": 24.25
+              },
+              {
+                "s": 4.5,
+                "distance": 24.5
+              },
+              {
+                "s": 4.75,
+                "distance": 24.75
+              },
+              {
+                "s": 5,
+                "distance": 25
+              },
+              {
+                "s": 5.25,
+                "distance": 25.25
+              },
+              {
+                "s": 5.5,
+                "distance": 25.5
+              },
+              {
+                "s": 5.75,
+                "distance": 25.75
+              },
+              {
+                "s": 6,
+                "distance": 26
+              },
+              {
+                "s": 6.25,
+                "distance": 26.25
+              },
+              {
+                "s": 6.5,
+                "distance": 26.5
+              },
+              {
+                "s": 6.75,
+                "distance": 26.75
+              },
+              {
+                "s": 7,
+                "distance": 27
+              },
+              {
+                "s": 7.25,
+                "distance": 27.25
+              },
+              {
+                "s": 7.5,
+                "distance": 27.5
+              },
+              {
+                "s": 7.75,
+                "distance": 27.75
+              },
+              {
+                "s": 8,
+                "distance": 28
+              },
+              {
+                "s": 8.25,
+                "distance": 28.25
+              },
+              {
+                "s": 8.5,
+                "distance": 28.5
+              },
+              {
+                "s": 8.75,
+                "distance": 28.75
+              },
+              {
+                "s": 9,
+                "distance": 29
+              },
+              {
+                "s": 9.25,
+                "distance": 29.25
+              },
+              {
+                "s": 9.5,
+                "distance": 29.5
+              },
+              {
+                "s": 9.75,
+                "distance": 29.75
+              },
+              {
+                "s": 10,
+                "distance": 30
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863568.5590871756,
+                "northing": 6937521.33134574
+              },
+              "target": {
+                "easting": 863568.5590871756,
+                "northing": 6937543.33134574
+              },
+              "distance": 22
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 22
+              },
+              {
+                "s": 0.25,
+                "distance": 22
+              },
+              {
+                "s": 0.5,
+                "distance": 22
+              },
+              {
+                "s": 0.75,
+                "distance": 22
+              },
+              {
+                "s": 1,
+                "distance": 22
+              },
+              {
+                "s": 1.25,
+                "distance": 22
+              },
+              {
+                "s": 1.5,
+                "distance": 22
+              },
+              {
+                "s": 1.75,
+                "distance": 22
+              },
+              {
+                "s": 2,
+                "distance": 22
+              },
+              {
+                "s": 2.25,
+                "distance": 22
+              },
+              {
+                "s": 2.5,
+                "distance": 22
+              },
+              {
+                "s": 2.75,
+                "distance": 22
+              },
+              {
+                "s": 3,
+                "distance": 22
+              },
+              {
+                "s": 3.25,
+                "distance": 22
+              },
+              {
+                "s": 3.5,
+                "distance": 22
+              },
+              {
+                "s": 3.75,
+                "distance": 22
+              },
+              {
+                "s": 4,
+                "distance": 22
+              },
+              {
+                "s": 4.25,
+                "distance": 22
+              },
+              {
+                "s": 4.5,
+                "distance": 22
+              },
+              {
+                "s": 4.75,
+                "distance": 22
+              },
+              {
+                "s": 5,
+                "distance": 22
+              },
+              {
+                "s": 5.25,
+                "distance": 22
+              },
+              {
+                "s": 5.5,
+                "distance": 22
+              },
+              {
+                "s": 5.75,
+                "distance": 22
+              },
+              {
+                "s": 6,
+                "distance": 22
+              },
+              {
+                "s": 6.25,
+                "distance": 22
+              },
+              {
+                "s": 6.5,
+                "distance": 22
+              },
+              {
+                "s": 6.75,
+                "distance": 22
+              },
+              {
+                "s": 7,
+                "distance": 22
+              },
+              {
+                "s": 7.25,
+                "distance": 22
+              },
+              {
+                "s": 7.5,
+                "distance": 22
+              },
+              {
+                "s": 7.75,
+                "distance": 22
+              },
+              {
+                "s": 8,
+                "distance": 22
+              },
+              {
+                "s": 8.25,
+                "distance": 22
+              },
+              {
+                "s": 8.5,
+                "distance": 22
+              },
+              {
+                "s": 8.75,
+                "distance": 22
+              },
+              {
+                "s": 9,
+                "distance": 22
+              },
+              {
+                "s": 9.25,
+                "distance": 22
+              },
+              {
+                "s": 9.5,
+                "distance": 22
+              },
+              {
+                "s": 9.75,
+                "distance": 22
+              },
+              {
+                "s": 10,
+                "distance": 22
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863558.5590871756,
+                "northing": 6937521.33134574
+              },
+              "target": {
+                "easting": 863538.5590871756,
+                "northing": 6937521.33134574
+              },
+              "distance": 20
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 30
+              },
+              {
+                "s": 0.25,
+                "distance": 29.75
+              },
+              {
+                "s": 0.5,
+                "distance": 29.5
+              },
+              {
+                "s": 0.75,
+                "distance": 29.25
+              },
+              {
+                "s": 1,
+                "distance": 29
+              },
+              {
+                "s": 1.25,
+                "distance": 28.75
+              },
+              {
+                "s": 1.5,
+                "distance": 28.5
+              },
+              {
+                "s": 1.75,
+                "distance": 28.25
+              },
+              {
+                "s": 2,
+                "distance": 28
+              },
+              {
+                "s": 2.25,
+                "distance": 27.75
+              },
+              {
+                "s": 2.5,
+                "distance": 27.5
+              },
+              {
+                "s": 2.75,
+                "distance": 27.25
+              },
+              {
+                "s": 3,
+                "distance": 27
+              },
+              {
+                "s": 3.25,
+                "distance": 26.75
+              },
+              {
+                "s": 3.5,
+                "distance": 26.5
+              },
+              {
+                "s": 3.75,
+                "distance": 26.25
+              },
+              {
+                "s": 4,
+                "distance": 26
+              },
+              {
+                "s": 4.25,
+                "distance": 25.75
+              },
+              {
+                "s": 4.5,
+                "distance": 25.5
+              },
+              {
+                "s": 4.75,
+                "distance": 25.25
+              },
+              {
+                "s": 5,
+                "distance": 25
+              },
+              {
+                "s": 5.25,
+                "distance": 24.75
+              },
+              {
+                "s": 5.5,
+                "distance": 24.5
+              },
+              {
+                "s": 5.75,
+                "distance": 24.25
+              },
+              {
+                "s": 6,
+                "distance": 24
+              },
+              {
+                "s": 6.25,
+                "distance": 23.75
+              },
+              {
+                "s": 6.5,
+                "distance": 23.5
+              },
+              {
+                "s": 6.75,
+                "distance": 23.25
+              },
+              {
+                "s": 7,
+                "distance": 23
+              },
+              {
+                "s": 7.25,
+                "distance": 22.75
+              },
+              {
+                "s": 7.5,
+                "distance": 22.5
+              },
+              {
+                "s": 7.75,
+                "distance": 22.25
+              },
+              {
+                "s": 8,
+                "distance": 22
+              },
+              {
+                "s": 8.25,
+                "distance": 21.75
+              },
+              {
+                "s": 8.5,
+                "distance": 21.5
+              },
+              {
+                "s": 8.75,
+                "distance": 21.25
+              },
+              {
+                "s": 9,
+                "distance": 21
+              },
+              {
+                "s": 9.25,
+                "distance": 20.75
+              },
+              {
+                "s": 9.5,
+                "distance": 20.5
+              },
+              {
+                "s": 9.75,
+                "distance": 20.25
+              },
+              {
+                "s": 10,
+                "distance": 20
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "facade": "west",
+        "run": 0,
+        "line": [
+          {
+            "easting": 863558.5590871756,
+            "northing": 6937521.33134574
+          },
+          {
+            "easting": 863558.5590871756,
+            "northing": 6937513.33134574
+          }
+        ],
+        "height": {
+          "unavailable": "no-terrain"
+        },
+        "targets": [
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863558.5590871756,
+                "northing": 6937513.33134574
+              },
+              "target": {
+                "easting": 863558.5590871756,
+                "northing": 6937509.33134574
+              },
+              "distance": 4
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 12
+              },
+              {
+                "s": 0.25,
+                "distance": 11.75
+              },
+              {
+                "s": 0.5,
+                "distance": 11.5
+              },
+              {
+                "s": 0.75,
+                "distance": 11.25
+              },
+              {
+                "s": 1,
+                "distance": 11
+              },
+              {
+                "s": 1.25,
+                "distance": 10.75
+              },
+              {
+                "s": 1.5,
+                "distance": 10.5
+              },
+              {
+                "s": 1.75,
+                "distance": 10.25
+              },
+              {
+                "s": 2,
+                "distance": 10
+              },
+              {
+                "s": 2.25,
+                "distance": 9.75
+              },
+              {
+                "s": 2.5,
+                "distance": 9.5
+              },
+              {
+                "s": 2.75,
+                "distance": 9.25
+              },
+              {
+                "s": 3,
+                "distance": 9
+              },
+              {
+                "s": 3.25,
+                "distance": 8.75
+              },
+              {
+                "s": 3.5,
+                "distance": 8.5
+              },
+              {
+                "s": 3.75,
+                "distance": 8.25
+              },
+              {
+                "s": 4,
+                "distance": 8
+              },
+              {
+                "s": 4.25,
+                "distance": 7.75
+              },
+              {
+                "s": 4.5,
+                "distance": 7.5
+              },
+              {
+                "s": 4.75,
+                "distance": 7.25
+              },
+              {
+                "s": 5,
+                "distance": 7
+              },
+              {
+                "s": 5.25,
+                "distance": 6.75
+              },
+              {
+                "s": 5.5,
+                "distance": 6.5
+              },
+              {
+                "s": 5.75,
+                "distance": 6.25
+              },
+              {
+                "s": 6,
+                "distance": 6
+              },
+              {
+                "s": 6.25,
+                "distance": 5.75
+              },
+              {
+                "s": 6.5,
+                "distance": 5.5
+              },
+              {
+                "s": 6.75,
+                "distance": 5.25
+              },
+              {
+                "s": 7,
+                "distance": 5
+              },
+              {
+                "s": 7.25,
+                "distance": 4.75
+              },
+              {
+                "s": 7.5,
+                "distance": 4.5
+              },
+              {
+                "s": 7.75,
+                "distance": 4.25
+              },
+              {
+                "s": 8,
+                "distance": 4
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863558.5590871756,
+                "northing": 6937521.33134574
+              },
+              "target": {
+                "easting": 863588.5590871756,
+                "northing": 6937521.33134574
+              },
+              "distance": 30
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 30
+              },
+              {
+                "s": 0.25,
+                "distance": 30
+              },
+              {
+                "s": 0.5,
+                "distance": 30
+              },
+              {
+                "s": 0.75,
+                "distance": 30
+              },
+              {
+                "s": 1,
+                "distance": 30
+              },
+              {
+                "s": 1.25,
+                "distance": 30
+              },
+              {
+                "s": 1.5,
+                "distance": 30
+              },
+              {
+                "s": 1.75,
+                "distance": 30
+              },
+              {
+                "s": 2,
+                "distance": 30
+              },
+              {
+                "s": 2.25,
+                "distance": 30
+              },
+              {
+                "s": 2.5,
+                "distance": 30
+              },
+              {
+                "s": 2.75,
+                "distance": 30
+              },
+              {
+                "s": 3,
+                "distance": 30
+              },
+              {
+                "s": 3.25,
+                "distance": 30
+              },
+              {
+                "s": 3.5,
+                "distance": 30
+              },
+              {
+                "s": 3.75,
+                "distance": 30
+              },
+              {
+                "s": 4,
+                "distance": 30
+              },
+              {
+                "s": 4.25,
+                "distance": 30
+              },
+              {
+                "s": 4.5,
+                "distance": 30
+              },
+              {
+                "s": 4.75,
+                "distance": 30
+              },
+              {
+                "s": 5,
+                "distance": 30
+              },
+              {
+                "s": 5.25,
+                "distance": 30
+              },
+              {
+                "s": 5.5,
+                "distance": 30
+              },
+              {
+                "s": 5.75,
+                "distance": 30
+              },
+              {
+                "s": 6,
+                "distance": 30
+              },
+              {
+                "s": 6.25,
+                "distance": 30
+              },
+              {
+                "s": 6.5,
+                "distance": 30
+              },
+              {
+                "s": 6.75,
+                "distance": 30
+              },
+              {
+                "s": 7,
+                "distance": 30
+              },
+              {
+                "s": 7.25,
+                "distance": 30
+              },
+              {
+                "s": 7.5,
+                "distance": 30
+              },
+              {
+                "s": 7.75,
+                "distance": 30
+              },
+              {
+                "s": 8,
+                "distance": 30
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863558.5590871756,
+                "northing": 6937521.33134574
+              },
+              "target": {
+                "easting": 863558.5590871756,
+                "northing": 6937543.33134574
+              },
+              "distance": 22
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 22
+              },
+              {
+                "s": 0.25,
+                "distance": 22.25
+              },
+              {
+                "s": 0.5,
+                "distance": 22.5
+              },
+              {
+                "s": 0.75,
+                "distance": 22.75
+              },
+              {
+                "s": 1,
+                "distance": 23
+              },
+              {
+                "s": 1.25,
+                "distance": 23.25
+              },
+              {
+                "s": 1.5,
+                "distance": 23.5
+              },
+              {
+                "s": 1.75,
+                "distance": 23.75
+              },
+              {
+                "s": 2,
+                "distance": 24
+              },
+              {
+                "s": 2.25,
+                "distance": 24.25
+              },
+              {
+                "s": 2.5,
+                "distance": 24.5
+              },
+              {
+                "s": 2.75,
+                "distance": 24.75
+              },
+              {
+                "s": 3,
+                "distance": 25
+              },
+              {
+                "s": 3.25,
+                "distance": 25.25
+              },
+              {
+                "s": 3.5,
+                "distance": 25.5
+              },
+              {
+                "s": 3.75,
+                "distance": 25.75
+              },
+              {
+                "s": 4,
+                "distance": 26
+              },
+              {
+                "s": 4.25,
+                "distance": 26.25
+              },
+              {
+                "s": 4.5,
+                "distance": 26.5
+              },
+              {
+                "s": 4.75,
+                "distance": 26.75
+              },
+              {
+                "s": 5,
+                "distance": 27
+              },
+              {
+                "s": 5.25,
+                "distance": 27.25
+              },
+              {
+                "s": 5.5,
+                "distance": 27.5
+              },
+              {
+                "s": 5.75,
+                "distance": 27.75
+              },
+              {
+                "s": 6,
+                "distance": 28
+              },
+              {
+                "s": 6.25,
+                "distance": 28.25
+              },
+              {
+                "s": 6.5,
+                "distance": 28.5
+              },
+              {
+                "s": 6.75,
+                "distance": 28.75
+              },
+              {
+                "s": 7,
+                "distance": 29
+              },
+              {
+                "s": 7.25,
+                "distance": 29.25
+              },
+              {
+                "s": 7.5,
+                "distance": 29.5
+              },
+              {
+                "s": 7.75,
+                "distance": 29.75
+              },
+              {
+                "s": 8,
+                "distance": 30
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863558.5590871756,
+                "northing": 6937521.33134574
+              },
+              "target": {
+                "easting": 863538.5590871756,
+                "northing": 6937521.33134574
+              },
+              "distance": 20
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 20
+              },
+              {
+                "s": 0.25,
+                "distance": 20
+              },
+              {
+                "s": 0.5,
+                "distance": 20
+              },
+              {
+                "s": 0.75,
+                "distance": 20
+              },
+              {
+                "s": 1,
+                "distance": 20
+              },
+              {
+                "s": 1.25,
+                "distance": 20
+              },
+              {
+                "s": 1.5,
+                "distance": 20
+              },
+              {
+                "s": 1.75,
+                "distance": 20
+              },
+              {
+                "s": 2,
+                "distance": 20
+              },
+              {
+                "s": 2.25,
+                "distance": 20
+              },
+              {
+                "s": 2.5,
+                "distance": 20
+              },
+              {
+                "s": 2.75,
+                "distance": 20
+              },
+              {
+                "s": 3,
+                "distance": 20
+              },
+              {
+                "s": 3.25,
+                "distance": 20
+              },
+              {
+                "s": 3.5,
+                "distance": 20
+              },
+              {
+                "s": 3.75,
+                "distance": 20
+              },
+              {
+                "s": 4,
+                "distance": 20
+              },
+              {
+                "s": 4.25,
+                "distance": 20
+              },
+              {
+                "s": 4.5,
+                "distance": 20
+              },
+              {
+                "s": 4.75,
+                "distance": 20
+              },
+              {
+                "s": 5,
+                "distance": 20
+              },
+              {
+                "s": 5.25,
+                "distance": 20
+              },
+              {
+                "s": 5.5,
+                "distance": 20
+              },
+              {
+                "s": 5.75,
+                "distance": 20
+              },
+              {
+                "s": 6,
+                "distance": 20
+              },
+              {
+                "s": 6.25,
+                "distance": 20
+              },
+              {
+                "s": 6.5,
+                "distance": 20
+              },
+              {
+                "s": 6.75,
+                "distance": 20
+              },
+              {
+                "s": 7,
+                "distance": 20
+              },
+              {
+                "s": 7.25,
+                "distance": 20
+              },
+              {
+                "s": 7.5,
+                "distance": 20
+              },
+              {
+                "s": 7.75,
+                "distance": 20
+              },
+              {
+                "s": 8,
+                "distance": 20
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "notModelled": [
+      "chimney",
+      "antenna"
+    ]
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "query": {
+    "outline": "withRoofOverhangs",
+    "targets": [
+      {
+        "kind": "building",
+        "buildingId": "d06e014b-500d-4df6-a56d-7c6512ce7c6e"
+      }
+    ]
+  },
+  "date": "2026-10-20T06:26:25.620Z",
+  "boundary": {
+    "ring": [
+      {
+        "easting": 863538.5590871756,
+        "northing": 6937509.33134574
+      },
+      {
+        "easting": 863588.5590871756,
+        "northing": 6937509.33134574
+      },
+      {
+        "easting": 863588.5590871756,
+        "northing": 6937543.33134574
+      },
+      {
+        "easting": 863538.5590871756,
+        "northing": 6937543.33134574
+      }
+    ]
+  },
+  "projection": {
+    "available": true,
+    "buildingId": "building-main",
+    "height": {
+      "frame": "datum",
+      "groundAtFoot": {
+        "min": 0,
+        "max": 0
+      },
+      "top": 8.4,
+      "topAboveGround": {
+        "fromLowest": 8.4,
+        "fromHighest": 8.4
+      },
+      "eaves": 6,
+      "eavesAboveGround": {
+        "fromLowest": 6,
+        "fromHighest": 6
+      },
+      "notModelled": [
+        "chimney",
+        "antenna"
+      ]
+    }
+  },
+  "answer": {
+    "available": true,
+    "buildingId": "building-main",
+    "outline": "withRoofOverhangs",
+    "step": 0.25,
+    "targets": [
+      {
+        "target": {
+          "kind": "building",
+          "buildingId": "d06e014b-500d-4df6-a56d-7c6512ce7c6e"
+        },
+        "nearest": {
+          "building": {
+            "easting": 863568.5590871756,
+            "northing": 6937513.33134574
+          },
+          "target": {
+            "easting": 863572.0590871756,
+            "northing": 6937513.33134574
+          },
+          "distance": 3.5
+        }
+      }
+    ],
+    "notModelled": [
+      "chimney",
+      "antenna"
+    ]
+  }
+}

@@ -1,0 +1,555 @@
+{
+  "date": "2026-10-20T06:01:12.562Z",
+  "boundary": {
+    "ring": [
+      {
+        "easting": 860737.6898709,
+        "northing": 6931487.57459737
+      },
+      {
+        "easting": 860747.89987089,
+        "northing": 6931478.61459737
+      },
+      {
+        "easting": 860756.57987089,
+        "northing": 6931471.19459738
+      },
+      {
+        "easting": 860759.92987088,
+        "northing": 6931468.25459738
+      },
+      {
+        "easting": 860766.53987088,
+        "northing": 6931476.90459738
+      },
+      {
+        "easting": 860767.12987088,
+        "northing": 6931477.54459737
+      },
+      {
+        "easting": 860771.30987088,
+        "northing": 6931485.43459737
+      },
+      {
+        "easting": 860775.73987087,
+        "northing": 6931493.62459737
+      },
+      {
+        "easting": 860774.50987087,
+        "northing": 6931494.77459736
+      },
+      {
+        "easting": 860760.11987088,
+        "northing": 6931508.05459735
+      }
+    ]
+  },
+  "query": {
+    "crs": "EPSG:2154",
+    "minEasting": 860707.6898709,
+    "minNorthing": 6931438.25459738,
+    "maxEasting": 860805.73987087,
+    "maxNorthing": 6931538.05459735,
+    "limit": 500
+  },
+  "answer": [
+    {
+      "id": "TRONROUT0000000066106224",
+      "line": [
+        {
+          "easting": 860786.29987086,
+          "northing": 6931550.20459733
+        },
+        {
+          "easting": 860797.79987085,
+          "northing": 6931545.10459733
+        },
+        {
+          "easting": 860813.49987084,
+          "northing": 6931539.40459734
+        },
+        {
+          "easting": 860823.39987083,
+          "northing": 6931536.30459734
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 4,
+      "widthBasis": "measured",
+      "name": "Rue Saint Martin",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000000066107018",
+      "line": [
+        {
+          "easting": 860799.49987085,
+          "northing": 6931474.40459738
+        },
+        {
+          "easting": 860808.39987085,
+          "northing": 6931495.10459736
+        },
+        {
+          "easting": 860822.09987083,
+          "northing": 6931534.70459734
+        },
+        {
+          "easting": 860823.39987083,
+          "northing": 6931536.30459734
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 4,
+      "widthBasis": "measured",
+      "name": "Rue de l'Eglise",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000000066107022",
+      "line": [
+        {
+          "easting": 860741.8998709,
+          "northing": 6931499.10459736
+        },
+        {
+          "easting": 860758.49987089,
+          "northing": 6931512.60459735
+        },
+        {
+          "easting": 860769.09987088,
+          "northing": 6931524.70459735
+        },
+        {
+          "easting": 860786.29987086,
+          "northing": 6931550.20459733
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 4,
+      "widthBasis": "measured",
+      "name": "Rue Heurtebise",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000000066107030",
+      "line": [
+        {
+          "easting": 860730.69987091,
+          "northing": 6931514.70459735
+        },
+        {
+          "easting": 860744.4998709,
+          "northing": 6931527.80459734
+        },
+        {
+          "easting": 860753.39987089,
+          "northing": 6931538.00459734
+        },
+        {
+          "easting": 860759.09987088,
+          "northing": 6931547.10459733
+        },
+        {
+          "easting": 860749.19987089,
+          "northing": 6931557.50459733
+        },
+        {
+          "easting": 860741.7998709,
+          "northing": 6931563.00459732
+        },
+        {
+          "easting": 860737.8998709,
+          "northing": 6931564.70459732
+        }
+      ],
+      "kind": "track",
+      "level": "ground",
+      "widthMetres": 3,
+      "widthBasis": "estimated",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000000066107054",
+      "line": [
+        {
+          "easting": 860730.69987091,
+          "northing": 6931514.70459735
+        },
+        {
+          "easting": 860741.8998709,
+          "northing": 6931499.10459736
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 4,
+      "widthBasis": "measured",
+      "name": "Place Charles de Gaulle",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000000066107055",
+      "line": [
+        {
+          "easting": 860730.39987091,
+          "northing": 6931488.70459737
+        },
+        {
+          "easting": 860741.8998709,
+          "northing": 6931499.10459736
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 4,
+      "widthBasis": "measured",
+      "name": "Place Charles de Gaulle",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000000066107060",
+      "line": [
+        {
+          "easting": 860779.39987087,
+          "northing": 6931449.30459739
+        },
+        {
+          "easting": 860781.29987087,
+          "northing": 6931451.40459739
+        },
+        {
+          "easting": 860790.79987086,
+          "northing": 6931461.60459738
+        },
+        {
+          "easting": 860799.29987085,
+          "northing": 6931473.80459738
+        },
+        {
+          "easting": 860799.49987085,
+          "northing": 6931474.40459738
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 4,
+      "widthBasis": "measured",
+      "name": "Rue de l'Eglise",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000000066107072",
+      "line": [
+        {
+          "easting": 860730.39987091,
+          "northing": 6931488.70459737
+        },
+        {
+          "easting": 860726.19987091,
+          "northing": 6931483.40459737
+        },
+        {
+          "easting": 860706.79987093,
+          "northing": 6931459.20459739
+        },
+        {
+          "easting": 860693.79987094,
+          "northing": 6931445.60459739
+        }
+      ],
+      "kind": "track",
+      "level": "ground",
+      "widthMetres": 3,
+      "widthBasis": "estimated",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000000066107088",
+      "line": [
+        {
+          "easting": 860730.39987091,
+          "northing": 6931488.70459737
+        },
+        {
+          "easting": 860733.99987091,
+          "northing": 6931485.60459737
+        },
+        {
+          "easting": 860755.59987089,
+          "northing": 6931469.20459738
+        },
+        {
+          "easting": 860778.49987087,
+          "northing": 6931450.10459739
+        },
+        {
+          "easting": 860779.39987087,
+          "northing": 6931449.30459739
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 5,
+      "widthBasis": "measured",
+      "name": "Grande Rue",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000000066107093",
+      "line": [
+        {
+          "easting": 860756.39987089,
+          "northing": 6931413.50459741
+        },
+        {
+          "easting": 860766.59987088,
+          "northing": 6931426.00459741
+        },
+        {
+          "easting": 860778.99987087,
+          "northing": 6931442.0045974
+        },
+        {
+          "easting": 860782.89987087,
+          "northing": 6931445.9045974
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 4,
+      "widthBasis": "measured",
+      "name": "Rue de l'Eglise",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000000066107095",
+      "line": [
+        {
+          "easting": 860799.49987085,
+          "northing": 6931474.40459738
+        },
+        {
+          "easting": 860802.29987085,
+          "northing": 6931473.70459738
+        },
+        {
+          "easting": 860812.69987084,
+          "northing": 6931472.20459738
+        },
+        {
+          "easting": 860835.59987082,
+          "northing": 6931473.60459738
+        },
+        {
+          "easting": 860846.89987081,
+          "northing": 6931478.10459737
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 4,
+      "widthBasis": "measured",
+      "name": "Rue des Marchands",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000000066107098",
+      "line": [
+        {
+          "easting": 860806.69987085,
+          "northing": 6931423.30459741
+        },
+        {
+          "easting": 860812.89987084,
+          "northing": 6931428.2045974
+        },
+        {
+          "easting": 860821.49987084,
+          "northing": 6931439.9045974
+        },
+        {
+          "easting": 860837.99987082,
+          "northing": 6931462.40459738
+        },
+        {
+          "easting": 860846.89987081,
+          "northing": 6931478.10459737
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 4,
+      "widthBasis": "measured",
+      "name": "Rue du Four",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000000066107112",
+      "line": [
+        {
+          "easting": 860782.89987087,
+          "northing": 6931445.9045974
+        },
+        {
+          "easting": 860804.39987085,
+          "northing": 6931425.00459741
+        },
+        {
+          "easting": 860806.69987085,
+          "northing": 6931423.30459741
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 5,
+      "widthBasis": "measured",
+      "name": "Grande Rue",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000000066107113",
+      "line": [
+        {
+          "easting": 860709.19987093,
+          "northing": 6931504.30459736
+        },
+        {
+          "easting": 860720.39987092,
+          "northing": 6931494.80459736
+        },
+        {
+          "easting": 860730.39987091,
+          "northing": 6931488.70459737
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 5,
+      "widthBasis": "measured",
+      "name": "Grande Rue",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000000066107114",
+      "line": [
+        {
+          "easting": 860779.39987087,
+          "northing": 6931449.30459739
+        },
+        {
+          "easting": 860782.89987087,
+          "northing": 6931445.9045974
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 5,
+      "widthBasis": "measured",
+      "name": "Grande Rue",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000000114194489",
+      "line": [
+        {
+          "easting": 860730.69987091,
+          "northing": 6931514.70459735
+        },
+        {
+          "easting": 860717.69987092,
+          "northing": 6931529.40459734
+        },
+        {
+          "easting": 860717.99987092,
+          "northing": 6931533.50459734
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 4,
+      "widthBasis": "measured",
+      "name": "Place Charles de Gaulle",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000002215756383",
+      "line": [
+        {
+          "easting": 860709.19987093,
+          "northing": 6931504.30459736
+        },
+        {
+          "easting": 860714.09987092,
+          "northing": 6931508.70459736
+        },
+        {
+          "easting": 860718.49987092,
+          "northing": 6931511.80459735
+        },
+        {
+          "easting": 860723.59987091,
+          "northing": 6931514.50459735
+        },
+        {
+          "easting": 860730.69987091,
+          "northing": 6931514.70459735
+        }
+      ],
+      "kind": "path",
+      "level": "ground",
+      "widthMetres": 1.5,
+      "widthBasis": "estimated",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000002215756384",
+      "line": [
+        {
+          "easting": 860663.89987096,
+          "northing": 6931542.90459733
+        },
+        {
+          "easting": 860680.19987095,
+          "northing": 6931530.60459734
+        },
+        {
+          "easting": 860692.49987094,
+          "northing": 6931517.20459735
+        },
+        {
+          "easting": 860709.19987093,
+          "northing": 6931504.30459736
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 5,
+      "widthBasis": "measured",
+      "name": "Grande Rue",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    },
+    {
+      "id": "TRONROUT0000002488639508",
+      "line": [
+        {
+          "easting": 860717.99987092,
+          "northing": 6931533.50459734
+        },
+        {
+          "easting": 860732.09987091,
+          "northing": 6931548.30459733
+        }
+      ],
+      "kind": "road",
+      "level": "ground",
+      "widthMetres": 3,
+      "widthBasis": "measured",
+      "name": "Ruelle Leblond",
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · BD TOPO"
+    }
+  ]
+}

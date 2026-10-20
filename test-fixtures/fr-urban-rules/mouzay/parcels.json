@@ -1,0 +1,5074 @@
+{
+  "date": "2026-10-20T06:25:49.303Z",
+  "kind": "parcel",
+  "query": {
+    "crs": "EPSG:2154",
+    "minEasting": 860697.6898709,
+    "minNorthing": 6931428.25459738,
+    "maxEasting": 860815.73987087,
+    "maxNorthing": 6931548.05459735,
+    "limit": 200
+  },
+  "answer": [
+    {
+      "id": "55364000ZN0010",
+      "kind": "parcel",
+      "label": "Section ZN n° 0010",
+      "summary": "Mouzay · 19 710 m²",
+      "shortLabel": "ZN 0010",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "ZN"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0010"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 ZN 0010"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "19 710 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860691.90987094,
+            "northing": 6931260.61459751
+          },
+          {
+            "easting": 860414.30987116,
+            "northing": 6931378.50459744
+          },
+          {
+            "easting": 860420.24987116,
+            "northing": 6931380.78459744
+          },
+          {
+            "easting": 860494.2898711,
+            "northing": 6931407.80459742
+          },
+          {
+            "easting": 860517.50987108,
+            "northing": 6931422.00459741
+          },
+          {
+            "easting": 860553.44987105,
+            "northing": 6931398.06459742
+          },
+          {
+            "easting": 860593.27987102,
+            "northing": 6931381.21459743
+          },
+          {
+            "easting": 860661.12987096,
+            "northing": 6931352.18459745
+          },
+          {
+            "easting": 860720.76987092,
+            "northing": 6931327.27459747
+          },
+          {
+            "easting": 860713.41987092,
+            "northing": 6931279.6145975
+          },
+          {
+            "easting": 860691.90987094,
+            "northing": 6931260.61459751
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 614010,
+        "numero": "0010",
+        "feuille": 1,
+        "section": "ZN",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000ZN0010",
+        "contenance": 19710,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0290",
+      "kind": "parcel",
+      "label": "Section AB n° 0290",
+      "summary": "Mouzay · 76 m²",
+      "shortLabel": "AB 0290",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0290"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0290"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "76 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860820.89987084,
+            "northing": 6931417.52459741
+          },
+          {
+            "easting": 860818.02987084,
+            "northing": 6931419.88459741
+          },
+          {
+            "easting": 860814.36987084,
+            "northing": 6931423.19459741
+          },
+          {
+            "easting": 860816.43987084,
+            "northing": 6931425.95459741
+          },
+          {
+            "easting": 860819.73987084,
+            "northing": 6931429.9245974
+          },
+          {
+            "easting": 860826.40987083,
+            "northing": 6931424.62459741
+          },
+          {
+            "easting": 860820.89987084,
+            "northing": 6931417.52459741
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 42959170,
+        "numero": "0290",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0290",
+        "contenance": 76,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0275",
+      "kind": "parcel",
+      "label": "Section AB n° 0275",
+      "summary": "Mouzay · 198 m²",
+      "shortLabel": "AB 0275",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0275"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0275"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "198 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860815.84987084,
+            "northing": 6931504.92459736
+          },
+          {
+            "easting": 860816.75987084,
+            "northing": 6931506.86459736
+          },
+          {
+            "easting": 860819.91987084,
+            "northing": 6931513.63459735
+          },
+          {
+            "easting": 860832.59987083,
+            "northing": 6931506.03459736
+          },
+          {
+            "easting": 860837.61987082,
+            "northing": 6931502.74459736
+          },
+          {
+            "easting": 860833.07987083,
+            "northing": 6931494.32459736
+          },
+          {
+            "easting": 860815.84987084,
+            "northing": 6931504.92459736
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 40735088,
+        "numero": "0275",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0275",
+        "contenance": 198,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0276",
+      "kind": "parcel",
+      "label": "Section AB n° 0276",
+      "summary": "Mouzay · 122 m²",
+      "shortLabel": "AB 0276",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0276"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0276"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "122 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860814.25987084,
+            "northing": 6931498.87459736
+          },
+          {
+            "easting": 860813.91987084,
+            "northing": 6931499.05459736
+          },
+          {
+            "easting": 860813.16987084,
+            "northing": 6931499.48459736
+          },
+          {
+            "easting": 860815.84987084,
+            "northing": 6931504.92459736
+          },
+          {
+            "easting": 860833.07987083,
+            "northing": 6931494.32459736
+          },
+          {
+            "easting": 860832.31987083,
+            "northing": 6931492.90459737
+          },
+          {
+            "easting": 860830.19987083,
+            "northing": 6931488.84459737
+          },
+          {
+            "easting": 860814.25987084,
+            "northing": 6931498.87459736
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 40846496,
+        "numero": "0276",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0276",
+        "contenance": 122,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0277",
+      "kind": "parcel",
+      "label": "Section AB n° 0277",
+      "summary": "Mouzay · 113 m²",
+      "shortLabel": "AB 0277",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0277"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0277"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "113 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860811.15987084,
+            "northing": 6931490.27459737
+          },
+          {
+            "easting": 860814.25987084,
+            "northing": 6931498.87459736
+          },
+          {
+            "easting": 860830.19987083,
+            "northing": 6931488.84459737
+          },
+          {
+            "easting": 860829.66987083,
+            "northing": 6931487.88459737
+          },
+          {
+            "easting": 860828.73987083,
+            "northing": 6931486.25459737
+          },
+          {
+            "easting": 860822.18987083,
+            "northing": 6931489.44459737
+          },
+          {
+            "easting": 860820.55987084,
+            "northing": 6931485.63459737
+          },
+          {
+            "easting": 860811.15987084,
+            "northing": 6931490.27459737
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 40957502,
+        "numero": "0277",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0277",
+        "contenance": 113,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0279",
+      "kind": "parcel",
+      "label": "Section AB n° 0279",
+      "summary": "Mouzay · 164 m²",
+      "shortLabel": "AB 0279",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0279"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0279"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "164 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860811.15987084,
+            "northing": 6931490.27459737
+          },
+          {
+            "easting": 860820.55987084,
+            "northing": 6931485.63459737
+          },
+          {
+            "easting": 860826.64987083,
+            "northing": 6931482.56459737
+          },
+          {
+            "easting": 860822.43987083,
+            "northing": 6931474.74459737
+          },
+          {
+            "easting": 860807.39987085,
+            "northing": 6931480.05459737
+          },
+          {
+            "easting": 860810.63987084,
+            "northing": 6931488.84459736
+          },
+          {
+            "easting": 860811.15987084,
+            "northing": 6931490.27459737
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 41177669,
+        "numero": "0279",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0279",
+        "contenance": 164,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0291",
+      "kind": "parcel",
+      "label": "Section AB n° 0291",
+      "summary": "Mouzay · 48 m²",
+      "shortLabel": "AB 0291",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0291"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0291"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "48 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860802.53987085,
+            "northing": 6931433.4745974
+          },
+          {
+            "easting": 860806.16987085,
+            "northing": 6931437.9545974
+          },
+          {
+            "easting": 860812.24987084,
+            "northing": 6931432.8245974
+          },
+          {
+            "easting": 860810.99987084,
+            "northing": 6931431.2145974
+          },
+          {
+            "easting": 860808.78987085,
+            "northing": 6931428.3445974
+          },
+          {
+            "easting": 860806.47987085,
+            "northing": 6931430.2345974
+          },
+          {
+            "easting": 860802.53987085,
+            "northing": 6931433.4745974
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 43063515,
+        "numero": "0291",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0291",
+        "contenance": 48,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0292",
+      "kind": "parcel",
+      "label": "Section AB n° 0292",
+      "summary": "Mouzay · 326 m²",
+      "shortLabel": "AB 0292",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0292"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0292"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "326 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860806.16987085,
+            "northing": 6931437.9545974
+          },
+          {
+            "easting": 860799.06987085,
+            "northing": 6931443.77459739
+          },
+          {
+            "easting": 860800.96987085,
+            "northing": 6931446.05459739
+          },
+          {
+            "easting": 860794.30987086,
+            "northing": 6931451.91459739
+          },
+          {
+            "easting": 860796.47987086,
+            "northing": 6931454.92459739
+          },
+          {
+            "easting": 860799.66987085,
+            "northing": 6931459.31459738
+          },
+          {
+            "easting": 860813.84987084,
+            "northing": 6931449.76459739
+          },
+          {
+            "easting": 860821.30987084,
+            "northing": 6931444.63459739
+          },
+          {
+            "easting": 860815.38987084,
+            "northing": 6931436.9545974
+          },
+          {
+            "easting": 860812.24987084,
+            "northing": 6931432.8245974
+          },
+          {
+            "easting": 860806.16987085,
+            "northing": 6931437.9545974
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 43167492,
+        "numero": "0292",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0292",
+        "contenance": 326,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0293",
+      "kind": "parcel",
+      "label": "Section AB n° 0293",
+      "summary": "Mouzay · 141 m²",
+      "shortLabel": "AB 0293",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0293"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0293"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "141 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860821.30987084,
+            "northing": 6931444.63459739
+          },
+          {
+            "easting": 860813.84987084,
+            "northing": 6931449.76459739
+          },
+          {
+            "easting": 860799.66987085,
+            "northing": 6931459.31459738
+          },
+          {
+            "easting": 860802.96987085,
+            "northing": 6931463.96459738
+          },
+          {
+            "easting": 860809.20987085,
+            "northing": 6931460.24459739
+          },
+          {
+            "easting": 860814.96987084,
+            "northing": 6931456.74459739
+          },
+          {
+            "easting": 860817.27987084,
+            "northing": 6931455.32459739
+          },
+          {
+            "easting": 860816.22987084,
+            "northing": 6931453.61459739
+          },
+          {
+            "easting": 860823.44987083,
+            "northing": 6931447.29459739
+          },
+          {
+            "easting": 860821.30987084,
+            "northing": 6931444.63459739
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 43271035,
+        "numero": "0293",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0293",
+        "contenance": 141,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0294",
+      "kind": "parcel",
+      "label": "Section AB n° 0294",
+      "summary": "Mouzay · 53 m²",
+      "shortLabel": "AB 0294",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0294"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0294"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "53 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860817.27987084,
+            "northing": 6931455.32459739
+          },
+          {
+            "easting": 860818.83987084,
+            "northing": 6931457.67459739
+          },
+          {
+            "easting": 860827.16987083,
+            "northing": 6931452.19459739
+          },
+          {
+            "easting": 860823.44987083,
+            "northing": 6931447.29459739
+          },
+          {
+            "easting": 860816.22987084,
+            "northing": 6931453.61459739
+          },
+          {
+            "easting": 860817.27987084,
+            "northing": 6931455.32459739
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 43374373,
+        "numero": "0294",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0294",
+        "contenance": 53,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0295",
+      "kind": "parcel",
+      "label": "Section AB n° 0295",
+      "summary": "Mouzay · 166 m²",
+      "shortLabel": "AB 0295",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0295"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0295"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "166 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860814.96987084,
+            "northing": 6931456.74459739
+          },
+          {
+            "easting": 860818.23987084,
+            "northing": 6931464.33459738
+          },
+          {
+            "easting": 860820.12987084,
+            "northing": 6931468.72459738
+          },
+          {
+            "easting": 860834.22987083,
+            "northing": 6931462.05459738
+          },
+          {
+            "easting": 860830.94987083,
+            "northing": 6931457.00459739
+          },
+          {
+            "easting": 860827.16987083,
+            "northing": 6931452.19459739
+          },
+          {
+            "easting": 860818.83987084,
+            "northing": 6931457.67459739
+          },
+          {
+            "easting": 860817.27987084,
+            "northing": 6931455.32459739
+          },
+          {
+            "easting": 860814.96987084,
+            "northing": 6931456.74459739
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 43477594,
+        "numero": "0295",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0295",
+        "contenance": 166,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0296",
+      "kind": "parcel",
+      "label": "Section AB n° 0296",
+      "summary": "Mouzay · 73 m²",
+      "shortLabel": "AB 0296",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0296"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0296"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "73 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860809.20987085,
+            "northing": 6931460.24459739
+          },
+          {
+            "easting": 860810.89987084,
+            "northing": 6931463.61459738
+          },
+          {
+            "easting": 860813.98987084,
+            "northing": 6931469.39459738
+          },
+          {
+            "easting": 860820.12987084,
+            "northing": 6931468.72459738
+          },
+          {
+            "easting": 860818.23987084,
+            "northing": 6931464.33459738
+          },
+          {
+            "easting": 860814.96987084,
+            "northing": 6931456.74459739
+          },
+          {
+            "easting": 860809.20987085,
+            "northing": 6931460.24459739
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 43580220,
+        "numero": "0296",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0296",
+        "contenance": 73,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0297",
+      "kind": "parcel",
+      "label": "Section AB n° 0297",
+      "summary": "Mouzay · 33 m²",
+      "shortLabel": "AB 0297",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0297"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0297"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "33 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860810.89987084,
+            "northing": 6931463.61459738
+          },
+          {
+            "easting": 860805.13987085,
+            "northing": 6931467.06459738
+          },
+          {
+            "easting": 860807.18987085,
+            "northing": 6931470.08459738
+          },
+          {
+            "easting": 860807.42987085,
+            "northing": 6931470.06459738
+          },
+          {
+            "easting": 860813.98987084,
+            "northing": 6931469.39459738
+          },
+          {
+            "easting": 860810.89987084,
+            "northing": 6931463.61459738
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 43682346,
+        "numero": "0297",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0297",
+        "contenance": 33,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0298",
+      "kind": "parcel",
+      "label": "Section AB n° 0298",
+      "summary": "Mouzay · 25 m²",
+      "shortLabel": "AB 0298",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0298"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0298"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "25 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860802.96987085,
+            "northing": 6931463.96459738
+          },
+          {
+            "easting": 860804.11987085,
+            "northing": 6931465.61459738
+          },
+          {
+            "easting": 860805.13987085,
+            "northing": 6931467.06459738
+          },
+          {
+            "easting": 860810.89987084,
+            "northing": 6931463.61459738
+          },
+          {
+            "easting": 860809.20987085,
+            "northing": 6931460.24459739
+          },
+          {
+            "easting": 860802.96987085,
+            "northing": 6931463.96459738
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 43784080,
+        "numero": "0298",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0298",
+        "contenance": 25,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0299",
+      "kind": "parcel",
+      "label": "Section AB n° 0299",
+      "summary": "Mouzay · 144 m²",
+      "shortLabel": "AB 0299",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0299"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0299"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "144 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860802.53987085,
+            "northing": 6931433.4745974
+          },
+          {
+            "easting": 860802.03987085,
+            "northing": 6931432.8445974
+          },
+          {
+            "easting": 860789.95987086,
+            "northing": 6931442.7345974
+          },
+          {
+            "easting": 860788.36987086,
+            "northing": 6931444.0345974
+          },
+          {
+            "easting": 860790.77987086,
+            "northing": 6931447.25459739
+          },
+          {
+            "easting": 860794.30987086,
+            "northing": 6931451.91459739
+          },
+          {
+            "easting": 860800.96987085,
+            "northing": 6931446.05459739
+          },
+          {
+            "easting": 860799.06987085,
+            "northing": 6931443.77459739
+          },
+          {
+            "easting": 860806.16987085,
+            "northing": 6931437.9545974
+          },
+          {
+            "easting": 860802.53987085,
+            "northing": 6931433.4745974
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 43885335,
+        "numero": "0299",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0299",
+        "contenance": 144,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0300",
+      "kind": "parcel",
+      "label": "Section AB n° 0300",
+      "summary": "Mouzay · 364 m²",
+      "shortLabel": "AB 0300",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0300"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0300"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "364 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860782.54987087,
+            "northing": 6931410.06459741
+          },
+          {
+            "easting": 860769.99987088,
+            "northing": 6931421.40459741
+          },
+          {
+            "easting": 860783.53987087,
+            "northing": 6931437.6645974
+          },
+          {
+            "easting": 860794.40987086,
+            "northing": 6931427.91459741
+          },
+          {
+            "easting": 860794.52987086,
+            "northing": 6931423.76459741
+          },
+          {
+            "easting": 860782.54987087,
+            "northing": 6931410.06459741
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 44607468,
+        "numero": "0300",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0300",
+        "contenance": 364,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0312",
+      "kind": "parcel",
+      "label": "Section AB n° 0312",
+      "summary": "Mouzay · 78 m²",
+      "shortLabel": "AB 0312",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0312"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0312"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "78 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860725.12987091,
+            "northing": 6931422.57459741
+          },
+          {
+            "easting": 860719.28987092,
+            "northing": 6931414.84459741
+          },
+          {
+            "easting": 860712.46987092,
+            "northing": 6931425.26459741
+          },
+          {
+            "easting": 860713.74987092,
+            "northing": 6931428.10459741
+          },
+          {
+            "easting": 860725.12987091,
+            "northing": 6931422.57459741
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 46087460,
+        "numero": "0312",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0312",
+        "contenance": 78,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0337",
+      "kind": "parcel",
+      "label": "Section AB n° 0337",
+      "summary": "Mouzay · 418 m²",
+      "shortLabel": "AB 0337",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0337"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0337"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "418 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860747.0298709,
+            "northing": 6931447.03459739
+          },
+          {
+            "easting": 860736.7798709,
+            "northing": 6931454.82459739
+          },
+          {
+            "easting": 860738.4698709,
+            "northing": 6931457.60459739
+          },
+          {
+            "easting": 860741.3498709,
+            "northing": 6931462.21459739
+          },
+          {
+            "easting": 860743.5698709,
+            "northing": 6931460.66459738
+          },
+          {
+            "easting": 860745.6898709,
+            "northing": 6931459.19459738
+          },
+          {
+            "easting": 860752.46987089,
+            "northing": 6931453.43459739
+          },
+          {
+            "easting": 860753.83987089,
+            "northing": 6931455.09459739
+          },
+          {
+            "easting": 860758.72987089,
+            "northing": 6931460.89459738
+          },
+          {
+            "easting": 860759.62987089,
+            "northing": 6931460.03459739
+          },
+          {
+            "easting": 860772.02987088,
+            "northing": 6931450.73459739
+          },
+          {
+            "easting": 860767.35987088,
+            "northing": 6931444.98459739
+          },
+          {
+            "easting": 860761.09987088,
+            "northing": 6931436.9745974
+          },
+          {
+            "easting": 860759.73987088,
+            "northing": 6931438.0245974
+          },
+          {
+            "easting": 860749.67987089,
+            "northing": 6931445.58459739
+          },
+          {
+            "easting": 860748.47987089,
+            "northing": 6931446.4845974
+          },
+          {
+            "easting": 860748.12987089,
+            "northing": 6931446.11459739
+          },
+          {
+            "easting": 860747.0298709,
+            "northing": 6931447.03459739
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 48980562,
+        "numero": "0337",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0337",
+        "contenance": 418,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0338",
+      "kind": "parcel",
+      "label": "Section AB n° 0338",
+      "summary": "Mouzay · 229 m²",
+      "shortLabel": "AB 0338",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0338"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0338"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "229 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860734.85987091,
+            "northing": 6931438.1145974
+          },
+          {
+            "easting": 860737.2298709,
+            "northing": 6931440.6745974
+          },
+          {
+            "easting": 860739.8898709,
+            "northing": 6931438.8045974
+          },
+          {
+            "easting": 860743.7998709,
+            "northing": 6931443.3245974
+          },
+          {
+            "easting": 860747.0298709,
+            "northing": 6931447.03459739
+          },
+          {
+            "easting": 860748.12987089,
+            "northing": 6931446.11459739
+          },
+          {
+            "easting": 860748.47987089,
+            "northing": 6931446.4845974
+          },
+          {
+            "easting": 860749.67987089,
+            "northing": 6931445.58459739
+          },
+          {
+            "easting": 860759.73987088,
+            "northing": 6931438.0245974
+          },
+          {
+            "easting": 860761.09987088,
+            "northing": 6931436.9745974
+          },
+          {
+            "easting": 860754.69987089,
+            "northing": 6931427.8945974
+          },
+          {
+            "easting": 860740.6798709,
+            "northing": 6931437.3145974
+          },
+          {
+            "easting": 860739.4598709,
+            "northing": 6931438.1045974
+          },
+          {
+            "easting": 860737.5098709,
+            "northing": 6931435.9345974
+          },
+          {
+            "easting": 860734.85987091,
+            "northing": 6931438.1145974
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 49068571,
+        "numero": "0338",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0338",
+        "contenance": 229,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0342",
+      "kind": "parcel",
+      "label": "Section AB n° 0342",
+      "summary": "Mouzay · 92 m²",
+      "shortLabel": "AB 0342",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0342"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0342"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "92 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860715.68987092,
+            "northing": 6931442.8245974
+          },
+          {
+            "easting": 860705.34987093,
+            "northing": 6931449.72459739
+          },
+          {
+            "easting": 860703.05987093,
+            "northing": 6931451.19459739
+          },
+          {
+            "easting": 860706.73987093,
+            "northing": 6931455.92459739
+          },
+          {
+            "easting": 860719.49987092,
+            "northing": 6931447.76459739
+          },
+          {
+            "easting": 860715.68987092,
+            "northing": 6931442.8245974
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 49710356,
+        "numero": "0342",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0342",
+        "contenance": 92,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0344",
+      "kind": "parcel",
+      "label": "Section AB n° 0344",
+      "summary": "Mouzay · 161 m²",
+      "shortLabel": "AB 0344",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0344"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0344"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "161 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860723.13987091,
+            "northing": 6931452.42459739
+          },
+          {
+            "easting": 860710.53987092,
+            "northing": 6931460.99459738
+          },
+          {
+            "easting": 860717.18987092,
+            "northing": 6931469.73459738
+          },
+          {
+            "easting": 860729.37987091,
+            "northing": 6931460.47459738
+          },
+          {
+            "easting": 860723.13987091,
+            "northing": 6931452.42459739
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 49883468,
+        "numero": "0344",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0344",
+        "contenance": 161,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0346",
+      "kind": "parcel",
+      "label": "Section AB n° 0346",
+      "summary": "Mouzay · 766 m²",
+      "shortLabel": "AB 0346",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0346"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0346"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "766 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860760.11987088,
+            "northing": 6931508.05459735
+          },
+          {
+            "easting": 860774.50987087,
+            "northing": 6931494.77459736
+          },
+          {
+            "easting": 860775.73987087,
+            "northing": 6931493.62459737
+          },
+          {
+            "easting": 860771.30987088,
+            "northing": 6931485.43459737
+          },
+          {
+            "easting": 860767.12987088,
+            "northing": 6931477.54459737
+          },
+          {
+            "easting": 860766.53987088,
+            "northing": 6931476.90459738
+          },
+          {
+            "easting": 860759.92987088,
+            "northing": 6931468.25459738
+          },
+          {
+            "easting": 860756.57987089,
+            "northing": 6931471.19459738
+          },
+          {
+            "easting": 860747.89987089,
+            "northing": 6931478.61459737
+          },
+          {
+            "easting": 860737.6898709,
+            "northing": 6931487.57459737
+          },
+          {
+            "easting": 860760.11987088,
+            "northing": 6931508.05459735
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 50054766,
+        "numero": "0346",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0346",
+        "contenance": 766,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0347",
+      "kind": "parcel",
+      "label": "Section AB n° 0347",
+      "summary": "Mouzay · 238 m²",
+      "shortLabel": "AB 0347",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0347"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0347"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "238 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860767.12987088,
+            "northing": 6931477.54459737
+          },
+          {
+            "easting": 860769.35987088,
+            "northing": 6931475.76459738
+          },
+          {
+            "easting": 860771.14987088,
+            "northing": 6931474.33459738
+          },
+          {
+            "easting": 860780.73987087,
+            "northing": 6931466.63459738
+          },
+          {
+            "easting": 860781.91987087,
+            "northing": 6931465.62459738
+          },
+          {
+            "easting": 860774.47987087,
+            "northing": 6931456.15459739
+          },
+          {
+            "easting": 860766.33987088,
+            "northing": 6931461.97459738
+          },
+          {
+            "easting": 860759.64987089,
+            "northing": 6931467.76459738
+          },
+          {
+            "easting": 860759.92987088,
+            "northing": 6931468.25459738
+          },
+          {
+            "easting": 860766.53987088,
+            "northing": 6931476.90459738
+          },
+          {
+            "easting": 860767.12987088,
+            "northing": 6931477.54459737
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 50139894,
+        "numero": "0347",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0347",
+        "contenance": 238,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0348",
+      "kind": "parcel",
+      "label": "Section AB n° 0348",
+      "summary": "Mouzay · 186 m²",
+      "shortLabel": "AB 0348",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0348"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0348"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "186 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860771.30987088,
+            "northing": 6931485.43459737
+          },
+          {
+            "easting": 860774.41987087,
+            "northing": 6931483.21459737
+          },
+          {
+            "easting": 860776.50987087,
+            "northing": 6931481.77459737
+          },
+          {
+            "easting": 860778.07987087,
+            "northing": 6931480.58459737
+          },
+          {
+            "easting": 860787.84987086,
+            "northing": 6931473.31459738
+          },
+          {
+            "easting": 860785.06987086,
+            "northing": 6931469.78459738
+          },
+          {
+            "easting": 860781.91987087,
+            "northing": 6931465.62459738
+          },
+          {
+            "easting": 860780.73987087,
+            "northing": 6931466.63459738
+          },
+          {
+            "easting": 860771.14987088,
+            "northing": 6931474.33459738
+          },
+          {
+            "easting": 860769.35987088,
+            "northing": 6931475.76459738
+          },
+          {
+            "easting": 860767.12987088,
+            "northing": 6931477.54459737
+          },
+          {
+            "easting": 860771.30987088,
+            "northing": 6931485.43459737
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 50224753,
+        "numero": "0348",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0348",
+        "contenance": 186,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0350",
+      "kind": "parcel",
+      "label": "Section AB n° 0350",
+      "summary": "Mouzay · 101 m²",
+      "shortLabel": "AB 0350",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0350"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0350"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "101 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860760.11987088,
+            "northing": 6931508.05459735
+          },
+          {
+            "easting": 860763.88987088,
+            "northing": 6931511.45459735
+          },
+          {
+            "easting": 860765.80987088,
+            "northing": 6931509.86459736
+          },
+          {
+            "easting": 860778.13987087,
+            "northing": 6931498.20459736
+          },
+          {
+            "easting": 860775.73987087,
+            "northing": 6931493.62459737
+          },
+          {
+            "easting": 860774.50987087,
+            "northing": 6931494.77459736
+          },
+          {
+            "easting": 860760.11987088,
+            "northing": 6931508.05459735
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 50684044,
+        "numero": "0350",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0350",
+        "contenance": 101,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0351",
+      "kind": "parcel",
+      "label": "Section AB n° 0351",
+      "summary": "Mouzay · 131 m²",
+      "shortLabel": "AB 0351",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0351"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0351"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "131 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860778.13987087,
+            "northing": 6931498.20459736
+          },
+          {
+            "easting": 860780.78987087,
+            "northing": 6931503.21459736
+          },
+          {
+            "easting": 860790.82987086,
+            "northing": 6931497.35459736
+          },
+          {
+            "easting": 860794.45987086,
+            "northing": 6931495.17459736
+          },
+          {
+            "easting": 860799.56987085,
+            "northing": 6931492.09459736
+          },
+          {
+            "easting": 860796.64987086,
+            "northing": 6931485.98459737
+          },
+          {
+            "easting": 860791.28987086,
+            "northing": 6931489.45459737
+          },
+          {
+            "easting": 860787.67987086,
+            "northing": 6931491.96459737
+          },
+          {
+            "easting": 860778.13987087,
+            "northing": 6931498.20459736
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 50768221,
+        "numero": "0351",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0351",
+        "contenance": 131,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0354",
+      "kind": "parcel",
+      "label": "Section AB n° 0354",
+      "summary": "Mouzay · 81 m²",
+      "shortLabel": "AB 0354",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0354"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0354"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "81 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860789.61987086,
+            "northing": 6931504.28459736
+          },
+          {
+            "easting": 860792.20987086,
+            "northing": 6931509.75459735
+          },
+          {
+            "easting": 860804.70987085,
+            "northing": 6931502.83459736
+          },
+          {
+            "easting": 860802.70987085,
+            "northing": 6931498.52459736
+          },
+          {
+            "easting": 860802.32987085,
+            "northing": 6931497.75459736
+          },
+          {
+            "easting": 860797.02987085,
+            "northing": 6931500.49459736
+          },
+          {
+            "easting": 860789.61987086,
+            "northing": 6931504.28459736
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 51019492,
+        "numero": "0354",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0354",
+        "contenance": 81,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0357",
+      "kind": "parcel",
+      "label": "Section AB n° 0357",
+      "summary": "Mouzay · 82 m²",
+      "shortLabel": "AB 0357",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0357"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0357"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "82 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860797.46987085,
+            "northing": 6931528.88459734
+          },
+          {
+            "easting": 860809.52987084,
+            "northing": 6931522.72459735
+          },
+          {
+            "easting": 860808.62987085,
+            "northing": 6931520.32459735
+          },
+          {
+            "easting": 860807.41987085,
+            "northing": 6931517.15459735
+          },
+          {
+            "easting": 860794.67987086,
+            "northing": 6931523.67459734
+          },
+          {
+            "easting": 860797.46987085,
+            "northing": 6931528.88459734
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 51267871,
+        "numero": "0357",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0357",
+        "contenance": 82,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0358",
+      "kind": "parcel",
+      "label": "Section AB n° 0358",
+      "summary": "Mouzay · 167 m²",
+      "shortLabel": "AB 0358",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0358"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0358"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "167 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860797.46987085,
+            "northing": 6931528.88459734
+          },
+          {
+            "easting": 860802.78987085,
+            "northing": 6931539.76459733
+          },
+          {
+            "easting": 860814.61987084,
+            "northing": 6931535.29459734
+          },
+          {
+            "easting": 860811.89987084,
+            "northing": 6931528.58459734
+          },
+          {
+            "easting": 860809.52987084,
+            "northing": 6931522.72459735
+          },
+          {
+            "easting": 860797.46987085,
+            "northing": 6931528.88459734
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 51350418,
+        "numero": "0358",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0358",
+        "contenance": 167,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0360",
+      "kind": "parcel",
+      "label": "Section AB n° 0360",
+      "summary": "Mouzay · 183 m²",
+      "shortLabel": "AB 0360",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0360"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0360"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "183 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860805.09987085,
+            "northing": 6931559.75459732
+          },
+          {
+            "easting": 860817.20987084,
+            "northing": 6931548.43459733
+          },
+          {
+            "easting": 860814.72987084,
+            "northing": 6931545.71459733
+          },
+          {
+            "easting": 860813.23987084,
+            "northing": 6931543.95459733
+          },
+          {
+            "easting": 860810.19987084,
+            "northing": 6931542.34459734
+          },
+          {
+            "easting": 860804.49987085,
+            "northing": 6931544.46459733
+          },
+          {
+            "easting": 860797.17987085,
+            "northing": 6931547.94459733
+          },
+          {
+            "easting": 860800.87987085,
+            "northing": 6931554.13459733
+          },
+          {
+            "easting": 860801.84987085,
+            "northing": 6931555.69459733
+          },
+          {
+            "easting": 860805.09987085,
+            "northing": 6931559.75459732
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 51803493,
+        "numero": "0360",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0360",
+        "contenance": 183,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0387",
+      "kind": "parcel",
+      "label": "Section AB n° 0387",
+      "summary": "Mouzay · 480 m²",
+      "shortLabel": "AB 0387",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0387"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0387"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "480 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860765.46987088,
+            "northing": 6931560.86459733
+          },
+          {
+            "easting": 860774.07987087,
+            "northing": 6931550.82459733
+          },
+          {
+            "easting": 860779.64987087,
+            "northing": 6931545.31459733
+          },
+          {
+            "easting": 860774.89987087,
+            "northing": 6931538.31459734
+          },
+          {
+            "easting": 860770.46987088,
+            "northing": 6931531.80459734
+          },
+          {
+            "easting": 860765.83987088,
+            "northing": 6931524.99459735
+          },
+          {
+            "easting": 860753.65987089,
+            "northing": 6931535.16459734
+          },
+          {
+            "easting": 860758.85987089,
+            "northing": 6931542.25459733
+          },
+          {
+            "easting": 860761.52987088,
+            "northing": 6931545.46459733
+          },
+          {
+            "easting": 860755.54987089,
+            "northing": 6931552.11459733
+          },
+          {
+            "easting": 860765.46987088,
+            "northing": 6931560.86459733
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 54491175,
+        "numero": "0387",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0387",
+        "contenance": 480,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0388",
+      "kind": "parcel",
+      "label": "Section AB n° 0388",
+      "summary": "Mouzay · 172 m²",
+      "shortLabel": "AB 0388",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0388"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0388"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "172 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860747.20987089,
+            "northing": 6931526.71459734
+          },
+          {
+            "easting": 860753.65987089,
+            "northing": 6931535.16459734
+          },
+          {
+            "easting": 860765.83987088,
+            "northing": 6931524.99459735
+          },
+          {
+            "easting": 860765.25987088,
+            "northing": 6931523.91459734
+          },
+          {
+            "easting": 860764.98987088,
+            "northing": 6931523.61459735
+          },
+          {
+            "easting": 860758.53987089,
+            "northing": 6931516.00459735
+          },
+          {
+            "easting": 860747.20987089,
+            "northing": 6931526.71459734
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 54566174,
+        "numero": "0388",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0388",
+        "contenance": 172,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0390",
+      "kind": "parcel",
+      "label": "Section AB n° 0390",
+      "summary": "Mouzay · 74 m²",
+      "shortLabel": "AB 0390",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0390"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0390"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "74 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860744.2298709,
+            "northing": 6931524.05459735
+          },
+          {
+            "easting": 860755.40987089,
+            "northing": 6931512.92459735
+          },
+          {
+            "easting": 860752.18987089,
+            "northing": 6931509.73459735
+          },
+          {
+            "easting": 860745.7698709,
+            "northing": 6931516.10459735
+          },
+          {
+            "easting": 860744.5798709,
+            "northing": 6931517.30459735
+          },
+          {
+            "easting": 860740.9498709,
+            "northing": 6931520.96459735
+          },
+          {
+            "easting": 860744.2298709,
+            "northing": 6931524.05459735
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 55000285,
+        "numero": "0390",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0390",
+        "contenance": 74,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0391",
+      "kind": "parcel",
+      "label": "Section AB n° 0391",
+      "summary": "Mouzay · 255 m²",
+      "shortLabel": "AB 0391",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0391"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0391"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "255 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860733.89987091,
+            "northing": 6931547.39459733
+          },
+          {
+            "easting": 860745.1898709,
+            "northing": 6931533.77459734
+          },
+          {
+            "easting": 860735.1598709,
+            "northing": 6931524.13459735
+          },
+          {
+            "easting": 860722.73987091,
+            "northing": 6931536.98459734
+          },
+          {
+            "easting": 860728.76987091,
+            "northing": 6931542.20459734
+          },
+          {
+            "easting": 860733.89987091,
+            "northing": 6931547.39459733
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 55074686,
+        "numero": "0391",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0391",
+        "contenance": 255,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0400",
+      "kind": "parcel",
+      "label": "Section AB n° 0400",
+      "summary": "Mouzay · 203 m²",
+      "shortLabel": "AB 0400",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0400"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0400"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "203 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860689.55987094,
+            "northing": 6931527.01459734
+          },
+          {
+            "easting": 860702.54987093,
+            "northing": 6931540.26459734
+          },
+          {
+            "easting": 860709.37987092,
+            "northing": 6931531.66459734
+          },
+          {
+            "easting": 860709.21987093,
+            "northing": 6931531.51459734
+          },
+          {
+            "easting": 860702.45987093,
+            "northing": 6931525.21459734
+          },
+          {
+            "easting": 860702.92987093,
+            "northing": 6931524.62459735
+          },
+          {
+            "easting": 860703.23987093,
+            "northing": 6931524.21459735
+          },
+          {
+            "easting": 860699.22987093,
+            "northing": 6931518.32459735
+          },
+          {
+            "easting": 860695.62987094,
+            "northing": 6931521.55459735
+          },
+          {
+            "easting": 860689.55987094,
+            "northing": 6931527.01459734
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 56341685,
+        "numero": "0400",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0400",
+        "contenance": 203,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0401",
+      "kind": "parcel",
+      "label": "Section AB n° 0401",
+      "summary": "Mouzay · 392 m²",
+      "shortLabel": "AB 0401",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0401"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0401"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "392 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860689.55987094,
+            "northing": 6931527.01459734
+          },
+          {
+            "easting": 860689.42987094,
+            "northing": 6931526.88459734
+          },
+          {
+            "easting": 860682.75987095,
+            "northing": 6931534.12459734
+          },
+          {
+            "easting": 860674.74987095,
+            "northing": 6931544.63459733
+          },
+          {
+            "easting": 860691.33987094,
+            "northing": 6931554.61459733
+          },
+          {
+            "easting": 860698.02987093,
+            "northing": 6931545.92459733
+          },
+          {
+            "easting": 860702.54987093,
+            "northing": 6931540.26459734
+          },
+          {
+            "easting": 860689.55987094,
+            "northing": 6931527.01459734
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 56413746,
+        "numero": "0401",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0401",
+        "contenance": 392,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0407",
+      "kind": "parcel",
+      "label": "Section AB n° 0407",
+      "summary": "Mouzay · 111 m²",
+      "shortLabel": "AB 0407",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0407"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0407"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "111 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860782.10987087,
+            "northing": 6931529.19459734
+          },
+          {
+            "easting": 860786.21987086,
+            "northing": 6931536.46459734
+          },
+          {
+            "easting": 860787.93987086,
+            "northing": 6931539.48459734
+          },
+          {
+            "easting": 860793.34987086,
+            "northing": 6931536.15459734
+          },
+          {
+            "easting": 860791.20987086,
+            "northing": 6931531.69459734
+          },
+          {
+            "easting": 860795.52987086,
+            "northing": 6931529.28459734
+          },
+          {
+            "easting": 860791.81987086,
+            "northing": 6931523.00459735
+          },
+          {
+            "easting": 860782.10987087,
+            "northing": 6931529.19459734
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 56842070,
+        "numero": "0407",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0407",
+        "contenance": 111,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0417",
+      "kind": "parcel",
+      "label": "Section AB n° 0417",
+      "summary": "Mouzay · 3 916 m²",
+      "shortLabel": "AB 0417",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0417"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0417"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "3 916 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860669.70987096,
+            "northing": 6931355.26459745
+          },
+          {
+            "easting": 860625.19987099,
+            "northing": 6931373.27459744
+          },
+          {
+            "easting": 860657.05987097,
+            "northing": 6931423.24459741
+          },
+          {
+            "easting": 860636.40987098,
+            "northing": 6931440.9245974
+          },
+          {
+            "easting": 860649.80987097,
+            "northing": 6931430.9745974
+          },
+          {
+            "easting": 860662.85987096,
+            "northing": 6931447.57459739
+          },
+          {
+            "easting": 860699.63987093,
+            "northing": 6931427.50459741
+          },
+          {
+            "easting": 860706.55987093,
+            "northing": 6931415.60459741
+          },
+          {
+            "easting": 860703.40987093,
+            "northing": 6931411.01459741
+          },
+          {
+            "easting": 860696.78987094,
+            "northing": 6931400.59459742
+          },
+          {
+            "easting": 860690.01987094,
+            "northing": 6931390.31459743
+          },
+          {
+            "easting": 860675.39987095,
+            "northing": 6931365.17459744
+          },
+          {
+            "easting": 860669.70987096,
+            "northing": 6931355.26459745
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 57820805,
+        "numero": "0417",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0417",
+        "contenance": 3916,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0427",
+      "kind": "parcel",
+      "label": "Section AB n° 0427",
+      "summary": "Mouzay · 69 m²",
+      "shortLabel": "AB 0427",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0427"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0427"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "69 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860742.7298709,
+            "northing": 6931547.04459733
+          },
+          {
+            "easting": 860742.2998709,
+            "northing": 6931546.87459733
+          },
+          {
+            "easting": 860737.8998709,
+            "northing": 6931552.10459733
+          },
+          {
+            "easting": 860743.6598709,
+            "northing": 6931558.80459732
+          },
+          {
+            "easting": 860744.7898709,
+            "northing": 6931558.58459733
+          },
+          {
+            "easting": 860749.37987089,
+            "northing": 6931553.82459733
+          },
+          {
+            "easting": 860748.78987089,
+            "northing": 6931553.23459733
+          },
+          {
+            "easting": 860747.10987089,
+            "northing": 6931551.58459733
+          },
+          {
+            "easting": 860742.5898709,
+            "northing": 6931547.18459733
+          },
+          {
+            "easting": 860742.7298709,
+            "northing": 6931547.04459733
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 58776601,
+        "numero": "0427",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0427",
+        "contenance": 69,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0335",
+      "kind": "parcel",
+      "label": "Section AB n° 0335",
+      "summary": "Mouzay · 1 149 m²",
+      "shortLabel": "AB 0335",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0335"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0335"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "1 149 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860687.02987094,
+            "northing": 6931496.01459736
+          },
+          {
+            "easting": 860695.41987094,
+            "northing": 6931504.55459736
+          },
+          {
+            "easting": 860711.13987092,
+            "northing": 6931490.16459737
+          },
+          {
+            "easting": 860713.12987092,
+            "northing": 6931492.11459736
+          },
+          {
+            "easting": 860723.88987091,
+            "northing": 6931484.04459737
+          },
+          {
+            "easting": 860717.51987092,
+            "northing": 6931475.46459737
+          },
+          {
+            "easting": 860698.66987093,
+            "northing": 6931450.33459739
+          },
+          {
+            "easting": 860681.70987095,
+            "northing": 6931481.29459737
+          },
+          {
+            "easting": 860684.64987095,
+            "northing": 6931484.05459737
+          },
+          {
+            "easting": 860688.98987094,
+            "northing": 6931488.54459737
+          },
+          {
+            "easting": 860684.10987095,
+            "northing": 6931493.02459737
+          },
+          {
+            "easting": 860687.02987094,
+            "northing": 6931496.01459736
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 48803337,
+        "numero": "0335",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0335",
+        "contenance": 1149,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0336",
+      "kind": "parcel",
+      "label": "Section AB n° 0336",
+      "summary": "Mouzay · 112 m²",
+      "shortLabel": "AB 0336",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0336"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0336"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "112 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860743.5698709,
+            "northing": 6931460.66459738
+          },
+          {
+            "easting": 860748.98987089,
+            "northing": 6931466.88459738
+          },
+          {
+            "easting": 860750.54987089,
+            "northing": 6931468.53459738
+          },
+          {
+            "easting": 860758.72987089,
+            "northing": 6931460.89459738
+          },
+          {
+            "easting": 860753.83987089,
+            "northing": 6931455.09459739
+          },
+          {
+            "easting": 860752.46987089,
+            "northing": 6931453.43459739
+          },
+          {
+            "easting": 860745.6898709,
+            "northing": 6931459.19459738
+          },
+          {
+            "easting": 860743.5698709,
+            "northing": 6931460.66459738
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 48892144,
+        "numero": "0336",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0336",
+        "contenance": 112,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0339",
+      "kind": "parcel",
+      "label": "Section AB n° 0339",
+      "summary": "Mouzay · 345 m²",
+      "shortLabel": "AB 0339",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0339"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0339"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "345 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860734.85987091,
+            "northing": 6931438.1145974
+          },
+          {
+            "easting": 860737.5098709,
+            "northing": 6931435.9345974
+          },
+          {
+            "easting": 860739.4598709,
+            "northing": 6931438.1045974
+          },
+          {
+            "easting": 860740.6798709,
+            "northing": 6931437.3145974
+          },
+          {
+            "easting": 860754.69987089,
+            "northing": 6931427.8945974
+          },
+          {
+            "easting": 860748.05987089,
+            "northing": 6931421.08459741
+          },
+          {
+            "easting": 860744.6298709,
+            "northing": 6931423.14459741
+          },
+          {
+            "easting": 860744.0598709,
+            "northing": 6931422.49459741
+          },
+          {
+            "easting": 860742.7598709,
+            "northing": 6931423.45459741
+          },
+          {
+            "easting": 860743.1498709,
+            "northing": 6931424.06459741
+          },
+          {
+            "easting": 860740.4798709,
+            "northing": 6931425.62459741
+          },
+          {
+            "easting": 860739.4798709,
+            "northing": 6931426.21459741
+          },
+          {
+            "easting": 860737.5198709,
+            "northing": 6931423.5945974
+          },
+          {
+            "easting": 860731.83987091,
+            "northing": 6931426.01459741
+          },
+          {
+            "easting": 860731.23987091,
+            "northing": 6931426.26459741
+          },
+          {
+            "easting": 860730.38987091,
+            "northing": 6931426.65459741
+          },
+          {
+            "easting": 860727.84987091,
+            "northing": 6931427.70459741
+          },
+          {
+            "easting": 860726.23987091,
+            "northing": 6931428.3945974
+          },
+          {
+            "easting": 860722.92987091,
+            "northing": 6931429.7445974
+          },
+          {
+            "easting": 860719.36987092,
+            "northing": 6931431.1945974
+          },
+          {
+            "easting": 860729.35987091,
+            "northing": 6931442.5545974
+          },
+          {
+            "easting": 860734.85987091,
+            "northing": 6931438.1145974
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 49156428,
+        "numero": "0339",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0339",
+        "contenance": 345,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0340",
+      "kind": "parcel",
+      "label": "Section AB n° 0340",
+      "summary": "Mouzay · 480 m²",
+      "shortLabel": "AB 0340",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0340"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0340"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "480 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860734.85987091,
+            "northing": 6931438.1145974
+          },
+          {
+            "easting": 860729.35987091,
+            "northing": 6931442.5545974
+          },
+          {
+            "easting": 860719.36987092,
+            "northing": 6931431.1945974
+          },
+          {
+            "easting": 860709.08987093,
+            "northing": 6931434.2145974
+          },
+          {
+            "easting": 860715.68987092,
+            "northing": 6931442.8245974
+          },
+          {
+            "easting": 860719.49987092,
+            "northing": 6931447.76459739
+          },
+          {
+            "easting": 860723.13987091,
+            "northing": 6931452.42459739
+          },
+          {
+            "easting": 860729.37987091,
+            "northing": 6931460.47459738
+          },
+          {
+            "easting": 860736.7798709,
+            "northing": 6931454.82459739
+          },
+          {
+            "easting": 860747.0298709,
+            "northing": 6931447.03459739
+          },
+          {
+            "easting": 860743.7998709,
+            "northing": 6931443.3245974
+          },
+          {
+            "easting": 860739.8898709,
+            "northing": 6931438.8045974
+          },
+          {
+            "easting": 860737.2298709,
+            "northing": 6931440.6745974
+          },
+          {
+            "easting": 860734.85987091,
+            "northing": 6931438.1145974
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 49535954,
+        "numero": "0340",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0340",
+        "contenance": 480,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0341",
+      "kind": "parcel",
+      "label": "Section AB n° 0341",
+      "summary": "Mouzay · 113 m²",
+      "shortLabel": "AB 0341",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0341"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0341"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "113 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860709.08987093,
+            "northing": 6931434.2145974
+          },
+          {
+            "easting": 860708.52987093,
+            "northing": 6931434.3245974
+          },
+          {
+            "easting": 860708.23987093,
+            "northing": 6931434.3845974
+          },
+          {
+            "easting": 860703.24987093,
+            "northing": 6931443.5745974
+          },
+          {
+            "easting": 860702.05987093,
+            "northing": 6931445.75459739
+          },
+          {
+            "easting": 860701.67987093,
+            "northing": 6931446.45459739
+          },
+          {
+            "easting": 860700.73987093,
+            "northing": 6931448.21459739
+          },
+          {
+            "easting": 860701.75987093,
+            "northing": 6931449.52459739
+          },
+          {
+            "easting": 860703.05987093,
+            "northing": 6931451.19459739
+          },
+          {
+            "easting": 860705.34987093,
+            "northing": 6931449.72459739
+          },
+          {
+            "easting": 860715.68987092,
+            "northing": 6931442.8245974
+          },
+          {
+            "easting": 860709.08987093,
+            "northing": 6931434.2145974
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 49623349,
+        "numero": "0341",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0341",
+        "contenance": 113,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0343",
+      "kind": "parcel",
+      "label": "Section AB n° 0343",
+      "summary": "Mouzay · 96 m²",
+      "shortLabel": "AB 0343",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0343"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0343"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "96 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860723.13987091,
+            "northing": 6931452.42459739
+          },
+          {
+            "easting": 860719.49987092,
+            "northing": 6931447.76459739
+          },
+          {
+            "easting": 860706.73987093,
+            "northing": 6931455.92459739
+          },
+          {
+            "easting": 860710.53987092,
+            "northing": 6931460.99459738
+          },
+          {
+            "easting": 860723.13987091,
+            "northing": 6931452.42459739
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 49797036,
+        "numero": "0343",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0343",
+        "contenance": 96,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0345",
+      "kind": "parcel",
+      "label": "Section AB n° 0345",
+      "summary": "Mouzay · 457 m²",
+      "shortLabel": "AB 0345",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0345"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0345"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "457 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860743.5698709,
+            "northing": 6931460.66459738
+          },
+          {
+            "easting": 860741.3498709,
+            "northing": 6931462.21459739
+          },
+          {
+            "easting": 860738.4698709,
+            "northing": 6931457.60459739
+          },
+          {
+            "easting": 860736.7798709,
+            "northing": 6931454.82459739
+          },
+          {
+            "easting": 860729.37987091,
+            "northing": 6931460.47459738
+          },
+          {
+            "easting": 860717.18987092,
+            "northing": 6931469.73459738
+          },
+          {
+            "easting": 860724.99987091,
+            "northing": 6931479.38459737
+          },
+          {
+            "easting": 860729.04987091,
+            "northing": 6931484.32459737
+          },
+          {
+            "easting": 860731.28987091,
+            "northing": 6931482.45459737
+          },
+          {
+            "easting": 860748.98987089,
+            "northing": 6931466.88459738
+          },
+          {
+            "easting": 860743.5698709,
+            "northing": 6931460.66459738
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 49969371,
+        "numero": "0345",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0345",
+        "contenance": 457,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0349",
+      "kind": "parcel",
+      "label": "Section AB n° 0349",
+      "summary": "Mouzay · 325 m²",
+      "shortLabel": "AB 0349",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0349"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0349"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "325 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860778.13987087,
+            "northing": 6931498.20459736
+          },
+          {
+            "easting": 860787.67987086,
+            "northing": 6931491.96459737
+          },
+          {
+            "easting": 860791.28987086,
+            "northing": 6931489.45459737
+          },
+          {
+            "easting": 860796.64987086,
+            "northing": 6931485.98459737
+          },
+          {
+            "easting": 860795.09987086,
+            "northing": 6931482.68459737
+          },
+          {
+            "easting": 860787.84987086,
+            "northing": 6931473.31459738
+          },
+          {
+            "easting": 860778.07987087,
+            "northing": 6931480.58459737
+          },
+          {
+            "easting": 860776.50987087,
+            "northing": 6931481.77459737
+          },
+          {
+            "easting": 860774.41987087,
+            "northing": 6931483.21459737
+          },
+          {
+            "easting": 860771.30987088,
+            "northing": 6931485.43459737
+          },
+          {
+            "easting": 860775.73987087,
+            "northing": 6931493.62459737
+          },
+          {
+            "easting": 860778.13987087,
+            "northing": 6931498.20459736
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 50309308,
+        "numero": "0349",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0349",
+        "contenance": 325,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0352",
+      "kind": "parcel",
+      "label": "Section AB n° 0352",
+      "summary": "Mouzay · 120 m²",
+      "shortLabel": "AB 0352",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0352"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0352"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "120 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860783.14987087,
+            "northing": 6931507.69459736
+          },
+          {
+            "easting": 860789.61987086,
+            "northing": 6931504.28459736
+          },
+          {
+            "easting": 860797.02987085,
+            "northing": 6931500.49459736
+          },
+          {
+            "easting": 860802.32987085,
+            "northing": 6931497.75459736
+          },
+          {
+            "easting": 860799.56987085,
+            "northing": 6931492.09459736
+          },
+          {
+            "easting": 860794.45987086,
+            "northing": 6931495.17459736
+          },
+          {
+            "easting": 860790.82987086,
+            "northing": 6931497.35459736
+          },
+          {
+            "easting": 860780.78987087,
+            "northing": 6931503.21459736
+          },
+          {
+            "easting": 860783.14987087,
+            "northing": 6931507.69459736
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 50852242,
+        "numero": "0352",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0352",
+        "contenance": 120,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0353",
+      "kind": "parcel",
+      "label": "Section AB n° 0353",
+      "summary": "Mouzay · 207 m²",
+      "shortLabel": "AB 0353",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0353"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0353"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "207 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860765.80987088,
+            "northing": 6931509.86459736
+          },
+          {
+            "easting": 860773.81987087,
+            "northing": 6931518.88459735
+          },
+          {
+            "easting": 860785.06987086,
+            "northing": 6931511.47459735
+          },
+          {
+            "easting": 860783.14987087,
+            "northing": 6931507.69459736
+          },
+          {
+            "easting": 860780.78987087,
+            "northing": 6931503.21459736
+          },
+          {
+            "easting": 860778.13987087,
+            "northing": 6931498.20459736
+          },
+          {
+            "easting": 860765.80987088,
+            "northing": 6931509.86459736
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 50936120,
+        "numero": "0353",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0353",
+        "contenance": 207,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0355",
+      "kind": "parcel",
+      "label": "Section AB n° 0355",
+      "summary": "Mouzay · 325 m²",
+      "shortLabel": "AB 0355",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0355"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0355"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "325 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860785.06987086,
+            "northing": 6931511.47459735
+          },
+          {
+            "easting": 860791.81987086,
+            "northing": 6931523.00459735
+          },
+          {
+            "easting": 860795.52987086,
+            "northing": 6931529.28459734
+          },
+          {
+            "easting": 860801.65987085,
+            "northing": 6931540.09459733
+          },
+          {
+            "easting": 860802.36987085,
+            "northing": 6931539.88459733
+          },
+          {
+            "easting": 860802.78987085,
+            "northing": 6931539.76459733
+          },
+          {
+            "easting": 860797.46987085,
+            "northing": 6931528.88459734
+          },
+          {
+            "easting": 860794.67987086,
+            "northing": 6931523.67459734
+          },
+          {
+            "easting": 860807.41987085,
+            "northing": 6931517.15459735
+          },
+          {
+            "easting": 860806.42987085,
+            "northing": 6931513.31459735
+          },
+          {
+            "easting": 860805.25987085,
+            "northing": 6931508.85459735
+          },
+          {
+            "easting": 860807.19987085,
+            "northing": 6931507.83459735
+          },
+          {
+            "easting": 860806.70987085,
+            "northing": 6931506.84459736
+          },
+          {
+            "easting": 860804.70987085,
+            "northing": 6931502.83459736
+          },
+          {
+            "easting": 860792.20987086,
+            "northing": 6931509.75459735
+          },
+          {
+            "easting": 860789.61987086,
+            "northing": 6931504.28459736
+          },
+          {
+            "easting": 860783.14987087,
+            "northing": 6931507.69459736
+          },
+          {
+            "easting": 860785.06987086,
+            "northing": 6931511.47459735
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 51102678,
+        "numero": "0355",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0355",
+        "contenance": 325,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0359",
+      "kind": "parcel",
+      "label": "Section AB n° 0359",
+      "summary": "Mouzay · 109 m²",
+      "shortLabel": "AB 0359",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0359"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0359"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "109 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860787.93987086,
+            "northing": 6931539.48459734
+          },
+          {
+            "easting": 860789.14987086,
+            "northing": 6931541.50459734
+          },
+          {
+            "easting": 860791.40987086,
+            "northing": 6931545.27459733
+          },
+          {
+            "easting": 860799.55987085,
+            "northing": 6931541.15459734
+          },
+          {
+            "easting": 860801.65987085,
+            "northing": 6931540.09459733
+          },
+          {
+            "easting": 860795.52987086,
+            "northing": 6931529.28459734
+          },
+          {
+            "easting": 860791.20987086,
+            "northing": 6931531.69459734
+          },
+          {
+            "easting": 860793.34987086,
+            "northing": 6931536.15459734
+          },
+          {
+            "easting": 860787.93987086,
+            "northing": 6931539.48459734
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 51432572,
+        "numero": "0359",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0359",
+        "contenance": 109,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0361",
+      "kind": "parcel",
+      "label": "Section AB n° 0361",
+      "summary": "Mouzay · 167 m²",
+      "shortLabel": "AB 0361",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0361"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0361"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "167 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860788.28987086,
+            "northing": 6931564.74459732
+          },
+          {
+            "easting": 860801.84987085,
+            "northing": 6931555.69459733
+          },
+          {
+            "easting": 860800.87987085,
+            "northing": 6931554.13459733
+          },
+          {
+            "easting": 860797.17987085,
+            "northing": 6931547.94459733
+          },
+          {
+            "easting": 860789.82987086,
+            "northing": 6931551.51459733
+          },
+          {
+            "easting": 860782.21987087,
+            "northing": 6931557.13459733
+          },
+          {
+            "easting": 860784.44987086,
+            "northing": 6931559.92459732
+          },
+          {
+            "easting": 860788.28987086,
+            "northing": 6931564.74459732
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 51885160,
+        "numero": "0361",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0361",
+        "contenance": 167,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0363",
+      "kind": "parcel",
+      "label": "Section AB n° 0363",
+      "summary": "Mouzay · 309 m²",
+      "shortLabel": "AB 0363",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0363"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0363"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "309 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860817.63987084,
+            "northing": 6931574.79459731
+          },
+          {
+            "easting": 860816.97987084,
+            "northing": 6931573.97459731
+          },
+          {
+            "easting": 860829.14987083,
+            "northing": 6931561.47459732
+          },
+          {
+            "easting": 860817.20987084,
+            "northing": 6931548.43459733
+          },
+          {
+            "easting": 860805.09987085,
+            "northing": 6931559.75459732
+          },
+          {
+            "easting": 860813.40987084,
+            "northing": 6931569.87459731
+          },
+          {
+            "easting": 860811.55987084,
+            "northing": 6931571.41459732
+          },
+          {
+            "easting": 860811.94987084,
+            "northing": 6931571.92459732
+          },
+          {
+            "easting": 860816.09987084,
+            "northing": 6931576.03459731
+          },
+          {
+            "easting": 860817.63987084,
+            "northing": 6931574.79459731
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 52047707,
+        "numero": "0363",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0363",
+        "contenance": 309,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0389",
+      "kind": "parcel",
+      "label": "Section AB n° 0389",
+      "summary": "Mouzay · 69 m²",
+      "shortLabel": "AB 0389",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0389"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0389"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "69 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860744.2298709,
+            "northing": 6931524.05459735
+          },
+          {
+            "easting": 860747.20987089,
+            "northing": 6931526.71459734
+          },
+          {
+            "easting": 860758.53987089,
+            "northing": 6931516.00459735
+          },
+          {
+            "easting": 860755.40987089,
+            "northing": 6931512.92459735
+          },
+          {
+            "easting": 860744.2298709,
+            "northing": 6931524.05459735
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 54641057,
+        "numero": "0389",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0389",
+        "contenance": 69,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0393",
+      "kind": "parcel",
+      "label": "Section AB n° 0393",
+      "summary": "Mouzay · 108 m²",
+      "shortLabel": "AB 0393",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0393"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0393"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "108 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860749.88987089,
+            "northing": 6931538.35459734
+          },
+          {
+            "easting": 860742.7298709,
+            "northing": 6931547.04459733
+          },
+          {
+            "easting": 860742.5898709,
+            "northing": 6931547.18459733
+          },
+          {
+            "easting": 860747.10987089,
+            "northing": 6931551.58459733
+          },
+          {
+            "easting": 860748.78987089,
+            "northing": 6931553.23459733
+          },
+          {
+            "easting": 860749.37987089,
+            "northing": 6931553.82459733
+          },
+          {
+            "easting": 860753.15987089,
+            "northing": 6931549.63459733
+          },
+          {
+            "easting": 860756.63987089,
+            "northing": 6931545.03459733
+          },
+          {
+            "easting": 860749.88987089,
+            "northing": 6931538.35459734
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 55223077,
+        "numero": "0393",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0393",
+        "contenance": 108,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0397",
+      "kind": "parcel",
+      "label": "Section AB n° 0397",
+      "summary": "Mouzay · 150 m²",
+      "shortLabel": "AB 0397",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0397"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0397"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "150 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860713.60987092,
+            "northing": 6931558.17459733
+          },
+          {
+            "easting": 860715.37987092,
+            "northing": 6931555.84459733
+          },
+          {
+            "easting": 860721.16987092,
+            "northing": 6931560.37459733
+          },
+          {
+            "easting": 860724.64987091,
+            "northing": 6931555.41459733
+          },
+          {
+            "easting": 860729.15987091,
+            "northing": 6931549.01459733
+          },
+          {
+            "easting": 860724.46987091,
+            "northing": 6931545.04459733
+          },
+          {
+            "easting": 860721.73987092,
+            "northing": 6931542.70459734
+          },
+          {
+            "easting": 860711.62987092,
+            "northing": 6931556.46459733
+          },
+          {
+            "easting": 860713.60987092,
+            "northing": 6931558.17459733
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 55516744,
+        "numero": "0397",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0397",
+        "contenance": 150,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0398",
+      "kind": "parcel",
+      "label": "Section AB n° 0398",
+      "summary": "Mouzay · 182 m²",
+      "shortLabel": "AB 0398",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0398"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0398"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "182 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860717.34987092,
+            "northing": 6931538.71459733
+          },
+          {
+            "easting": 860707.05987093,
+            "northing": 6931552.73459733
+          },
+          {
+            "easting": 860701.17987093,
+            "northing": 6931560.59459733
+          },
+          {
+            "easting": 860708.57987093,
+            "northing": 6931565.03459732
+          },
+          {
+            "easting": 860713.60987092,
+            "northing": 6931558.17459733
+          },
+          {
+            "easting": 860711.62987092,
+            "northing": 6931556.46459733
+          },
+          {
+            "easting": 860721.73987092,
+            "northing": 6931542.70459734
+          },
+          {
+            "easting": 860720.44987092,
+            "northing": 6931541.51459733
+          },
+          {
+            "easting": 860717.34987092,
+            "northing": 6931538.71459733
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 55589505,
+        "numero": "0398",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0398",
+        "contenance": 182,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0399",
+      "kind": "parcel",
+      "label": "Section AB n° 0399",
+      "summary": "Mouzay · 315 m²",
+      "shortLabel": "AB 0399",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0399"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0399"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "315 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860702.54987093,
+            "northing": 6931540.26459734
+          },
+          {
+            "easting": 860698.02987093,
+            "northing": 6931545.92459733
+          },
+          {
+            "easting": 860691.33987094,
+            "northing": 6931554.61459733
+          },
+          {
+            "easting": 860695.56987094,
+            "northing": 6931557.18459733
+          },
+          {
+            "easting": 860697.32987093,
+            "northing": 6931558.20459733
+          },
+          {
+            "easting": 860701.17987093,
+            "northing": 6931560.59459733
+          },
+          {
+            "easting": 860707.05987093,
+            "northing": 6931552.73459733
+          },
+          {
+            "easting": 860717.34987092,
+            "northing": 6931538.71459733
+          },
+          {
+            "easting": 860709.37987092,
+            "northing": 6931531.66459734
+          },
+          {
+            "easting": 860702.54987093,
+            "northing": 6931540.26459734
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 55661996,
+        "numero": "0399",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0399",
+        "contenance": 315,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0406",
+      "kind": "parcel",
+      "label": "Section AB n° 0406",
+      "summary": "Mouzay · 168 m²",
+      "shortLabel": "AB 0406",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0406"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0406"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "168 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860773.81987087,
+            "northing": 6931518.88459735
+          },
+          {
+            "easting": 860782.10987087,
+            "northing": 6931529.19459734
+          },
+          {
+            "easting": 860791.81987086,
+            "northing": 6931523.00459735
+          },
+          {
+            "easting": 860785.06987086,
+            "northing": 6931511.47459735
+          },
+          {
+            "easting": 860773.81987087,
+            "northing": 6931518.88459735
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 56770974,
+        "numero": "0406",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0406",
+        "contenance": 168,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    },
+    {
+      "id": "55364000AB0428",
+      "kind": "parcel",
+      "label": "Section AB n° 0428",
+      "summary": "Mouzay · 117 m²",
+      "shortLabel": "AB 0428",
+      "details": [
+        {
+          "labelKey": "carteGouv.parcel.section",
+          "value": "AB"
+        },
+        {
+          "labelKey": "carteGouv.parcel.number",
+          "value": "0428"
+        },
+        {
+          "labelKey": "carteGouv.parcel.commune",
+          "value": "Mouzay (55364)"
+        },
+        {
+          "labelKey": "carteGouv.parcel.reference",
+          "value": "55364 000 AB 0428"
+        },
+        {
+          "labelKey": "carteGouv.parcel.area",
+          "value": "117 m²"
+        }
+      ],
+      "rings": [
+        [
+          {
+            "easting": 860749.88987089,
+            "northing": 6931538.35459734
+          },
+          {
+            "easting": 860745.1898709,
+            "northing": 6931533.77459734
+          },
+          {
+            "easting": 860733.89987091,
+            "northing": 6931547.39459733
+          },
+          {
+            "easting": 860737.8998709,
+            "northing": 6931552.10459733
+          },
+          {
+            "easting": 860742.2998709,
+            "northing": 6931546.87459733
+          },
+          {
+            "easting": 860742.7298709,
+            "northing": 6931547.04459733
+          },
+          {
+            "easting": 860749.88987089,
+            "northing": 6931538.35459734
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 58843143,
+        "numero": "0428",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "55",
+        "nom_com": "Mouzay",
+        "code_com": "364",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "55364000AB0428",
+        "contenance": 117,
+        "code_insee": "55364"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    }
+  ]
+}

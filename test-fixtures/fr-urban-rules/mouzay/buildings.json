@@ -1,0 +1,5037 @@
+{
+  "date": "2026-10-20T06:25:49.427Z",
+  "kind": "building",
+  "query": {
+    "crs": "EPSG:2154",
+    "minEasting": 860687.6898709,
+    "minNorthing": 6931418.25459738,
+    "maxEasting": 860825.73987087,
+    "maxNorthing": 6931558.05459735,
+    "limit": 500
+  },
+  "answer": [
+    {
+      "id": "BATIMENT0000002274729130",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860733.89987091,
+            "northing": 6931547.39459733
+          },
+          {
+            "easting": 860745.1898709,
+            "northing": 6931533.77459734
+          },
+          {
+            "easting": 860735.1598709,
+            "northing": 6931524.13459735
+          },
+          {
+            "easting": 860722.73987091,
+            "northing": 6931536.98459734
+          },
+          {
+            "easting": 860728.76987091,
+            "northing": 6931542.20459734
+          },
+          {
+            "easting": 860733.89987091,
+            "northing": 6931547.39459733
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23445695,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729130",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "10",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 8.9,
+        "bdtopo.altitude_minimale_sol": 173.6,
+        "bdtopo.altitude_maximale_toit": 184.3
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 8.9,
+        "roofMetres": 10.7,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 173.6,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "pci:batiment.23683307",
+      "kind": "building",
+      "label": "Construction légère",
+      "rings": [
+        [
+          {
+            "easting": 860780.73987087,
+            "northing": 6931466.63459738
+          },
+          {
+            "easting": 860783.80987087,
+            "northing": 6931470.73459738
+          },
+          {
+            "easting": 860785.06987086,
+            "northing": 6931469.78459738
+          },
+          {
+            "easting": 860781.91987087,
+            "northing": 6931465.62459738
+          },
+          {
+            "easting": 860780.73987087,
+            "northing": 6931466.63459738
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23451521,
+        "pci.type": "Construction légère"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "lightweight": true
+    },
+    {
+      "id": "pci:batiment.23704076",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "rings": [
+        [
+          {
+            "easting": 860763.07987088,
+            "northing": 6931479.67459737
+          },
+          {
+            "easting": 860761.93987088,
+            "northing": 6931480.74459737
+          },
+          {
+            "easting": 860762.23987088,
+            "northing": 6931482.81459737
+          },
+          {
+            "easting": 860764.55987088,
+            "northing": 6931480.96459737
+          },
+          {
+            "easting": 860763.51987088,
+            "northing": 6931479.29459737
+          },
+          {
+            "easting": 860763.07987088,
+            "northing": 6931479.67459737
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23472453,
+        "pci.type": "Bâtiment en dur"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO"
+    },
+    {
+      "id": "BATIMENT0000002274729095",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Annexe · 1 étage",
+      "rings": [
+        [
+          {
+            "easting": 860767.12987088,
+            "northing": 6931477.54459737
+          },
+          {
+            "easting": 860771.30987088,
+            "northing": 6931485.43459737
+          },
+          {
+            "easting": 860774.41987087,
+            "northing": 6931483.21459737
+          },
+          {
+            "easting": 860769.35987088,
+            "northing": 6931475.76459738
+          },
+          {
+            "easting": 860767.12987088,
+            "northing": 6931477.54459737
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23472597,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729095",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Annexe",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 0,
+        "bdtopo.nombre_d_etages": 1,
+        "bdtopo.materiaux_des_murs": "",
+        "bdtopo.materiaux_de_la_toiture": "",
+        "bdtopo.hauteur": 4.8,
+        "bdtopo.altitude_minimale_sol": 171.2,
+        "bdtopo.altitude_maximale_toit": 178.2
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 4.8,
+        "roofMetres": 7,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 171.2,
+        "verticalDatum": "NGF-IGN 1969"
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729094",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860771.14987088,
+            "northing": 6931474.33459738
+          },
+          {
+            "easting": 860773.26987087,
+            "northing": 6931477.31459738
+          },
+          {
+            "easting": 860774.82987087,
+            "northing": 6931476.12459737
+          },
+          {
+            "easting": 860778.07987087,
+            "northing": 6931480.58459737
+          },
+          {
+            "easting": 860787.84987086,
+            "northing": 6931473.31459738
+          },
+          {
+            "easting": 860785.06987086,
+            "northing": 6931469.78459738
+          },
+          {
+            "easting": 860783.80987087,
+            "northing": 6931470.73459738
+          },
+          {
+            "easting": 860780.73987087,
+            "northing": 6931466.63459738
+          },
+          {
+            "easting": 860771.14987088,
+            "northing": 6931474.33459738
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23472759,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729094",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "50",
+        "bdtopo.materiaux_de_la_toiture": "90",
+        "bdtopo.hauteur": 5.8,
+        "bdtopo.altitude_minimale_sol": 171.2,
+        "bdtopo.altitude_maximale_toit": 180.1
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 5.8,
+        "roofMetres": 8.9,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 171.2,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "block"
+        ],
+        "roof": [
+          "other"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729093",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860771.14987088,
+            "northing": 6931474.33459738
+          },
+          {
+            "easting": 860780.73987087,
+            "northing": 6931466.63459738
+          },
+          {
+            "easting": 860781.91987087,
+            "northing": 6931465.62459738
+          },
+          {
+            "easting": 860774.47987087,
+            "northing": 6931456.15459739
+          },
+          {
+            "easting": 860766.33987088,
+            "northing": 6931461.97459738
+          },
+          {
+            "easting": 860759.64987089,
+            "northing": 6931467.76459738
+          },
+          {
+            "easting": 860759.92987088,
+            "northing": 6931468.25459738
+          },
+          {
+            "easting": 860766.53987088,
+            "northing": 6931476.90459738
+          },
+          {
+            "easting": 860767.12987088,
+            "northing": 6931477.54459737
+          },
+          {
+            "easting": 860769.35987088,
+            "northing": 6931475.76459738
+          },
+          {
+            "easting": 860771.14987088,
+            "northing": 6931474.33459738
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23472907,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729093",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 7.3,
+        "bdtopo.altitude_minimale_sol": 172,
+        "bdtopo.altitude_maximale_toit": 180.8
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 7.3,
+        "roofMetres": 8.8,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 172,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729113",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 2 logements · 1 étage",
+      "rings": [
+        [
+          {
+            "easting": 860748.47987089,
+            "northing": 6931446.4845974
+          },
+          {
+            "easting": 860751.64987089,
+            "northing": 6931450.48459739
+          },
+          {
+            "easting": 860752.06987089,
+            "northing": 6931451.01459739
+          },
+          {
+            "easting": 860752.45987089,
+            "northing": 6931450.69459739
+          },
+          {
+            "easting": 860754.29987089,
+            "northing": 6931453.00459739
+          },
+          {
+            "easting": 860754.01987089,
+            "northing": 6931453.22459739
+          },
+          {
+            "easting": 860759.62987089,
+            "northing": 6931460.03459739
+          },
+          {
+            "easting": 860772.02987088,
+            "northing": 6931450.73459739
+          },
+          {
+            "easting": 860767.35987088,
+            "northing": 6931444.98459739
+          },
+          {
+            "easting": 860766.93987088,
+            "northing": 6931445.2345974
+          },
+          {
+            "easting": 860762.97987088,
+            "northing": 6931440.2645974
+          },
+          {
+            "easting": 860762.06987088,
+            "northing": 6931440.9745974
+          },
+          {
+            "easting": 860759.73987088,
+            "northing": 6931438.0245974
+          },
+          {
+            "easting": 860749.67987089,
+            "northing": 6931445.58459739
+          },
+          {
+            "easting": 860748.47987089,
+            "northing": 6931446.4845974
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23473556,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729113",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 2,
+        "bdtopo.nombre_d_etages": 1,
+        "bdtopo.materiaux_des_murs": "13",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 6,
+        "bdtopo.altitude_minimale_sol": 170.3,
+        "bdtopo.altitude_maximale_toit": 177.7
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 6,
+        "roofMetres": 7.4,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 170.3,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone",
+          "concrete"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729118",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Annexe · 1 étage",
+      "rings": [
+        [
+          {
+            "easting": 860727.35987091,
+            "northing": 6931408.76459742
+          },
+          {
+            "easting": 860733.48987091,
+            "northing": 6931418.57459741
+          },
+          {
+            "easting": 860738.5898709,
+            "northing": 6931415.01459741
+          },
+          {
+            "easting": 860734.85987091,
+            "northing": 6931409.59459742
+          },
+          {
+            "easting": 860732.92987091,
+            "northing": 6931410.97459742
+          },
+          {
+            "easting": 860729.88987091,
+            "northing": 6931406.90459742
+          },
+          {
+            "easting": 860727.35987091,
+            "northing": 6931408.76459742
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23474837,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729118",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Annexe",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 0,
+        "bdtopo.nombre_d_etages": 1,
+        "bdtopo.materiaux_des_murs": "02",
+        "bdtopo.materiaux_de_la_toiture": "01",
+        "bdtopo.hauteur": 5,
+        "bdtopo.altitude_minimale_sol": 168,
+        "bdtopo.altitude_maximale_toit": 175.4
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 5,
+        "roofMetres": 7.4,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 168,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      }
+    },
+    {
+      "id": "pci:batiment.23709442",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "rings": [
+        [
+          {
+            "easting": 860725.62987091,
+            "northing": 6931575.74459731
+          },
+          {
+            "easting": 860735.3298709,
+            "northing": 6931561.41459732
+          },
+          {
+            "easting": 860732.88987091,
+            "northing": 6931555.24459733
+          },
+          {
+            "easting": 860729.98987091,
+            "northing": 6931552.56459733
+          },
+          {
+            "easting": 860717.73987092,
+            "northing": 6931570.45459732
+          },
+          {
+            "easting": 860725.62987091,
+            "northing": 6931575.74459731
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23477845,
+        "pci.type": "Bâtiment en dur"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO"
+    },
+    {
+      "id": "BATIMENT0000002274729086",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860711.62987092,
+            "northing": 6931556.46459733
+          },
+          {
+            "easting": 860721.73987092,
+            "northing": 6931542.70459734
+          },
+          {
+            "easting": 860720.44987092,
+            "northing": 6931541.51459733
+          },
+          {
+            "easting": 860717.34987092,
+            "northing": 6931538.71459733
+          },
+          {
+            "easting": 860707.05987093,
+            "northing": 6931552.73459733
+          },
+          {
+            "easting": 860711.62987092,
+            "northing": 6931556.46459733
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23478144,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729086",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "10",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 8.5,
+        "bdtopo.altitude_minimale_sol": 171.8,
+        "bdtopo.altitude_maximale_toit": 181.8
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 8.5,
+        "roofMetres": 10,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 171.8,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729087",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860717.34987092,
+            "northing": 6931538.71459733
+          },
+          {
+            "easting": 860709.37987092,
+            "northing": 6931531.66459734
+          },
+          {
+            "easting": 860702.54987093,
+            "northing": 6931540.26459734
+          },
+          {
+            "easting": 860698.02987093,
+            "northing": 6931545.92459733
+          },
+          {
+            "easting": 860691.33987094,
+            "northing": 6931554.61459733
+          },
+          {
+            "easting": 860695.56987094,
+            "northing": 6931557.18459733
+          },
+          {
+            "easting": 860701.27987093,
+            "northing": 6931548.90459733
+          },
+          {
+            "easting": 860702.92987093,
+            "northing": 6931550.18459733
+          },
+          {
+            "easting": 860697.32987093,
+            "northing": 6931558.20459733
+          },
+          {
+            "easting": 860701.17987093,
+            "northing": 6931560.59459733
+          },
+          {
+            "easting": 860707.05987093,
+            "northing": 6931552.73459733
+          },
+          {
+            "easting": 860717.34987092,
+            "northing": 6931538.71459733
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23478281,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729087",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "21",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 6.9,
+        "bdtopo.altitude_minimale_sol": 170,
+        "bdtopo.altitude_maximale_toit": 181.4
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 6.9,
+        "roofMetres": 11.4,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 170,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone",
+          "stone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729048",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860759.35987088,
+            "northing": 6931569.85459732
+          },
+          {
+            "easting": 860748.81987089,
+            "northing": 6931559.68459732
+          },
+          {
+            "easting": 860740.4298709,
+            "northing": 6931568.62459732
+          },
+          {
+            "easting": 860751.28987089,
+            "northing": 6931578.60459731
+          },
+          {
+            "easting": 860757.58987089,
+            "northing": 6931571.77459731
+          },
+          {
+            "easting": 860759.35987088,
+            "northing": 6931569.85459732
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23478473,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729048",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "10",
+        "bdtopo.materiaux_de_la_toiture": "19",
+        "bdtopo.hauteur": 7.8,
+        "bdtopo.altitude_minimale_sol": 171.6,
+        "bdtopo.altitude_maximale_toit": 181.1
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 7.8,
+        "roofMetres": 9.5,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 171.6,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone"
+        ],
+        "roof": [
+          "tiles",
+          "other"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729047",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Annexe · 1 étage",
+      "rings": [
+        [
+          {
+            "easting": 860765.46987088,
+            "northing": 6931560.86459733
+          },
+          {
+            "easting": 860755.54987089,
+            "northing": 6931552.11459733
+          },
+          {
+            "easting": 860748.81987089,
+            "northing": 6931559.68459732
+          },
+          {
+            "easting": 860759.35987088,
+            "northing": 6931569.85459732
+          },
+          {
+            "easting": 860761.04987088,
+            "northing": 6931567.37459732
+          },
+          {
+            "easting": 860765.46987088,
+            "northing": 6931560.86459733
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23478588,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729047",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Annexe",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 0,
+        "bdtopo.nombre_d_etages": 1,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 8.9,
+        "bdtopo.altitude_minimale_sol": 172.4,
+        "bdtopo.altitude_maximale_toit": 182.9
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 8.9,
+        "roofMetres": 10.5,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 172.4,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729084",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860758.85987089,
+            "northing": 6931542.25459733
+          },
+          {
+            "easting": 860761.52987088,
+            "northing": 6931545.46459733
+          },
+          {
+            "easting": 860755.54987089,
+            "northing": 6931552.11459733
+          },
+          {
+            "easting": 860765.46987088,
+            "northing": 6931560.86459733
+          },
+          {
+            "easting": 860774.07987087,
+            "northing": 6931550.82459733
+          },
+          {
+            "easting": 860779.64987087,
+            "northing": 6931545.31459733
+          },
+          {
+            "easting": 860774.89987087,
+            "northing": 6931538.31459734
+          },
+          {
+            "easting": 860770.46987088,
+            "northing": 6931531.80459734
+          },
+          {
+            "easting": 860758.85987089,
+            "northing": 6931542.25459733
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23478706,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729084",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 8.2,
+        "bdtopo.altitude_minimale_sol": 173.7,
+        "bdtopo.altitude_maximale_toit": 183.7
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 8.2,
+        "roofMetres": 10,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 173.7,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729132",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860753.65987089,
+            "northing": 6931535.16459734
+          },
+          {
+            "easting": 860765.83987088,
+            "northing": 6931524.99459735
+          },
+          {
+            "easting": 860765.25987088,
+            "northing": 6931523.91459734
+          },
+          {
+            "easting": 860764.98987088,
+            "northing": 6931523.61459735
+          },
+          {
+            "easting": 860758.53987089,
+            "northing": 6931516.00459735
+          },
+          {
+            "easting": 860747.20987089,
+            "northing": 6931526.71459734
+          },
+          {
+            "easting": 860753.65987089,
+            "northing": 6931535.16459734
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23478824,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729132",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "10",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 7.4,
+        "bdtopo.altitude_minimale_sol": 173.3,
+        "bdtopo.altitude_maximale_toit": 184.4
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 7.4,
+        "roofMetres": 11.1,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 173.3,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002477762198",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Commercial et services · 2 logements · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860760.11987088,
+            "northing": 6931508.05459735
+          },
+          {
+            "easting": 860774.50987087,
+            "northing": 6931494.77459736
+          },
+          {
+            "easting": 860772.29987087,
+            "northing": 6931492.63459736
+          },
+          {
+            "easting": 860767.56987088,
+            "northing": 6931497.00459736
+          },
+          {
+            "easting": 860756.97987089,
+            "northing": 6931487.04459737
+          },
+          {
+            "easting": 860747.89987089,
+            "northing": 6931478.61459737
+          },
+          {
+            "easting": 860737.6898709,
+            "northing": 6931487.57459737
+          },
+          {
+            "easting": 860760.11987088,
+            "northing": 6931508.05459735
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23622723,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002477762198",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Commercial et services",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 2,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "00",
+        "bdtopo.materiaux_de_la_toiture": "00",
+        "bdtopo.hauteur": 10.4,
+        "bdtopo.altitude_minimale_sol": 173.5,
+        "bdtopo.altitude_maximale_toit": 186.2
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 10.4,
+        "roofMetres": 12.7,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 173.5,
+        "verticalDatum": "NGF-IGN 1969"
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729222",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Indifférencié",
+      "rings": [
+        [
+          {
+            "easting": 860817.27987084,
+            "northing": 6931455.32459739
+          },
+          {
+            "easting": 860818.83987084,
+            "northing": 6931457.67459739
+          },
+          {
+            "easting": 860827.16987083,
+            "northing": 6931452.19459739
+          },
+          {
+            "easting": 860823.44987083,
+            "northing": 6931447.29459739
+          },
+          {
+            "easting": 860816.22987084,
+            "northing": 6931453.61459739
+          },
+          {
+            "easting": 860817.27987084,
+            "northing": 6931455.32459739
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23445312,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729222",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Indifférencié",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.hauteur": 4.5,
+        "bdtopo.altitude_minimale_sol": 170.2,
+        "bdtopo.altitude_maximale_toit": 177.1
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 4.5,
+        "roofMetres": 6.9,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 170.2,
+        "verticalDatum": "NGF-IGN 1969"
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729080",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Indifférencié",
+      "rings": [
+        [
+          {
+            "easting": 860799.66987085,
+            "northing": 6931459.31459738
+          },
+          {
+            "easting": 860813.84987084,
+            "northing": 6931449.76459739
+          },
+          {
+            "easting": 860809.29987085,
+            "northing": 6931442.54459739
+          },
+          {
+            "easting": 860815.38987084,
+            "northing": 6931436.9545974
+          },
+          {
+            "easting": 860812.24987084,
+            "northing": 6931432.8245974
+          },
+          {
+            "easting": 860806.16987085,
+            "northing": 6931437.9545974
+          },
+          {
+            "easting": 860799.06987085,
+            "northing": 6931443.77459739
+          },
+          {
+            "easting": 860800.96987085,
+            "northing": 6931446.05459739
+          },
+          {
+            "easting": 860794.30987086,
+            "northing": 6931451.91459739
+          },
+          {
+            "easting": 860796.47987086,
+            "northing": 6931454.92459739
+          },
+          {
+            "easting": 860799.66987085,
+            "northing": 6931459.31459738
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23445414,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729080",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Indifférencié",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.hauteur": 7.7,
+        "bdtopo.altitude_minimale_sol": 170.5,
+        "bdtopo.altitude_maximale_toit": 181.1
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 7.7,
+        "roofMetres": 10.6,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 170.5,
+        "verticalDatum": "NGF-IGN 1969"
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729098",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 1 étage",
+      "rings": [
+        [
+          {
+            "easting": 860796.64987086,
+            "northing": 6931485.98459737
+          },
+          {
+            "easting": 860795.09987086,
+            "northing": 6931482.68459737
+          },
+          {
+            "easting": 860787.84987086,
+            "northing": 6931473.31459738
+          },
+          {
+            "easting": 860778.07987087,
+            "northing": 6931480.58459737
+          },
+          {
+            "easting": 860776.50987087,
+            "northing": 6931481.77459737
+          },
+          {
+            "easting": 860780.21987087,
+            "northing": 6931487.04459737
+          },
+          {
+            "easting": 860785.84987086,
+            "northing": 6931482.79459737
+          },
+          {
+            "easting": 860791.28987086,
+            "northing": 6931489.45459737
+          },
+          {
+            "easting": 860796.64987086,
+            "northing": 6931485.98459737
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23445562,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729098",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 1,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "90",
+        "bdtopo.hauteur": 7.1,
+        "bdtopo.altitude_minimale_sol": 171.2,
+        "bdtopo.altitude_maximale_toit": 181.8
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 7.1,
+        "roofMetres": 10.6,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 171.2,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "other"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729259",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Annexe · 1 étage",
+      "rings": [
+        [
+          {
+            "easting": 860818.02987084,
+            "northing": 6931419.88459741
+          },
+          {
+            "easting": 860814.36987084,
+            "northing": 6931423.19459741
+          },
+          {
+            "easting": 860816.43987084,
+            "northing": 6931425.95459741
+          },
+          {
+            "easting": 860820.25987084,
+            "northing": 6931422.58459741
+          },
+          {
+            "easting": 860818.02987084,
+            "northing": 6931419.88459741
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23467646,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729259",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Annexe",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 0,
+        "bdtopo.nombre_d_etages": 1,
+        "bdtopo.materiaux_des_murs": "05",
+        "bdtopo.materiaux_de_la_toiture": "09",
+        "bdtopo.hauteur": 2.5,
+        "bdtopo.altitude_minimale_sol": 169.8,
+        "bdtopo.altitude_maximale_toit": 172.8
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 2.5,
+        "roofMetres": 3,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 169.8,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "block"
+        ],
+        "roof": [
+          "other"
+        ]
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729242",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860841.47987082,
+            "northing": 6931432.8345974
+          },
+          {
+            "easting": 860842.99987082,
+            "northing": 6931431.8445974
+          },
+          {
+            "easting": 860836.78987082,
+            "northing": 6931423.31459741
+          },
+          {
+            "easting": 860829.94987083,
+            "northing": 6931428.7645974
+          },
+          {
+            "easting": 860832.16987083,
+            "northing": 6931431.5445974
+          },
+          {
+            "easting": 860833.09987083,
+            "northing": 6931432.8245974
+          },
+          {
+            "easting": 860826.16987083,
+            "northing": 6931438.0345974
+          },
+          {
+            "easting": 860828.90987083,
+            "northing": 6931441.7045974
+          },
+          {
+            "easting": 860841.47987082,
+            "northing": 6931432.8345974
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23467760,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729242",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "10",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 5.5,
+        "bdtopo.altitude_minimale_sol": 169.7,
+        "bdtopo.altitude_maximale_toit": 178
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 5.5,
+        "roofMetres": 8.3,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 169.7,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729139",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 1 étage",
+      "rings": [
+        [
+          {
+            "easting": 860775.83987087,
+            "northing": 6931426.28459741
+          },
+          {
+            "easting": 860783.62987087,
+            "northing": 6931434.9045974
+          },
+          {
+            "easting": 860790.15987086,
+            "northing": 6931429.17459741
+          },
+          {
+            "easting": 860782.23987087,
+            "northing": 6931420.50459741
+          },
+          {
+            "easting": 860775.83987087,
+            "northing": 6931426.28459741
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23469371,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729139",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 1,
+        "bdtopo.materiaux_des_murs": "50",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 4.6,
+        "bdtopo.altitude_minimale_sol": 169.1,
+        "bdtopo.altitude_maximale_toit": 176.6
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 4.6,
+        "roofMetres": 7.5,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 169.1,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "block"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729078",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860802.53987085,
+            "northing": 6931433.4745974
+          },
+          {
+            "easting": 860806.16987085,
+            "northing": 6931437.9545974
+          },
+          {
+            "easting": 860812.24987084,
+            "northing": 6931432.8245974
+          },
+          {
+            "easting": 860810.99987084,
+            "northing": 6931431.2145974
+          },
+          {
+            "easting": 860808.78987085,
+            "northing": 6931428.3445974
+          },
+          {
+            "easting": 860806.47987085,
+            "northing": 6931430.2345974
+          },
+          {
+            "easting": 860802.53987085,
+            "northing": 6931433.4745974
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23469453,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729078",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "10",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 8.3,
+        "bdtopo.altitude_minimale_sol": 170.1,
+        "bdtopo.altitude_maximale_toit": 179.5
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 8.3,
+        "roofMetres": 9.4,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 170.1,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729079",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860794.30987086,
+            "northing": 6931451.91459739
+          },
+          {
+            "easting": 860800.96987085,
+            "northing": 6931446.05459739
+          },
+          {
+            "easting": 860799.06987085,
+            "northing": 6931443.77459739
+          },
+          {
+            "easting": 860806.16987085,
+            "northing": 6931437.9545974
+          },
+          {
+            "easting": 860802.53987085,
+            "northing": 6931433.4745974
+          },
+          {
+            "easting": 860802.03987085,
+            "northing": 6931432.8445974
+          },
+          {
+            "easting": 860789.95987086,
+            "northing": 6931442.7345974
+          },
+          {
+            "easting": 860788.36987086,
+            "northing": 6931444.0345974
+          },
+          {
+            "easting": 860790.77987086,
+            "northing": 6931447.25459739
+          },
+          {
+            "easting": 860794.30987086,
+            "northing": 6931451.91459739
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23469533,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729079",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 6.7,
+        "bdtopo.altitude_minimale_sol": 170.4,
+        "bdtopo.altitude_maximale_toit": 178.6
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 6.7,
+        "roofMetres": 8.2,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 170.4,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729081",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860799.66987085,
+            "northing": 6931459.31459738
+          },
+          {
+            "easting": 860802.96987085,
+            "northing": 6931463.96459738
+          },
+          {
+            "easting": 860809.20987085,
+            "northing": 6931460.24459739
+          },
+          {
+            "easting": 860814.96987084,
+            "northing": 6931456.74459739
+          },
+          {
+            "easting": 860817.27987084,
+            "northing": 6931455.32459739
+          },
+          {
+            "easting": 860816.22987084,
+            "northing": 6931453.61459739
+          },
+          {
+            "easting": 860813.84987084,
+            "northing": 6931449.76459739
+          },
+          {
+            "easting": 860799.66987085,
+            "northing": 6931459.31459738
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23469612,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729081",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "24",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 6.1,
+        "bdtopo.altitude_minimale_sol": 171.2,
+        "bdtopo.altitude_maximale_toit": 178.9
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 6.1,
+        "roofMetres": 7.7,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 171.2,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone",
+          "brick"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729082",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Annexe · 1 étage",
+      "rings": [
+        [
+          {
+            "easting": 860809.20987085,
+            "northing": 6931460.24459739
+          },
+          {
+            "easting": 860802.96987085,
+            "northing": 6931463.96459738
+          },
+          {
+            "easting": 860804.11987085,
+            "northing": 6931465.61459738
+          },
+          {
+            "easting": 860805.13987085,
+            "northing": 6931467.06459738
+          },
+          {
+            "easting": 860810.89987084,
+            "northing": 6931463.61459738
+          },
+          {
+            "easting": 860809.20987085,
+            "northing": 6931460.24459739
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23469703,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729082",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Annexe",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 0,
+        "bdtopo.nombre_d_etages": 1,
+        "bdtopo.materiaux_des_murs": "01",
+        "bdtopo.materiaux_de_la_toiture": "01",
+        "bdtopo.hauteur": 5.8,
+        "bdtopo.altitude_minimale_sol": 172.1,
+        "bdtopo.altitude_maximale_toit": 179
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 5.8,
+        "roofMetres": 6.9,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 172.1,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729083",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Annexe · 1 étage",
+      "rings": [
+        [
+          {
+            "easting": 860805.13987085,
+            "northing": 6931467.06459738
+          },
+          {
+            "easting": 860807.18987085,
+            "northing": 6931470.08459738
+          },
+          {
+            "easting": 860807.42987085,
+            "northing": 6931470.06459738
+          },
+          {
+            "easting": 860813.98987084,
+            "northing": 6931469.39459738
+          },
+          {
+            "easting": 860810.89987084,
+            "northing": 6931463.61459738
+          },
+          {
+            "easting": 860805.13987085,
+            "northing": 6931467.06459738
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23469788,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729083",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Annexe",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 0,
+        "bdtopo.nombre_d_etages": 1,
+        "bdtopo.materiaux_des_murs": "02",
+        "bdtopo.materiaux_de_la_toiture": "01",
+        "bdtopo.hauteur": 5.6,
+        "bdtopo.altitude_minimale_sol": 172.5,
+        "bdtopo.altitude_maximale_toit": 178.9
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 5.6,
+        "roofMetres": 6.4,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 172.5,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729223",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Annexe · 1 étage",
+      "rings": [
+        [
+          {
+            "easting": 860818.23987084,
+            "northing": 6931464.33459738
+          },
+          {
+            "easting": 860814.96987084,
+            "northing": 6931456.74459739
+          },
+          {
+            "easting": 860809.20987085,
+            "northing": 6931460.24459739
+          },
+          {
+            "easting": 860810.89987084,
+            "northing": 6931463.61459738
+          },
+          {
+            "easting": 860813.98987084,
+            "northing": 6931469.39459738
+          },
+          {
+            "easting": 860820.12987084,
+            "northing": 6931468.72459738
+          },
+          {
+            "easting": 860818.23987084,
+            "northing": 6931464.33459738
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23469904,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729223",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Annexe",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 0,
+        "bdtopo.nombre_d_etages": 1,
+        "bdtopo.materiaux_des_murs": "02",
+        "bdtopo.materiaux_de_la_toiture": "01",
+        "bdtopo.hauteur": 5.9,
+        "bdtopo.altitude_minimale_sol": 171.9,
+        "bdtopo.altitude_maximale_toit": 179
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 5.9,
+        "roofMetres": 7.1,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 171.9,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729224",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860818.23987084,
+            "northing": 6931464.33459738
+          },
+          {
+            "easting": 860820.12987084,
+            "northing": 6931468.72459738
+          },
+          {
+            "easting": 860834.22987083,
+            "northing": 6931462.05459738
+          },
+          {
+            "easting": 860830.94987083,
+            "northing": 6931457.00459739
+          },
+          {
+            "easting": 860818.23987084,
+            "northing": 6931464.33459738
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23469993,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729224",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "10",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 6.5,
+        "bdtopo.altitude_minimale_sol": 170.8,
+        "bdtopo.altitude_maximale_toit": 180.5
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 6.5,
+        "roofMetres": 9.7,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 170.8,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729230",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Indifférencié",
+      "rings": [
+        [
+          {
+            "easting": 860825.62987083,
+            "northing": 6931525.28459735
+          },
+          {
+            "easting": 860838.28987082,
+            "northing": 6931514.96459735
+          },
+          {
+            "easting": 860832.59987083,
+            "northing": 6931506.03459736
+          },
+          {
+            "easting": 860819.91987084,
+            "northing": 6931513.63459735
+          },
+          {
+            "easting": 860818.93987084,
+            "northing": 6931514.21459735
+          },
+          {
+            "easting": 860825.62987083,
+            "northing": 6931525.28459735
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23470570,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729230",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Indifférencié",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.hauteur": 8.7,
+        "bdtopo.altitude_minimale_sol": 174.6,
+        "bdtopo.altitude_maximale_toit": 185.2
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 8.7,
+        "roofMetres": 10.6,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 174.6,
+        "verticalDatum": "NGF-IGN 1969"
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729229",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860833.07987083,
+            "northing": 6931494.32459736
+          },
+          {
+            "easting": 860815.84987084,
+            "northing": 6931504.92459736
+          },
+          {
+            "easting": 860816.75987084,
+            "northing": 6931506.86459736
+          },
+          {
+            "easting": 860819.91987084,
+            "northing": 6931513.63459735
+          },
+          {
+            "easting": 860832.59987083,
+            "northing": 6931506.03459736
+          },
+          {
+            "easting": 860837.61987082,
+            "northing": 6931502.74459736
+          },
+          {
+            "easting": 860833.07987083,
+            "northing": 6931494.32459736
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23470673,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729229",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 8.1,
+        "bdtopo.altitude_minimale_sol": 173.7,
+        "bdtopo.altitude_maximale_toit": 184.6
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 8.1,
+        "roofMetres": 10.9,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 173.7,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729228",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860833.07987083,
+            "northing": 6931494.32459736
+          },
+          {
+            "easting": 860832.31987083,
+            "northing": 6931492.90459737
+          },
+          {
+            "easting": 860830.19987083,
+            "northing": 6931488.84459737
+          },
+          {
+            "easting": 860814.25987084,
+            "northing": 6931498.87459736
+          },
+          {
+            "easting": 860813.91987084,
+            "northing": 6931499.05459736
+          },
+          {
+            "easting": 860813.16987084,
+            "northing": 6931499.48459736
+          },
+          {
+            "easting": 860815.84987084,
+            "northing": 6931504.92459736
+          },
+          {
+            "easting": 860833.07987083,
+            "northing": 6931494.32459736
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23470770,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729228",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 7,
+        "bdtopo.altitude_minimale_sol": 173.6,
+        "bdtopo.altitude_maximale_toit": 182.6
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 7,
+        "roofMetres": 9,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 173.6,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729226",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860814.25987084,
+            "northing": 6931498.87459736
+          },
+          {
+            "easting": 860830.19987083,
+            "northing": 6931488.84459737
+          },
+          {
+            "easting": 860829.66987083,
+            "northing": 6931487.88459737
+          },
+          {
+            "easting": 860828.73987083,
+            "northing": 6931486.25459737
+          },
+          {
+            "easting": 860822.18987083,
+            "northing": 6931489.44459737
+          },
+          {
+            "easting": 860820.55987084,
+            "northing": 6931485.63459737
+          },
+          {
+            "easting": 860811.15987084,
+            "northing": 6931490.27459737
+          },
+          {
+            "easting": 860814.25987084,
+            "northing": 6931498.87459736
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23470876,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729226",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "10",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 7.4,
+        "bdtopo.altitude_minimale_sol": 173.6,
+        "bdtopo.altitude_maximale_toit": 182.7
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 7.4,
+        "roofMetres": 9.1,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 173.6,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729225",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860820.55987084,
+            "northing": 6931485.63459737
+          },
+          {
+            "easting": 860822.18987083,
+            "northing": 6931489.44459737
+          },
+          {
+            "easting": 860828.73987083,
+            "northing": 6931486.25459737
+          },
+          {
+            "easting": 860826.64987083,
+            "northing": 6931482.56459737
+          },
+          {
+            "easting": 860820.55987084,
+            "northing": 6931485.63459737
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23471014,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729225",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 4.4,
+        "bdtopo.altitude_minimale_sol": 173,
+        "bdtopo.altitude_maximale_toit": 180.7
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 4.4,
+        "roofMetres": 7.7,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 173,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729227",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860820.55987084,
+            "northing": 6931485.63459737
+          },
+          {
+            "easting": 860826.64987083,
+            "northing": 6931482.56459737
+          },
+          {
+            "easting": 860822.43987083,
+            "northing": 6931474.74459737
+          },
+          {
+            "easting": 860807.39987085,
+            "northing": 6931480.05459737
+          },
+          {
+            "easting": 860810.63987084,
+            "northing": 6931488.84459736
+          },
+          {
+            "easting": 860811.15987084,
+            "northing": 6931490.27459737
+          },
+          {
+            "easting": 860820.55987084,
+            "northing": 6931485.63459737
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23471109,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729227",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 7,
+        "bdtopo.altitude_minimale_sol": 173.3,
+        "bdtopo.altitude_maximale_toit": 182
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 7,
+        "roofMetres": 8.7,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 173.3,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729096",
+      "kind": "building",
+      "label": "Construction légère",
+      "summary": "Indifférencié",
+      "rings": [
+        [
+          {
+            "easting": 860756.57987089,
+            "northing": 6931471.19459738
+          },
+          {
+            "easting": 860763.07987088,
+            "northing": 6931479.67459737
+          },
+          {
+            "easting": 860763.51987088,
+            "northing": 6931479.29459737
+          },
+          {
+            "easting": 860766.53987088,
+            "northing": 6931476.90459738
+          },
+          {
+            "easting": 860759.92987088,
+            "northing": 6931468.25459738
+          },
+          {
+            "easting": 860756.57987089,
+            "northing": 6931471.19459738
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23471213,
+        "pci.type": "Construction légère",
+        "bdtopo.cleabs": "BATIMENT0000002274729096",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Indifférencié",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.hauteur": 6.8,
+        "bdtopo.altitude_minimale_sol": 172.6,
+        "bdtopo.altitude_maximale_toit": 180.6
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 6.8,
+        "roofMetres": 8,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 172.6,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "lightweight": true
+    },
+    {
+      "id": "BATIMENT0000002274729076",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860807.41987085,
+            "northing": 6931517.15459735
+          },
+          {
+            "easting": 860794.67987086,
+            "northing": 6931523.67459734
+          },
+          {
+            "easting": 860797.46987085,
+            "northing": 6931528.88459734
+          },
+          {
+            "easting": 860809.52987084,
+            "northing": 6931522.72459735
+          },
+          {
+            "easting": 860808.62987085,
+            "northing": 6931520.32459735
+          },
+          {
+            "easting": 860807.41987085,
+            "northing": 6931517.15459735
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23471644,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729076",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "90",
+        "bdtopo.hauteur": 6.7,
+        "bdtopo.altitude_minimale_sol": 175,
+        "bdtopo.altitude_maximale_toit": 182.9
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 6.7,
+        "roofMetres": 7.9,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 175,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "other"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729075",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860807.41987085,
+            "northing": 6931517.15459735
+          },
+          {
+            "easting": 860806.42987085,
+            "northing": 6931513.31459735
+          },
+          {
+            "easting": 860805.25987085,
+            "northing": 6931508.85459735
+          },
+          {
+            "easting": 860807.19987085,
+            "northing": 6931507.83459735
+          },
+          {
+            "easting": 860806.70987085,
+            "northing": 6931506.84459736
+          },
+          {
+            "easting": 860804.70987085,
+            "northing": 6931502.83459736
+          },
+          {
+            "easting": 860792.20987086,
+            "northing": 6931509.75459735
+          },
+          {
+            "easting": 860793.81987086,
+            "northing": 6931513.46459735
+          },
+          {
+            "easting": 860790.06987086,
+            "northing": 6931515.57459735
+          },
+          {
+            "easting": 860794.67987086,
+            "northing": 6931523.67459734
+          },
+          {
+            "easting": 860807.41987085,
+            "northing": 6931517.15459735
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23471750,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729075",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 6.6,
+        "bdtopo.altitude_minimale_sol": 174.8,
+        "bdtopo.altitude_maximale_toit": 183.1
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 6.6,
+        "roofMetres": 8.3,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 174.8,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729102",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Annexe · 1 étage",
+      "rings": [
+        [
+          {
+            "easting": 860792.20987086,
+            "northing": 6931509.75459735
+          },
+          {
+            "easting": 860804.70987085,
+            "northing": 6931502.83459736
+          },
+          {
+            "easting": 860802.70987085,
+            "northing": 6931498.52459736
+          },
+          {
+            "easting": 860802.32987085,
+            "northing": 6931497.75459736
+          },
+          {
+            "easting": 860797.02987085,
+            "northing": 6931500.49459736
+          },
+          {
+            "easting": 860789.61987086,
+            "northing": 6931504.28459736
+          },
+          {
+            "easting": 860792.20987086,
+            "northing": 6931509.75459735
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23471858,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729102",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Annexe",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 0,
+        "bdtopo.nombre_d_etages": 1,
+        "bdtopo.materiaux_des_murs": "02",
+        "bdtopo.materiaux_de_la_toiture": "01",
+        "bdtopo.hauteur": 6.4,
+        "bdtopo.altitude_minimale_sol": 174.6,
+        "bdtopo.altitude_maximale_toit": 182.3
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 6.4,
+        "roofMetres": 7.7,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 174.6,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729101",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Indifférencié",
+      "rings": [
+        [
+          {
+            "easting": 860802.32987085,
+            "northing": 6931497.75459736
+          },
+          {
+            "easting": 860799.56987085,
+            "northing": 6931492.09459736
+          },
+          {
+            "easting": 860794.45987086,
+            "northing": 6931495.17459736
+          },
+          {
+            "easting": 860797.02987085,
+            "northing": 6931500.49459736
+          },
+          {
+            "easting": 860802.32987085,
+            "northing": 6931497.75459736
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23472003,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729101",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Indifférencié",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.hauteur": 5.7,
+        "bdtopo.altitude_minimale_sol": 174.1,
+        "bdtopo.altitude_maximale_toit": 180.4
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 5.7,
+        "roofMetres": 6.3,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 174.1,
+        "verticalDatum": "NGF-IGN 1969"
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729100",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860791.28987086,
+            "northing": 6931489.45459737
+          },
+          {
+            "easting": 860787.67987086,
+            "northing": 6931491.96459737
+          },
+          {
+            "easting": 860790.82987086,
+            "northing": 6931497.35459736
+          },
+          {
+            "easting": 860794.45987086,
+            "northing": 6931495.17459736
+          },
+          {
+            "easting": 860799.56987085,
+            "northing": 6931492.09459736
+          },
+          {
+            "easting": 860796.64987086,
+            "northing": 6931485.98459737
+          },
+          {
+            "easting": 860791.28987086,
+            "northing": 6931489.45459737
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23472113,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729100",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 6.2,
+        "bdtopo.altitude_minimale_sol": 173.7,
+        "bdtopo.altitude_maximale_toit": 180.9
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 6.2,
+        "roofMetres": 7.2,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 173.7,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729106",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Annexe · 1 étage",
+      "rings": [
+        [
+          {
+            "easting": 860765.80987088,
+            "northing": 6931509.86459736
+          },
+          {
+            "easting": 860773.81987087,
+            "northing": 6931518.88459735
+          },
+          {
+            "easting": 860785.06987086,
+            "northing": 6931511.47459735
+          },
+          {
+            "easting": 860783.14987087,
+            "northing": 6931507.69459736
+          },
+          {
+            "easting": 860780.78987087,
+            "northing": 6931503.21459736
+          },
+          {
+            "easting": 860778.13987087,
+            "northing": 6931498.20459736
+          },
+          {
+            "easting": 860765.80987088,
+            "northing": 6931509.86459736
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23472222,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729106",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Annexe",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 0,
+        "bdtopo.nombre_d_etages": 1,
+        "bdtopo.materiaux_des_murs": "10",
+        "bdtopo.materiaux_de_la_toiture": "90",
+        "bdtopo.hauteur": 6.9,
+        "bdtopo.altitude_minimale_sol": 175.3,
+        "bdtopo.altitude_maximale_toit": 183.6
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 6.9,
+        "roofMetres": 8.3,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 175.3,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone"
+        ],
+        "roof": [
+          "other"
+        ]
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729107",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 étage",
+      "rings": [
+        [
+          {
+            "easting": 860760.11987088,
+            "northing": 6931508.05459735
+          },
+          {
+            "easting": 860763.88987088,
+            "northing": 6931511.45459735
+          },
+          {
+            "easting": 860765.80987088,
+            "northing": 6931509.86459736
+          },
+          {
+            "easting": 860778.13987087,
+            "northing": 6931498.20459736
+          },
+          {
+            "easting": 860775.73987087,
+            "northing": 6931493.62459737
+          },
+          {
+            "easting": 860774.50987087,
+            "northing": 6931494.77459736
+          },
+          {
+            "easting": 860760.11987088,
+            "northing": 6931508.05459735
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23472321,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729107",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 0,
+        "bdtopo.nombre_d_etages": 1,
+        "bdtopo.materiaux_des_murs": "15",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 7.4,
+        "bdtopo.altitude_minimale_sol": 175,
+        "bdtopo.altitude_maximale_toit": 184.2
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 7.4,
+        "roofMetres": 9.2,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 175,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone",
+          "block"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "pci:batiment.23704679",
+      "kind": "building",
+      "label": "Construction légère",
+      "rings": [
+        [
+          {
+            "easting": 860724.99987091,
+            "northing": 6931479.38459737
+          },
+          {
+            "easting": 860729.04987091,
+            "northing": 6931484.32459737
+          },
+          {
+            "easting": 860731.28987091,
+            "northing": 6931482.45459737
+          },
+          {
+            "easting": 860730.46987091,
+            "northing": 6931481.56459737
+          },
+          {
+            "easting": 860729.22987091,
+            "northing": 6931482.51459737
+          },
+          {
+            "easting": 860726.02987091,
+            "northing": 6931478.56459737
+          },
+          {
+            "easting": 860724.99987091,
+            "northing": 6931479.38459737
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23473062,
+        "pci.type": "Construction légère"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "lightweight": true
+    },
+    {
+      "id": "BATIMENT0000002274729112",
+      "kind": "building",
+      "label": "Construction légère",
+      "summary": "Indifférencié",
+      "rings": [
+        [
+          {
+            "easting": 860730.38987091,
+            "northing": 6931426.65459741
+          },
+          {
+            "easting": 860727.84987091,
+            "northing": 6931427.70459741
+          },
+          {
+            "easting": 860726.23987091,
+            "northing": 6931428.3945974
+          },
+          {
+            "easting": 860729.41987091,
+            "northing": 6931433.0045974
+          },
+          {
+            "easting": 860733.06987091,
+            "northing": 6931430.7645974
+          },
+          {
+            "easting": 860730.38987091,
+            "northing": 6931426.65459741
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23473180,
+        "pci.type": "Construction légère",
+        "bdtopo.cleabs": "BATIMENT0000002274729112",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Indifférencié",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.hauteur": 3.5,
+        "bdtopo.altitude_minimale_sol": 168.7,
+        "bdtopo.altitude_maximale_toit": 173.6
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 3.5,
+        "roofMetres": 4.9,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 168.7,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "lightweight": true
+    },
+    {
+      "id": "BATIMENT0000002274729114",
+      "kind": "building",
+      "label": "Construction légère",
+      "summary": "Indifférencié",
+      "rings": [
+        [
+          {
+            "easting": 860743.5698709,
+            "northing": 6931460.66459738
+          },
+          {
+            "easting": 860748.98987089,
+            "northing": 6931466.88459738
+          },
+          {
+            "easting": 860751.13987089,
+            "northing": 6931465.00459738
+          },
+          {
+            "easting": 860747.42987089,
+            "northing": 6931460.80459738
+          },
+          {
+            "easting": 860753.83987089,
+            "northing": 6931455.09459739
+          },
+          {
+            "easting": 860752.46987089,
+            "northing": 6931453.43459739
+          },
+          {
+            "easting": 860745.6898709,
+            "northing": 6931459.19459738
+          },
+          {
+            "easting": 860743.5698709,
+            "northing": 6931460.66459738
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23473339,
+        "pci.type": "Construction légère",
+        "bdtopo.cleabs": "BATIMENT0000002274729114",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Indifférencié",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.hauteur": 4.1,
+        "bdtopo.altitude_minimale_sol": 171.4,
+        "bdtopo.altitude_maximale_toit": 176.4
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 4.1,
+        "roofMetres": 5,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 171.4,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "lightweight": true
+    },
+    {
+      "id": "BATIMENT0000002274729115",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Indifférencié",
+      "rings": [
+        [
+          {
+            "easting": 860738.4698709,
+            "northing": 6931457.60459739
+          },
+          {
+            "easting": 860741.3498709,
+            "northing": 6931462.21459739
+          },
+          {
+            "easting": 860743.5698709,
+            "northing": 6931460.66459738
+          },
+          {
+            "easting": 860745.6898709,
+            "northing": 6931459.19459738
+          },
+          {
+            "easting": 860742.9398709,
+            "northing": 6931454.80459739
+          },
+          {
+            "easting": 860738.4698709,
+            "northing": 6931457.60459739
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23473453,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729115",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Indifférencié",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.hauteur": 3.2,
+        "bdtopo.altitude_minimale_sol": 170.9,
+        "bdtopo.altitude_maximale_toit": 176.2
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 3.2,
+        "roofMetres": 5.3,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 170.9,
+        "verticalDatum": "NGF-IGN 1969"
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729111",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860740.6798709,
+            "northing": 6931437.3145974
+          },
+          {
+            "easting": 860748.12987089,
+            "northing": 6931446.11459739
+          },
+          {
+            "easting": 860748.47987089,
+            "northing": 6931446.4845974
+          },
+          {
+            "easting": 860749.67987089,
+            "northing": 6931445.58459739
+          },
+          {
+            "easting": 860759.73987088,
+            "northing": 6931438.0245974
+          },
+          {
+            "easting": 860761.09987088,
+            "northing": 6931436.9745974
+          },
+          {
+            "easting": 860754.69987089,
+            "northing": 6931427.8945974
+          },
+          {
+            "easting": 860740.6798709,
+            "northing": 6931437.3145974
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23473656,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729111",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "25",
+        "bdtopo.materiaux_de_la_toiture": "19",
+        "bdtopo.hauteur": 6.1,
+        "bdtopo.altitude_minimale_sol": 169.6,
+        "bdtopo.altitude_maximale_toit": 177.3
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 6.1,
+        "roofMetres": 7.7,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 169.6,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone",
+          "block"
+        ],
+        "roof": [
+          "tiles",
+          "other"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729110",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860731.83987091,
+            "northing": 6931426.01459741
+          },
+          {
+            "easting": 860734.69987091,
+            "northing": 6931430.5345974
+          },
+          {
+            "easting": 860740.6798709,
+            "northing": 6931437.3145974
+          },
+          {
+            "easting": 860754.69987089,
+            "northing": 6931427.8945974
+          },
+          {
+            "easting": 860748.05987089,
+            "northing": 6931421.08459741
+          },
+          {
+            "easting": 860744.6298709,
+            "northing": 6931423.14459741
+          },
+          {
+            "easting": 860744.0598709,
+            "northing": 6931422.49459741
+          },
+          {
+            "easting": 860742.7598709,
+            "northing": 6931423.45459741
+          },
+          {
+            "easting": 860743.1498709,
+            "northing": 6931424.06459741
+          },
+          {
+            "easting": 860740.4798709,
+            "northing": 6931425.62459741
+          },
+          {
+            "easting": 860739.4798709,
+            "northing": 6931426.21459741
+          },
+          {
+            "easting": 860737.5198709,
+            "northing": 6931423.5945974
+          },
+          {
+            "easting": 860731.83987091,
+            "northing": 6931426.01459741
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23473773,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729110",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "10",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 5.9,
+        "bdtopo.altitude_minimale_sol": 169.2,
+        "bdtopo.altitude_maximale_toit": 176.7
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 5.9,
+        "roofMetres": 7.5,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 169.2,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729145",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Indifférencié",
+      "rings": [
+        [
+          {
+            "easting": 860703.05987093,
+            "northing": 6931451.19459739
+          },
+          {
+            "easting": 860705.34987093,
+            "northing": 6931449.72459739
+          },
+          {
+            "easting": 860702.05987093,
+            "northing": 6931445.75459739
+          },
+          {
+            "easting": 860701.67987093,
+            "northing": 6931446.45459739
+          },
+          {
+            "easting": 860700.73987093,
+            "northing": 6931448.21459739
+          },
+          {
+            "easting": 860701.75987093,
+            "northing": 6931449.52459739
+          },
+          {
+            "easting": 860703.05987093,
+            "northing": 6931451.19459739
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23473888,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729145",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Indifférencié",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.hauteur": 2.3,
+        "bdtopo.altitude_minimale_sol": 169.2,
+        "bdtopo.altitude_maximale_toit": 171.9
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 2.3,
+        "roofMetres": 2.7,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 169.2,
+        "verticalDatum": "NGF-IGN 1969"
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729122",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 1 étage",
+      "rings": [
+        [
+          {
+            "easting": 860733.48987091,
+            "northing": 6931418.57459741
+          },
+          {
+            "easting": 860727.35987091,
+            "northing": 6931408.76459742
+          },
+          {
+            "easting": 860726.82987091,
+            "northing": 6931408.17459742
+          },
+          {
+            "easting": 860718.67987092,
+            "northing": 6931414.01459741
+          },
+          {
+            "easting": 860719.28987092,
+            "northing": 6931414.84459741
+          },
+          {
+            "easting": 860725.12987091,
+            "northing": 6931422.57459741
+          },
+          {
+            "easting": 860733.48987091,
+            "northing": 6931418.57459741
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23474958,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729122",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 1,
+        "bdtopo.materiaux_des_murs": "10",
+        "bdtopo.materiaux_de_la_toiture": "90",
+        "bdtopo.hauteur": 4.9,
+        "bdtopo.altitude_minimale_sol": 167.9,
+        "bdtopo.altitude_maximale_toit": 176.5
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 4.9,
+        "roofMetres": 8.6,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 167.9,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone"
+        ],
+        "roof": [
+          "other"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729125",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860725.12987091,
+            "northing": 6931422.57459741
+          },
+          {
+            "easting": 860719.28987092,
+            "northing": 6931414.84459741
+          },
+          {
+            "easting": 860712.46987092,
+            "northing": 6931425.26459741
+          },
+          {
+            "easting": 860713.74987092,
+            "northing": 6931428.10459741
+          },
+          {
+            "easting": 860725.12987091,
+            "northing": 6931422.57459741
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23475080,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729125",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "10",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 6.6,
+        "bdtopo.altitude_minimale_sol": 169.1,
+        "bdtopo.altitude_maximale_toit": 177.2
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 6.6,
+        "roofMetres": 8.1,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 169.1,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729090",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Annexe · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860672.87987095,
+            "northing": 6931508.49459736
+          },
+          {
+            "easting": 860682.03987095,
+            "northing": 6931517.04459735
+          },
+          {
+            "easting": 860695.41987094,
+            "northing": 6931504.55459736
+          },
+          {
+            "easting": 860687.02987094,
+            "northing": 6931496.01459736
+          },
+          {
+            "easting": 860683.51987095,
+            "northing": 6931499.28459736
+          },
+          {
+            "easting": 860678.28987095,
+            "northing": 6931494.62459736
+          },
+          {
+            "easting": 860668.81987096,
+            "northing": 6931504.84459736
+          },
+          {
+            "easting": 860672.87987095,
+            "northing": 6931508.49459736
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23477503,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729090",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Annexe",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 8.2,
+        "bdtopo.altitude_minimale_sol": 169.6,
+        "bdtopo.altitude_maximale_toit": 179.6
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 8.2,
+        "roofMetres": 10,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 169.6,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729092",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860675.73987095,
+            "northing": 6931492.14459737
+          },
+          {
+            "easting": 860678.28987095,
+            "northing": 6931494.62459736
+          },
+          {
+            "easting": 860683.51987095,
+            "northing": 6931499.28459736
+          },
+          {
+            "easting": 860687.02987094,
+            "northing": 6931496.01459736
+          },
+          {
+            "easting": 860684.10987095,
+            "northing": 6931493.02459737
+          },
+          {
+            "easting": 860688.98987094,
+            "northing": 6931488.54459737
+          },
+          {
+            "easting": 860684.64987095,
+            "northing": 6931484.05459737
+          },
+          {
+            "easting": 860681.70987095,
+            "northing": 6931481.29459737
+          },
+          {
+            "easting": 860675.73987095,
+            "northing": 6931492.14459737
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23477625,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729092",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 7.5,
+        "bdtopo.altitude_minimale_sol": 169.4,
+        "bdtopo.altitude_maximale_toit": 178.2
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 7.5,
+        "roofMetres": 8.8,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 169.4,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729091",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Annexe · 2 logements · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860717.51987092,
+            "northing": 6931475.46459737
+          },
+          {
+            "easting": 860706.49987093,
+            "northing": 6931484.06459737
+          },
+          {
+            "easting": 860699.91987093,
+            "northing": 6931477.34459737
+          },
+          {
+            "easting": 860693.80987094,
+            "northing": 6931482.87459737
+          },
+          {
+            "easting": 860690.09987094,
+            "northing": 6931479.09459737
+          },
+          {
+            "easting": 860684.64987095,
+            "northing": 6931484.05459737
+          },
+          {
+            "easting": 860688.98987094,
+            "northing": 6931488.54459737
+          },
+          {
+            "easting": 860684.10987095,
+            "northing": 6931493.02459737
+          },
+          {
+            "easting": 860687.02987094,
+            "northing": 6931496.01459736
+          },
+          {
+            "easting": 860695.41987094,
+            "northing": 6931504.55459736
+          },
+          {
+            "easting": 860711.13987092,
+            "northing": 6931490.16459737
+          },
+          {
+            "easting": 860713.12987092,
+            "northing": 6931492.11459736
+          },
+          {
+            "easting": 860723.88987091,
+            "northing": 6931484.04459737
+          },
+          {
+            "easting": 860717.51987092,
+            "northing": 6931475.46459737
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23477739,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729091",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Annexe",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 2,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "02",
+        "bdtopo.materiaux_de_la_toiture": "01",
+        "bdtopo.hauteur": 6.5,
+        "bdtopo.altitude_minimale_sol": 168.9,
+        "bdtopo.altitude_maximale_toit": 179.4
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 6.5,
+        "roofMetres": 10.5,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 168.9,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      }
+    },
+    {
+      "id": "pci:batiment.45272064",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "rings": [
+        [
+          {
+            "easting": 860836.28987082,
+            "northing": 6931451.67459739
+          },
+          {
+            "easting": 860848.80987081,
+            "northing": 6931442.3645974
+          },
+          {
+            "easting": 860848.74987081,
+            "northing": 6931442.28459739
+          },
+          {
+            "easting": 860850.80987081,
+            "northing": 6931440.7045974
+          },
+          {
+            "easting": 860850.98987081,
+            "northing": 6931439.3045974
+          },
+          {
+            "easting": 860849.28987081,
+            "northing": 6931437.0845974
+          },
+          {
+            "easting": 860847.88987081,
+            "northing": 6931436.9045974
+          },
+          {
+            "easting": 860845.82987082,
+            "northing": 6931438.4845974
+          },
+          {
+            "easting": 860841.47987082,
+            "northing": 6931432.8345974
+          },
+          {
+            "easting": 860828.90987083,
+            "northing": 6931441.7045974
+          },
+          {
+            "easting": 860836.28987082,
+            "northing": 6931451.67459739
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 45229599,
+        "pci.type": "Bâtiment en dur"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO"
+    },
+    {
+      "id": "BATIMENT0000002274729129",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860733.89987091,
+            "northing": 6931547.39459733
+          },
+          {
+            "easting": 860737.8998709,
+            "northing": 6931552.10459733
+          },
+          {
+            "easting": 860742.2998709,
+            "northing": 6931546.87459733
+          },
+          {
+            "easting": 860742.7298709,
+            "northing": 6931547.04459733
+          },
+          {
+            "easting": 860749.88987089,
+            "northing": 6931538.35459734
+          },
+          {
+            "easting": 860745.1898709,
+            "northing": 6931533.77459734
+          },
+          {
+            "easting": 860733.89987091,
+            "northing": 6931547.39459733
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23445823,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729129",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "10",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 9.3,
+        "bdtopo.altitude_minimale_sol": 173.5,
+        "bdtopo.altitude_maximale_toit": 184.6
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 9.3,
+        "roofMetres": 11.1,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 173.5,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729128",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Annexe · 1 étage",
+      "rings": [
+        [
+          {
+            "easting": 860749.37987089,
+            "northing": 6931553.82459733
+          },
+          {
+            "easting": 860748.78987089,
+            "northing": 6931553.23459733
+          },
+          {
+            "easting": 860747.10987089,
+            "northing": 6931551.58459733
+          },
+          {
+            "easting": 860742.5898709,
+            "northing": 6931547.18459733
+          },
+          {
+            "easting": 860742.7298709,
+            "northing": 6931547.04459733
+          },
+          {
+            "easting": 860742.2998709,
+            "northing": 6931546.87459733
+          },
+          {
+            "easting": 860737.8998709,
+            "northing": 6931552.10459733
+          },
+          {
+            "easting": 860743.6598709,
+            "northing": 6931558.80459732
+          },
+          {
+            "easting": 860744.7898709,
+            "northing": 6931558.58459733
+          },
+          {
+            "easting": 860749.37987089,
+            "northing": 6931553.82459733
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23445950,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729128",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Annexe",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 0,
+        "bdtopo.nombre_d_etages": 1,
+        "bdtopo.materiaux_des_murs": "00",
+        "bdtopo.materiaux_de_la_toiture": "00",
+        "bdtopo.hauteur": 4.2,
+        "bdtopo.altitude_minimale_sol": 172.7,
+        "bdtopo.altitude_maximale_toit": 180
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 4.2,
+        "roofMetres": 7.3,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 172.7,
+        "verticalDatum": "NGF-IGN 1969"
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729043",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860805.09987085,
+            "northing": 6931559.75459732
+          },
+          {
+            "easting": 860813.40987084,
+            "northing": 6931569.87459731
+          },
+          {
+            "easting": 860816.97987084,
+            "northing": 6931573.97459731
+          },
+          {
+            "easting": 860829.14987083,
+            "northing": 6931561.47459732
+          },
+          {
+            "easting": 860817.20987084,
+            "northing": 6931548.43459733
+          },
+          {
+            "easting": 860805.09987085,
+            "northing": 6931559.75459732
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23446081,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729043",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "10",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 5.9,
+        "bdtopo.altitude_minimale_sol": 175.4,
+        "bdtopo.altitude_maximale_toit": 183.2
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 5.9,
+        "roofMetres": 7.8,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 175.4,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729044",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860817.63987084,
+            "northing": 6931574.79459731
+          },
+          {
+            "easting": 860823.30987083,
+            "northing": 6931581.67459731
+          },
+          {
+            "easting": 860835.89987082,
+            "northing": 6931568.33459732
+          },
+          {
+            "easting": 860829.14987083,
+            "northing": 6931561.47459732
+          },
+          {
+            "easting": 860816.97987084,
+            "northing": 6931573.97459731
+          },
+          {
+            "easting": 860817.63987084,
+            "northing": 6931574.79459731
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23446214,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729044",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "10",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 6.1,
+        "bdtopo.altitude_minimale_sol": 175.1,
+        "bdtopo.altitude_maximale_toit": 183
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 6.1,
+        "roofMetres": 7.9,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 175.1,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "pci:batiment.23683147",
+      "kind": "building",
+      "label": "Construction légère",
+      "rings": [
+        [
+          {
+            "easting": 860747.10987089,
+            "northing": 6931551.58459733
+          },
+          {
+            "easting": 860748.78987089,
+            "northing": 6931553.23459733
+          },
+          {
+            "easting": 860750.50987089,
+            "northing": 6931551.35459733
+          },
+          {
+            "easting": 860748.90987089,
+            "northing": 6931549.61459733
+          },
+          {
+            "easting": 860747.10987089,
+            "northing": 6931551.58459733
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23451360,
+        "pci.type": "Construction légère"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "lightweight": true
+    },
+    {
+      "id": "BATIMENT0000002274729231",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Annexe · 1 étage",
+      "rings": [
+        [
+          {
+            "easting": 860825.62987083,
+            "northing": 6931525.28459735
+          },
+          {
+            "easting": 860834.45987082,
+            "northing": 6931537.73459734
+          },
+          {
+            "easting": 860849.91987081,
+            "northing": 6931524.11459734
+          },
+          {
+            "easting": 860842.62987082,
+            "northing": 6931511.62459735
+          },
+          {
+            "easting": 860838.28987082,
+            "northing": 6931514.96459735
+          },
+          {
+            "easting": 860825.62987083,
+            "northing": 6931525.28459735
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23470462,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729231",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Annexe",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 0,
+        "bdtopo.nombre_d_etages": 1,
+        "bdtopo.materiaux_des_murs": "02",
+        "bdtopo.materiaux_de_la_toiture": "01",
+        "bdtopo.hauteur": 9.8,
+        "bdtopo.altitude_minimale_sol": 174.8,
+        "bdtopo.altitude_maximale_toit": 187
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 9.8,
+        "roofMetres": 12.2,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 174.8,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729105",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860773.81987087,
+            "northing": 6931518.88459735
+          },
+          {
+            "easting": 860782.10987087,
+            "northing": 6931529.19459734
+          },
+          {
+            "easting": 860791.81987086,
+            "northing": 6931523.00459735
+          },
+          {
+            "easting": 860785.06987086,
+            "northing": 6931511.47459735
+          },
+          {
+            "easting": 860773.81987087,
+            "northing": 6931518.88459735
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23471279,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729105",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "10",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 7.1,
+        "bdtopo.altitude_minimale_sol": 175.2,
+        "bdtopo.altitude_maximale_toit": 183.8
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 7.1,
+        "roofMetres": 8.6,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 175.2,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729104",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860782.10987087,
+            "northing": 6931529.19459734
+          },
+          {
+            "easting": 860786.21987086,
+            "northing": 6931536.46459734
+          },
+          {
+            "easting": 860787.93987086,
+            "northing": 6931539.48459734
+          },
+          {
+            "easting": 860793.34987086,
+            "northing": 6931536.15459734
+          },
+          {
+            "easting": 860791.20987086,
+            "northing": 6931531.69459734
+          },
+          {
+            "easting": 860795.52987086,
+            "northing": 6931529.28459734
+          },
+          {
+            "easting": 860791.81987086,
+            "northing": 6931523.00459735
+          },
+          {
+            "easting": 860782.10987087,
+            "northing": 6931529.19459734
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23471374,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729104",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "13",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 7.1,
+        "bdtopo.altitude_minimale_sol": 174.9,
+        "bdtopo.altitude_maximale_toit": 182.8
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 7.1,
+        "roofMetres": 7.9,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 174.9,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "stone",
+          "concrete"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729103",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860801.65987085,
+            "northing": 6931540.09459733
+          },
+          {
+            "easting": 860795.52987086,
+            "northing": 6931529.28459734
+          },
+          {
+            "easting": 860791.20987086,
+            "northing": 6931531.69459734
+          },
+          {
+            "easting": 860793.34987086,
+            "northing": 6931536.15459734
+          },
+          {
+            "easting": 860787.93987086,
+            "northing": 6931539.48459734
+          },
+          {
+            "easting": 860789.14987086,
+            "northing": 6931541.50459734
+          },
+          {
+            "easting": 860791.40987086,
+            "northing": 6931545.27459733
+          },
+          {
+            "easting": 860799.55987085,
+            "northing": 6931541.15459734
+          },
+          {
+            "easting": 860801.65987085,
+            "northing": 6931540.09459733
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23471458,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729103",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 6.6,
+        "bdtopo.altitude_minimale_sol": 174.8,
+        "bdtopo.altitude_maximale_toit": 182.4
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 6.6,
+        "roofMetres": 7.6,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 174.8,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729077",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860797.46987085,
+            "northing": 6931528.88459734
+          },
+          {
+            "easting": 860802.78987085,
+            "northing": 6931539.76459733
+          },
+          {
+            "easting": 860814.61987084,
+            "northing": 6931535.29459734
+          },
+          {
+            "easting": 860811.89987084,
+            "northing": 6931528.58459734
+          },
+          {
+            "easting": 860809.52987084,
+            "northing": 6931522.72459735
+          },
+          {
+            "easting": 860797.46987085,
+            "northing": 6931528.88459734
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23471556,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729077",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 6.4,
+        "bdtopo.altitude_minimale_sol": 175.1,
+        "bdtopo.altitude_maximale_toit": 182.7
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 6.4,
+        "roofMetres": 7.6,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 175.1,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729049",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860713.60987092,
+            "northing": 6931558.17459733
+          },
+          {
+            "easting": 860708.57987093,
+            "northing": 6931565.03459732
+          },
+          {
+            "easting": 860714.77987092,
+            "northing": 6931569.22459732
+          },
+          {
+            "easting": 860716.78987092,
+            "northing": 6931566.42459732
+          },
+          {
+            "easting": 860721.16987092,
+            "northing": 6931560.37459733
+          },
+          {
+            "easting": 860715.37987092,
+            "northing": 6931555.84459733
+          },
+          {
+            "easting": 860713.60987092,
+            "northing": 6931558.17459733
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23477943,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729049",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 8.3,
+        "bdtopo.altitude_minimale_sol": 170.9,
+        "bdtopo.altitude_maximale_toit": 180.4
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 8.3,
+        "roofMetres": 9.5,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 170.9,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729085",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860713.60987092,
+            "northing": 6931558.17459733
+          },
+          {
+            "easting": 860715.37987092,
+            "northing": 6931555.84459733
+          },
+          {
+            "easting": 860721.16987092,
+            "northing": 6931560.37459733
+          },
+          {
+            "easting": 860724.64987091,
+            "northing": 6931555.41459733
+          },
+          {
+            "easting": 860729.15987091,
+            "northing": 6931549.01459733
+          },
+          {
+            "easting": 860724.46987091,
+            "northing": 6931545.04459733
+          },
+          {
+            "easting": 860721.73987092,
+            "northing": 6931542.70459734
+          },
+          {
+            "easting": 860711.62987092,
+            "northing": 6931556.46459733
+          },
+          {
+            "easting": 860713.60987092,
+            "northing": 6931558.17459733
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23478049,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729085",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 8.9,
+        "bdtopo.altitude_minimale_sol": 172,
+        "bdtopo.altitude_maximale_toit": 182.8
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 8.9,
+        "roofMetres": 10.8,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 172,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729088",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860691.33987094,
+            "northing": 6931554.61459733
+          },
+          {
+            "easting": 860698.02987093,
+            "northing": 6931545.92459733
+          },
+          {
+            "easting": 860682.75987095,
+            "northing": 6931534.12459734
+          },
+          {
+            "easting": 860674.74987095,
+            "northing": 6931544.63459733
+          },
+          {
+            "easting": 860691.33987094,
+            "northing": 6931554.61459733
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23478368,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729088",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 7,
+        "bdtopo.altitude_minimale_sol": 169.5,
+        "bdtopo.altitude_maximale_toit": 177.8
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 7,
+        "roofMetres": 8.3,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 169.5,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729131",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860747.20987089,
+            "northing": 6931526.71459734
+          },
+          {
+            "easting": 860758.53987089,
+            "northing": 6931516.00459735
+          },
+          {
+            "easting": 860755.40987089,
+            "northing": 6931512.92459735
+          },
+          {
+            "easting": 860744.2298709,
+            "northing": 6931524.05459735
+          },
+          {
+            "easting": 860747.20987089,
+            "northing": 6931526.71459734
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23478961,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729131",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 8,
+        "bdtopo.altitude_minimale_sol": 175.1,
+        "bdtopo.altitude_maximale_toit": 184.3
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 8,
+        "roofMetres": 9.2,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 175.1,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729133",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860744.2298709,
+            "northing": 6931524.05459735
+          },
+          {
+            "easting": 860755.40987089,
+            "northing": 6931512.92459735
+          },
+          {
+            "easting": 860752.18987089,
+            "northing": 6931509.73459735
+          },
+          {
+            "easting": 860745.7698709,
+            "northing": 6931516.10459735
+          },
+          {
+            "easting": 860744.5798709,
+            "northing": 6931517.30459735
+          },
+          {
+            "easting": 860740.9498709,
+            "northing": 6931520.96459735
+          },
+          {
+            "easting": 860744.2298709,
+            "northing": 6931524.05459735
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23479097,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729133",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "20",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 8.2,
+        "bdtopo.altitude_minimale_sol": 175,
+        "bdtopo.altitude_maximale_toit": 184.2
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 8.2,
+        "roofMetres": 9.2,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 175,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "millstone"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    },
+    {
+      "id": "BATIMENT0000002274729089",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Indifférencié",
+      "rings": [
+        [
+          {
+            "easting": 860787.79987086,
+            "northing": 6931562.70459732
+          },
+          {
+            "easting": 860793.80987086,
+            "northing": 6931558.19459732
+          },
+          {
+            "easting": 860789.74987086,
+            "northing": 6931552.37459733
+          },
+          {
+            "easting": 860783.51987087,
+            "northing": 6931556.88459733
+          },
+          {
+            "easting": 860787.79987086,
+            "northing": 6931562.70459732
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23480809,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729089",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Indifférencié",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.hauteur": 5.9,
+        "bdtopo.altitude_minimale_sol": 173.8,
+        "bdtopo.altitude_maximale_toit": 183.3
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 5.9,
+        "roofMetres": 9.5,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 173.8,
+        "verticalDatum": "NGF-IGN 1969"
+      }
+    },
+    {
+      "id": "BATIMENT0000002274729074",
+      "kind": "building",
+      "label": "Bâtiment en dur",
+      "summary": "Résidentiel · 1 logement · 2 étages",
+      "rings": [
+        [
+          {
+            "easting": 860800.87987085,
+            "northing": 6931554.13459733
+          },
+          {
+            "easting": 860801.84987085,
+            "northing": 6931555.69459733
+          },
+          {
+            "easting": 860805.09987085,
+            "northing": 6931559.75459732
+          },
+          {
+            "easting": 860817.20987084,
+            "northing": 6931548.43459733
+          },
+          {
+            "easting": 860814.72987084,
+            "northing": 6931545.71459733
+          },
+          {
+            "easting": 860800.87987085,
+            "northing": 6931554.13459733
+          }
+        ]
+      ],
+      "properties": {
+        "pci.gid": 23480934,
+        "pci.type": "Bâtiment en dur",
+        "bdtopo.cleabs": "BATIMENT0000002274729074",
+        "bdtopo.nature": "Indifférenciée",
+        "bdtopo.usage_1": "Résidentiel",
+        "bdtopo.etat_de_l_objet": "En service",
+        "bdtopo.nombre_de_logements": 1,
+        "bdtopo.nombre_d_etages": 2,
+        "bdtopo.materiaux_des_murs": "45",
+        "bdtopo.materiaux_de_la_toiture": "10",
+        "bdtopo.hauteur": 5.7,
+        "bdtopo.altitude_minimale_sol": 175.4,
+        "bdtopo.altitude_maximale_toit": 182.8
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr) · Parcellaire Express, BD TOPO",
+      "height": {
+        "eavesMetres": 5.7,
+        "roofMetres": 7.4,
+        "basis": "measured"
+      },
+      "ground": {
+        "elevation": 175.4,
+        "verticalDatum": "NGF-IGN 1969"
+      },
+      "materials": {
+        "walls": [
+          "brick",
+          "block"
+        ],
+        "roof": [
+          "tiles"
+        ]
+      },
+      "suggested": true
+    }
+  ]
+}

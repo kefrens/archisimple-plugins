@@ -1,0 +1,4419 @@
+{
+  "query": {
+    "outline": "withRoofOverhangs",
+    "targets": [
+      {
+        "kind": "boundary-edge",
+        "edge": 1
+      },
+      {
+        "kind": "boundary-edge",
+        "edge": 2
+      },
+      {
+        "kind": "boundary-edge",
+        "edge": 3
+      },
+      {
+        "kind": "boundary-edge",
+        "edge": 4
+      }
+    ],
+    "ratios": [
+      0.5
+    ],
+    "byFacade": true
+  },
+  "date": "2026-10-20T06:26:25.599Z",
+  "boundary": {
+    "ring": [
+      {
+        "easting": 863538.5590871756,
+        "northing": 6937509.33134574
+      },
+      {
+        "easting": 863588.5590871756,
+        "northing": 6937509.33134574
+      },
+      {
+        "easting": 863588.5590871756,
+        "northing": 6937543.33134574
+      },
+      {
+        "easting": 863538.5590871756,
+        "northing": 6937543.33134574
+      }
+    ]
+  },
+  "projection": {
+    "available": true,
+    "buildingId": "building-main",
+    "height": {
+      "frame": "datum",
+      "groundAtFoot": {
+        "min": 0,
+        "max": 0
+      },
+      "top": 8.400000000000002,
+      "topAboveGround": {
+        "fromLowest": 8.400000000000002,
+        "fromHighest": 8.400000000000002
+      },
+      "eaves": 6,
+      "eavesAboveGround": {
+        "fromLowest": 6,
+        "fromHighest": 6
+      },
+      "notModelled": [
+        "chimney",
+        "antenna"
+      ]
+    }
+  },
+  "answer": {
+    "available": true,
+    "buildingId": "building-main",
+    "outline": "withRoofOverhangs",
+    "step": 0.25,
+    "targets": [
+      {
+        "target": {
+          "kind": "boundary-edge",
+          "edge": 1
+        },
+        "nearest": {
+          "building": {
+            "easting": 863558.5590871756,
+            "northing": 6937512.931345739
+          },
+          "target": {
+            "easting": 863558.5590871756,
+            "northing": 6937509.33134574
+          },
+          "distance": 3.6
+        },
+        "worst": [
+          {
+            "ratio": 0.5,
+            "building": {
+              "easting": 863558.5590871756,
+              "northing": 6937512.931345739
+            },
+            "target": {
+              "easting": 863558.5590871756,
+              "northing": 6937509.33134574
+            },
+            "distance": 3.5999999999999996,
+            "buildingAltitude": 5.76,
+            "groundAltitude": 0,
+            "rise": 5.76,
+            "margin": 0.7199999999999998,
+            "frame": "datum"
+          }
+        ]
+      },
+      {
+        "target": {
+          "kind": "boundary-edge",
+          "edge": 2
+        },
+        "nearest": {
+          "building": {
+            "easting": 863568.5590871756,
+            "northing": 6937512.931345739
+          },
+          "target": {
+            "easting": 863588.5590871756,
+            "northing": 6937512.931345739
+          },
+          "distance": 20
+        },
+        "worst": [
+          {
+            "ratio": 0.5,
+            "building": {
+              "easting": 863568.5590871756,
+              "northing": 6937517.33134574
+            },
+            "target": {
+              "easting": 863588.5590871756,
+              "northing": 6937517.33134574
+            },
+            "distance": 20,
+            "buildingAltitude": 8.400000000000002,
+            "groundAltitude": 0,
+            "rise": 8.400000000000002,
+            "margin": 15.799999999999999,
+            "frame": "datum"
+          }
+        ]
+      },
+      {
+        "target": {
+          "kind": "boundary-edge",
+          "edge": 3
+        },
+        "nearest": {
+          "building": {
+            "easting": 863568.5590871756,
+            "northing": 6937521.73134574
+          },
+          "target": {
+            "easting": 863568.5590871756,
+            "northing": 6937543.33134574
+          },
+          "distance": 21.6
+        },
+        "worst": [
+          {
+            "ratio": 0.5,
+            "building": {
+              "easting": 863568.5590871756,
+              "northing": 6937521.73134574
+            },
+            "target": {
+              "easting": 863568.5590871756,
+              "northing": 6937543.33134574
+            },
+            "distance": 21.6,
+            "buildingAltitude": 5.760000000000001,
+            "groundAltitude": 0,
+            "rise": 5.760000000000001,
+            "margin": 18.720000000000002,
+            "frame": "datum"
+          }
+        ]
+      },
+      {
+        "target": {
+          "kind": "boundary-edge",
+          "edge": 4
+        },
+        "nearest": {
+          "building": {
+            "easting": 863558.5590871756,
+            "northing": 6937512.931345739
+          },
+          "target": {
+            "easting": 863538.5590871756,
+            "northing": 6937512.931345739
+          },
+          "distance": 20
+        },
+        "worst": [
+          {
+            "ratio": 0.5,
+            "building": {
+              "easting": 863558.5590871756,
+              "northing": 6937517.33134574
+            },
+            "target": {
+              "easting": 863538.5590871756,
+              "northing": 6937517.33134574
+            },
+            "distance": 20,
+            "buildingAltitude": 8.4,
+            "groundAltitude": 0,
+            "rise": 8.4,
+            "margin": 15.8,
+            "frame": "datum"
+          }
+        ]
+      }
+    ],
+    "facades": [
+      {
+        "facade": "south",
+        "run": 0,
+        "line": [
+          {
+            "easting": 863558.5590871756,
+            "northing": 6937513.33134574
+          },
+          {
+            "easting": 863568.5590871756,
+            "northing": 6937513.33134574
+          }
+        ],
+        "height": {
+          "max": 6,
+          "samples": [
+            {
+              "s": 0,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 0.25,
+              "point": {
+                "easting": 863558.8090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 0.5,
+              "point": {
+                "easting": 863559.0590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 0.75,
+              "point": {
+                "easting": 863559.3090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 1,
+              "point": {
+                "easting": 863559.5590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 1.25,
+              "point": {
+                "easting": 863559.8090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 1.5,
+              "point": {
+                "easting": 863560.0590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 1.75,
+              "point": {
+                "easting": 863560.3090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 2,
+              "point": {
+                "easting": 863560.5590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 2.25,
+              "point": {
+                "easting": 863560.8090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 2.5,
+              "point": {
+                "easting": 863561.0590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 2.75,
+              "point": {
+                "easting": 863561.3090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 3,
+              "point": {
+                "easting": 863561.5590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 3.25,
+              "point": {
+                "easting": 863561.8090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 3.5,
+              "point": {
+                "easting": 863562.0590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 3.75,
+              "point": {
+                "easting": 863562.3090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 4,
+              "point": {
+                "easting": 863562.5590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 4.25,
+              "point": {
+                "easting": 863562.8090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 4.5,
+              "point": {
+                "easting": 863563.0590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 4.75,
+              "point": {
+                "easting": 863563.3090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 5,
+              "point": {
+                "easting": 863563.5590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 5.25,
+              "point": {
+                "easting": 863563.8090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 5.5,
+              "point": {
+                "easting": 863564.0590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 5.75,
+              "point": {
+                "easting": 863564.3090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 6,
+              "point": {
+                "easting": 863564.5590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 6.25,
+              "point": {
+                "easting": 863564.8090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 6.5,
+              "point": {
+                "easting": 863565.0590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 6.75,
+              "point": {
+                "easting": 863565.3090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 7,
+              "point": {
+                "easting": 863565.5590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 5.999999999999999,
+              "foot": 0,
+              "aboveFoot": 5.999999999999999
+            },
+            {
+              "s": 7.25,
+              "point": {
+                "easting": 863565.8090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 7.5,
+              "point": {
+                "easting": 863566.0590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 7.75,
+              "point": {
+                "easting": 863566.3090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 8,
+              "point": {
+                "easting": 863566.5590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 8.25,
+              "point": {
+                "easting": 863566.8090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 8.5,
+              "point": {
+                "easting": 863567.0590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 8.75,
+              "point": {
+                "easting": 863567.3090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 9,
+              "point": {
+                "easting": 863567.5590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 9.25,
+              "point": {
+                "easting": 863567.8090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 5.999999999999999,
+              "foot": 0,
+              "aboveFoot": 5.999999999999999
+            },
+            {
+              "s": 9.5,
+              "point": {
+                "easting": 863568.0590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 9.75,
+              "point": {
+                "easting": 863568.3090871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 10,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            }
+          ]
+        },
+        "targets": [
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863558.5590871756,
+                "northing": 6937513.33134574
+              },
+              "target": {
+                "easting": 863558.5590871756,
+                "northing": 6937509.33134574
+              },
+              "distance": 4,
+              "aboveFootThere": 6
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 4
+              },
+              {
+                "s": 0.25,
+                "distance": 4
+              },
+              {
+                "s": 0.5,
+                "distance": 4
+              },
+              {
+                "s": 0.75,
+                "distance": 4
+              },
+              {
+                "s": 1,
+                "distance": 4
+              },
+              {
+                "s": 1.25,
+                "distance": 4
+              },
+              {
+                "s": 1.5,
+                "distance": 4
+              },
+              {
+                "s": 1.75,
+                "distance": 4
+              },
+              {
+                "s": 2,
+                "distance": 4
+              },
+              {
+                "s": 2.25,
+                "distance": 4
+              },
+              {
+                "s": 2.5,
+                "distance": 4
+              },
+              {
+                "s": 2.75,
+                "distance": 4
+              },
+              {
+                "s": 3,
+                "distance": 4
+              },
+              {
+                "s": 3.25,
+                "distance": 4
+              },
+              {
+                "s": 3.5,
+                "distance": 4
+              },
+              {
+                "s": 3.75,
+                "distance": 4
+              },
+              {
+                "s": 4,
+                "distance": 4
+              },
+              {
+                "s": 4.25,
+                "distance": 4
+              },
+              {
+                "s": 4.5,
+                "distance": 4
+              },
+              {
+                "s": 4.75,
+                "distance": 4
+              },
+              {
+                "s": 5,
+                "distance": 4
+              },
+              {
+                "s": 5.25,
+                "distance": 4
+              },
+              {
+                "s": 5.5,
+                "distance": 4
+              },
+              {
+                "s": 5.75,
+                "distance": 4
+              },
+              {
+                "s": 6,
+                "distance": 4
+              },
+              {
+                "s": 6.25,
+                "distance": 4
+              },
+              {
+                "s": 6.5,
+                "distance": 4
+              },
+              {
+                "s": 6.75,
+                "distance": 4
+              },
+              {
+                "s": 7,
+                "distance": 4
+              },
+              {
+                "s": 7.25,
+                "distance": 4
+              },
+              {
+                "s": 7.5,
+                "distance": 4
+              },
+              {
+                "s": 7.75,
+                "distance": 4
+              },
+              {
+                "s": 8,
+                "distance": 4
+              },
+              {
+                "s": 8.25,
+                "distance": 4
+              },
+              {
+                "s": 8.5,
+                "distance": 4
+              },
+              {
+                "s": 8.75,
+                "distance": 4
+              },
+              {
+                "s": 9,
+                "distance": 4
+              },
+              {
+                "s": 9.25,
+                "distance": 4
+              },
+              {
+                "s": 9.5,
+                "distance": 4
+              },
+              {
+                "s": 9.75,
+                "distance": 4
+              },
+              {
+                "s": 10,
+                "distance": 4
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863568.5590871756,
+                "northing": 6937513.33134574
+              },
+              "target": {
+                "easting": 863588.5590871756,
+                "northing": 6937513.33134574
+              },
+              "distance": 20,
+              "aboveFootThere": 6
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 30
+              },
+              {
+                "s": 0.25,
+                "distance": 29.75
+              },
+              {
+                "s": 0.5,
+                "distance": 29.5
+              },
+              {
+                "s": 0.75,
+                "distance": 29.25
+              },
+              {
+                "s": 1,
+                "distance": 29
+              },
+              {
+                "s": 1.25,
+                "distance": 28.75
+              },
+              {
+                "s": 1.5,
+                "distance": 28.5
+              },
+              {
+                "s": 1.75,
+                "distance": 28.25
+              },
+              {
+                "s": 2,
+                "distance": 28
+              },
+              {
+                "s": 2.25,
+                "distance": 27.75
+              },
+              {
+                "s": 2.5,
+                "distance": 27.5
+              },
+              {
+                "s": 2.75,
+                "distance": 27.25
+              },
+              {
+                "s": 3,
+                "distance": 27
+              },
+              {
+                "s": 3.25,
+                "distance": 26.75
+              },
+              {
+                "s": 3.5,
+                "distance": 26.5
+              },
+              {
+                "s": 3.75,
+                "distance": 26.25
+              },
+              {
+                "s": 4,
+                "distance": 26
+              },
+              {
+                "s": 4.25,
+                "distance": 25.75
+              },
+              {
+                "s": 4.5,
+                "distance": 25.5
+              },
+              {
+                "s": 4.75,
+                "distance": 25.25
+              },
+              {
+                "s": 5,
+                "distance": 25
+              },
+              {
+                "s": 5.25,
+                "distance": 24.75
+              },
+              {
+                "s": 5.5,
+                "distance": 24.5
+              },
+              {
+                "s": 5.75,
+                "distance": 24.25
+              },
+              {
+                "s": 6,
+                "distance": 24
+              },
+              {
+                "s": 6.25,
+                "distance": 23.75
+              },
+              {
+                "s": 6.5,
+                "distance": 23.5
+              },
+              {
+                "s": 6.75,
+                "distance": 23.25
+              },
+              {
+                "s": 7,
+                "distance": 23
+              },
+              {
+                "s": 7.25,
+                "distance": 22.75
+              },
+              {
+                "s": 7.5,
+                "distance": 22.5
+              },
+              {
+                "s": 7.75,
+                "distance": 22.25
+              },
+              {
+                "s": 8,
+                "distance": 22
+              },
+              {
+                "s": 8.25,
+                "distance": 21.75
+              },
+              {
+                "s": 8.5,
+                "distance": 21.5
+              },
+              {
+                "s": 8.75,
+                "distance": 21.25
+              },
+              {
+                "s": 9,
+                "distance": 21
+              },
+              {
+                "s": 9.25,
+                "distance": 20.75
+              },
+              {
+                "s": 9.5,
+                "distance": 20.5
+              },
+              {
+                "s": 9.75,
+                "distance": 20.25
+              },
+              {
+                "s": 10,
+                "distance": 20
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863558.5590871756,
+                "northing": 6937513.33134574
+              },
+              "target": {
+                "easting": 863558.5590871756,
+                "northing": 6937543.33134574
+              },
+              "distance": 30,
+              "aboveFootThere": 6
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 30
+              },
+              {
+                "s": 0.25,
+                "distance": 30
+              },
+              {
+                "s": 0.5,
+                "distance": 30
+              },
+              {
+                "s": 0.75,
+                "distance": 30
+              },
+              {
+                "s": 1,
+                "distance": 30
+              },
+              {
+                "s": 1.25,
+                "distance": 30
+              },
+              {
+                "s": 1.5,
+                "distance": 30
+              },
+              {
+                "s": 1.75,
+                "distance": 30
+              },
+              {
+                "s": 2,
+                "distance": 30
+              },
+              {
+                "s": 2.25,
+                "distance": 30
+              },
+              {
+                "s": 2.5,
+                "distance": 30
+              },
+              {
+                "s": 2.75,
+                "distance": 30
+              },
+              {
+                "s": 3,
+                "distance": 30
+              },
+              {
+                "s": 3.25,
+                "distance": 30
+              },
+              {
+                "s": 3.5,
+                "distance": 30
+              },
+              {
+                "s": 3.75,
+                "distance": 30
+              },
+              {
+                "s": 4,
+                "distance": 30
+              },
+              {
+                "s": 4.25,
+                "distance": 30
+              },
+              {
+                "s": 4.5,
+                "distance": 30
+              },
+              {
+                "s": 4.75,
+                "distance": 30
+              },
+              {
+                "s": 5,
+                "distance": 30
+              },
+              {
+                "s": 5.25,
+                "distance": 30
+              },
+              {
+                "s": 5.5,
+                "distance": 30
+              },
+              {
+                "s": 5.75,
+                "distance": 30
+              },
+              {
+                "s": 6,
+                "distance": 30
+              },
+              {
+                "s": 6.25,
+                "distance": 30
+              },
+              {
+                "s": 6.5,
+                "distance": 30
+              },
+              {
+                "s": 6.75,
+                "distance": 30
+              },
+              {
+                "s": 7,
+                "distance": 30
+              },
+              {
+                "s": 7.25,
+                "distance": 30
+              },
+              {
+                "s": 7.5,
+                "distance": 30
+              },
+              {
+                "s": 7.75,
+                "distance": 30
+              },
+              {
+                "s": 8,
+                "distance": 30
+              },
+              {
+                "s": 8.25,
+                "distance": 30
+              },
+              {
+                "s": 8.5,
+                "distance": 30
+              },
+              {
+                "s": 8.75,
+                "distance": 30
+              },
+              {
+                "s": 9,
+                "distance": 30
+              },
+              {
+                "s": 9.25,
+                "distance": 30
+              },
+              {
+                "s": 9.5,
+                "distance": 30
+              },
+              {
+                "s": 9.75,
+                "distance": 30
+              },
+              {
+                "s": 10,
+                "distance": 30
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863558.5590871756,
+                "northing": 6937513.33134574
+              },
+              "target": {
+                "easting": 863538.5590871756,
+                "northing": 6937513.33134574
+              },
+              "distance": 20,
+              "aboveFootThere": 6
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 20
+              },
+              {
+                "s": 0.25,
+                "distance": 20.25
+              },
+              {
+                "s": 0.5,
+                "distance": 20.5
+              },
+              {
+                "s": 0.75,
+                "distance": 20.75
+              },
+              {
+                "s": 1,
+                "distance": 21
+              },
+              {
+                "s": 1.25,
+                "distance": 21.25
+              },
+              {
+                "s": 1.5,
+                "distance": 21.5
+              },
+              {
+                "s": 1.75,
+                "distance": 21.75
+              },
+              {
+                "s": 2,
+                "distance": 22
+              },
+              {
+                "s": 2.25,
+                "distance": 22.25
+              },
+              {
+                "s": 2.5,
+                "distance": 22.5
+              },
+              {
+                "s": 2.75,
+                "distance": 22.75
+              },
+              {
+                "s": 3,
+                "distance": 23
+              },
+              {
+                "s": 3.25,
+                "distance": 23.25
+              },
+              {
+                "s": 3.5,
+                "distance": 23.5
+              },
+              {
+                "s": 3.75,
+                "distance": 23.75
+              },
+              {
+                "s": 4,
+                "distance": 24
+              },
+              {
+                "s": 4.25,
+                "distance": 24.25
+              },
+              {
+                "s": 4.5,
+                "distance": 24.5
+              },
+              {
+                "s": 4.75,
+                "distance": 24.75
+              },
+              {
+                "s": 5,
+                "distance": 25
+              },
+              {
+                "s": 5.25,
+                "distance": 25.25
+              },
+              {
+                "s": 5.5,
+                "distance": 25.5
+              },
+              {
+                "s": 5.75,
+                "distance": 25.75
+              },
+              {
+                "s": 6,
+                "distance": 26
+              },
+              {
+                "s": 6.25,
+                "distance": 26.25
+              },
+              {
+                "s": 6.5,
+                "distance": 26.5
+              },
+              {
+                "s": 6.75,
+                "distance": 26.75
+              },
+              {
+                "s": 7,
+                "distance": 27
+              },
+              {
+                "s": 7.25,
+                "distance": 27.25
+              },
+              {
+                "s": 7.5,
+                "distance": 27.5
+              },
+              {
+                "s": 7.75,
+                "distance": 27.75
+              },
+              {
+                "s": 8,
+                "distance": 28
+              },
+              {
+                "s": 8.25,
+                "distance": 28.25
+              },
+              {
+                "s": 8.5,
+                "distance": 28.5
+              },
+              {
+                "s": 8.75,
+                "distance": 28.75
+              },
+              {
+                "s": 9,
+                "distance": 29
+              },
+              {
+                "s": 9.25,
+                "distance": 29.25
+              },
+              {
+                "s": 9.5,
+                "distance": 29.5
+              },
+              {
+                "s": 9.75,
+                "distance": 29.75
+              },
+              {
+                "s": 10,
+                "distance": 30
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "facade": "east",
+        "run": 0,
+        "line": [
+          {
+            "easting": 863568.5590871756,
+            "northing": 6937513.33134574
+          },
+          {
+            "easting": 863568.5590871756,
+            "northing": 6937521.33134574
+          }
+        ],
+        "height": {
+          "max": 8.400000000000004,
+          "samples": [
+            {
+              "s": 0,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6.029999999999999,
+              "foot": 0,
+              "aboveFoot": 6.029999999999999
+            },
+            {
+              "s": 0.25,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937513.58134574
+              },
+              "top": 6.1499999999999995,
+              "foot": 0,
+              "aboveFoot": 6.1499999999999995
+            },
+            {
+              "s": 0.5,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937513.83134574
+              },
+              "top": 6.299999999999999,
+              "foot": 0,
+              "aboveFoot": 6.299999999999999
+            },
+            {
+              "s": 0.75,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937514.08134574
+              },
+              "top": 6.449999999999999,
+              "foot": 0,
+              "aboveFoot": 6.449999999999999
+            },
+            {
+              "s": 1,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937514.33134574
+              },
+              "top": 6.6,
+              "foot": 0,
+              "aboveFoot": 6.6
+            },
+            {
+              "s": 1.25,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937514.58134574
+              },
+              "top": 6.749999999999999,
+              "foot": 0,
+              "aboveFoot": 6.749999999999999
+            },
+            {
+              "s": 1.5,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937514.83134574
+              },
+              "top": 6.9,
+              "foot": 0,
+              "aboveFoot": 6.9
+            },
+            {
+              "s": 1.75,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937515.08134574
+              },
+              "top": 7.05,
+              "foot": 0,
+              "aboveFoot": 7.05
+            },
+            {
+              "s": 2,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937515.33134574
+              },
+              "top": 7.2,
+              "foot": 0,
+              "aboveFoot": 7.2
+            },
+            {
+              "s": 2.25,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937515.58134574
+              },
+              "top": 7.3500000000000005,
+              "foot": 0,
+              "aboveFoot": 7.3500000000000005
+            },
+            {
+              "s": 2.5,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937515.83134574
+              },
+              "top": 7.5,
+              "foot": 0,
+              "aboveFoot": 7.5
+            },
+            {
+              "s": 2.75,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937516.08134574
+              },
+              "top": 7.65,
+              "foot": 0,
+              "aboveFoot": 7.65
+            },
+            {
+              "s": 3,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937516.33134574
+              },
+              "top": 7.800000000000001,
+              "foot": 0,
+              "aboveFoot": 7.800000000000001
+            },
+            {
+              "s": 3.25,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937516.58134574
+              },
+              "top": 7.95,
+              "foot": 0,
+              "aboveFoot": 7.95
+            },
+            {
+              "s": 3.5,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937516.83134574
+              },
+              "top": 8.100000000000001,
+              "foot": 0,
+              "aboveFoot": 8.100000000000001
+            },
+            {
+              "s": 3.75,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937517.08134574
+              },
+              "top": 8.25,
+              "foot": 0,
+              "aboveFoot": 8.25
+            },
+            {
+              "s": 4,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937517.33134574
+              },
+              "top": 8.400000000000004,
+              "foot": 0,
+              "aboveFoot": 8.400000000000004
+            },
+            {
+              "s": 4.25,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937517.58134574
+              },
+              "top": 8.250000000000004,
+              "foot": 0,
+              "aboveFoot": 8.250000000000004
+            },
+            {
+              "s": 4.5,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937517.83134574
+              },
+              "top": 8.100000000000003,
+              "foot": 0,
+              "aboveFoot": 8.100000000000003
+            },
+            {
+              "s": 4.75,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937518.08134574
+              },
+              "top": 7.950000000000003,
+              "foot": 0,
+              "aboveFoot": 7.950000000000003
+            },
+            {
+              "s": 5,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937518.33134574
+              },
+              "top": 7.800000000000003,
+              "foot": 0,
+              "aboveFoot": 7.800000000000003
+            },
+            {
+              "s": 5.25,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937518.58134574
+              },
+              "top": 7.650000000000003,
+              "foot": 0,
+              "aboveFoot": 7.650000000000003
+            },
+            {
+              "s": 5.5,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937518.83134574
+              },
+              "top": 7.500000000000003,
+              "foot": 0,
+              "aboveFoot": 7.500000000000003
+            },
+            {
+              "s": 5.75,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937519.08134574
+              },
+              "top": 7.350000000000002,
+              "foot": 0,
+              "aboveFoot": 7.350000000000002
+            },
+            {
+              "s": 6,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937519.33134574
+              },
+              "top": 7.200000000000003,
+              "foot": 0,
+              "aboveFoot": 7.200000000000003
+            },
+            {
+              "s": 6.25,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937519.58134574
+              },
+              "top": 7.0500000000000025,
+              "foot": 0,
+              "aboveFoot": 7.0500000000000025
+            },
+            {
+              "s": 6.5,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937519.83134574
+              },
+              "top": 6.900000000000002,
+              "foot": 0,
+              "aboveFoot": 6.900000000000002
+            },
+            {
+              "s": 6.75,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937520.08134574
+              },
+              "top": 6.750000000000002,
+              "foot": 0,
+              "aboveFoot": 6.750000000000002
+            },
+            {
+              "s": 7,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937520.33134574
+              },
+              "top": 6.600000000000001,
+              "foot": 0,
+              "aboveFoot": 6.600000000000001
+            },
+            {
+              "s": 7.25,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937520.58134574
+              },
+              "top": 6.450000000000001,
+              "foot": 0,
+              "aboveFoot": 6.450000000000001
+            },
+            {
+              "s": 7.5,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937520.83134574
+              },
+              "top": 6.300000000000002,
+              "foot": 0,
+              "aboveFoot": 6.300000000000002
+            },
+            {
+              "s": 7.75,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937521.08134574
+              },
+              "top": 6.150000000000002,
+              "foot": 0,
+              "aboveFoot": 6.150000000000002
+            },
+            {
+              "s": 8,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.030000000000001,
+              "foot": 0,
+              "aboveFoot": 6.030000000000001
+            }
+          ]
+        },
+        "targets": [
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863568.5590871756,
+                "northing": 6937513.33134574
+              },
+              "target": {
+                "easting": 863568.5590871756,
+                "northing": 6937509.33134574
+              },
+              "distance": 4,
+              "aboveFootThere": 6.029999999999999
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 4
+              },
+              {
+                "s": 0.25,
+                "distance": 4.25
+              },
+              {
+                "s": 0.5,
+                "distance": 4.5
+              },
+              {
+                "s": 0.75,
+                "distance": 4.75
+              },
+              {
+                "s": 1,
+                "distance": 5
+              },
+              {
+                "s": 1.25,
+                "distance": 5.25
+              },
+              {
+                "s": 1.5,
+                "distance": 5.5
+              },
+              {
+                "s": 1.75,
+                "distance": 5.75
+              },
+              {
+                "s": 2,
+                "distance": 6
+              },
+              {
+                "s": 2.25,
+                "distance": 6.25
+              },
+              {
+                "s": 2.5,
+                "distance": 6.5
+              },
+              {
+                "s": 2.75,
+                "distance": 6.75
+              },
+              {
+                "s": 3,
+                "distance": 7
+              },
+              {
+                "s": 3.25,
+                "distance": 7.25
+              },
+              {
+                "s": 3.5,
+                "distance": 7.5
+              },
+              {
+                "s": 3.75,
+                "distance": 7.75
+              },
+              {
+                "s": 4,
+                "distance": 8
+              },
+              {
+                "s": 4.25,
+                "distance": 8.25
+              },
+              {
+                "s": 4.5,
+                "distance": 8.5
+              },
+              {
+                "s": 4.75,
+                "distance": 8.75
+              },
+              {
+                "s": 5,
+                "distance": 9
+              },
+              {
+                "s": 5.25,
+                "distance": 9.25
+              },
+              {
+                "s": 5.5,
+                "distance": 9.5
+              },
+              {
+                "s": 5.75,
+                "distance": 9.75
+              },
+              {
+                "s": 6,
+                "distance": 10
+              },
+              {
+                "s": 6.25,
+                "distance": 10.25
+              },
+              {
+                "s": 6.5,
+                "distance": 10.5
+              },
+              {
+                "s": 6.75,
+                "distance": 10.75
+              },
+              {
+                "s": 7,
+                "distance": 11
+              },
+              {
+                "s": 7.25,
+                "distance": 11.25
+              },
+              {
+                "s": 7.5,
+                "distance": 11.5
+              },
+              {
+                "s": 7.75,
+                "distance": 11.75
+              },
+              {
+                "s": 8,
+                "distance": 12
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863568.5590871756,
+                "northing": 6937513.33134574
+              },
+              "target": {
+                "easting": 863588.5590871756,
+                "northing": 6937513.33134574
+              },
+              "distance": 20,
+              "aboveFootThere": 6.029999999999999
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 20
+              },
+              {
+                "s": 0.25,
+                "distance": 20
+              },
+              {
+                "s": 0.5,
+                "distance": 20
+              },
+              {
+                "s": 0.75,
+                "distance": 20
+              },
+              {
+                "s": 1,
+                "distance": 20
+              },
+              {
+                "s": 1.25,
+                "distance": 20
+              },
+              {
+                "s": 1.5,
+                "distance": 20
+              },
+              {
+                "s": 1.75,
+                "distance": 20
+              },
+              {
+                "s": 2,
+                "distance": 20
+              },
+              {
+                "s": 2.25,
+                "distance": 20
+              },
+              {
+                "s": 2.5,
+                "distance": 20
+              },
+              {
+                "s": 2.75,
+                "distance": 20
+              },
+              {
+                "s": 3,
+                "distance": 20
+              },
+              {
+                "s": 3.25,
+                "distance": 20
+              },
+              {
+                "s": 3.5,
+                "distance": 20
+              },
+              {
+                "s": 3.75,
+                "distance": 20
+              },
+              {
+                "s": 4,
+                "distance": 20
+              },
+              {
+                "s": 4.25,
+                "distance": 20
+              },
+              {
+                "s": 4.5,
+                "distance": 20
+              },
+              {
+                "s": 4.75,
+                "distance": 20
+              },
+              {
+                "s": 5,
+                "distance": 20
+              },
+              {
+                "s": 5.25,
+                "distance": 20
+              },
+              {
+                "s": 5.5,
+                "distance": 20
+              },
+              {
+                "s": 5.75,
+                "distance": 20
+              },
+              {
+                "s": 6,
+                "distance": 20
+              },
+              {
+                "s": 6.25,
+                "distance": 20
+              },
+              {
+                "s": 6.5,
+                "distance": 20
+              },
+              {
+                "s": 6.75,
+                "distance": 20
+              },
+              {
+                "s": 7,
+                "distance": 20
+              },
+              {
+                "s": 7.25,
+                "distance": 20
+              },
+              {
+                "s": 7.5,
+                "distance": 20
+              },
+              {
+                "s": 7.75,
+                "distance": 20
+              },
+              {
+                "s": 8,
+                "distance": 20
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863568.5590871756,
+                "northing": 6937521.33134574
+              },
+              "target": {
+                "easting": 863568.5590871756,
+                "northing": 6937543.33134574
+              },
+              "distance": 22,
+              "aboveFootThere": 6.030000000000001
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 30
+              },
+              {
+                "s": 0.25,
+                "distance": 29.75
+              },
+              {
+                "s": 0.5,
+                "distance": 29.5
+              },
+              {
+                "s": 0.75,
+                "distance": 29.25
+              },
+              {
+                "s": 1,
+                "distance": 29
+              },
+              {
+                "s": 1.25,
+                "distance": 28.75
+              },
+              {
+                "s": 1.5,
+                "distance": 28.5
+              },
+              {
+                "s": 1.75,
+                "distance": 28.25
+              },
+              {
+                "s": 2,
+                "distance": 28
+              },
+              {
+                "s": 2.25,
+                "distance": 27.75
+              },
+              {
+                "s": 2.5,
+                "distance": 27.5
+              },
+              {
+                "s": 2.75,
+                "distance": 27.25
+              },
+              {
+                "s": 3,
+                "distance": 27
+              },
+              {
+                "s": 3.25,
+                "distance": 26.75
+              },
+              {
+                "s": 3.5,
+                "distance": 26.5
+              },
+              {
+                "s": 3.75,
+                "distance": 26.25
+              },
+              {
+                "s": 4,
+                "distance": 26
+              },
+              {
+                "s": 4.25,
+                "distance": 25.75
+              },
+              {
+                "s": 4.5,
+                "distance": 25.5
+              },
+              {
+                "s": 4.75,
+                "distance": 25.25
+              },
+              {
+                "s": 5,
+                "distance": 25
+              },
+              {
+                "s": 5.25,
+                "distance": 24.75
+              },
+              {
+                "s": 5.5,
+                "distance": 24.5
+              },
+              {
+                "s": 5.75,
+                "distance": 24.25
+              },
+              {
+                "s": 6,
+                "distance": 24
+              },
+              {
+                "s": 6.25,
+                "distance": 23.75
+              },
+              {
+                "s": 6.5,
+                "distance": 23.5
+              },
+              {
+                "s": 6.75,
+                "distance": 23.25
+              },
+              {
+                "s": 7,
+                "distance": 23
+              },
+              {
+                "s": 7.25,
+                "distance": 22.75
+              },
+              {
+                "s": 7.5,
+                "distance": 22.5
+              },
+              {
+                "s": 7.75,
+                "distance": 22.25
+              },
+              {
+                "s": 8,
+                "distance": 22
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863568.5590871756,
+                "northing": 6937513.33134574
+              },
+              "target": {
+                "easting": 863538.5590871756,
+                "northing": 6937513.33134574
+              },
+              "distance": 30,
+              "aboveFootThere": 6.029999999999999
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 30
+              },
+              {
+                "s": 0.25,
+                "distance": 30
+              },
+              {
+                "s": 0.5,
+                "distance": 30
+              },
+              {
+                "s": 0.75,
+                "distance": 30
+              },
+              {
+                "s": 1,
+                "distance": 30
+              },
+              {
+                "s": 1.25,
+                "distance": 30
+              },
+              {
+                "s": 1.5,
+                "distance": 30
+              },
+              {
+                "s": 1.75,
+                "distance": 30
+              },
+              {
+                "s": 2,
+                "distance": 30
+              },
+              {
+                "s": 2.25,
+                "distance": 30
+              },
+              {
+                "s": 2.5,
+                "distance": 30
+              },
+              {
+                "s": 2.75,
+                "distance": 30
+              },
+              {
+                "s": 3,
+                "distance": 30
+              },
+              {
+                "s": 3.25,
+                "distance": 30
+              },
+              {
+                "s": 3.5,
+                "distance": 30
+              },
+              {
+                "s": 3.75,
+                "distance": 30
+              },
+              {
+                "s": 4,
+                "distance": 30
+              },
+              {
+                "s": 4.25,
+                "distance": 30
+              },
+              {
+                "s": 4.5,
+                "distance": 30
+              },
+              {
+                "s": 4.75,
+                "distance": 30
+              },
+              {
+                "s": 5,
+                "distance": 30
+              },
+              {
+                "s": 5.25,
+                "distance": 30
+              },
+              {
+                "s": 5.5,
+                "distance": 30
+              },
+              {
+                "s": 5.75,
+                "distance": 30
+              },
+              {
+                "s": 6,
+                "distance": 30
+              },
+              {
+                "s": 6.25,
+                "distance": 30
+              },
+              {
+                "s": 6.5,
+                "distance": 30
+              },
+              {
+                "s": 6.75,
+                "distance": 30
+              },
+              {
+                "s": 7,
+                "distance": 30
+              },
+              {
+                "s": 7.25,
+                "distance": 30
+              },
+              {
+                "s": 7.5,
+                "distance": 30
+              },
+              {
+                "s": 7.75,
+                "distance": 30
+              },
+              {
+                "s": 8,
+                "distance": 30
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "facade": "north",
+        "run": 0,
+        "line": [
+          {
+            "easting": 863568.5590871756,
+            "northing": 6937521.33134574
+          },
+          {
+            "easting": 863558.5590871756,
+            "northing": 6937521.33134574
+          }
+        ],
+        "height": {
+          "max": 6.000000000000002,
+          "samples": [
+            {
+              "s": 0,
+              "point": {
+                "easting": 863568.5590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 0.25,
+              "point": {
+                "easting": 863568.3090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 0.5,
+              "point": {
+                "easting": 863568.0590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 0.75,
+              "point": {
+                "easting": 863567.8090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 1,
+              "point": {
+                "easting": 863567.5590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 1.25,
+              "point": {
+                "easting": 863567.3090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 1.5,
+              "point": {
+                "easting": 863567.0590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 1.75,
+              "point": {
+                "easting": 863566.8090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 2,
+              "point": {
+                "easting": 863566.5590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 2.25,
+              "point": {
+                "easting": 863566.3090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 2.5,
+              "point": {
+                "easting": 863566.0590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000002,
+              "foot": 0,
+              "aboveFoot": 6.000000000000002
+            },
+            {
+              "s": 2.75,
+              "point": {
+                "easting": 863565.8090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 3,
+              "point": {
+                "easting": 863565.5590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 3.25,
+              "point": {
+                "easting": 863565.3090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 3.5,
+              "point": {
+                "easting": 863565.0590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 3.75,
+              "point": {
+                "easting": 863564.8090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 4,
+              "point": {
+                "easting": 863564.5590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 4.25,
+              "point": {
+                "easting": 863564.3090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 4.5,
+              "point": {
+                "easting": 863564.0590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 4.75,
+              "point": {
+                "easting": 863563.8090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 5,
+              "point": {
+                "easting": 863563.5590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 5.25,
+              "point": {
+                "easting": 863563.3090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 5.5,
+              "point": {
+                "easting": 863563.0590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 5.75,
+              "point": {
+                "easting": 863562.8090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 6,
+              "point": {
+                "easting": 863562.5590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 6.25,
+              "point": {
+                "easting": 863562.3090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 6.5,
+              "point": {
+                "easting": 863562.0590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 6.75,
+              "point": {
+                "easting": 863561.8090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 7,
+              "point": {
+                "easting": 863561.5590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 7.25,
+              "point": {
+                "easting": 863561.3090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000002,
+              "foot": 0,
+              "aboveFoot": 6.000000000000002
+            },
+            {
+              "s": 7.5,
+              "point": {
+                "easting": 863561.0590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 7.75,
+              "point": {
+                "easting": 863560.8090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 8,
+              "point": {
+                "easting": 863560.5590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 8.25,
+              "point": {
+                "easting": 863560.3090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 8.5,
+              "point": {
+                "easting": 863560.0590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 8.75,
+              "point": {
+                "easting": 863559.8090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 9,
+              "point": {
+                "easting": 863559.5590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 9.25,
+              "point": {
+                "easting": 863559.3090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6,
+              "foot": 0,
+              "aboveFoot": 6
+            },
+            {
+              "s": 9.5,
+              "point": {
+                "easting": 863559.0590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 9.75,
+              "point": {
+                "easting": 863558.8090871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            },
+            {
+              "s": 10,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.000000000000001,
+              "foot": 0,
+              "aboveFoot": 6.000000000000001
+            }
+          ]
+        },
+        "targets": [
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863568.5590871756,
+                "northing": 6937521.33134574
+              },
+              "target": {
+                "easting": 863568.5590871756,
+                "northing": 6937509.33134574
+              },
+              "distance": 12,
+              "aboveFootThere": 6.000000000000001
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 12
+              },
+              {
+                "s": 0.25,
+                "distance": 12
+              },
+              {
+                "s": 0.5,
+                "distance": 12
+              },
+              {
+                "s": 0.75,
+                "distance": 12
+              },
+              {
+                "s": 1,
+                "distance": 12
+              },
+              {
+                "s": 1.25,
+                "distance": 12
+              },
+              {
+                "s": 1.5,
+                "distance": 12
+              },
+              {
+                "s": 1.75,
+                "distance": 12
+              },
+              {
+                "s": 2,
+                "distance": 12
+              },
+              {
+                "s": 2.25,
+                "distance": 12
+              },
+              {
+                "s": 2.5,
+                "distance": 12
+              },
+              {
+                "s": 2.75,
+                "distance": 12
+              },
+              {
+                "s": 3,
+                "distance": 12
+              },
+              {
+                "s": 3.25,
+                "distance": 12
+              },
+              {
+                "s": 3.5,
+                "distance": 12
+              },
+              {
+                "s": 3.75,
+                "distance": 12
+              },
+              {
+                "s": 4,
+                "distance": 12
+              },
+              {
+                "s": 4.25,
+                "distance": 12
+              },
+              {
+                "s": 4.5,
+                "distance": 12
+              },
+              {
+                "s": 4.75,
+                "distance": 12
+              },
+              {
+                "s": 5,
+                "distance": 12
+              },
+              {
+                "s": 5.25,
+                "distance": 12
+              },
+              {
+                "s": 5.5,
+                "distance": 12
+              },
+              {
+                "s": 5.75,
+                "distance": 12
+              },
+              {
+                "s": 6,
+                "distance": 12
+              },
+              {
+                "s": 6.25,
+                "distance": 12
+              },
+              {
+                "s": 6.5,
+                "distance": 12
+              },
+              {
+                "s": 6.75,
+                "distance": 12
+              },
+              {
+                "s": 7,
+                "distance": 12
+              },
+              {
+                "s": 7.25,
+                "distance": 12
+              },
+              {
+                "s": 7.5,
+                "distance": 12
+              },
+              {
+                "s": 7.75,
+                "distance": 12
+              },
+              {
+                "s": 8,
+                "distance": 12
+              },
+              {
+                "s": 8.25,
+                "distance": 12
+              },
+              {
+                "s": 8.5,
+                "distance": 12
+              },
+              {
+                "s": 8.75,
+                "distance": 12
+              },
+              {
+                "s": 9,
+                "distance": 12
+              },
+              {
+                "s": 9.25,
+                "distance": 12
+              },
+              {
+                "s": 9.5,
+                "distance": 12
+              },
+              {
+                "s": 9.75,
+                "distance": 12
+              },
+              {
+                "s": 10,
+                "distance": 12
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863568.5590871756,
+                "northing": 6937521.33134574
+              },
+              "target": {
+                "easting": 863588.5590871756,
+                "northing": 6937521.33134574
+              },
+              "distance": 20,
+              "aboveFootThere": 6.000000000000001
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 20
+              },
+              {
+                "s": 0.25,
+                "distance": 20.25
+              },
+              {
+                "s": 0.5,
+                "distance": 20.5
+              },
+              {
+                "s": 0.75,
+                "distance": 20.75
+              },
+              {
+                "s": 1,
+                "distance": 21
+              },
+              {
+                "s": 1.25,
+                "distance": 21.25
+              },
+              {
+                "s": 1.5,
+                "distance": 21.5
+              },
+              {
+                "s": 1.75,
+                "distance": 21.75
+              },
+              {
+                "s": 2,
+                "distance": 22
+              },
+              {
+                "s": 2.25,
+                "distance": 22.25
+              },
+              {
+                "s": 2.5,
+                "distance": 22.5
+              },
+              {
+                "s": 2.75,
+                "distance": 22.75
+              },
+              {
+                "s": 3,
+                "distance": 23
+              },
+              {
+                "s": 3.25,
+                "distance": 23.25
+              },
+              {
+                "s": 3.5,
+                "distance": 23.5
+              },
+              {
+                "s": 3.75,
+                "distance": 23.75
+              },
+              {
+                "s": 4,
+                "distance": 24
+              },
+              {
+                "s": 4.25,
+                "distance": 24.25
+              },
+              {
+                "s": 4.5,
+                "distance": 24.5
+              },
+              {
+                "s": 4.75,
+                "distance": 24.75
+              },
+              {
+                "s": 5,
+                "distance": 25
+              },
+              {
+                "s": 5.25,
+                "distance": 25.25
+              },
+              {
+                "s": 5.5,
+                "distance": 25.5
+              },
+              {
+                "s": 5.75,
+                "distance": 25.75
+              },
+              {
+                "s": 6,
+                "distance": 26
+              },
+              {
+                "s": 6.25,
+                "distance": 26.25
+              },
+              {
+                "s": 6.5,
+                "distance": 26.5
+              },
+              {
+                "s": 6.75,
+                "distance": 26.75
+              },
+              {
+                "s": 7,
+                "distance": 27
+              },
+              {
+                "s": 7.25,
+                "distance": 27.25
+              },
+              {
+                "s": 7.5,
+                "distance": 27.5
+              },
+              {
+                "s": 7.75,
+                "distance": 27.75
+              },
+              {
+                "s": 8,
+                "distance": 28
+              },
+              {
+                "s": 8.25,
+                "distance": 28.25
+              },
+              {
+                "s": 8.5,
+                "distance": 28.5
+              },
+              {
+                "s": 8.75,
+                "distance": 28.75
+              },
+              {
+                "s": 9,
+                "distance": 29
+              },
+              {
+                "s": 9.25,
+                "distance": 29.25
+              },
+              {
+                "s": 9.5,
+                "distance": 29.5
+              },
+              {
+                "s": 9.75,
+                "distance": 29.75
+              },
+              {
+                "s": 10,
+                "distance": 30
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863568.5590871756,
+                "northing": 6937521.33134574
+              },
+              "target": {
+                "easting": 863568.5590871756,
+                "northing": 6937543.33134574
+              },
+              "distance": 22,
+              "aboveFootThere": 6.000000000000001
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 22
+              },
+              {
+                "s": 0.25,
+                "distance": 22
+              },
+              {
+                "s": 0.5,
+                "distance": 22
+              },
+              {
+                "s": 0.75,
+                "distance": 22
+              },
+              {
+                "s": 1,
+                "distance": 22
+              },
+              {
+                "s": 1.25,
+                "distance": 22
+              },
+              {
+                "s": 1.5,
+                "distance": 22
+              },
+              {
+                "s": 1.75,
+                "distance": 22
+              },
+              {
+                "s": 2,
+                "distance": 22
+              },
+              {
+                "s": 2.25,
+                "distance": 22
+              },
+              {
+                "s": 2.5,
+                "distance": 22
+              },
+              {
+                "s": 2.75,
+                "distance": 22
+              },
+              {
+                "s": 3,
+                "distance": 22
+              },
+              {
+                "s": 3.25,
+                "distance": 22
+              },
+              {
+                "s": 3.5,
+                "distance": 22
+              },
+              {
+                "s": 3.75,
+                "distance": 22
+              },
+              {
+                "s": 4,
+                "distance": 22
+              },
+              {
+                "s": 4.25,
+                "distance": 22
+              },
+              {
+                "s": 4.5,
+                "distance": 22
+              },
+              {
+                "s": 4.75,
+                "distance": 22
+              },
+              {
+                "s": 5,
+                "distance": 22
+              },
+              {
+                "s": 5.25,
+                "distance": 22
+              },
+              {
+                "s": 5.5,
+                "distance": 22
+              },
+              {
+                "s": 5.75,
+                "distance": 22
+              },
+              {
+                "s": 6,
+                "distance": 22
+              },
+              {
+                "s": 6.25,
+                "distance": 22
+              },
+              {
+                "s": 6.5,
+                "distance": 22
+              },
+              {
+                "s": 6.75,
+                "distance": 22
+              },
+              {
+                "s": 7,
+                "distance": 22
+              },
+              {
+                "s": 7.25,
+                "distance": 22
+              },
+              {
+                "s": 7.5,
+                "distance": 22
+              },
+              {
+                "s": 7.75,
+                "distance": 22
+              },
+              {
+                "s": 8,
+                "distance": 22
+              },
+              {
+                "s": 8.25,
+                "distance": 22
+              },
+              {
+                "s": 8.5,
+                "distance": 22
+              },
+              {
+                "s": 8.75,
+                "distance": 22
+              },
+              {
+                "s": 9,
+                "distance": 22
+              },
+              {
+                "s": 9.25,
+                "distance": 22
+              },
+              {
+                "s": 9.5,
+                "distance": 22
+              },
+              {
+                "s": 9.75,
+                "distance": 22
+              },
+              {
+                "s": 10,
+                "distance": 22
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863558.5590871756,
+                "northing": 6937521.33134574
+              },
+              "target": {
+                "easting": 863538.5590871756,
+                "northing": 6937521.33134574
+              },
+              "distance": 20,
+              "aboveFootThere": 6.000000000000001
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 30
+              },
+              {
+                "s": 0.25,
+                "distance": 29.75
+              },
+              {
+                "s": 0.5,
+                "distance": 29.5
+              },
+              {
+                "s": 0.75,
+                "distance": 29.25
+              },
+              {
+                "s": 1,
+                "distance": 29
+              },
+              {
+                "s": 1.25,
+                "distance": 28.75
+              },
+              {
+                "s": 1.5,
+                "distance": 28.5
+              },
+              {
+                "s": 1.75,
+                "distance": 28.25
+              },
+              {
+                "s": 2,
+                "distance": 28
+              },
+              {
+                "s": 2.25,
+                "distance": 27.75
+              },
+              {
+                "s": 2.5,
+                "distance": 27.5
+              },
+              {
+                "s": 2.75,
+                "distance": 27.25
+              },
+              {
+                "s": 3,
+                "distance": 27
+              },
+              {
+                "s": 3.25,
+                "distance": 26.75
+              },
+              {
+                "s": 3.5,
+                "distance": 26.5
+              },
+              {
+                "s": 3.75,
+                "distance": 26.25
+              },
+              {
+                "s": 4,
+                "distance": 26
+              },
+              {
+                "s": 4.25,
+                "distance": 25.75
+              },
+              {
+                "s": 4.5,
+                "distance": 25.5
+              },
+              {
+                "s": 4.75,
+                "distance": 25.25
+              },
+              {
+                "s": 5,
+                "distance": 25
+              },
+              {
+                "s": 5.25,
+                "distance": 24.75
+              },
+              {
+                "s": 5.5,
+                "distance": 24.5
+              },
+              {
+                "s": 5.75,
+                "distance": 24.25
+              },
+              {
+                "s": 6,
+                "distance": 24
+              },
+              {
+                "s": 6.25,
+                "distance": 23.75
+              },
+              {
+                "s": 6.5,
+                "distance": 23.5
+              },
+              {
+                "s": 6.75,
+                "distance": 23.25
+              },
+              {
+                "s": 7,
+                "distance": 23
+              },
+              {
+                "s": 7.25,
+                "distance": 22.75
+              },
+              {
+                "s": 7.5,
+                "distance": 22.5
+              },
+              {
+                "s": 7.75,
+                "distance": 22.25
+              },
+              {
+                "s": 8,
+                "distance": 22
+              },
+              {
+                "s": 8.25,
+                "distance": 21.75
+              },
+              {
+                "s": 8.5,
+                "distance": 21.5
+              },
+              {
+                "s": 8.75,
+                "distance": 21.25
+              },
+              {
+                "s": 9,
+                "distance": 21
+              },
+              {
+                "s": 9.25,
+                "distance": 20.75
+              },
+              {
+                "s": 9.5,
+                "distance": 20.5
+              },
+              {
+                "s": 9.75,
+                "distance": 20.25
+              },
+              {
+                "s": 10,
+                "distance": 20
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "facade": "west",
+        "run": 0,
+        "line": [
+          {
+            "easting": 863558.5590871756,
+            "northing": 6937521.33134574
+          },
+          {
+            "easting": 863558.5590871756,
+            "northing": 6937513.33134574
+          }
+        ],
+        "height": {
+          "max": 8.399999999999999,
+          "samples": [
+            {
+              "s": 0,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937521.33134574
+              },
+              "top": 6.030000000000001,
+              "foot": 0,
+              "aboveFoot": 6.030000000000001
+            },
+            {
+              "s": 0.25,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937521.08134574
+              },
+              "top": 6.150000000000001,
+              "foot": 0,
+              "aboveFoot": 6.150000000000001
+            },
+            {
+              "s": 0.5,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937520.83134574
+              },
+              "top": 6.300000000000002,
+              "foot": 0,
+              "aboveFoot": 6.300000000000002
+            },
+            {
+              "s": 0.75,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937520.58134574
+              },
+              "top": 6.450000000000001,
+              "foot": 0,
+              "aboveFoot": 6.450000000000001
+            },
+            {
+              "s": 1,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937520.33134574
+              },
+              "top": 6.600000000000001,
+              "foot": 0,
+              "aboveFoot": 6.600000000000001
+            },
+            {
+              "s": 1.25,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937520.08134574
+              },
+              "top": 6.750000000000001,
+              "foot": 0,
+              "aboveFoot": 6.750000000000001
+            },
+            {
+              "s": 1.5,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937519.83134574
+              },
+              "top": 6.9,
+              "foot": 0,
+              "aboveFoot": 6.9
+            },
+            {
+              "s": 1.75,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937519.58134574
+              },
+              "top": 7.050000000000001,
+              "foot": 0,
+              "aboveFoot": 7.050000000000001
+            },
+            {
+              "s": 2,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937519.33134574
+              },
+              "top": 7.200000000000001,
+              "foot": 0,
+              "aboveFoot": 7.200000000000001
+            },
+            {
+              "s": 2.25,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937519.08134574
+              },
+              "top": 7.3500000000000005,
+              "foot": 0,
+              "aboveFoot": 7.3500000000000005
+            },
+            {
+              "s": 2.5,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937518.83134574
+              },
+              "top": 7.5,
+              "foot": 0,
+              "aboveFoot": 7.5
+            },
+            {
+              "s": 2.75,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937518.58134574
+              },
+              "top": 7.65,
+              "foot": 0,
+              "aboveFoot": 7.65
+            },
+            {
+              "s": 3,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937518.33134574
+              },
+              "top": 7.800000000000001,
+              "foot": 0,
+              "aboveFoot": 7.800000000000001
+            },
+            {
+              "s": 3.25,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937518.08134574
+              },
+              "top": 7.949999999999999,
+              "foot": 0,
+              "aboveFoot": 7.949999999999999
+            },
+            {
+              "s": 3.5,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937517.83134574
+              },
+              "top": 8.1,
+              "foot": 0,
+              "aboveFoot": 8.1
+            },
+            {
+              "s": 3.75,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937517.58134574
+              },
+              "top": 8.25,
+              "foot": 0,
+              "aboveFoot": 8.25
+            },
+            {
+              "s": 4,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937517.33134574
+              },
+              "top": 8.399999999999999,
+              "foot": 0,
+              "aboveFoot": 8.399999999999999
+            },
+            {
+              "s": 4.25,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937517.08134574
+              },
+              "top": 8.249999999999998,
+              "foot": 0,
+              "aboveFoot": 8.249999999999998
+            },
+            {
+              "s": 4.5,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937516.83134574
+              },
+              "top": 8.099999999999998,
+              "foot": 0,
+              "aboveFoot": 8.099999999999998
+            },
+            {
+              "s": 4.75,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937516.58134574
+              },
+              "top": 7.9499999999999975,
+              "foot": 0,
+              "aboveFoot": 7.9499999999999975
+            },
+            {
+              "s": 5,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937516.33134574
+              },
+              "top": 7.799999999999997,
+              "foot": 0,
+              "aboveFoot": 7.799999999999997
+            },
+            {
+              "s": 5.25,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937516.08134574
+              },
+              "top": 7.649999999999999,
+              "foot": 0,
+              "aboveFoot": 7.649999999999999
+            },
+            {
+              "s": 5.5,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937515.83134574
+              },
+              "top": 7.499999999999998,
+              "foot": 0,
+              "aboveFoot": 7.499999999999998
+            },
+            {
+              "s": 5.75,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937515.58134574
+              },
+              "top": 7.349999999999998,
+              "foot": 0,
+              "aboveFoot": 7.349999999999998
+            },
+            {
+              "s": 6,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937515.33134574
+              },
+              "top": 7.199999999999998,
+              "foot": 0,
+              "aboveFoot": 7.199999999999998
+            },
+            {
+              "s": 6.25,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937515.08134574
+              },
+              "top": 7.049999999999999,
+              "foot": 0,
+              "aboveFoot": 7.049999999999999
+            },
+            {
+              "s": 6.5,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937514.83134574
+              },
+              "top": 6.899999999999999,
+              "foot": 0,
+              "aboveFoot": 6.899999999999999
+            },
+            {
+              "s": 6.75,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937514.58134574
+              },
+              "top": 6.749999999999998,
+              "foot": 0,
+              "aboveFoot": 6.749999999999998
+            },
+            {
+              "s": 7,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937514.33134574
+              },
+              "top": 6.599999999999999,
+              "foot": 0,
+              "aboveFoot": 6.599999999999999
+            },
+            {
+              "s": 7.25,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937514.08134574
+              },
+              "top": 6.449999999999999,
+              "foot": 0,
+              "aboveFoot": 6.449999999999999
+            },
+            {
+              "s": 7.5,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937513.83134574
+              },
+              "top": 6.299999999999999,
+              "foot": 0,
+              "aboveFoot": 6.299999999999999
+            },
+            {
+              "s": 7.75,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937513.58134574
+              },
+              "top": 6.1499999999999995,
+              "foot": 0,
+              "aboveFoot": 6.1499999999999995
+            },
+            {
+              "s": 8,
+              "point": {
+                "easting": 863558.5590871756,
+                "northing": 6937513.33134574
+              },
+              "top": 6.03,
+              "foot": 0,
+              "aboveFoot": 6.03
+            }
+          ]
+        },
+        "targets": [
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863558.5590871756,
+                "northing": 6937513.33134574
+              },
+              "target": {
+                "easting": 863558.5590871756,
+                "northing": 6937509.33134574
+              },
+              "distance": 4,
+              "aboveFootThere": 6.03
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 12
+              },
+              {
+                "s": 0.25,
+                "distance": 11.75
+              },
+              {
+                "s": 0.5,
+                "distance": 11.5
+              },
+              {
+                "s": 0.75,
+                "distance": 11.25
+              },
+              {
+                "s": 1,
+                "distance": 11
+              },
+              {
+                "s": 1.25,
+                "distance": 10.75
+              },
+              {
+                "s": 1.5,
+                "distance": 10.5
+              },
+              {
+                "s": 1.75,
+                "distance": 10.25
+              },
+              {
+                "s": 2,
+                "distance": 10
+              },
+              {
+                "s": 2.25,
+                "distance": 9.75
+              },
+              {
+                "s": 2.5,
+                "distance": 9.5
+              },
+              {
+                "s": 2.75,
+                "distance": 9.25
+              },
+              {
+                "s": 3,
+                "distance": 9
+              },
+              {
+                "s": 3.25,
+                "distance": 8.75
+              },
+              {
+                "s": 3.5,
+                "distance": 8.5
+              },
+              {
+                "s": 3.75,
+                "distance": 8.25
+              },
+              {
+                "s": 4,
+                "distance": 8
+              },
+              {
+                "s": 4.25,
+                "distance": 7.75
+              },
+              {
+                "s": 4.5,
+                "distance": 7.5
+              },
+              {
+                "s": 4.75,
+                "distance": 7.25
+              },
+              {
+                "s": 5,
+                "distance": 7
+              },
+              {
+                "s": 5.25,
+                "distance": 6.75
+              },
+              {
+                "s": 5.5,
+                "distance": 6.5
+              },
+              {
+                "s": 5.75,
+                "distance": 6.25
+              },
+              {
+                "s": 6,
+                "distance": 6
+              },
+              {
+                "s": 6.25,
+                "distance": 5.75
+              },
+              {
+                "s": 6.5,
+                "distance": 5.5
+              },
+              {
+                "s": 6.75,
+                "distance": 5.25
+              },
+              {
+                "s": 7,
+                "distance": 5
+              },
+              {
+                "s": 7.25,
+                "distance": 4.75
+              },
+              {
+                "s": 7.5,
+                "distance": 4.5
+              },
+              {
+                "s": 7.75,
+                "distance": 4.25
+              },
+              {
+                "s": 8,
+                "distance": 4
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863558.5590871756,
+                "northing": 6937521.33134574
+              },
+              "target": {
+                "easting": 863588.5590871756,
+                "northing": 6937521.33134574
+              },
+              "distance": 30,
+              "aboveFootThere": 6.030000000000001
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 30
+              },
+              {
+                "s": 0.25,
+                "distance": 30
+              },
+              {
+                "s": 0.5,
+                "distance": 30
+              },
+              {
+                "s": 0.75,
+                "distance": 30
+              },
+              {
+                "s": 1,
+                "distance": 30
+              },
+              {
+                "s": 1.25,
+                "distance": 30
+              },
+              {
+                "s": 1.5,
+                "distance": 30
+              },
+              {
+                "s": 1.75,
+                "distance": 30
+              },
+              {
+                "s": 2,
+                "distance": 30
+              },
+              {
+                "s": 2.25,
+                "distance": 30
+              },
+              {
+                "s": 2.5,
+                "distance": 30
+              },
+              {
+                "s": 2.75,
+                "distance": 30
+              },
+              {
+                "s": 3,
+                "distance": 30
+              },
+              {
+                "s": 3.25,
+                "distance": 30
+              },
+              {
+                "s": 3.5,
+                "distance": 30
+              },
+              {
+                "s": 3.75,
+                "distance": 30
+              },
+              {
+                "s": 4,
+                "distance": 30
+              },
+              {
+                "s": 4.25,
+                "distance": 30
+              },
+              {
+                "s": 4.5,
+                "distance": 30
+              },
+              {
+                "s": 4.75,
+                "distance": 30
+              },
+              {
+                "s": 5,
+                "distance": 30
+              },
+              {
+                "s": 5.25,
+                "distance": 30
+              },
+              {
+                "s": 5.5,
+                "distance": 30
+              },
+              {
+                "s": 5.75,
+                "distance": 30
+              },
+              {
+                "s": 6,
+                "distance": 30
+              },
+              {
+                "s": 6.25,
+                "distance": 30
+              },
+              {
+                "s": 6.5,
+                "distance": 30
+              },
+              {
+                "s": 6.75,
+                "distance": 30
+              },
+              {
+                "s": 7,
+                "distance": 30
+              },
+              {
+                "s": 7.25,
+                "distance": 30
+              },
+              {
+                "s": 7.5,
+                "distance": 30
+              },
+              {
+                "s": 7.75,
+                "distance": 30
+              },
+              {
+                "s": 8,
+                "distance": 30
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863558.5590871756,
+                "northing": 6937521.33134574
+              },
+              "target": {
+                "easting": 863558.5590871756,
+                "northing": 6937543.33134574
+              },
+              "distance": 22,
+              "aboveFootThere": 6.030000000000001
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 22
+              },
+              {
+                "s": 0.25,
+                "distance": 22.25
+              },
+              {
+                "s": 0.5,
+                "distance": 22.5
+              },
+              {
+                "s": 0.75,
+                "distance": 22.75
+              },
+              {
+                "s": 1,
+                "distance": 23
+              },
+              {
+                "s": 1.25,
+                "distance": 23.25
+              },
+              {
+                "s": 1.5,
+                "distance": 23.5
+              },
+              {
+                "s": 1.75,
+                "distance": 23.75
+              },
+              {
+                "s": 2,
+                "distance": 24
+              },
+              {
+                "s": 2.25,
+                "distance": 24.25
+              },
+              {
+                "s": 2.5,
+                "distance": 24.5
+              },
+              {
+                "s": 2.75,
+                "distance": 24.75
+              },
+              {
+                "s": 3,
+                "distance": 25
+              },
+              {
+                "s": 3.25,
+                "distance": 25.25
+              },
+              {
+                "s": 3.5,
+                "distance": 25.5
+              },
+              {
+                "s": 3.75,
+                "distance": 25.75
+              },
+              {
+                "s": 4,
+                "distance": 26
+              },
+              {
+                "s": 4.25,
+                "distance": 26.25
+              },
+              {
+                "s": 4.5,
+                "distance": 26.5
+              },
+              {
+                "s": 4.75,
+                "distance": 26.75
+              },
+              {
+                "s": 5,
+                "distance": 27
+              },
+              {
+                "s": 5.25,
+                "distance": 27.25
+              },
+              {
+                "s": 5.5,
+                "distance": 27.5
+              },
+              {
+                "s": 5.75,
+                "distance": 27.75
+              },
+              {
+                "s": 6,
+                "distance": 28
+              },
+              {
+                "s": 6.25,
+                "distance": 28.25
+              },
+              {
+                "s": 6.5,
+                "distance": 28.5
+              },
+              {
+                "s": 6.75,
+                "distance": 28.75
+              },
+              {
+                "s": 7,
+                "distance": 29
+              },
+              {
+                "s": 7.25,
+                "distance": 29.25
+              },
+              {
+                "s": 7.5,
+                "distance": 29.5
+              },
+              {
+                "s": 7.75,
+                "distance": 29.75
+              },
+              {
+                "s": 8,
+                "distance": 30
+              }
+            ]
+          },
+          {
+            "nearest": {
+              "facade": {
+                "easting": 863558.5590871756,
+                "northing": 6937521.33134574
+              },
+              "target": {
+                "easting": 863538.5590871756,
+                "northing": 6937521.33134574
+              },
+              "distance": 20,
+              "aboveFootThere": 6.030000000000001
+            },
+            "samples": [
+              {
+                "s": 0,
+                "distance": 20
+              },
+              {
+                "s": 0.25,
+                "distance": 20
+              },
+              {
+                "s": 0.5,
+                "distance": 20
+              },
+              {
+                "s": 0.75,
+                "distance": 20
+              },
+              {
+                "s": 1,
+                "distance": 20
+              },
+              {
+                "s": 1.25,
+                "distance": 20
+              },
+              {
+                "s": 1.5,
+                "distance": 20
+              },
+              {
+                "s": 1.75,
+                "distance": 20
+              },
+              {
+                "s": 2,
+                "distance": 20
+              },
+              {
+                "s": 2.25,
+                "distance": 20
+              },
+              {
+                "s": 2.5,
+                "distance": 20
+              },
+              {
+                "s": 2.75,
+                "distance": 20
+              },
+              {
+                "s": 3,
+                "distance": 20
+              },
+              {
+                "s": 3.25,
+                "distance": 20
+              },
+              {
+                "s": 3.5,
+                "distance": 20
+              },
+              {
+                "s": 3.75,
+                "distance": 20
+              },
+              {
+                "s": 4,
+                "distance": 20
+              },
+              {
+                "s": 4.25,
+                "distance": 20
+              },
+              {
+                "s": 4.5,
+                "distance": 20
+              },
+              {
+                "s": 4.75,
+                "distance": 20
+              },
+              {
+                "s": 5,
+                "distance": 20
+              },
+              {
+                "s": 5.25,
+                "distance": 20
+              },
+              {
+                "s": 5.5,
+                "distance": 20
+              },
+              {
+                "s": 5.75,
+                "distance": 20
+              },
+              {
+                "s": 6,
+                "distance": 20
+              },
+              {
+                "s": 6.25,
+                "distance": 20
+              },
+              {
+                "s": 6.5,
+                "distance": 20
+              },
+              {
+                "s": 6.75,
+                "distance": 20
+              },
+              {
+                "s": 7,
+                "distance": 20
+              },
+              {
+                "s": 7.25,
+                "distance": 20
+              },
+              {
+                "s": 7.5,
+                "distance": 20
+              },
+              {
+                "s": 7.75,
+                "distance": 20
+              },
+              {
+                "s": 8,
+                "distance": 20
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "notModelled": [
+      "chimney",
+      "antenna"
+    ]
+  }
+}

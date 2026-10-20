@@ -9,11 +9,13 @@ the same path any third-party package takes.
 
 ```text
 archisimple-plugins/
-  urban-rules/            one package
+  fr-urban-rules/         one package
     package.json          the manifest — the authoritative description
     src/index.js          the entry point, plain ESM JavaScript
     tests/                runs under `node --test`, no install, no build
   sh3f-importer/          another
+  services/               companion services, run server-side (not packages)
+  test-fixtures/          recorded answers the tests read (not a package)
   docs/                   design notes and extension ADRs
 ```
 
@@ -28,8 +30,26 @@ is discovered, installed and hot-reloaded as its own package.
 
 | Package                        | Type      | What it does                                                                                     |
 | ------------------------------ | --------- | ------------------------------------------------------------------------------------------------ |
-| [urban-rules/](urban-rules/)   | extension | Applies local planning limits — site coverage, buildable floor area, storey caps — to the Space Programme, before any geometry exists. The reference for contributing knowledge to the planning pipeline. |
+| [fr-urban-rules/](fr-urban-rules/) | extension | **Règles d'urbanisme (PLU)**: reads the planning rules on a French plot — regime, document in force, zone, prescriptions, easements, Géorisques risks and a link to the regulation — and hands the host a `RegulationReport` (SDK 1.28, `regulations`), the regulation opened at the zone's page where the deployment runs its companion service, which also reads the zone's written rules on request for the user to confirm; under the RNU and a carte communale, the coded national rules, the Site boundary's edges and the R.111-17 checks, with an edge-role correction written to the Site (`document`); drawn and entered rules to confirm; the emprise au sol and surface de plancher under their French definitions, the footprint budget, extension caps, a capacity estimate and indicative procedure flags; and the Space Programme warning (`ai`). The reference for contributing a **regulation source** and a **planning-stage enricher**. |
+
+`urban-rules` (Urban Rules, generic) was **retired** in Sprint 002.3: its
+programme warning moved to `fr-urban-rules`, read from the plot's confirmed
+rules rather than three typed preferences. An installed copy stays installed
+until its user removes it; see [fr-urban-rules/README.md](fr-urban-rules/README.md)
+for the migration note.
 | [sh3f-importer/](sh3f-importer/) | extension | Imports Sweet Home 3D furniture libraries (`.sh3f`) into the Library — categories, metre dimensions, plan icons, doors and windows, and the licence each entry carries. The reference for contributing an **importer**, and the proof that a format needs no change to the application. |
+
+## Services
+
+[services/](services/) (Sprint 002.5a) holds the server-side half of a
+package: Node programs the deployment runs in one `plugin-services` container
+behind a gateway, at `/plugins-api/<package id>/` on the editor's origin
+(platform ADR-0114). They are **not packages** — never zipped, installed or
+loaded into the editor — and sit two levels down so neither the Development
+Repository nor `tools/build-index.mjs` mistakes them for one. The first is
+[fr-urban-rules-service](services/fr-urban-rules-service/README.md): it reads a
+plot's règlement and finds its zone's chapter. Node ≥ 22.13;
+`node --test 'services/*/tests/*.test.mjs'`.
 
 ---
 
@@ -75,10 +95,16 @@ const ThemeServiceToken = { name: 'theme' };
 const theme = context.services.get(ThemeServiceToken);
 ```
 
-Well-known token names: `logging`, `document`, `selection`, `command`,
-`resource`, `theme`, `i18n`, `package`, `preferences`, `component-model`,
-`geo-map`, `ai`. `context.commands` and `context.events` arrive directly on the
-context, no lookup needed.
+Well-known token names (from `defineServiceToken(...)` in the platform's
+`packages/extension-sdk/src/services.ts`, SDK 1.28): `logging`, `document`,
+`selection`, `command`, `resource`, `theme`, `i18n`, `package`, `preferences`,
+`component-model`, `geo-map`, `map-features`, `terrain`, `vegetation`, `roads`,
+`site`, `regulations`, `site-package-data`, `country-profile`, `ai`, `assets`,
+`importer`, `exporter`, `sheet-exporter`, and `plugin-service` (SDK 1.28,
+`plugin-services.ts`). `context.commands` and
+`context.events` arrive directly on the context, no lookup needed. The current
+SDK version is `SDK_VERSION` in `packages/extension-sdk/src/sdk-version.ts`
+(`1.28` on 2026-10-20); [CLAUDE.md](CLAUDE.md) has the table with notes.
 
 ---
 
@@ -90,9 +116,9 @@ export function activate(context) {
 
   subscriptions.add(
     commands.register({
-      id: 'urban-rules.checkSetback',
-      titleKey: 'urban-rules.checkSetback.title',
-      categoryKey: 'urban-rules.category',
+      id: 'my-plugin.checkSetback',
+      titleKey: 'my-plugin.checkSetback.title',
+      categoryKey: 'my-plugin.category',
       run: () => logger.info('checking setbacks')
     })
   );
@@ -113,16 +139,25 @@ strings ship as i18n resources.
 Declare exactly what you use. Read-only observation is **ambient** and needs
 nothing.
 
-| Capability   | Grants                                                  |
-| ------------ | ------------------------------------------------------- |
-| `commands`   | `context.commands.register()`                           |
-| `events`     | `context.events.on()`                                   |
-| `document`   | Document **writes** (`transact`). Reading is ambient.   |
-| `components` | Registering components and entity kinds                 |
-| `geo`        | Contributing base-map layers                            |
-| `ai`         | Contributing Skills and planning stages (ADR-0028)      |
-| `import`     | `registerImporter()` — listing importers is ambient     |
-| `export`     | `registerExporter()` — listing exporters is ambient     |
+From `EXTENSION_CAPABILITIES` in the platform's
+`packages/extension-sdk/src/capabilities.ts` (SDK 1.28; no capability added since 1.25):
+
+| Capability        | Grants                                                              |
+| ----------------- | ------------------------------------------------------------------- |
+| `commands`        | `context.commands.register()`                                       |
+| `events`          | `context.events.on()`                                               |
+| `document`        | Document **writes** (`transact`) and your Site section's `write`    |
+| `components`      | Registering components and entity kinds                             |
+| `geo`             | Contributing base-map layers                                        |
+| `ai`              | Contributing Skills and planning stages (ADR-0028)                  |
+| `assets`          | Contributing Library asset definitions                              |
+| `import`          | `registerImporter()` — listing importers is ambient                 |
+| `export`          | `registerExporter()`, sheet exporters — listing is ambient          |
+| `map-features`    | Registering feature and road sources — listing is ambient           |
+| `terrain`         | Registering elevation providers                                     |
+| `country-profile` | Registering a country profile                                       |
+| `vegetation`      | Registering canopy sources                                          |
+| `regulations`     | Registering a regulation source (SDK 1.25) — listing is ambient     |
 
 `rendering`, `properties`, `object-types` and `generators` are reserved: valid in
 a manifest, but no service is gated on them yet. `import` and `export` were on
@@ -150,12 +185,20 @@ typo fails loudly at parse time.
    `lastReloadAt` and any message. `Validate` there is a dry run.
 4. **Run the tests** — no install, no build:
    ```bash
-   node --test urban-rules/tests/package.test.mjs
+   node --test fr-urban-rules/tests/*.test.mjs
    ```
+   `fr-urban-rules/tests/acceptance.test.mjs` (Sprint 002.4) replays the five
+   reference plots from `test-fixtures/fr-urban-rules/acceptance/<plot>/`,
+   captured in the editor by the developer command *Capture test fixtures
+   (developer)*, registered only when the preference
+   `fr-urban-rules.devCapture` is `true` (see the package README);
+   `node tools/record-fixtures.mjs <plot> --trim` keeps only what the tests
+   read, and `--check` compares those recorded answers with the live services,
+   for a person to read.
 5. **Validate and ship:**
    ```bash
-   archisimple package validate ./urban-rules
-   archisimple package build    ./urban-rules --out dist
+   archisimple package validate ./fr-urban-rules
+   archisimple package build    ./fr-urban-rules --out dist
    ```
 
 `build` validates first and writes nothing if validation fails. An `.aspkg` is a
@@ -260,12 +303,12 @@ Not this repo's preferences — what the host enforces.
 ## Conventions
 
 - Folder name is the package's short name in kebab-case; the manifest `id` is
-  the reverse-DNS form (`com.archisimple.urban-rules`).
+  the reverse-DNS form (`com.archisimple.fr-urban-rules`).
 - Command ids and translation keys are namespaced by package.
 - Each package is self-contained: no shared `node_modules`, no cross-folder
   imports, no build step. If two need the same helper, copy it — a package that
   cannot be zipped and installed on its own is not a package.
-- Conventional Commits, scoped by package: `feat(urban-rules): …`.
+- Conventional Commits, scoped by package: `feat(fr-urban-rules): …`.
 
 ---
 

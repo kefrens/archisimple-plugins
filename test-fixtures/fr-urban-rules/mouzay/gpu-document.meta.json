@@ -1,0 +1,6 @@
+{
+  "url": "https://www.geoportail-urbanisme.gouv.fr/api/document?partition=DU_55364&status=document.production",
+  "method": "GET",
+  "status": 200,
+  "date": "2026-10-20T05:28:33.796Z"
+}

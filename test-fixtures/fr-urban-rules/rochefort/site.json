@@ -1,0 +1,87 @@
+{
+  "anchor": {
+    "latitude": 47.69936104567822,
+    "longitude": -2.33673550621203
+  },
+  "crs": "EPSG:2154",
+  "country": "FR",
+  "parcels": [
+    {
+      "sourceId": "carte-gouv.parcelle",
+      "featureId": "56196000AB0235",
+      "label": "Section AB n° 0235",
+      "rings": [
+        [
+          {
+            "easting": 300035.99031724,
+            "northing": 6746746.04468677
+          },
+          {
+            "easting": 300043.25031724,
+            "northing": 6746745.76468677
+          },
+          {
+            "easting": 300042.59031724,
+            "northing": 6746728.85468678
+          },
+          {
+            "easting": 300035.96031724,
+            "northing": 6746729.24468678
+          },
+          {
+            "easting": 300036.21031724,
+            "northing": 6746737.68468677
+          },
+          {
+            "easting": 300032.69031724,
+            "northing": 6746737.68468677
+          },
+          {
+            "easting": 300030.84031725,
+            "northing": 6746737.68468677
+          },
+          {
+            "easting": 300031.03031725,
+            "northing": 6746739.44468677
+          },
+          {
+            "easting": 300031.39031725,
+            "northing": 6746743.05468677
+          },
+          {
+            "easting": 300033.36031724,
+            "northing": 6746742.99468677
+          },
+          {
+            "easting": 300035.61031724,
+            "northing": 6746742.91468677
+          },
+          {
+            "easting": 300035.82031724,
+            "northing": 6746744.58468677
+          },
+          {
+            "easting": 300035.99031724,
+            "northing": 6746746.04468677
+          }
+        ]
+      ],
+      "properties": {
+        "gid": 34638957,
+        "numero": "0235",
+        "feuille": 1,
+        "section": "AB",
+        "code_dep": "56",
+        "nom_com": "Rochefort-en-Terre",
+        "code_com": "196",
+        "com_abs": "000",
+        "code_arr": "000",
+        "idu": "56196000AB0235",
+        "contenance": 132,
+        "code_insee": "56196"
+      },
+      "attribution": "© IGN — Géoplateforme (data.geopf.fr)"
+    }
+  ],
+  "plotArea": 132
+}

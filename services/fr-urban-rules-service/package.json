@@ -1,0 +1,21 @@
+{
+  "name": "fr-urban-rules-service",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Companion service of com.archisimple.fr-urban-rules: reads a plot's règlement from the Géoportail de l'Urbanisme and finds its zone's chapter (Sprint 002.5a).",
+  "type": "module",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "archisimple": {
+    "packageId": "com.archisimple.fr-urban-rules"
+  },
+  "main": "src/service.mjs",
+  "scripts": {
+    "test": "node --test \"tests/*.test.mjs\""
+  },
+  "dependencies": {
+    "pdfjs-dist": "6.2.108"
+  }
+}
