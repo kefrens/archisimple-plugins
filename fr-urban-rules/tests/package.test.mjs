@@ -29,14 +29,15 @@ const SDK_CATEGORIES = [
   'information'
 ];
 
-test('criterion 1: the manifest declares an SDK 1.32 extension (002.8: questions and parked-variation checks) needing `regulations` and, since 002.1a, `document`', () => {
+test('criterion 1: the manifest declares an SDK 1.33 extension (002.11: the planning snapshot in the Site cache) needing `regulations` and, since 002.1a, `document`', () => {
   assert.equal(manifest.id, 'com.archisimple.fr-urban-rules');
   assert.equal(manifest.type, 'extension');
-  assert.equal(manifest.version, '0.8.1');
-  // 1.32 since 002.8 (DEC-10): `checkVariation` (1.31, 096.11) and `questions`
-  // (1.32, 096.12). 1.30 since 002.7: an envelope's `volume` (1.29) and the report's
-  // `sheet` (1.30). 1.28 since 002.6a: `plugin-service` and `locate()`.
-  assert.equal(manifest.sdkVersion, '1.32');
+  assert.equal(manifest.version, '0.9.0');
+  // 1.33 since 002.11: `readCache` / `writeCache` / `onDidChangeCache` (096.17,
+  // ADR-0115). 1.32 since 002.8 (DEC-10): `checkVariation` (1.31, 096.11) and
+  // `questions` (1.32, 096.12). 1.30 since 002.7: an envelope's `volume` (1.29)
+  // and the report's `sheet` (1.30). 1.28 since 002.6a: `plugin-service` and `locate()`.
+  assert.equal(manifest.sdkVersion, '1.33');
   assert.equal(manifest.entryPoint, 'src/index.js');
   // `document` since 002.1a: `SitePackageDataService.write` requires it (096.4 DEC-7),
   // and an answer's offer too (096.12 DEC-12). `ai` since 002.3: the programme stage,

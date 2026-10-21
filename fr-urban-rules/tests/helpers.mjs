@@ -147,6 +147,12 @@ export const requestFor = (site, reason = 'site') => ({ site, country: 'FR', rea
 
 /** The acceptance captures, one folder per plot (002.4 DEC-1's five plots). */
 export const ACCEPTANCE = new URL('acceptance/', FIXTURES);
+/**
+ * Sprint 002.11 step 0: plots recorded for the planning snapshot only, in the
+ * acceptance captures' shape (`loadAcceptance(plot, SNAPSHOT_FIXTURES)`) —
+ * apart from `acceptance/`, which holds 002.9's expected values.
+ */
+export const SNAPSHOT_FIXTURES = new URL('snapshot/', FIXTURES);
 
 const jsonClone = (value) => (value === undefined ? undefined : JSON.parse(JSON.stringify(value)));
 
@@ -311,8 +317,8 @@ export function expandSiteCalls(pairs) {
  * `answers.json` (re-recorded by `tools/record-fixtures.mjs`); since 002.8,
  * `variations.json` where the capture checked a parked variation.
  */
-export async function loadAcceptance(plot) {
-  const folder = new URL(`${plot}/`, ACCEPTANCE);
+export async function loadAcceptance(plot, base = ACCEPTANCE) {
+  const folder = new URL(`${plot}/`, base);
   try {
     await readdir(folder);
   } catch (cause) {

@@ -1,5 +1,44 @@
 # Changelog — `fr-urban-rules`
 
+## 0.9.0 — Sprint 002.11, Planning Snapshot
+
+- **SDK 1.33** (from 1.32): `SitePackageDataService.readCache` / `writeCache` /
+  `onDidChangeCache` (platform 096.17, ADR-0115). Lockstep: ship this version
+  only with a web image carrying 096.17; an older host refuses the manifest.
+  Capabilities and `network.hosts` unchanged.
+- **The reading kept in the project.** After a completed read of the plot on
+  view, its facts (schema 1: the commune and the document parsed, each layer's
+  items with their outlines, Géorisques' answers, the règlement's link) and the
+  written readings shown go to the package's Site cache, with the sources'
+  credit lines as the envelope's attributions — never to the section, never a
+  verdict. Outlines within 100 m of the plot, to the centimetre, each centroid
+  as read; past 200,000 characters, DEC-2's steps (30 m, simplified at 0.5 m,
+  outlines dropped by category, passages shortened), each said; a snapshot that
+  still does not fit, or a refused write, is « Not saved in the project » and
+  the previous one stays. Written only when the reading changed.
+- **At open**: the snapshot shown at once through the read's progress (« Read
+  on {date} — checking for changes… »), then the fresh answer — « Unchanged
+  since {date} — checked today » or « What changed since {date} », en and fr
+  (« Unchanged since {date} among the sources that answered today » when some
+  did not); offline, each source restored is **`saved`** (SDK 1.33) with its
+  date and « shown as read on {date} » (`status.shownAsReadOn`), and the host
+  says once « Offline — N sources shown as read on {date} ». A source that does
+  not answer in a session while its earlier answer is shown is `saved` too.
+- **The règlement's link survives**: offline it opens the file it named, « as
+  listed on {date} »; when the GPU's file list never answered, a written
+  reading of the same version names it (its GPU document id, now kept).
+- **A re-read listing the same features in another order is the same
+  reading**: nothing written, the project stays clean.
+- **Keys hold**: drawn keys read the centroid kept as read; written rules carry
+  their computed key (`writtenKeysOf`, one computation), so a shortened passage
+  never moves one.
+- **Written rules without the companion**, from the snapshot, dated, beside the
+  « not available » notice. With it, a different reading of the same version is
+  offered (« Use it », `written-use-newer`), never taken silently.
+- A snapshot of a higher schema, malformed, or of another plot is ignored (and
+  logged); every member restored is re-read as an answer is (a link only to the
+  GPU's files).
+
 ## 0.8.1 — Sprint 002.9, Design-Time Acceptance FR
 
 Three defects of 002.6b found by the acceptance's expected values (SDK 1.32,

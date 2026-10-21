@@ -633,7 +633,7 @@ test('criterion 11: a `site` or `design` read of a cached plot sends no request;
   assert.equal(context.fetched.requests.length, count * 2);
 });
 
-test('criterion 11: a refresh whose source fails shows the cached answer, its earlier date and `unavailable`', async () => {
+test('criterion 11: a refresh whose source fails shows the cached answer, its earlier date and `saved`', async () => {
   let failing = false;
   const zone = plots.lyon.answers.get('apicarto-zone-urba').body;
   const context = readerFor('lyon', {
@@ -648,7 +648,8 @@ test('criterion 11: a refresh whose source fails shows the cached answer, its ea
   const refreshed = await context.reader.read(requestFor(context.site, 'refresh'), { signal });
   const before = source(first, 'zone-urba');
   const after = source(refreshed, 'zone-urba');
-  assert.equal(after.state, 'unavailable');
+  // Sprint 002.11's review (SDK 1.33): an earlier reading shown is `saved`, never `unavailable`.
+  assert.equal(after.state, 'saved');
   assert.equal(after.retrievedAt, before.retrievedAt);
   assert.equal(after.detail.key, 'fr-urban-rules.status.shownAsRead');
   assert.ok(new Date(source(refreshed, 'document').retrievedAt) > new Date(before.retrievedAt));

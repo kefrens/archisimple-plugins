@@ -19,6 +19,10 @@
  *   from the stored one, request by request — status, feature counts,
  *   `idurba` / `datvalid` values — for the owner to decide whether the GPU
  *   changed (DEC-4, the Risks). Exits 0 either way.
+ * - With `--snapshot` (Sprint 002.11 step 0): the plot is one of
+ *   `test-fixtures/fr-urban-rules/snapshot/` (`manualchemin`), captured the
+ *   same way, recorded and trimmed the same way; the planning answers only.
+ *
  * - With `--trim` (the owner's Q7, 2026-10-20): **no network**. Reads the plot
  *   twice offline, as the tests do (with the walk's section and without it),
  *   through the replays, and keeps only what those reads were answered from:
@@ -77,6 +81,7 @@ import {
 } from './acceptance.mjs';
 import {
   ACCEPTANCE,
+  SNAPSHOT_FIXTURES,
   loadAcceptance,
   replayFetch,
   replayService
@@ -90,6 +95,8 @@ try {
   process.exit(2);
 }
 const { plot, check, trim } = options;
+// Sprint 002.11 step 0: a snapshot plot's captures live apart from 002.9's expected values.
+const BASE = options.snapshot ? SNAPSHOT_FIXTURES : ACCEPTANCE;
 
 if (options.extraction) {
   if (options.noModel) await checkDocument(plot, options.acceptance);
@@ -97,9 +104,9 @@ if (options.extraction) {
   process.exit(0);
 }
 
-const captured = await loadAcceptance(plot);
+const captured = await loadAcceptance(plot, BASE);
 if (captured === undefined) {
-  console.error(`no captures for ${plot}: ${new URL(`${plot}/`, ACCEPTANCE).pathname} is absent`);
+  console.error(`no captures for ${plot}: ${new URL(`${plot}/`, BASE).pathname} is absent`);
   process.exit(2);
 }
 
@@ -142,7 +149,7 @@ for (const call of unrecorded) {
 }
 for (const message of logs) console.log(`  log: ${message}`);
 
-const folder = new URL(`${plot}/`, ACCEPTANCE);
+const folder = new URL(`${plot}/`, BASE);
 if (!check) {
   // Minified, as `--trim` leaves the captures (Q7); run `--trim` after a re-recording.
   await writeFile(new URL('answers.json', folder), `${JSON.stringify(answers)}\n`);
@@ -255,7 +262,7 @@ function toMillimetre(value) {
 }
 
 async function trimCaptures(name, captured) {
-  const folder = new URL(`${name}/`, ACCEPTANCE);
+  const folder = new URL(`${name}/`, BASE);
   const used = { site: new Set(), roads: new Set(), 'map-features': new Set(), document: new Set() };
   const served = new Set();
   // As acceptance.test.mjs reads: with the walk's section, and without it (« to confirm »).

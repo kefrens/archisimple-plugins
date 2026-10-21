@@ -1,15 +1,18 @@
 # Règles d'urbanisme (PLU) — `fr-urban-rules`
 
-`com.archisimple.fr-urban-rules` · extension · SDK **1.32** · capabilities `regulations`, `document`, `ai`, `commands`
+`com.archisimple.fr-urban-rules` · extension · SDK **1.33** · capabilities `regulations`, `document`, `ai`, `commands`
 
 Reads the planning rules that apply to a French plot and hands ArchiSimple a
 country-neutral `RegulationReport` (platform ADR-0111): which regime applies
 (PLU, PLUi, carte communale, RNU, "plan not on the GPU", or "not known"), the
 document in force and its version, the zone, the prescriptions, information
 items and public-utility easements on the plot, the risks Géorisques lists, and
-a link to the regulation. What it writes to the project is only what the user
-decided — confirmations, entered rules, edge roles and the Surfaces answers — in
-its own Site section, one Request each.
+a link to the regulation. Decisions never from a read; readings to the cache:
+what it writes to the project's section is only what the user decided —
+confirmations, entered rules, edge roles and the Surfaces answers — one Request
+each; since 0.9.0, what it **read** is kept beside it in the package's Site
+cache (platform ADR-0115), off the history, written only when the reading
+changed.
 
 Phase 1 of the [fr-urban-rules milestone](../docs/milestones/fr-urban-rules/fr-urban-rules.md):
 0.1.0 is Sprint [002.0 PLU Reading](../docs/sprints/sprint-002.0-plu-reading.md);
@@ -26,6 +29,49 @@ three defects: a written pleine terre ratio of the plot area is checked like a
 percentage, a written extension share of the floor area is never measured
 against the existing emprise (« not checked », the base named), and the Rules
 view of a carte communale or the RNU says why no written regulation is read.
+After Phase 3: **0.9.0** is Sprint [002.11 Planning Snapshot](../docs/sprints/sprint-002.11-planning-snapshot.md)
+(SDK 1.33, platform 096.17).
+
+## The planning snapshot (0.9.0)
+
+- **What is kept.** After a completed read of the plot on view, the facts the
+  report is built from — the commune and the document parsed, each layer's
+  items with their outlines in the Site's CRS, Géorisques' answers, the
+  règlement's link — and the written readings shown, each rule with the key it
+  had: `writeCache(data, attributions)` (SDK 1.33), schema 1, the credit lines
+  of the sources present in the envelope. Never the raw answers, never a check,
+  a count, the envelope or a capacity: those are computed again.
+- **Fitted to the file.** Outlines kept within 100 m of the plot, to the
+  centimetre, each feature's centroid kept as read (a drawn rule's key reads
+  it). Past 200,000 characters: within 30 m, then simplified at 0.5 m, then
+  the outlines of information, easements and prescriptions dropped, then the
+  written passages shortened to 500 characters — each step said in the
+  overview (« Simplified to fit the project file »). A snapshot that does not
+  fit, or a write the host refuses, is not saved, said (« Not saved in the
+  project: too large »), and the previous one stays. The six reference plots
+  take 1.6–29 KB with no step.
+- **Written only when the reading changed** (its dates aside): opening an
+  unchanged project leaves it clean.
+- **At open.** The editor reads a project holding a snapshot (096.17). The
+  snapshot of the plot on view is shown at once — « Read on {date} — checking
+  for changes… », its sources loading with their date — and the online read
+  continues in the same read: its answer says « Unchanged since {date} —
+  checked today » or « What changed since {date} » (a new version of the
+  document with the confirmations to review, the regime, the zones, a
+  prescription, an easement or a risk new or no longer listed — information,
+  never a decision). Offline, each source is `saved` (SDK 1.33) — « shown as
+  read on » its date — and the editor says once « Offline — N sources shown as
+  read on {date} »; the règlement's link opens the file it named then; the
+  checks are computed from it.
+- **Confirmations hold.** A rule rebuilt from a snapshot has the key a fresh
+  read gives it, so every confirmation still names it.
+- **Written rules without the companion.** The written readings the snapshot
+  holds are listed — « Written rules as read on {date} ({model}) » — beside the
+  « not available on this deployment » notice; Extract again is not offered.
+  With the companion, the project's reading stands; a different reading of the
+  same document version is **offered** (« A newer reading of the written rules
+  exists — Use it »), never taken silently, and accepting it changes no
+  confirmation.
 
 ## The assistant's questions and the parked variations (0.8.0)
 
@@ -269,10 +315,10 @@ from the published index):
 
 ## What it needs from the platform
 
-- **SDK 1.32** (since 0.8.0: `checkVariation`, 096.11's 1.31, and the
-  questions, 096.12's 1.32; 1.30 since 0.7.0 for the volume and the sheet; 1.28
-  since 0.5.0 for `plugin-service`) and the `regulations`
-  capability; `ai` for the programme enricher and the questions, `document` for
+- **SDK 1.33** (since 0.9.0: the Site cache, 096.17; 1.32 since 0.8.0:
+  `checkVariation`, 096.11's 1.31, and the questions, 096.12's 1.32; 1.30 since
+  0.7.0 for the volume and the sheet; 1.28 since 0.5.0 for `plugin-service`)
+  and the `regulations` capability; `ai` for the programme enricher and the questions, `document` for
   every section write and an answer's offer. An older web image refuses the manifest whole
   (`unknown-capability` / SDK too old): the two move in lockstep.
 - Optionally, the deployment's **companion service** (platform ADR-0114, the
@@ -322,7 +368,9 @@ Memory, for the session, keyed by the plot (parcel ids and their rings to the
 centimetre, with the CRS). A `site` or `design` read of a plot already read is
 answered from memory with no request; the host's Refresh (`reason: 'refresh'`)
 reads every source again, and a source failing then is shown as last read,
-marked unavailable.
+marked unavailable. Since 0.9.0 the project also keeps one snapshot, for the plot
+on view (« The planning snapshot » above): with no memory of the plot, it seeds
+the last good answers, so a source that fails is shown as the project read it.
 
 ## Tests
 

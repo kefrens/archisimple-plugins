@@ -20,12 +20,16 @@
  * service's `toGeographicRing` / `fromGeographicRing`; nothing here knows the
  * Lambert formula.
  *
- * **Reads, and writes only what the user decided.** 002.0 wrote nothing;
- * since 002.1a the user's decisions — edge roles, confirmations, entered rules
- * (002.2) and the Surfaces answers (002.3) — go to the package's own Site
- * section, one Request each, never from a read. The cache (DEC-9) is memory,
- * for the session. Since 002.3 the package also registers the `programme`
- * planning-stage enricher (`ai`), which replaced `urban-rules`'.
+ * **Decisions never from a read; readings to the cache.** 002.0 wrote
+ * nothing; since 002.1a the user's decisions — edge roles, confirmations,
+ * entered rules (002.2) and the Surfaces answers (002.3) — go to the package's
+ * own Site section, one Request each, never from a read. The session cache
+ * (DEC-9) is memory; since Sprint 002.11 (SDK 1.33, platform ADR-0115) what a
+ * read answered is also kept in the project — the package's Site **cache**,
+ * off the history, written only when the reading changed — so a project opened
+ * elsewhere or offline shows its planning rules at once, « read on <date> »,
+ * and checks them again. Since 002.3 the package also registers the
+ * `programme` planning-stage enricher (`ai`), which replaced `urban-rules`'.
  *
  * **Its companion service, when the deployment runs it** (Sprint 002.6a, SDK
  * 1.28): found through `plugin-service`'s `locate()`, asked only for a zone's
@@ -601,7 +605,18 @@ const CONFIDENCES = new Set(['high', 'medium', 'low']);
 const METRES_MAX = 10_000;
 const FACTOR_MAX = 100;
 /** DEC-2's three actions that start or restart an extraction. */
-const WRITTEN_ACTIONS = new Set(['written-extract', 'written-extract-again', 'written-try-again']);
+const WRITTEN_ACTIONS = new Set([
+  'written-extract',
+  'written-extract-again',
+  'written-try-again',
+  // Sprint 002.11 DEC-7: take the companion's newer reading in place of the project's.
+  'written-use-newer'
+]);
+/** A written rule's key as `writtenKeysOf` computes it, stored in a snapshot (002.11 DEC-5). */
+// Sprint 002.11's review: a sector may hold a space (« UA et UB », up to 40
+// characters), so only control characters are refused — else such a rule's
+// stored key was dropped and recomputed from a passage DEC-2 step 5 may have shortened.
+const STORED_WRITTEN_KEY = /^written:[^\u0000-\u001f\u007f]{1,240}$/;
 
 /**
  * DEC-2: every code of 002.5a DEC-11 and 002.5b DEC-10 (and the client's own),
@@ -868,7 +883,13 @@ function checkedServiceRule(item, documentPages) {
     conditions: strings(item.conditions),
     exceptions: strings(item.exceptions),
     sectorUnplaced: item.sectorUnplaced === true,
-    confidence: CONFIDENCES.has(item.confidence) ? item.confidence : 'low'
+    confidence: CONFIDENCES.has(item.confidence) ? item.confidence : 'low',
+    // Sprint 002.11 DEC-5: a key stored with a restored rule, reused as computed
+    // (a passage shortened to fit the project file never moves it). The
+    // service never sends one.
+    ...(typeof item.ruleKey === 'string' && STORED_WRITTEN_KEY.test(item.ruleKey)
+      ? { ruleKey: item.ruleKey }
+      : {})
   };
 }
 
@@ -905,7 +926,20 @@ function checkedResult(json) {
   return {
     schemaVersion: json.schemaVersion,
     promptVersion: Number.isInteger(json.promptVersion) ? json.promptVersion : 0,
-    document: { idurba: document.idurba, nomfic: document.nomfic, pages: document.pages },
+    document: {
+      idurba: document.idurba,
+      nomfic: document.nomfic,
+      pages: document.pages,
+      // Sprint 002.11 DEC-7: the règlement's hash, which tells a newer reading of the same file.
+      ...(typeof document.sha256 === 'string' && /^[0-9a-f]{64}$/.test(document.sha256)
+        ? { sha256: document.sha256 }
+        : {}),
+      // Sprint 002.11's review: the GPU document the file was read from, which names
+      // its link (fixed per version) when the file list does not answer.
+      ...(typeof document.documentId === 'string' && GPU_DOCUMENT_ID.test(document.documentId)
+        ? { documentId: document.documentId }
+        : {})
+    },
     ...(pages === undefined ? {} : { chapter: { pages } }),
     rules,
     dropped: dropped + refused,
@@ -943,6 +977,30 @@ const extractAgainOffered = (result, current) =>
     (result.model.providerId !== current.providerId ||
       result.schemaVersion < current.schemaVersion ||
       result.promptVersion < current.promptVersion));
+
+/**
+ * 002.6b DEC-3's written keys of one result read for one zone, parallel to
+ * `result.rules`: `written:<sector or *>:cyrb53(normalised passage)`, with
+ * `~2`, `~3`… for a repeat in the result's order; `undefined` for a rule of
+ * another sector. Sprint 002.11 DEC-5: a rule restored from the project's
+ * snapshot carries the key computed when it was read, and keeps it — its
+ * passage may have been shortened to fit the file.
+ */
+function writtenKeysOf(result, zone) {
+  const taken = new Set();
+  return result.rules.map((item) => {
+    if (!item.sectorUnplaced && !sectorIsZones(item.sector, zone)) return undefined;
+    if (item.ruleKey !== undefined && !taken.has(item.ruleKey)) {
+      taken.add(item.ruleKey);
+      return item.ruleKey;
+    }
+    const base = `written:${item.sector ?? '*'}:${cyrb53(normalisedPassage(item.passage))}`;
+    let id = base;
+    for (let n = 2; taken.has(id); n += 1) id = `${base}~${n}`;
+    taken.add(id);
+    return id;
+  });
+}
 
 /** DEC-3: a written rule's limit, SDK-shaped; `undefined` for a statement. */
 function writtenLimitOf(rule) {
@@ -1364,6 +1422,8 @@ const ownDocuments = (documents, partition) =>
   documents.filter(
     (d) => typeof d?.name !== 'string' || d.name.toUpperCase() === partition.toUpperCase()
   );
+/** A GPU document id as the service names one (hexadecimal); anything else is not kept. */
+const GPU_DOCUMENT_ID = /^[0-9a-f]{16,64}$/i;
 const gpuFilesUrl = (id) => `${GPU_DOCUMENT_API}/${encodeURIComponent(id)}/files`;
 const gpuFileHref = (id, name) =>
   `${GPU_DOCUMENT_API}/${encodeURIComponent(id)}/files/${encodeURIComponent(name)}`;
@@ -1443,6 +1503,27 @@ function parseDocuments(features) {
     .filter((d) => d.partition !== undefined && d.name !== undefined);
 }
 
+/**
+ * Sprint 002.11 DEC-4: wave 1's facts from an answer — read from its raw
+ * features when it has them, else from the parsed form a snapshot keeps.
+ */
+function municipalityOf(answer, view) {
+  if (Array.isArray(answer.features)) return parseMunicipality(answer.features, preferredCommune(view));
+  return isRecord(answer.municipality) ? answer.municipality : undefined;
+}
+const documentsOf = (answer) =>
+  Array.isArray(answer.features)
+    ? parseDocuments(answer.features)
+    : Array.isArray(answer.documents)
+      ? answer.documents
+      : [];
+const featureCountOf = (answer) =>
+  Array.isArray(answer.features)
+    ? answer.features.length
+    : Number.isSafeInteger(answer.count)
+      ? answer.count
+      : 0;
+
 function featureId(feature, layer, index) {
   return typeof feature.id === 'string' || typeof feature.id === 'number'
     ? String(feature.id)
@@ -1506,6 +1587,604 @@ function georisquesData(json) {
   return json;
 }
 
+// ── The planning snapshot (Sprint 002.11, SDK 1.33, platform ADR-0115) ─────────
+
+/**
+ * The snapshot's own schema (DEC-8), apart from the section's. A snapshot of a
+ * higher schema is ignored and logged; a malformed one is ignored and replaced
+ * at the next completed read.
+ */
+const SNAPSHOT_SCHEMA = 1;
+/**
+ * DEC-2: what `data` and its attributions may take, serialized — under
+ * ADR-0115's 262,144 characters per entry, with room for the next schema.
+ */
+const SNAPSHOT_BUDGET = 200_000;
+/** Owner answer 1: the plot's box grown by 100 m, always (DEC-2 step 1). */
+const SNAPSHOT_MARGIN = 100;
+/** DEC-2 step 2: the road margin, the furthest any rule here looks ({@link ROAD_MARGIN}). */
+const SNAPSHOT_NEAR_MARGIN = 30;
+/** DEC-2 step 3: Douglas–Peucker, in metres. */
+const SNAPSHOT_SIMPLIFY = 0.5;
+/** DEC-2 step 5: a written rule's passage kept to this many characters. */
+const SNAPSHOT_PASSAGE_MAX = 500;
+/** ADR-0115 Rule 2: at most 16 credit lines of at most 300 characters. */
+const SNAPSHOT_ATTRIBUTIONS_MAX = 16;
+/**
+ * DEC-2's steps after the first, in order, each named in the snapshot's
+ * `simplified` when taken: the overview says what was given up.
+ */
+const SNAPSHOT_STEPS = [
+  'clip-30',
+  'simplify',
+  'drop-information',
+  'drop-easement',
+  'drop-prescription',
+  'shorten-passages'
+];
+const SNAPSHOT_STEP_KEYS = {
+  'clip-30': 'fr-urban-rules.snapshot.step.clip30',
+  simplify: 'fr-urban-rules.snapshot.step.simplify',
+  'drop-information': 'fr-urban-rules.snapshot.step.dropInformation',
+  'drop-easement': 'fr-urban-rules.snapshot.step.dropEasement',
+  'drop-prescription': 'fr-urban-rules.snapshot.step.dropPrescription',
+  'shorten-passages': 'fr-urban-rules.snapshot.step.shortenPassages'
+};
+/** The layers whose geometry DEC-2 step 4 drops, by the step that drops it. */
+const SNAPSHOT_DROPPED_LAYERS = {
+  'drop-information': INFORMATION_LAYERS,
+  'drop-easement': EASEMENT_LAYERS,
+  'drop-prescription': PRESCRIPTION_LAYERS
+};
+
+/** A Lambert coordinate kept to the centimetre (DEC-2 step 1). */
+const cmRound = (value) => Math.round(value * 100) / 100;
+
+/** The plot's box in the Site's CRS, grown by `margin`; `undefined` without parcels. */
+function plotBoxOf(view, margin) {
+  let box;
+  for (const parcel of view?.parcels ?? []) {
+    for (const p of (parcel.rings ?? []).flat()) {
+      if (!Number.isFinite(p?.easting) || !Number.isFinite(p?.northing)) continue;
+      box ??= { minE: Infinity, minN: Infinity, maxE: -Infinity, maxN: -Infinity };
+      box.minE = Math.min(box.minE, p.easting - margin);
+      box.minN = Math.min(box.minN, p.northing - margin);
+      box.maxE = Math.max(box.maxE, p.easting + margin);
+      box.maxN = Math.max(box.maxN, p.northing + margin);
+    }
+  }
+  // On the centimetre grid, outward: a point cut onto an edge stays on it once
+  // rounded, so a restored snapshot cut again is unchanged (DEC-3's equality).
+  return box === undefined
+    ? undefined
+    : {
+        minE: Math.floor(box.minE * 100) / 100,
+        minN: Math.floor(box.minN * 100) / 100,
+        maxE: Math.ceil(box.maxE * 100) / 100,
+        maxN: Math.ceil(box.maxN * 100) / 100
+      };
+}
+
+/** Sutherland–Hodgman: an open ring cut to the box; `undefined` when nothing of it is inside. */
+function clipRingToBox(ring, box) {
+  const planes = [
+    [(p) => p.easting >= box.minE, (a, b) => crossAt(a, b, 'easting', box.minE)],
+    [(p) => p.easting <= box.maxE, (a, b) => crossAt(a, b, 'easting', box.maxE)],
+    [(p) => p.northing >= box.minN, (a, b) => crossAt(a, b, 'northing', box.minN)],
+    [(p) => p.northing <= box.maxN, (a, b) => crossAt(a, b, 'northing', box.maxN)]
+  ];
+  let points = openRing(ring);
+  for (const [inside, cross] of planes) {
+    if (points.length === 0) break;
+    const out = [];
+    for (let i = 0; i < points.length; i += 1) {
+      const current = points[i];
+      const previous = points[(i + points.length - 1) % points.length];
+      if (inside(current)) {
+        if (!inside(previous)) out.push(cross(previous, current));
+        out.push(current);
+      } else if (inside(previous)) out.push(cross(previous, current));
+    }
+    points = out;
+  }
+  const rounded = openRing(dedupe(points.map(roundPoint)));
+  return rounded.length >= 3 ? rounded : undefined;
+}
+
+/** Where the segment a→b meets the line `axis = value`. */
+function crossAt(a, b, axis, value) {
+  const t = (value - a[axis]) / (b[axis] - a[axis]);
+  return {
+    easting: axis === 'easting' ? value : a.easting + t * (b.easting - a.easting),
+    northing: axis === 'northing' ? value : a.northing + t * (b.northing - a.northing)
+  };
+}
+
+const roundPoint = (p) => ({ easting: cmRound(p.easting), northing: cmRound(p.northing) });
+const dedupe = (points) =>
+  points.filter(
+    (p, i) =>
+      i === 0 || p.easting !== points[i - 1].easting || p.northing !== points[i - 1].northing
+  );
+
+/** Liang–Barsky per segment: a line cut to the box, as the pieces inside it. */
+function clipLineToBox(line, box) {
+  const pieces = [];
+  let piece = [];
+  const close = () => {
+    const rounded = dedupe(piece.map(roundPoint));
+    if (rounded.length >= 2) pieces.push(rounded);
+    piece = [];
+  };
+  for (let i = 1; i < line.length; i += 1) {
+    const a = line[i - 1];
+    const b = line[i];
+    const dx = b.easting - a.easting;
+    const dy = b.northing - a.northing;
+    let t0 = 0;
+    let t1 = 1;
+    let inside = true;
+    for (const [p, q] of [
+      [-dx, a.easting - box.minE],
+      [dx, box.maxE - a.easting],
+      [-dy, a.northing - box.minN],
+      [dy, box.maxN - a.northing]
+    ]) {
+      if (p === 0) {
+        if (q < 0) inside = false;
+        continue;
+      }
+      const t = q / p;
+      if (p < 0) t0 = Math.max(t0, t);
+      else t1 = Math.min(t1, t);
+    }
+    if (!inside || t0 > t1) {
+      close();
+      continue;
+    }
+    const start = { easting: a.easting + t0 * dx, northing: a.northing + t0 * dy };
+    const end = { easting: a.easting + t1 * dx, northing: a.northing + t1 * dy };
+    if (piece.length === 0 || t0 > 0) {
+      close();
+      piece.push(start);
+    }
+    piece.push(end);
+    if (t1 < 1) close();
+  }
+  close();
+  return pieces;
+}
+
+/**
+ * DEC-2 steps 1–4 on one geometry, never on its facts. The `centroid` the
+ * key reads is kept as `convertGeometry` computed it — on the whole,
+ * unsimplified geometry — and never recomputed (DEC-5): a feature clipped to
+ * nothing keeps it and draws no outline. A point or an unconverted geometry
+ * is kept as it is.
+ */
+function shapedGeometry(geometry, { box, simplify, drop }) {
+  if (geometry === null || typeof geometry !== 'object') return geometry;
+  const surface = geometry.kind === 'surface' && Array.isArray(geometry.rings);
+  const line = geometry.kind === 'line' && Array.isArray(geometry.lines);
+  if (!surface && !line) return geometry;
+  const parts = surface ? geometry.rings : geometry.lines;
+  // The centroid a key reads (`roundedCentroid`), held whatever is cut below.
+  const centroid = geometry.centroid ?? boxCentre(parts.flat());
+  let shaped = [];
+  if (!drop) {
+    if (surface) {
+      for (const ring of parts) {
+        let cut = box === undefined ? dedupe(openRing(ring).map(roundPoint)) : clipRingToBox(ring, box);
+        if (cut !== undefined && simplify) cut = simplifyRing(cut, SNAPSHOT_SIMPLIFY);
+        if (cut !== undefined && cut.length >= 3) shaped.push(cut);
+      }
+    } else {
+      for (const part of parts) {
+        const pieces = box === undefined ? [dedupe(part.map(roundPoint))] : clipLineToBox(part, box);
+        for (const piece of pieces) {
+          const kept = simplify ? simplifyLine(piece, SNAPSHOT_SIMPLIFY) : piece;
+          if (kept.length >= 2) shaped.push(kept);
+        }
+      }
+    }
+  }
+  return {
+    kind: geometry.kind,
+    [surface ? 'rings' : 'lines']: shaped,
+    ...(centroid === undefined ? {} : { centroid })
+  };
+}
+
+/** One source's snapshot entry, its layers' geometry shaped by DEC-2's options. */
+function shapedSource(id, entry, options) {
+  if (!Array.isArray(entry.parsed)) return entry;
+  const drop = options.drop.some((step) => SNAPSHOT_DROPPED_LAYERS[step].includes(id));
+  return {
+    ...entry,
+    parsed: entry.parsed.map((item) => ({
+      ...item,
+      geometry: shapedGeometry(item.geometry, { ...options, drop })
+    }))
+  };
+}
+
+/** A written entry with its passages kept to {@link SNAPSHOT_PASSAGE_MAX} (DEC-2 step 5). */
+function shortenedWritten(entry) {
+  return {
+    ...entry,
+    result: {
+      ...entry.result,
+      rules: entry.result.rules.map((rule) =>
+        rule.passage.length > SNAPSHOT_PASSAGE_MAX
+          ? { ...rule, passage: `${rule.passage.slice(0, SNAPSHOT_PASSAGE_MAX - 1)}…` }
+          : rule
+      )
+    }
+  };
+}
+
+/** Serialized, as the host measures an entry (ADR-0115 Rule 7): `data` and its attributions. */
+const snapshotSize = (data, attributions) => JSON.stringify({ data, attributions }).length;
+
+/**
+ * DEC-2: the snapshot that fits, or `undefined` when even the last step does
+ * not. Step 1 (100 m) is always taken and never reported; each later step is
+ * named in `simplified`. `minimumStep` forces the steps up to it (tests).
+ */
+function fittedSnapshot(base, { view, attributions, budget = SNAPSHOT_BUDGET, minimumStep = 0 }) {
+  for (let taken = minimumStep; taken <= SNAPSHOT_STEPS.length; taken += 1) {
+    const steps = SNAPSHOT_STEPS.slice(0, taken);
+    const options = {
+      box: plotBoxOf(view, steps.includes('clip-30') ? SNAPSHOT_NEAR_MARGIN : SNAPSHOT_MARGIN),
+      simplify: steps.includes('simplify'),
+      drop: steps.filter((step) => step.startsWith('drop-'))
+    };
+    const sources = {};
+    for (const [id, entry] of Object.entries(base.sources)) {
+      sources[id] = shapedSource(id, entry, options);
+    }
+    const written = steps.includes('shorten-passages')
+      ? base.written.map(shortenedWritten)
+      : base.written;
+    const data = { ...base, sources, written, simplified: steps };
+    if (snapshotSize(data, attributions) <= budget) return data;
+  }
+  return undefined;
+}
+
+/**
+ * A written result as the service would answer it (002.5b's shape), so a
+ * restored one goes through {@link checkedResult} as any answer does, with
+ * the key each rule had for its zone (DEC-5). Never the chunks' texts.
+ */
+function storedResultOf(result, zone) {
+  const keys = writtenKeysOf(result, zone);
+  const serviceLimit = (limit) => {
+    if (limit === undefined) return null;
+    if (limit.kind === 'height_relative') {
+      return {
+        kind: 'height_relative',
+        reference: limit.reference,
+        factor: limit.factor,
+        offsetMetres: limit.offset,
+        minimumMetres: limit.minimum
+      };
+    }
+    return limit;
+  };
+  return {
+    schemaVersion: result.schemaVersion,
+    promptVersion: result.promptVersion,
+    document: result.document,
+    ...(result.chapter === undefined ? {} : { chapter: result.chapter }),
+    rules: result.rules.map((rule, index) => ({
+      kind: rule.kind,
+      sector: rule.sector,
+      statement: rule.statement,
+      limit: serviceLimit(rule.limit),
+      page: rule.page,
+      ...(rule.article === undefined ? {} : { article: rule.article }),
+      passage: rule.passage,
+      conditions: rule.conditions,
+      exceptions: rule.exceptions,
+      sectorUnplaced: rule.sectorUnplaced,
+      confidence: rule.confidence,
+      ...(keys[index] === undefined ? {} : { ruleKey: keys[index] })
+    })),
+    dropped: { total: result.dropped },
+    chunks: result.chunks,
+    model: result.model,
+    ...(result.extractedAt === undefined ? {} : { extractedAt: result.extractedAt })
+  };
+}
+
+/**
+ * What two snapshots are compared on (DEC-3): everything but when it was read —
+ * and, since Sprint 002.11's review, not the order a service listed its items
+ * in either: API Carto and Géorisques promise none, and a re-read listing the
+ * same features in another order is the same reading, which must not mark the
+ * project unsaved (ADR-0115 Rule 5). The order stored is the one read.
+ */
+function snapshotContent(data) {
+  const { readAt, ...rest } = data;
+  const unordered = (list) =>
+    Array.isArray(list) ? list.map(stableJson).sort() : list;
+  const sources = {};
+  for (const [id, entry] of Object.entries(rest.sources ?? {})) {
+    const { retrievedAt, ...kept } = entry ?? {};
+    for (const name of ['parsed', 'risks', 'pprs', 'documents']) {
+      if (Array.isArray(kept[name])) kept[name] = unordered(kept[name]);
+    }
+    sources[id] = kept;
+  }
+  return stableJson({ ...rest, sources, written: unordered(rest.written) });
+}
+
+/**
+ * A stored snapshot, checked (DEC-8): `{ data }` when it is one this package
+ * reads, `{ newer }` for a higher schema, `{ malformed }` otherwise, or
+ * `undefined` when there is none. The project file is input: every member a
+ * restore reads is checked here or where it is read.
+ */
+function checkedSnapshot(raw) {
+  if (raw === undefined || raw === null) return undefined;
+  if (!isRecord(raw)) return { malformed: true };
+  if (Number.isInteger(raw.schema) && raw.schema > SNAPSHOT_SCHEMA) return { newer: raw.schema };
+  if (raw.schema !== SNAPSHOT_SCHEMA) return { malformed: true };
+  if (
+    typeof raw.plotKey !== 'string' ||
+    typeof raw.readAt !== 'string' ||
+    Number.isNaN(Date.parse(raw.readAt)) ||
+    !isRecord(raw.sources) ||
+    (raw.written !== undefined && !Array.isArray(raw.written))
+  )
+    return { malformed: true };
+  for (const [id, entry] of Object.entries(raw.sources)) {
+    if (!Object.hasOwn(SOURCES, id) || !isRecord(entry)) return { malformed: true };
+    if (typeof entry.retrievedAt !== 'string' || Number.isNaN(Date.parse(entry.retrievedAt)))
+      return { malformed: true };
+    if (entry.features !== undefined || entry.failed !== undefined) return { malformed: true };
+    if (entry.parsed !== undefined && !Array.isArray(entry.parsed)) return { malformed: true };
+    if (Array.isArray(entry.parsed) && !entry.parsed.every((item) => isRecord(item) && isRecord(item.geometry)))
+      return { malformed: true };
+  }
+  if (raw.sources.municipality !== undefined) {
+    const m = raw.sources.municipality;
+    if (!(m.municipality === null || isRecord(m.municipality)) || !Number.isSafeInteger(m.count))
+      return { malformed: true };
+  }
+  if (raw.sources.document !== undefined) {
+    const d = raw.sources.document;
+    if (!Array.isArray(d.documents) || !d.documents.every(isRecord) || !Number.isSafeInteger(d.count))
+      return { malformed: true };
+  }
+  return { data: raw };
+}
+
+/** A written entry of a snapshot, checked as a service answer is (DEC-7); `undefined` if not one. */
+function restoredWrittenOf(entry) {
+  if (!isRecord(entry) || typeof entry.zone !== 'string' || !isRecord(entry.query)) return undefined;
+  const query = {};
+  for (const name of Object.keys(CHAPTER_INPUTS)) {
+    if (typeof entry.query[name] !== 'string' || !CHAPTER_INPUTS[name].test(entry.query[name]))
+      return undefined;
+    query[name] = entry.query[name];
+  }
+  const key = `${query.idurba.toUpperCase()}/${query.nomfic}/${query.zone}`;
+  const result = checkedResult(entry.result);
+  if (result === undefined) return undefined;
+  if (
+    result.document.idurba.toUpperCase() !== query.idurba.toUpperCase() ||
+    result.document.nomfic !== query.nomfic
+  )
+    return undefined;
+  return { key, query, zone: query.zone, result };
+}
+
+/** The credit lines of the sources a snapshot holds (DEC-1, ADR-0115 Rule 2). */
+function snapshotAttributions(sources) {
+  return [
+    ...new Set(
+      Object.keys(sources)
+        .filter((id) => Object.hasOwn(SOURCES, id))
+        .map((id) => ATTRIBUTIONS[SOURCES[id].attribution])
+    )
+  ]
+    .map((line) => cut(line, 300))
+    .slice(0, SNAPSHOT_ATTRIBUTIONS_MAX);
+}
+
+/**
+ * DEC-1: one source's snapshot entry from the answer shown — its parsed form,
+ * never its raw answer: wave 1's commune and documents parsed (`assemble`
+ * reads their raw features otherwise), a layer's items in `parse*`'s shape
+ * with their geometry in the Site's CRS, Géorisques' and the file list's
+ * own small answers. `retrievedAt` is the answer's.
+ */
+function snapshotEntryOf(id, answer, view) {
+  const { features, retrievedAt, restored, failed, detail, ...rest } = answer;
+  if (id === 'municipality') {
+    return {
+      retrievedAt,
+      municipality: municipalityOf(answer, view) ?? null,
+      count: featureCountOf(answer)
+    };
+  }
+  if (id === 'document') {
+    return { retrievedAt, documents: documentsOf(answer), count: featureCountOf(answer) };
+  }
+  if (Array.isArray(rest.parsed)) return { retrievedAt, parsed: rest.parsed };
+  return { retrievedAt, ...rest };
+}
+
+/** A finite point, or `undefined`. */
+const pointOf = (p) =>
+  Number.isFinite(p?.easting) && Number.isFinite(p?.northing)
+    ? { easting: p.easting, northing: p.northing }
+    : undefined;
+
+/** A stored geometry, checked: only what `convertGeometry` makes. */
+function restoredGeometryOf(geometry) {
+  if (!isRecord(geometry)) return { kind: 'none' };
+  const kind = geometry.kind;
+  const centroid = pointOf(geometry.centroid);
+  const parts = (list, min) =>
+    (Array.isArray(list) ? list : [])
+      .filter(Array.isArray)
+      .map((part) => part.map(pointOf))
+      .filter((part) => part.length >= min && part.every((p) => p !== undefined));
+  if (kind === 'surface') {
+    if (geometry.unconverted === true) return { kind, unconverted: true };
+    return { kind, rings: parts(geometry.rings, 3), ...(centroid === undefined ? {} : { centroid }) };
+  }
+  if (kind === 'line') {
+    if (geometry.unconverted === true) return { kind, unconverted: true };
+    return { kind, lines: parts(geometry.lines, 2), ...(centroid === undefined ? {} : { centroid }) };
+  }
+  return { kind: kind === 'point' ? 'point' : 'none' };
+}
+
+/** A layer's stored item, re-read field by field as `parse*` reads a feature (DEC-8). */
+const RESTORED_PICKS = {
+  zone: pickZone,
+  sector: pickSector,
+  prescription: (p) => ({
+    libelle: text(p.libelle),
+    txt: optionalText(p.txt),
+    type: text(p.type),
+    subtype: optionalText(p.subtype),
+    datvalid: optionalText(p.datvalid)
+  }),
+  information: (p) => ({
+    libelle: text(p.libelle),
+    txt: optionalText(p.txt),
+    type: text(p.type),
+    subtype: optionalText(p.subtype)
+  }),
+  easement: pickEasement
+};
+const restoredPickOf = (id) =>
+  id === 'zone-urba'
+    ? RESTORED_PICKS.zone
+    : id === 'secteur-cc'
+      ? RESTORED_PICKS.sector
+      : PRESCRIPTION_LAYERS.includes(id)
+        ? RESTORED_PICKS.prescription
+        : INFORMATION_LAYERS.includes(id)
+          ? RESTORED_PICKS.information
+          : EASEMENT_LAYERS.includes(id)
+            ? RESTORED_PICKS.easement
+            : undefined;
+
+/**
+ * DEC-4: a snapshot's entry as a source's answer, marked `restored` — the
+ * project file is input, so every member is re-read as this file reads an
+ * answer (strings as strings, a link only to the GPU's own files); `undefined`
+ * for an entry it cannot read.
+ */
+function restoredAnswerOf(id, entry) {
+  if (!isRecord(entry) || typeof entry.retrievedAt !== 'string') return undefined;
+  const base = { retrievedAt: entry.retrievedAt, restored: true };
+  const strings = (value) => (typeof value === 'string' ? value : undefined);
+  if (id === 'municipality') {
+    const m = entry.municipality;
+    if (!Number.isSafeInteger(entry.count)) return undefined;
+    if (m === null) return { ...base, municipality: undefined, count: entry.count };
+    if (!isRecord(m) || typeof m.insee !== 'string') return undefined;
+    return {
+      ...base,
+      count: entry.count,
+      municipality: {
+        insee: m.insee,
+        name: text(m.name),
+        isRnu: m.isRnu,
+        names: Array.isArray(m.names) ? m.names.filter((n) => typeof n === 'string') : [],
+        count: Number.isSafeInteger(m.count) ? m.count : 1,
+        ...(typeof m.arrondissement === 'string' ? { arrondissement: m.arrondissement } : {})
+      }
+    };
+  }
+  if (id === 'document') {
+    if (!Array.isArray(entry.documents) || !Number.isSafeInteger(entry.count)) return undefined;
+    return {
+      ...base,
+      count: entry.count,
+      documents: entry.documents.filter(isRecord).map((d) => ({
+        id: strings(d.id),
+        partition: strings(d.partition),
+        name: strings(d.name),
+        type: text(d.type).toUpperCase(),
+        title: strings(d.title),
+        status: strings(d.status)
+      }))
+    };
+  }
+  const pick = restoredPickOf(id);
+  if (pick !== undefined) {
+    if (!Array.isArray(entry.parsed)) return undefined;
+    return {
+      ...base,
+      parsed: entry.parsed.filter(isRecord).map((item, index) => ({
+        id: typeof item.id === 'string' ? item.id : `${id}.${index}`,
+        ...pick(item),
+        geometry: restoredGeometryOf(item.geometry)
+      }))
+    };
+  }
+  if (id === 'gpu-files') {
+    if (!['found', 'newer', 'not-found'].includes(entry.link)) return undefined;
+    const href =
+      typeof entry.href === 'string' && entry.href.startsWith(`${GPU_DOCUMENT_API}/`)
+        ? entry.href
+        : undefined;
+    if (entry.link === 'found' && href === undefined) return undefined;
+    return {
+      ...base,
+      link: entry.link,
+      ...(typeof entry.documentId === 'string' ? { documentId: entry.documentId } : {}),
+      ...(href === undefined ? {} : { href })
+    };
+  }
+  if (entry.empty === true) return { ...base, empty: true };
+  switch (id) {
+    case 'georisques-risques':
+      return Array.isArray(entry.risks)
+        ? {
+            ...base,
+            risks: entry.risks
+              .filter((r) => typeof r?.code === 'string' && typeof r.label === 'string')
+              .map((r) => ({ code: r.code, label: r.label }))
+          }
+        : undefined;
+    case 'georisques-pprn':
+      return Array.isArray(entry.pprs)
+        ? {
+            ...base,
+            pprs: entry.pprs
+              .filter((p) => typeof p?.id === 'string')
+              .map((p) => ({ id: p.id, label: text(p.label), procedure: optionalText(p.procedure) }))
+          }
+        : undefined;
+    case 'georisques-sismique':
+      return typeof entry.zone === 'string'
+        ? { ...base, zone: entry.zone, label: optionalText(entry.label) }
+        : undefined;
+    case 'georisques-rga':
+      return typeof entry.exposure === 'string'
+        ? { ...base, exposure: entry.exposure, label: optionalText(entry.label) }
+        : undefined;
+    case 'georisques-radon':
+      return typeof entry.radonClass === 'string' ? { ...base, radonClass: entry.radonClass } : undefined;
+    default:
+      return undefined;
+  }
+}
+
+/** `YYYY-MM-DD`, local, of a date: how a snapshot's date is said (as `clock` says a time). */
+const localDay = (date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+const dayOfIso = (iso) => localDay(new Date(iso));
+
 // ── The reader ──────────────────────────────────────────────────────────────────
 
 /**
@@ -1544,8 +2223,22 @@ export function createReader({
     const timer = setTimeout(fn, ms);
     return () => clearTimeout(timer);
   },
-  defer = (fn) => setTimeout(fn, 0)
+  defer = (fn) => setTimeout(fn, 0),
+  // Sprint 002.11 DEC-2: the snapshot's budget and the first step taken (tests force them).
+  snapshotBudget = SNAPSHOT_BUDGET,
+  snapshotMinimumStep = 0
 }) {
+  /** Sprint 002.11: set while this reader writes its cache, so its own write signals nothing. */
+  let writingCache = false;
+  /**
+   * Sprint 002.11's review: what this reader last wrote, serialized. The host
+   * says a cache changed once per microtask after the write — when `writingCache`
+   * is long clear and the read has returned — so the package's own write is
+   * told by its content, not by the moment; otherwise each write cost a second read.
+   */
+  let ownCacheWrite;
+  /** Sprint 002.11 DEC-7: the last completed read's plot, for « Use it » to write the snapshot. */
+  let lastSnapshotRead;
   /** Plot key → `{ report, answers, good }` (DEC-9): memory, for the session. */
   const cache = new Map();
   /**
@@ -1646,7 +2339,7 @@ export function createReader({
             withZonePages(
               rnu.augment(report, request, rnu.roadsKnown(request.site), facts.get(report), {
                 checks: false,
-                written: writtenInput(pages)
+                written: writtenInput(pages, facts.get(report))
               }),
               pages
             )
@@ -1666,12 +2359,13 @@ export function createReader({
       }
       await pages.settled();
       if (signal.aborted) throw new ReadAborted();
-      return withZonePages(
-        rnu.augment(base, request, answeredRoads, facts.get(base), {
-          written: writtenInput(pages)
-        }),
+      const written = writtenInput(pages, facts.get(base));
+      const answer = withZonePages(
+        rnu.augment(base, request, answeredRoads, facts.get(base), { written }),
         pages
       );
+      // Sprint 002.11: the snapshot written when the reading changed, and said.
+      return withSnapshot(answer, request.site, written?.zones ?? []);
     } finally {
       pages?.stop();
       if (active === controller) active = undefined;
@@ -1730,16 +2424,44 @@ export function createReader({
         : centroidOf(queryRings);
 
     const entry = cached ?? { good: {} };
+    // Sprint 002.11 DEC-4: no memory of this plot — the project's snapshot, when
+    // it is this plot's, seeds the last good answers. The entry carries no
+    // `report`, so nothing is answered from it without asking again.
+    const restored = cached === undefined ? restoreSnapshot(key) : undefined;
+    const restoredIds = new Set(Object.keys(restored?.answers ?? {}));
+    if (restored !== undefined) {
+      Object.assign(entry.good, restored.answers);
+      entry.restoredFrom = restored.data.readAt;
+    }
     const state = {
       view,
       service,
       assumptions,
-      answers: {},
-      pending: new Set(),
+      answers: { ...restored?.answers },
+      pending: new Set(restoredIds),
       skipped: new Set(),
       good: entry.good
     };
-    const emit = () => progress(assemble(state));
+    // While a snapshot's answer waits for its fresh one, the overview says so.
+    const checking = () =>
+      [...restoredIds].some((id) => state.answers[id]?.restored && state.pending.has(id));
+    const emit = () => {
+      const report = assemble(state);
+      progress(
+        checking() ? withSnapshotNotices(report, [checkingNotice(restored.data.readAt)]) : report
+      );
+    };
+    if (restored !== undefined) {
+      // Shown at once, through the read's own progress: the regime from the
+      // snapshot's wave 1, every source `loading` with its date.
+      const first = { ...state, assumptions: [...assumptions], answers: { ...state.answers }, good: {} };
+      resolveRegime(
+        first,
+        first.answers.municipality ?? { failed: 'missing' },
+        first.answers.document ?? { failed: 'missing' }
+      );
+      progress(withSnapshotNotices(assemble(first), [checkingNotice(restored.data.readAt)]));
+    }
 
     /** One source: fetched, parsed, recorded; the last good answer kept for a re-read. */
     const run = async (id, task) => {
@@ -1801,6 +2523,13 @@ export function createReader({
     ];
     for (const id of [...(zoneLayer === undefined ? [] : [zoneLayer]), ...wave3])
       state.pending.add(id);
+    // Sprint 002.11: a snapshot's source this regime does not read is not shown.
+    const asked = new Set(['municipality', 'document', ...state.pending]);
+    for (const id of restoredIds) {
+      if (asked.has(id)) continue;
+      delete state.answers[id];
+      state.pending.delete(id);
+    }
     emit();
 
     // Wave 2: the zone, or the sector of a carte communale.
@@ -1828,6 +2557,37 @@ export function createReader({
       throw new ReadAborted();
     }
     const report = assemble(state);
+    // Sprint 002.11 DEC-1, DEC-6: what this read would keep in the project, and
+    // whether anything was answered afresh (offline, nothing was).
+    entry.sources = snapshotSourcesOf(state, asked);
+    entry.facts = factsOf(state);
+    entry.freshIds = new Set(
+      Object.entries(state.answers)
+        .filter(([, answer]) => !answer.restored && answer.failed === undefined)
+        .map(([id]) => id)
+    );
+    // Sprint 002.11's review: a source asked that did not answer — « unchanged »
+    // then speaks only for those that did.
+    entry.partly = [...asked].some((id) => !entry.freshIds.has(id));
+    entry.summary = jsonClone({
+      regime: { code: report.regime.code },
+      ...(state.municipality === undefined
+        ? {}
+        : { municipality: { insee: state.municipality.insee, name: state.municipality.name } }),
+      ...(state.document === undefined
+        ? {}
+        : {
+            document: {
+              idurba: entry.facts.document?.version,
+              datvalid: entry.facts.document?.datvalid,
+              partition: state.document.partition,
+              gpuDocId: state.document.id,
+              type: state.document.type,
+              name: state.document.name
+            }
+          })
+    });
+    entry.compared = false;
     // An `unknown` report is never answered from memory: the next read asks
     // again. One with a source unavailable is, for five minutes only; then a
     // `site` or `design` read retries. The last good answers stay either way.
@@ -1835,7 +2595,8 @@ export function createReader({
       entry.report = undefined;
     } else {
       entry.report = report;
-      entry.expiresAt = report.sources.some((s) => s.state === 'unavailable')
+      // A source shown from an earlier reading (`saved`) did not answer either.
+      entry.expiresAt = report.sources.some((s) => s.state === 'unavailable' || s.state === 'saved')
         ? now().getTime() + DEGRADED_TTL_MS
         : undefined;
     }
@@ -1848,6 +2609,452 @@ export function createReader({
     cache.delete(key);
     cache.set(key, entry);
     while (cache.size > CACHE_PLOTS) cache.delete(cache.keys().next().value);
+  }
+
+  // ── The planning snapshot (Sprint 002.11) ─────────────────────────────────────
+
+  /** The `site-package-data` service when it has the cache (SDK 1.33); `undefined` before. */
+  function cacheService() {
+    const service = packageData();
+    return typeof service?.readCache === 'function' && typeof service.writeCache === 'function'
+      ? service
+      : undefined;
+  }
+
+  /** The project's snapshot, checked (DEC-8); a newer or malformed one is said once and ignored. */
+  function storedSnapshot() {
+    let raw;
+    try {
+      raw = cacheService()?.readCache();
+    } catch (cause) {
+      log(`${SOURCE_ID}: readCache threw: ${String(cause)}`);
+      return undefined;
+    }
+    const checked = checkedSnapshot(raw);
+    if (checked?.newer !== undefined) {
+      logOnce(`${SOURCE_ID}: the project's snapshot is schema ${checked.newer}; this package reads ${SNAPSHOT_SCHEMA}: ignored`);
+      return undefined;
+    }
+    if (checked?.malformed) {
+      logOnce(`${SOURCE_ID}: the project's snapshot is malformed: ignored, replaced at the next read`);
+      return undefined;
+    }
+    return checked?.data;
+  }
+
+  /**
+   * DEC-4, DEC-7: the snapshot of `key`, as the answers it holds (each marked
+   * `restored`), and its written rules seeded as extraction records — held
+   * whether or not the companion is located. `undefined` for another plot.
+   */
+  function restoreSnapshot(key) {
+    const data = storedSnapshot();
+    if (data === undefined || data.plotKey !== key) return undefined;
+    const answers = {};
+    for (const [id, entry] of Object.entries(data.sources)) {
+      const answer = restoredAnswerOf(id, entry);
+      if (answer === undefined) {
+        logOnce(`${SOURCE_ID}: the snapshot's ${id} is not one this package reads: not restored`);
+        continue;
+      }
+      answers[id] = answer;
+    }
+    for (const raw of data.written ?? []) {
+      const written = restoredWrittenOf(raw);
+      if (written === undefined) {
+        logOnce(`${SOURCE_ID}: a written reading of the snapshot is malformed: not restored`);
+        continue;
+      }
+      const id = cyrb53(written.key);
+      // A record this session already holds (asked, extracted) stands.
+      if (extractions.has(id)) continue;
+      extractions.set(id, {
+        id,
+        key: written.key,
+        query: written.query,
+        zone: written.zone,
+        state: 'done',
+        result: written.result,
+        restored: true,
+        readAt: data.readAt,
+        waiters: 0,
+        asked: false,
+        revision: 0
+      });
+    }
+    return { data, answers };
+  }
+
+  /** DEC-1: the snapshot's sources of a read — what is shown, raw answers dropped. */
+  function snapshotSourcesOf(state, asked) {
+    const sources = {};
+    for (const id of Object.keys(SOURCES)) {
+      if (!asked.has(id)) continue;
+      const shown = usable(state, id);
+      if (shown === undefined) continue;
+      sources[id] = snapshotEntryOf(id, shown, state.view);
+    }
+    return sources;
+  }
+
+  /**
+   * DEC-6's facts of a state: what « what changed » compares, never geometry,
+   * with the sources each fact was read from.
+   */
+  function factsOf(state) {
+    const zones = zonesOf(state);
+    const items = (layers, label) =>
+      layers.flatMap((id) => (usable(state, id)?.parsed ?? []).map(label));
+    const document = state.document;
+    const version = zones.find((z) => z.idurba !== undefined)?.idurba ?? document?.name;
+    const datvalid = zones.find((z) => z.datvalid !== undefined)?.datvalid;
+    return {
+      regime: state.regime?.code,
+      regimeLabel: state.regime?.label,
+      document:
+        document === undefined
+          ? undefined
+          : {
+              type: document.type === 'PLUI' ? 'PLUi' : document.type,
+              version,
+              datvalid,
+              validFrom: isoDate(datvalid) ?? idurbaDate(version)
+            },
+      zones: [...new Set(zones.map((z) => z.libelle).filter((l) => l !== ''))].sort(),
+      prescriptions: items(PRESCRIPTION_LAYERS, (p) => ({
+        id: `${p.type}|${p.subtype ?? ''}|${p.libelle}`,
+        label: p.libelle || p.type
+      })),
+      easements: items(EASEMENT_LAYERS, (e) => ({
+        id: `${e.suptype}|${e.nomass ?? ''}`,
+        label: e.nomass ?? e.suptype.toUpperCase()
+      })),
+      risks: [
+        ...(usable(state, 'georisques-risques')?.risks ?? []).map((r) => ({
+          id: `risk|${r.code}`,
+          label: r.label
+        })),
+        ...(usable(state, 'georisques-pprn')?.pprs ?? []).map((p) => ({
+          id: `ppr|${p.id}`,
+          label: p.label
+        }))
+      ]
+    };
+  }
+
+  /**
+   * DEC-6: the changes between the snapshot's facts and a fresh read's, on the
+   * sources ready in both; structured, worded at the answer.
+   */
+  function changesBetween(before, after, beforeIds, afterIds) {
+    const both = (ids) => ids.every((id) => beforeIds.has(id) && afterIds.has(id));
+    const changes = [];
+    if (both(['municipality', 'document'])) {
+      const a = before.document;
+      const b = after.document;
+      if (
+        a !== undefined &&
+        b !== undefined &&
+        (String(a.version ?? '').toUpperCase() !== String(b.version ?? '').toUpperCase() ||
+          String(a.datvalid ?? '') !== String(b.datvalid ?? ''))
+      ) {
+        changes.push({
+          kind: 'version',
+          type: b.type,
+          old: a.version ?? '—',
+          new: b.version ?? '—',
+          date: b.validFrom ?? '—'
+        });
+      }
+      if (
+        before.regime !== after.regime &&
+        before.regimeLabel !== undefined &&
+        after.regimeLabel !== undefined
+      ) {
+        changes.push({ kind: 'regime', old: before.regimeLabel, new: after.regimeLabel });
+      }
+    }
+    const zoneIds = ['zone-urba', 'secteur-cc'].filter((id) => beforeIds.has(id) || afterIds.has(id));
+    if (zoneIds.length > 0 && both(zoneIds) && before.zones.join('|') !== after.zones.join('|')) {
+      changes.push({
+        kind: 'zone',
+        old: before.zones.join(', ') || '—',
+        new: after.zones.join(', ') || '—'
+      });
+    }
+    const listed = (kind, layers, list) => {
+      if (!both(layers.filter((id) => beforeIds.has(id) || afterIds.has(id)))) return;
+      const old = new Map(before[list].map((item) => [item.id, item.label]));
+      const fresh = new Map(after[list].map((item) => [item.id, item.label]));
+      for (const [id, label] of fresh) {
+        if (!old.has(id)) changes.push({ kind: `${kind}-added`, label });
+      }
+      for (const [id, label] of old) {
+        if (!fresh.has(id)) changes.push({ kind: `${kind}-removed`, label });
+      }
+    };
+    listed('prescription', PRESCRIPTION_LAYERS, 'prescriptions');
+    listed('easement', EASEMENT_LAYERS, 'easements');
+    listed('risk', ['georisques-risques', 'georisques-pprn'], 'risks');
+    return changes;
+  }
+
+  /** DEC-4: « Read on {date} — checking for changes… ». */
+  const checkingNotice = (readAt) => ({
+    kind: 'notice',
+    tone: 'info',
+    text: { key: 'fr-urban-rules.snapshot.checking', params: { date: dayOfIso(readAt) } }
+  });
+
+  /** A report with the snapshot's blocks first in its overview. */
+  function withSnapshotNotices(report, blocks) {
+    if (blocks.length === 0 || !Array.isArray(report?.overview)) return report;
+    const next = { ...report, overview: [...blocks, ...report.overview] };
+    // What the report was assembled from stays with it (002.1a's facts).
+    if (facts.has(report)) facts.set(next, facts.get(report));
+    return next;
+  }
+
+  /** DEC-6: one change, worded (en and fr in the package's resources). */
+  function changeBlock(change, reopened) {
+    const notice = (key, params) => ({ kind: 'notice', tone: 'info', text: { key, params } });
+    switch (change.kind) {
+      case 'version':
+        // With no confirmation to review, the line says the version alone.
+        return reopened > 0
+          ? notice('fr-urban-rules.snapshot.change.version', {
+              type: change.type,
+              old: change.old,
+              new: change.new,
+              date: change.date,
+              count: reopened
+            })
+          : notice('fr-urban-rules.snapshot.change.versionNothingToReview', {
+              type: change.type,
+              old: change.old,
+              new: change.new,
+              date: change.date
+            });
+      case 'regime':
+        // A regime's name is a phrase of its own: given as text, in the host's language.
+        return notice('fr-urban-rules.snapshot.change.regime', {
+          regime: translate(change.new) ?? change.new,
+          old: translate(change.old) ?? change.old
+        });
+      case 'zone':
+        return notice('fr-urban-rules.snapshot.change.zone', { old: change.old, new: change.new });
+      case 'prescription-added':
+        return notice('fr-urban-rules.snapshot.change.prescriptionAdded', { label: cut(change.label, 300) });
+      case 'prescription-removed':
+        return notice('fr-urban-rules.snapshot.change.prescriptionRemoved', { label: cut(change.label, 300) });
+      case 'easement-added':
+        return notice('fr-urban-rules.snapshot.change.easementAdded', { label: cut(change.label, 300) });
+      case 'easement-removed':
+        return notice('fr-urban-rules.snapshot.change.easementRemoved', { label: cut(change.label, 300) });
+      case 'risk-added':
+        return notice('fr-urban-rules.snapshot.change.riskAdded', { label: cut(change.label, 300) });
+      default:
+        return notice('fr-urban-rules.snapshot.change.riskRemoved', { label: cut(change.label, 300) });
+    }
+  }
+
+  /** DEC-6: the facts of a stored snapshot, by the same readers as a fresh read's. */
+  function factsOfSnapshot(data, view) {
+    const answers = {};
+    for (const [id, entry] of Object.entries(data.sources)) {
+      const answer = restoredAnswerOf(id, entry);
+      if (answer !== undefined) answers[id] = answer;
+    }
+    const state = {
+      view,
+      service: siteOf(),
+      assumptions: [],
+      answers,
+      pending: new Set(),
+      skipped: new Set(),
+      good: {}
+    };
+    resolveRegime(
+      state,
+      answers.municipality ?? { failed: 'missing' },
+      answers.document ?? { failed: 'missing' }
+    );
+    return { facts: factsOf(state), ids: new Set(Object.keys(answers)) };
+  }
+
+  /** DEC-6's {n}: the rules the existing reopen rule reopened on this report. */
+  const reopenedCount = (report) =>
+    (report?.rules ?? []).filter((rule) =>
+      (rule.conditions ?? []).some((c) => c?.key === 'fr-urban-rules.rule.reopened')
+    ).length;
+
+  /**
+   * DEC-1, DEC-3: the snapshot of a completed read for the plot on view — its
+   * sources and the written readings shown — written when its content differs
+   * from the stored one (`readAt` and every `retrievedAt` aside), and only
+   * then dated now. DEC-6's comparison runs once per fetching read, against
+   * the snapshot as it stood. Never throws: a refused write is said.
+   */
+  function snapshotStep(key, entry, view, zones) {
+    const stored = storedSnapshot();
+    const baseline = stored?.plotKey === key ? stored : undefined;
+    if (!entry.compared) {
+      entry.compared = true;
+      if (baseline !== undefined) {
+        if (entry.freshIds.size === 0) {
+          entry.note = { kind: 'offline', since: baseline.readAt };
+        } else {
+          const before = factsOfSnapshot(baseline, view);
+          const changes = changesBetween(before.facts, entry.facts, before.ids, entry.freshIds);
+          if (changes.length > 0) entry.note = { kind: 'changed', since: baseline.readAt, changes };
+          else if (entry.note?.kind === 'changed') {
+            // Shown for the session (DEC-6), though the next snapshot is the new state.
+          } else if (entry.restoredFrom !== undefined) {
+            entry.note = {
+              kind: 'unchanged',
+              since: baseline.readAt,
+              ...(entry.partly ? { partly: true } : {})
+            };
+          } else entry.note = undefined;
+        }
+      }
+    }
+    const service = cacheService();
+    if (service === undefined || Object.keys(entry.sources).length === 0) return;
+    // A design read answered from memory changes nothing kept: no clip, no copy (DEC-3).
+    const writtenNow = zones
+      .map(
+        ({ record }) =>
+          `${record?.id}:${record?.revision}:${record?.state}:${record?.result?.extractedAt}:${record?.restored}:${record?.result?.document?.documentId}`
+      )
+      .join('|');
+    if (
+      entry.lastStep?.sources === entry.sources &&
+      entry.lastStep.written === writtenNow &&
+      entry.lastStep.stored === baseline?.readAt
+    )
+      return;
+    entry.lastStep = { sources: entry.sources, written: writtenNow, stored: baseline?.readAt };
+    const base = {
+      schema: SNAPSHOT_SCHEMA,
+      plotKey: key,
+      ...(typeof view.crs === 'string' ? { crs: view.crs } : {}),
+      readAt: '',
+      ...entry.summary,
+      sources: entry.sources,
+      written: zones
+        .filter(({ record }) => record?.state === 'done' && record.result !== undefined)
+        .map(({ zone, query, record }) => ({
+          zone,
+          query,
+          result: storedResultOf(record.result, zone)
+        }))
+    };
+    const attributions = snapshotAttributions(entry.sources);
+    const fitted = fittedSnapshot(jsonClone(base), {
+      view,
+      attributions,
+      budget: snapshotBudget,
+      minimumStep: snapshotMinimumStep
+    });
+    if (fitted === undefined) {
+      entry.saved = 'not-saved';
+      log(`${SOURCE_ID}: the snapshot does not fit ${snapshotBudget} characters: not saved`);
+      return;
+    }
+    const data = jsonClone(fitted);
+    if (baseline !== undefined && snapshotContent(baseline) === snapshotContent(data)) {
+      entry.saved = baseline;
+      return;
+    }
+    data.readAt = now().toISOString();
+    writingCache = true;
+    try {
+      service.writeCache(data, attributions);
+      ownCacheWrite = stableJson(data);
+      entry.saved = data;
+      entry.lastStep.stored = data.readAt;
+    } catch (cause) {
+      // The host's limits (its 1 MB across packages, which another package may
+      // have filled): the previous snapshot stays, and the overview says so.
+      entry.saved = 'not-saved';
+      log(`${SOURCE_ID}: writeCache refused the snapshot: ${cause instanceof Error ? cause.message : String(cause)}`);
+    } finally {
+      writingCache = false;
+    }
+  }
+
+  /** The overview's snapshot blocks for a read's answer (DEC-2, DEC-4, DEC-6). */
+  function snapshotBlocks(entry, report) {
+    const blocks = [];
+    const note = entry.note;
+    const notice = (tone, key, params) => ({
+      kind: 'notice',
+      tone,
+      text: { key, ...(params === undefined ? {} : { params }) }
+    });
+    // Offline, nothing is said here (Sprint 002.11's review): every source is
+    // `saved` with its date, and the host says « Offline — N sources shown as read
+    // on {date} » once, above the overview (SDK 1.33).
+    if (note?.kind === 'unchanged') {
+      blocks.push(
+        notice(
+          'info',
+          note.partly ? 'fr-urban-rules.snapshot.unchangedPartly' : 'fr-urban-rules.snapshot.unchanged',
+          { date: dayOfIso(note.since) }
+        )
+      );
+    } else if (note?.kind === 'changed') {
+      blocks.push({
+        kind: 'heading',
+        text: { key: 'fr-urban-rules.snapshot.changedSince', params: { date: dayOfIso(note.since) } }
+      });
+      const reopened = reopenedCount(report);
+      for (const change of note.changes) blocks.push(changeBlock(change, reopened));
+    }
+    if (entry.saved === 'not-saved') {
+      blocks.push(notice('warning', 'fr-urban-rules.snapshot.notSaved'));
+    } else if (Array.isArray(entry.saved?.simplified) && entry.saved.simplified.length > 0) {
+      blocks.push(
+        notice('info', 'fr-urban-rules.snapshot.simplified', {
+          steps: entry.saved.simplified
+            .map((step) => translate(SNAPSHOT_STEP_KEYS[step]) ?? step)
+            .join(' · ')
+        })
+      );
+    }
+    return blocks;
+  }
+
+  /**
+   * DEC-3: after a completed read, the snapshot step for the plot on view and
+   * the overview's snapshot blocks; the report as it is when no read of this
+   * plot fetched (no Site, another CRS).
+   */
+  function withSnapshot(report, view, zones) {
+    if (view === undefined || siteOf() === undefined) return report;
+    const key = plotKey(view);
+    const entry = cache.get(key);
+    if (entry?.sources === undefined) return report;
+    lastSnapshotRead = { key, view, zones };
+    snapshotStep(key, entry, view, zones);
+    return withSnapshotNotices(report, snapshotBlocks(entry, report));
+  }
+
+  /** DEC-4: a cache change outside a read (a project loaded) asks the host to read again. */
+  function cacheChanged() {
+    if (writingCache || readsInFlight > 0) return;
+    if (ownCacheWrite !== undefined) {
+      let stored;
+      try {
+        stored = cacheService()?.readCache();
+      } catch {
+        stored = undefined;
+      }
+      // The entry is the one this reader wrote: nothing new to read.
+      if (stored !== undefined && stableJson(stored) === ownCacheWrite) return;
+    }
+    requestSignal();
   }
 
   /** On deactivation: the read in flight aborted, the memory cleared. */
@@ -1881,7 +3088,15 @@ export function createReader({
       pauseOthers(new Set()); // review S2: a plot without written rules polls nothing
       return { view: { applies: false }, settled: async () => {}, stop: () => {} };
     }
-    const view = { applies: true, located: false, location: undefined, zones: [] };
+    const view = {
+      applies: true,
+      located: false,
+      location: undefined,
+      zones: [],
+      // Sprint 002.11 DEC-7: the zones' lookups, known before `locate()` answers,
+      // so a restored reading is shown with or without the companion.
+      lookups: chapterLookups(partition, zones, documentName)
+    };
     const awaited = [];
     let stopped = false;
     const stopWaiting = new AbortController();
@@ -1901,7 +3116,7 @@ export function createReader({
         pauseOthers(new Set()); // review S2
         return;
       }
-      view.zones = chapterLookups(partition, zones, documentName).map((lookup) => ({
+      view.zones = view.lookups.map((lookup) => ({
         zone: lookup.zone,
         query: lookup.query,
         entry: lookupChapter(view.location, lookup, reason === 'refresh'),
@@ -2125,6 +3340,50 @@ export function createReader({
     record.error = undefined;
     record.notBefore = undefined;
     record.jobId = undefined;
+    // 002.11: a reading taken (Extract, Extract again) is this session's, no longer the snapshot's.
+    record.restored = false;
+    record.offer = undefined;
+  }
+
+  /**
+   * Sprint 002.11 DEC-7: a `cachedOnly` answer for a restored record — the
+   * same document version, with other rules or passages, another file, or a
+   * later extraction by a newer prompt — kept as an offer. A passage the
+   * snapshot shortened (DEC-2 step 5) is compared on what it kept.
+   */
+  function offerIfNewer(record, json) {
+    const result = checkedResult(json);
+    if (result === undefined || !readsVersion(result, record.query)) return;
+    const held = record.result;
+    const samePassage = (kept, fresh) =>
+      kept === fresh ||
+      (kept.length === SNAPSHOT_PASSAGE_MAX && kept.endsWith('…') && fresh.startsWith(kept.slice(0, -1)));
+    const strip = ({ ruleKey, passage, ...rule }) => stableJson(rule);
+    const sameRules =
+      held.rules.length === result.rules.length &&
+      held.rules.every(
+        (rule, i) =>
+          strip(rule) === strip(result.rules[i]) && samePassage(rule.passage, result.rules[i].passage)
+      );
+    const sameFile =
+      held.document.sha256 === undefined ||
+      result.document.sha256 === undefined ||
+      held.document.sha256 === result.document.sha256;
+    const later =
+      result.promptVersion > held.promptVersion &&
+      Date.parse(result.extractedAt ?? '') > Date.parse(held.extractedAt ?? '');
+    record.offer = !sameRules || !sameFile || later ? result : undefined;
+    // Sprint 002.11's review: the same file's GPU document id, which an older
+    // snapshot did not keep, is a fact of the file — not another reading — and is
+    // taken, so the règlement's link survives the next offline open.
+    if (
+      held.document.documentId === undefined &&
+      result.document.documentId !== undefined &&
+      held.document.sha256 !== undefined &&
+      held.document.sha256 === result.document.sha256
+    ) {
+      record.result = { ...held, document: { ...held.document, documentId: result.document.documentId } };
+    }
   }
 
   /** A failure: a result already held stays shown when the failure may pass (as 002.6a S4). */
@@ -2194,7 +3453,9 @@ export function createReader({
       record.notBefore,
       record.result?.extractedAt,
       record.result?.rules.length,
-      record.current
+      record.current,
+      // 002.11 DEC-7: an offer that appears is a change a read should show.
+      record.offer?.extractedAt ?? (record.offer === undefined ? null : 'offer')
     ]);
 
   /** DEC-1: `GET extractions?…&cachedOnly=1` — reads, never starts work, never a model call. */
@@ -2207,6 +3468,12 @@ export function createReader({
     const current = checkedCurrent(answer.json?.current);
     if (current !== undefined) record.current = current;
     if (answer.status === 200) {
+      // Sprint 002.11 DEC-7: the project's reading stands — the user confirmed
+      // against it; another reading of the same version is offered, never taken.
+      if (record.restored && record.result !== undefined) {
+        offerIfNewer(record, answer.json?.result);
+        return;
+      }
       takeResult(record, answer.json?.result);
       return;
     }
@@ -2373,11 +3640,32 @@ export function createReader({
     }
   }
 
-  /** What a read hands `augment` (DEC-2): per zone, the record as it stands. */
-  function writtenInput(pages) {
+  /**
+   * Sprint 002.11 DEC-7: the zones' records holding a reading — restored from
+   * the project's snapshot or read this session — whether or not the
+   * companion is located.
+   */
+  const heldWritten = (lookups) =>
+    lookups
+      .map(({ zone, key, query }) => ({ zone, query, record: extractions.get(cyrb53(key)) }))
+      .filter(({ record }) => record?.state === 'done' && record.result !== undefined);
+
+  /**
+   * What a read hands `augment` (DEC-2): per zone, the record as it stands.
+   * Without the companion, or before it is located (002.11), the readings held.
+   */
+  function writtenInput(pages, reportFacts) {
     const view = pages?.view;
-    if (view === undefined || !view.applies) return undefined;
-    if (!view.located || view.location === undefined) return { available: false, zones: [] };
+    if (view === undefined) {
+      // 002.11 DEC-4: a snapshot shown before the zones' pages are asked.
+      const held = heldWritten(
+        chapterLookups(reportFacts?.partition, reportFacts?.zones ?? [], reportFacts?.documentName)
+      );
+      return held.length === 0 ? undefined : { available: false, zones: held };
+    }
+    if (!view.applies) return undefined;
+    if (!view.located || view.location === undefined)
+      return { available: false, zones: heldWritten(view.lookups) };
     return {
       available: true,
       zones: view.zones.map((z) => {
@@ -2391,6 +3679,21 @@ export function createReader({
   async function runWrittenAction(request) {
     const id = subjectFields(request.target?.subjectId).x;
     const record = id === undefined ? undefined : extractions.get(id);
+    // Sprint 002.11 DEC-7: « Use it » — the newer reading replaces the project's,
+    // written to the snapshot once; no confirmation changes.
+    if (request.actionId === 'written-use-newer') {
+      if (record?.offer === undefined) {
+        return { status: 'refused', message: { key: 'fr-urban-rules.written.readAgain' } };
+      }
+      record.result = record.offer;
+      record.offer = undefined;
+      record.restored = false;
+      record.revision += 1;
+      const last = lastSnapshotRead;
+      const entry = last === undefined ? undefined : cache.get(last.key);
+      if (entry?.sources !== undefined) snapshotStep(last.key, entry, last.view, last.zones);
+      return { status: 'done' };
+    }
     if (record === undefined || record.baseUrl === undefined) {
       return { status: 'refused', message: { key: 'fr-urban-rules.written.readAgain' } };
     }
@@ -2458,6 +3761,9 @@ export function createReader({
     if (href === undefined || linkAt === -1 || view.zones.length === 0) return report;
     const base = href.split('#')[0];
     const link = overview[linkAt];
+    // Sprint 002.11's review: a link read earlier keeps saying when, at the zone's page too.
+    const asReadOn =
+      link.detail?.key === 'fr-urban-rules.link.detailAsRead' ? link.detail.params?.date : undefined;
     const answers = view.zones.map(({ zone, entry }) => {
       entry.applied = linkSignature(entry);
       return { zone, answer: shownAnswer(entry) };
@@ -2489,7 +3795,10 @@ export function createReader({
                 }
               : { key: 'fr-urban-rules.link.regulationZonePage', params: { zone, page } },
           href: `${base}#page=${page}`,
-          detail: { key: 'fr-urban-rules.link.detailPage', params: { page } }
+          detail:
+            asReadOn === undefined
+              ? { key: 'fr-urban-rules.link.detailPage', params: { page } }
+              : { key: 'fr-urban-rules.link.detailPageAsRead', params: { page, date: asReadOn } }
         };
       });
     }
@@ -2515,14 +3824,14 @@ export function createReader({
       }
       municipality = good;
     }
-    const commune = parseMunicipality(municipality.features, preferredCommune(state.view));
+    const commune = municipalityOf(municipality, state.view);
     state.municipality = commune;
     if (commune === undefined || typeof commune.isRnu !== 'boolean') {
       // Features with no usable commune, or an `is_rnu` that is not a boolean:
       // the answer drifted, and drift is never "not published".
       if (commune !== undefined)
         log(`${SOURCE_ID}: municipality answered is_rnu=${String(commune.isRnu)}`);
-      else if (municipality.features.length > 0)
+      else if (featureCountOf(municipality) > 0)
         log(`${SOURCE_ID}: municipality answered no usable commune`);
       state.regime = { code: 'unknown', label: REGIME_LABELS.unknown };
       return;
@@ -2546,20 +3855,20 @@ export function createReader({
       state.regime = { code: 'unknown', label: REGIME_LABELS.unknown };
       return;
     }
-    const parsed = parseDocuments(answer.features);
+    const parsed = documentsOf(answer);
     const known = parsed.filter((d) => own(DOCUMENT_TYPES, d.type) !== undefined);
     for (const d of parsed) {
       if (own(DOCUMENT_TYPES, d.type) === undefined)
         log(`${SOURCE_ID}: unknown document type "${d.type}"`);
     }
-    if (answer.features.length === 0) {
+    if (featureCountOf(answer) === 0) {
       state.regime = { code: 'not_published', label: REGIME_LABELS.not_published };
       return;
     }
     if (known.length === 0) {
       // Something answered, and none of it is a document this reader knows:
       // drift, never "not published".
-      log(`${SOURCE_ID}: document answered ${answer.features.length} feature(s), none usable`);
+      log(`${SOURCE_ID}: document answered ${featureCountOf(answer)} feature(s), none usable`);
       state.regime = { code: 'unknown', label: REGIME_LABELS.unknown };
       return;
     }
@@ -2927,7 +4236,7 @@ export function createReader({
       zones.find((z) => z.datappro !== undefined) !== undefined
         ? isoDate(zones.find((z) => z.datappro !== undefined).datappro)
         : idurbaDate(version);
-    const link = usable(state, 'gpu-files');
+    const link = regulationLink(state, version);
     // The grid's own title ("PLUI GRAND LYON LA METROPOLE"), prefixed by the type when it lacks it.
     const typeName = doc.type === 'PLUI' ? 'PLUi' : doc.type;
     const named = doc.title ?? state.municipality?.name ?? '';
@@ -2940,10 +4249,41 @@ export function createReader({
       ...(doc.status === 'production'
         ? { status: { key: 'fr-urban-rules.document.status.production' } }
         : {}),
-      ...(link?.link === 'found' && state.answers['gpu-files']?.failed === undefined
-        ? { href: link.href }
-        : {})
+      ...(link === undefined ? {} : { href: link.href })
     };
+  }
+
+  /**
+   * The règlement's link (DEC-7), and when it was read if not just now
+   * (Sprint 002.11's review). A file's URL is fixed for a document version, so
+   * a link read earlier still opens it: the GPU's fresh answer first; else its
+   * last good one — this session's or the snapshot's — dated; else, when the
+   * file list never answered, a written reading held for this very version,
+   * which names the document's id and file, dated by its extraction.
+   * `undefined` when the GPU answered that it has no such file, or nothing
+   * names one.
+   */
+  function regulationLink(state, version) {
+    const answer = state.answers['gpu-files'];
+    const shown = usable(state, 'gpu-files');
+    if (shown?.link === 'found') {
+      return answer?.failed === undefined
+        ? { href: shown.href }
+        : { href: shown.href, asReadOn: shown.retrievedAt };
+    }
+    if (answer === undefined || answer.failed === undefined || shown !== undefined) return undefined;
+    for (const record of extractions.values()) {
+      const held = record.state === 'done' ? record.result : undefined;
+      const doc = held?.document;
+      if (typeof doc?.documentId !== 'string' || typeof doc.nomfic !== 'string') continue;
+      if (doc.idurba.toUpperCase() !== String(version ?? '').toUpperCase()) continue;
+      const date = held.extractedAt ?? record.readAt;
+      return {
+        href: gpuFileHref(doc.documentId, doc.nomfic),
+        ...(date === undefined ? {} : { asReadOn: date })
+      };
+    }
+    return undefined;
   }
 
   function easementFlags(easements) {
@@ -3014,7 +4354,13 @@ export function createReader({
     return flags;
   }
 
-  /** `sources[]` (DEC-9): `ready`, `unavailable` or `loading`; a skipped read is not listed. */
+  /**
+   * `sources[]` (DEC-9): `ready`, `unavailable` or `loading`; a skipped read is not listed.
+   * Sprint 002.11's review: a source that did not answer while an earlier reading of it is
+   * shown — this session's, or the project's snapshot — is `saved` (SDK 1.33), dated by that
+   * reading: the host says « shown as read on {date} » once, and never counts it as current
+   * or as merely « did not answer ».
+   */
   function sourceStatuses(state) {
     const statuses = [];
     for (const id of Object.keys(SOURCES)) {
@@ -3022,6 +4368,11 @@ export function createReader({
       const name = { key: SOURCES[id].key };
       if (answer === undefined) {
         if (state.pending.has(id)) statuses.push({ id, name, state: 'loading' });
+        continue;
+      }
+      // Sprint 002.11 DEC-4: a snapshot shown while the source is asked again.
+      if (answer.restored && state.pending.has(id)) {
+        statuses.push({ id, name, state: 'loading', retrievedAt: answer.retrievedAt });
         continue;
       }
       if (answer.failed === undefined) {
@@ -3039,15 +4390,22 @@ export function createReader({
       statuses.push({
         id,
         name,
-        state: 'unavailable',
+        state: good === undefined ? 'unavailable' : 'saved',
         ...(good === undefined
           ? { detail: answer.detail }
           : {
               retrievedAt: good.retrievedAt,
-              detail: {
-                key: 'fr-urban-rules.status.shownAsRead',
-                params: { time: clock(good.retrievedAt) }
-              }
+              // Sprint 002.11 DEC-4: a reading of another day says its date.
+              detail:
+                localDay(new Date(good.retrievedAt)) === localDay(now())
+                  ? {
+                      key: 'fr-urban-rules.status.shownAsRead',
+                      params: { time: clock(good.retrievedAt) }
+                    }
+                  : {
+                      key: 'fr-urban-rules.status.shownAsReadOn',
+                      params: { date: localDay(new Date(good.retrievedAt)) }
+                    }
             })
       });
     }
@@ -3056,6 +4414,9 @@ export function createReader({
 
   const isEmpty = (answer) =>
     (Array.isArray(answer.features) && answer.features.length === 0) ||
+    // Sprint 002.11: a restored answer holds its parsed form only.
+    (answer.features === undefined && answer.count === 0) ||
+    (answer.features === undefined && Array.isArray(answer.parsed) && answer.parsed.length === 0) ||
     answer.empty === true ||
     (Array.isArray(answer.risks) && answer.risks.length === 0) ||
     (Array.isArray(answer.pprs) && answer.pprs.length === 0);
@@ -3120,9 +4481,10 @@ export function createReader({
     if (document !== undefined) {
       const link = state.answers['gpu-files'];
       const shown = usable(state, 'gpu-files');
-      if (state.pending.has('gpu-files')) {
-        // Still resolving: nothing said yet.
-      } else if (link?.failed === undefined && shown?.link === 'found') {
+      const resolved = regulationLink(state, document.version);
+      if (state.pending.has('gpu-files') && !link?.restored) {
+        // Still resolving: nothing said yet (a snapshot's link is shown meanwhile, 002.11).
+      } else if (resolved !== undefined) {
         blocks.push({
           kind: 'link',
           label: {
@@ -3131,8 +4493,13 @@ export function createReader({
                 ? 'fr-urban-rules.link.document'
                 : 'fr-urban-rules.link.regulation'
           },
-          href: shown.href,
-          detail: { key: 'fr-urban-rules.link.detail' }
+          href: resolved.href,
+          // Sprint 002.11's review: a link read earlier says when, rather than
+          // « could not be resolved » while the file it names is known.
+          detail:
+            resolved.asReadOn === undefined
+              ? { key: 'fr-urban-rules.link.detail' }
+              : { key: 'fr-urban-rules.link.detailAsRead', params: { date: dayOfIso(resolved.asReadOn) } }
         });
       } else if (link?.failed !== undefined) {
         blocks.push({
@@ -3472,6 +4839,8 @@ export function createReader({
     lastReadFor: rnu.lastReadFor,
     /** Extraction records held (tests). */
     extractionCount: () => extractions.size,
+    // Sprint 002.11 DEC-4: the cache's change event, outside a read.
+    cacheChanged,
     /** Lookups held in the session map (tests: the LRU bound). */
     chapterCount: () => chapters.size,
     // 002.6b: the extraction actions are the reader's; every other is a section write.
@@ -7425,16 +8794,14 @@ function createRnu({
       if (result.chunks.failed === 0) readZones.add(zone);
       let shown = 0;
       let others = 0;
-      const taken = new Set();
-      for (const item of result.rules) {
-        if (!item.sectorUnplaced && !sectorIsZones(item.sector, zone)) {
+      // Sprint 002.11 DEC-5: one computation of the keys, which a restored rule's stored key joins.
+      const keys = writtenKeysOf(result, zone);
+      for (const [index, item] of result.rules.entries()) {
+        const id = keys[index];
+        if (id === undefined) {
           others += 1;
           continue;
         }
-        const base = `written:${item.sector ?? '*'}:${cyrb53(normalisedPassage(item.passage))}`;
-        let id = base;
-        for (let n = 2; taken.has(id); n += 1) id = `${base}~${n}`;
-        taken.add(id);
         // Two zones of one chapter read one extraction: its rule is listed once.
         if (seen.has(id)) continue;
         seen.add(id);
@@ -7646,7 +9013,9 @@ function createRnu({
   function writtenStateOf(written, planned) {
     const sources = [];
     const blocks = [];
-    if (written === undefined || !written.available) return { sources, blocks };
+    // Sprint 002.11 DEC-7: without the companion, the readings held (restored) are still shown.
+    if (written === undefined || (!written.available && written.zones.length === 0))
+      return { sources, blocks };
     written.zones.forEach(({ zone, record }, index) => {
       const sourceId = index === 0 ? 'written-rules' : `written-rules-${index + 1}`;
       const name = { key: 'fr-urban-rules.source.written', params: { zone: cut(zone, 64) } };
@@ -7746,6 +9115,26 @@ function createRnu({
             value: { key: 'fr-urban-rules.written.otherSectors', params: { count: counts.others } }
           });
         }
+        // Sprint 002.11 DEC-7: the project's reading, dated, until one is taken in this session.
+        if (record.restored) {
+          zoneBlocks.push(
+            notice('info', 'fr-urban-rules.snapshot.writtenAsRead', {
+              date: dayOfIso(result.extractedAt ?? record.readAt),
+              model: cut(result.model.model || result.model.providerId || '—', 120)
+            })
+          );
+        }
+        if (record.offer !== undefined && written.available) {
+          zoneBlocks.push({
+            kind: 'notice',
+            tone: 'info',
+            text: {
+              key: 'fr-urban-rules.snapshot.newerReading',
+              params: { date: dayOfIso(record.offer.extractedAt ?? now().toISOString()) }
+            },
+            actions: [action('written-use-newer', 'fr-urban-rules.snapshot.useNewer', true)]
+          });
+        }
         zoneBlocks.push({ kind: 'fields', rows });
         if (partial) {
           zoneBlocks.push(
@@ -7767,7 +9156,8 @@ function createRnu({
               })
             );
         }
-        if (!waiting && extractAgainOffered(result, record.current)) {
+        // Without the companion, Extract again is not offered: the notice says why (002.11).
+        if (written.available && !waiting && extractAgainOffered(result, record.current)) {
           zoneBlocks.push({
             kind: 'actions',
             actions: [action('written-extract-again', 'fr-urban-rules.written.extractAgain')]
@@ -13402,6 +14792,12 @@ export function activate(context) {
         }
       })
     );
+  }
+  // Sprint 002.11 DEC-4: a snapshot arriving outside a read (a project loaded
+  // while the source was registered) asks the host to read again.
+  const packageData = context.services.getOptional(SitePackageDataServiceToken);
+  if (typeof packageData?.onDidChangeCache === 'function') {
+    context.subscriptions.add(packageData.onDidChangeCache(() => reader.cacheChanged()));
   }
   // Disposed with the extension: no read outlives it, and no memory either.
   context.subscriptions.add({ dispose: () => reader.dispose() });

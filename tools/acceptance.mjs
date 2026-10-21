@@ -26,6 +26,8 @@ export const EXPECTED_URL = new URL(
 );
 export const ACCEPTANCE_URL = new URL('../test-fixtures/fr-urban-rules/acceptance/', import.meta.url);
 export const PLOTS = ['lyon', 'gordes', 'mouzay', 'brouennes', 'rochefort'];
+/** Sprint 002.11 step 0: the plots recorded for the planning snapshot only (`--snapshot`). */
+export const SNAPSHOT_PLOTS = ['manualchemin'];
 
 /** The command that records a plot's acceptance extraction again (DEC-3). */
 export const recordCommand = (plot) => `node tools/record-fixtures.mjs ${plot} --extraction --acceptance`;
@@ -34,6 +36,7 @@ export const sha256 = (text) => createHash('sha256').update(text).digest('hex');
 
 const USAGE =
   'usage: node tools/record-fixtures.mjs <plot> [--check | --trim]\n' +
+  '       node tools/record-fixtures.mjs <snapshot plot> --snapshot [--check | --trim]\n' +
   '       node tools/record-fixtures.mjs <plot> --extraction [--acceptance] [--check [--no-model]]';
 
 /**
@@ -43,21 +46,25 @@ const USAGE =
  */
 export function recorderOptions(argv) {
   const flags = new Set(argv.filter((a) => a.startsWith('--')));
-  const known = new Set(['--check', '--trim', '--extraction', '--acceptance', '--no-model']);
+  const known = new Set(['--check', '--trim', '--extraction', '--acceptance', '--no-model', '--snapshot']);
   const unknown = [...flags].filter((f) => !known.has(f));
   const plots = argv.filter((a) => !a.startsWith('--'));
   const fail = (why) => {
     throw new Error(`${why}\n${USAGE}`);
   };
   if (unknown.length > 0) fail(`unknown option ${unknown.join(', ')}`);
-  if (plots.length !== 1 || !PLOTS.includes(plots[0])) fail(`name one plot of ${PLOTS.join(', ')}`);
+  const snapshot = flags.has('--snapshot');
+  const names = snapshot ? SNAPSHOT_PLOTS : PLOTS;
+  if (plots.length !== 1 || !names.includes(plots[0])) fail(`name one plot of ${names.join(', ')}`);
+  if (snapshot && flags.has('--extraction')) fail('--snapshot records the planning answers only');
   const options = {
     plot: plots[0],
     check: flags.has('--check'),
     trim: flags.has('--trim'),
     extraction: flags.has('--extraction'),
     acceptance: flags.has('--acceptance'),
-    noModel: flags.has('--no-model')
+    noModel: flags.has('--no-model'),
+    snapshot
   };
   if (options.check && options.trim) fail('--check and --trim do not go together');
   if (options.extraction && options.trim) fail('--trim is for the planning answers, not an extraction');

@@ -11,7 +11,14 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 import { __testing, createReader } from '../src/index.js';
-import { FIXTURES, loadPlot, recordedFetch, recordedSiteService, requestFor } from './helpers.mjs';
+import {
+  FIXTURES,
+  answering,
+  loadPlot,
+  recordedFetch,
+  recordedSiteService,
+  requestFor
+} from './helpers.mjs';
 
 globalThis.fetch = () => {
   throw new Error('no network in tests');
@@ -272,7 +279,8 @@ function readerFor({
   overrides = {},
   module,
   now,
-  siteExtra = {}
+  siteExtra = {},
+  snapshotMinimumStep
 } = {}) {
   const site = {
     ...(boundary === undefined ? lyon.site : { ...lyon.site, boundary: { ring: boundary } }),
@@ -297,7 +305,8 @@ function readerFor({
     ...(now === undefined ? {} : { now }),
     ...(section === undefined ? {} : { packageData: () => section.service }),
     document: () => ({ find: () => [] }),
-    translate: (key) => `label:${key}`
+    translate: (key) => `label:${key}`,
+    ...(snapshotMinimumStep === undefined ? {} : { snapshotMinimumStep })
   });
   return { reader, site, service, section, schedule, wait, planning };
 }
@@ -1785,4 +1794,241 @@ test('review NIT: criterion 11 runs against the 0.5.0 build exactly as it shippe
     new URL('../../test-fixtures/fr-urban-rules/releases/0.5.0/index.mjs', import.meta.url)
   );
   assert.equal(createHash('sha256').update(bytes).digest('hex'), RELEASE_050_SHA256);
+});
+
+// ── Sprint 002.11: the written readings kept in the project's snapshot ──────────
+
+/** 096.4's section store with 096.17's cache beside it: `writeCache` recorded, `write` too. */
+function cacheStore(section, cache) {
+  const base = store(section);
+  let held = cache;
+  const cacheWrites = [];
+  base.service.readCache = () => (held === undefined ? undefined : structuredClone(held));
+  base.service.writeCache = (data, attributions) => {
+    cacheWrites.push({ data: structuredClone(data), attributions });
+    held = structuredClone(data);
+  };
+  base.service.onDidChangeCache = () => ({ dispose: () => {} });
+  return { ...base, cacheWrites, cache: () => held };
+}
+
+/** Lyon read with the companion answering the recorded extraction: the report and the snapshot. */
+async function lyonWithSnapshot() {
+  const section = cacheStore(undefined);
+  const context = readerFor({ service: fakeService({ cached: recorded }), section });
+  const report = await read(context);
+  context.reader.dispose();
+  return { report, snapshot: section.cache(), section };
+}
+
+test('002.11 criterion 7: restored extraction stands without the service', async () => {
+  const online = await lyonWithSnapshot();
+  assert.equal(online.section.cacheWrites.length, 1);
+  const [written] = online.snapshot.written;
+  // The whole result is kept — its rules with their passages and computed keys (DEC-5).
+  // 32 rules served; the one 002.6b's review S5 leaves out is never stored.
+  assert.equal(recorded.rules.length, 32);
+  assert.equal(written.result.rules.length, __testing.checkedResult(recorded).rules.length);
+  assert.ok(written.result.rules.every((r) => typeof r.passage === 'string' && r.passage !== ''));
+  assert.ok(written.result.rules.some((r) => r.ruleKey?.startsWith('written:')));
+  const fresh = writtenRules(online.report);
+  assert.ok(fresh.length > 0);
+
+  const section = cacheStore(undefined, online.snapshot);
+  const context = readerFor({ pluginService: { locate: async () => undefined }, section });
+  const report = await read(context);
+  context.reader.dispose();
+  // The same rules, the same keys and passages, from the project alone.
+  assert.deepEqual(
+    writtenRules(report).map((r) => [r.id, r.citation.passage.text]),
+    fresh.map((r) => [r.id, r.citation.passage.text])
+  );
+  // « Written rules as read on {date} ({model}) », and the « not available » notice kept (DEC-7).
+  const asRead = rulesView(report).blocks.find(
+    (b) => b.text?.key === 'fr-urban-rules.snapshot.writtenAsRead'
+  );
+  assert.ok(asRead !== undefined);
+  assert.equal(
+    en['fr-urban-rules.snapshot.writtenAsRead'].replace('{date}', asRead.text.params.date).replace('{model}', asRead.text.params.model),
+    `Written rules as read on ${asRead.text.params.date} (${recorded.model.model}).`
+  );
+  assert.match(fr['fr-urban-rules.snapshot.writtenAsRead'], /^Règles écrites telles que lues le \{date\}/);
+  assert.ok(
+    report.overview.some((b) => b.text?.key === 'fr-urban-rules.notice.writtenRulesUnavailable')
+  );
+  // Extract again is not offered: the notice says why.
+  const ids = actions(report).map((a) => a.id);
+  assert.equal(ids.includes('written-extract-again'), false);
+  assert.equal(ids.includes('written-extract'), false);
+  assert.equal(section.writes.length, 0, 'no decision from a read');
+  assert.equal(section.cacheWrites.length, 0, 'an unchanged reading is not written again');
+});
+
+test('002.11 review: the règlement’s link comes back from a written reading when the GPU never answered', async () => {
+  const online = await lyonWithSnapshot();
+  const [written] = online.snapshot.written;
+  // The written reading keeps the GPU document it was read from (fixed per version).
+  const { documentId, nomfic } = written.result.document;
+  assert.match(documentId, /^[0-9a-f]{32}$/);
+  // As ManualChemin's walk: the GPU's file list never answered, so the snapshot holds none.
+  const cache = structuredClone(online.snapshot);
+  delete cache.sources['gpu-files'];
+  const section = cacheStore(undefined, cache);
+  const context = readerFor({
+    pluginService: { locate: async () => undefined },
+    section,
+    overrides: { 'gpu-document': answering(503, null), 'gpu-files': answering(503, null) }
+  });
+  const report = await read(context);
+  context.reader.dispose();
+  const href = `https://www.geoportail-urbanisme.gouv.fr/api/document/${documentId}/files/${encodeURIComponent(nomfic)}`;
+  const link = report.overview.find((b) => b.kind === 'link');
+  assert.equal(link?.href, href);
+  assert.equal(link.detail.key, 'fr-urban-rules.link.detailAsRead');
+  assert.equal(link.detail.params.date, written.result.extractedAt.slice(0, 10));
+  assert.match(en['fr-urban-rules.link.detailAsRead'], /^The file as listed on \{date\}/);
+  assert.match(fr['fr-urban-rules.link.detailAsRead'], /^Le fichier tel que listé le \{date\}/);
+  assert.equal(report.document.href, href);
+  assert.equal(
+    report.overview.some((b) => b.text?.key === 'fr-urban-rules.notice.linkUnavailable'),
+    false,
+    'never « could not be resolved » while the file is known'
+  );
+  assert.equal(section.writes.length, 0);
+});
+
+test('002.11 review: written keys survive DEC-2 step 5 — passages shortened, keys as read (criterion 3)', async () => {
+  const section = cacheStore(undefined);
+  // Lyon's passages are all under 500 characters: one long rule added, and its twin
+  // (the same passage), so the order suffix `~2` is kept through the shortening too.
+  const long = 'Les constructions doivent s’implanter en retrait de la limite. '.repeat(12);
+  const cached = resultWith({
+    add: [
+      serviceRule({ statement: 'described', passage: long }),
+      serviceRule({ statement: 'described', passage: long, page: 127 })
+    ]
+  });
+  const online = readerFor({
+    service: fakeService({ cached }),
+    section,
+    snapshotMinimumStep: 6
+  });
+  const fresh = await read(online);
+  online.reader.dispose();
+  const snapshot = section.cache();
+  assert.ok(snapshot.simplified.includes('shorten-passages'));
+  const shortened = snapshot.written[0].result.rules.filter((r) => r.passage.endsWith('…'));
+  assert.ok(shortened.length > 0, 'some passage was over 500 characters');
+  const context = readerFor({
+    pluginService: { locate: async () => undefined },
+    section: cacheStore(undefined, snapshot)
+  });
+  const restored = await read(context);
+  context.reader.dispose();
+  assert.deepEqual(
+    writtenRules(restored).map((r) => r.id).sort(),
+    writtenRules(fresh).map((r) => r.id).sort()
+  );
+  assert.ok(writtenRules(restored).some((r) => /~2$/.test(r.id)));
+});
+
+test('002.11 review: a stored written key whose sector holds a space is kept, not recomputed', () => {
+  const key = 'written:UA et UB:1a2b3c4d5e6f7';
+  const result = __testing.checkedResult(
+    resultWith({ rules: [serviceRule({ statement: 'described', sector: 'UA et UB', ruleKey: key })] })
+  );
+  assert.equal(result.rules[0].ruleKey, key);
+  // A control character is still refused.
+  const refused = __testing.checkedResult(
+    resultWith({ rules: [serviceRule({ statement: 'described', sector: 'UA', ruleKey: 'written:UA\n:1' })] })
+  );
+  assert.equal(refused.rules[0].ruleKey, undefined);
+});
+
+test('002.11 review: at the zone’s page, a link read earlier still says when', async () => {
+  const online = await lyonWithSnapshot();
+  const cache = structuredClone(online.snapshot);
+  delete cache.sources['gpu-files'];
+  const context = readerFor({
+    service: fakeService({ cached: recorded }),
+    section: cacheStore(undefined, cache),
+    overrides: { 'gpu-document': answering(503, null), 'gpu-files': answering(503, null) }
+  });
+  await read(context);
+  await settle();
+  const report = await read(context, 'source');
+  context.reader.dispose();
+  const link = report.overview.find((b) => b.kind === 'link' && b.href.includes('#page='));
+  assert.ok(link !== undefined, 'the zone’s page is known');
+  assert.equal(link.detail.key, 'fr-urban-rules.link.detailPageAsRead');
+  assert.equal(link.detail.params.date, recorded.extractedAt.slice(0, 10));
+  assert.match(en['fr-urban-rules.link.detailPageAsRead'], /^The file as listed on \{date\}, opened at page \{page\}/);
+  assert.match(fr['fr-urban-rules.link.detailPageAsRead'], /^Le fichier tel que listé le \{date\}, ouvert à la page \{page\}/);
+});
+
+test('002.11 review: a written reading of another version names no link', async () => {
+  const online = await lyonWithSnapshot();
+  const cache = structuredClone(online.snapshot);
+  delete cache.sources['gpu-files'];
+  for (const entry of cache.written) {
+    entry.query.idurba = '200046977_PLUi_20990101';
+    entry.result.document.idurba = '200046977_PLUi_20990101';
+  }
+  const context = readerFor({
+    pluginService: { locate: async () => undefined },
+    section: cacheStore(undefined, cache),
+    overrides: { 'gpu-document': answering(503, null), 'gpu-files': answering(503, null) }
+  });
+  const report = await read(context);
+  context.reader.dispose();
+  assert.equal(report.overview.some((b) => b.kind === 'link'), false);
+  assert.ok(report.overview.some((b) => b.text?.key === 'fr-urban-rules.notice.linkUnavailable'));
+});
+
+test('002.11 criterion 8: a newer reading is offered, never applied; « Use it » writes the cache once', async () => {
+  const online = await lyonWithSnapshot();
+  const newer = resultWith({
+    add: [
+      serviceRule({ statement: 'described', passage: 'Une règle lue par une lecture plus récente.' })
+    ],
+    extractedAt: '2026-10-21T08:00:00.000Z'
+  });
+  const service = fakeService({ cached: newer });
+  const section = cacheStore(undefined, online.snapshot);
+  const context = readerFor({ service, section });
+  await read(context);
+  await settle();
+  const report = await read(context, 'source');
+  assert.ok(service.calls.cachedOnly.length >= 1);
+  // The project's reading stands: the same rules as before.
+  assert.deepEqual(
+    writtenRules(report).map((r) => r.id),
+    writtenRules(online.report).map((r) => r.id)
+  );
+  const offer = rulesView(report).blocks.find(
+    (b) => b.text?.key === 'fr-urban-rules.snapshot.newerReading'
+  );
+  assert.ok(offer !== undefined, 'the newer reading is offered');
+  assert.equal(offer.text.params.date, '2026-10-21');
+  assert.equal(offer.actions[0].id, 'written-use-newer');
+  assert.equal(en['fr-urban-rules.snapshot.useNewer'], 'Use it');
+  assert.equal(fr['fr-urban-rules.snapshot.useNewer'], 'Utiliser');
+  assert.equal(section.cacheWrites.length, 0, 'an offer writes nothing');
+
+  const answer = await act(context, 'written-use-newer', offer.actions[0].target);
+  assert.deepEqual(answer, { status: 'done' });
+  assert.equal(section.cacheWrites.length, 1, 'accepting writes the cache once');
+  assert.equal(section.writes.length, 0, 'and the section never');
+  const after = await read(context, 'action');
+  context.reader.dispose();
+  assert.equal(section.cacheWrites.length, 1);
+  assert.equal(writtenRules(after).length, writtenRules(online.report).length + 1);
+  assert.equal(
+    rulesView(after).blocks.some((b) => b.text?.key === 'fr-urban-rules.snapshot.newerReading'),
+    false
+  );
+  assert.equal(
+    section.cache().written[0].result.rules.length,
+    __testing.checkedResult(recorded).rules.length + 1
+  );
 });
