@@ -884,6 +884,57 @@ test('criterion 8: a 9 m façade at 4.5 m is a potential issue, at 5.5 m no issu
   assert.equal(checks[0].result, 'no_issue');
 });
 
+test('002.7 DEC-2: a confirmed « R ≥ Hf − 4 m, min 2 m » insets the side and rear edges 2 m and is a slope rising 1 for 1 from 4 m, said stricter over a roof', async () => {
+  const { report, rule } = await facadeCheck([{ facade: 'north', height: 9, distance: 5.5 }]);
+  const envelope = report.features.find((f) => f.id === 'envelope');
+  // BOX with the road to the south: edge 1 street, 2–4 side and rear — one chain of four points.
+  assert.deepEqual(envelope.volume.ceilings, [
+    { kind: 'slope', from: [p(20, 0), p(20, 30), p(0, 30), p(0, 0)], rise: 1, start: 4, ruleIds: [rule.id] }
+  ]);
+  const ring = envelope.rings[0];
+  // Within a millimetre: the inset grows each strip by a hair (review 2026-10-21), stricter.
+  const extent = [Math.min(...ring.map((q) => q.easting)), Math.max(...ring.map((q) => q.easting)), Math.min(...ring.map((q) => q.northing)), Math.max(...ring.map((q) => q.northing))];
+  [2, 18, 0, 28].forEach((expected, i) => assert.ok(Math.abs(extent[i] - expected) < 1e-3, `${extent[i]} vs ${expected}`));
+  const view = report.views.find((v) => v.id === 'envelope');
+  const applied = view.blocks.find((b) => b.kind === 'table');
+  assert.ok(
+    applied.rows.some(
+      (row) =>
+        row[1].key === 'fr-urban-rules.envelope.effect.slopeBoundaryFrom' &&
+        row[1].params.start === '4' &&
+        row[2].params.rise === '1'
+    )
+  );
+  assert.ok(view.blocks.find((b) => b.kind === 'assumptions').ids.includes('envelope-facade-ceiling'));
+});
+
+test('002.7 DEC-2 / criterion 5: a façade-relative setback with a positive offset is not applied, said why, and still checked', async () => {
+  const plus = serviceRule({
+    kind: 'boundary_setback',
+    limit: { kind: 'height_relative', reference: 'facade_height', factor: 0.5, offsetMetres: 1, minimumMetres: 3 },
+    passage: 'Le retrait est au moins égal à la moitié de la hauteur de façade plus 1 mètre, avec un minimum de 3 mètres.'
+  });
+  const section = store(undefined);
+  const context = readerFor({
+    service: fakeService({ cached: resultWith({ rules: [plus] }) }),
+    section,
+    measures: facadeMeasures([{ facade: 'north', height: 9, distance: 6 }]),
+    boundary: BOX
+  });
+  let report = await read(context);
+  const id = writtenRules(report)[0].id;
+  await act(context, 'confirm', actions(report).find((a) => a.id === 'confirm' && a.target.ruleId === id).target);
+  report = await read(context, 'action');
+  const view = report.views.find((v) => v.id === 'envelope');
+  const notApplied = view.blocks.filter((b) => b.kind === 'table').find((t) => t.columns[1].key === 'fr-urban-rules.envelope.column.reason');
+  assert.ok(notApplied.rows.some((row) => row[1].key === 'fr-urban-rules.envelope.reason.facadeOffset'));
+  // Its 3 m minimum still insets the outline (DEC-1); no slope is drawn for it.
+  const envelope = report.features.find((f) => f.id === 'envelope');
+  assert.equal(envelope.volume, undefined);
+  assert.ok(Math.abs(Math.max(...envelope.rings[0].map((q) => q.northing)) - 27) < 1e-3);
+  assert.equal(report.checks.filter((c) => c.ruleId === id).length, 1, 'still checked');
+});
+
 test('criterion 8: an L-shaped building — 9 m at 6 m and 6 m at 3 m — is one passing check naming the governing façade', async () => {
   const { report, rule } = await facadeCheck([
     { facade: 'north', height: 9, distance: 6 },

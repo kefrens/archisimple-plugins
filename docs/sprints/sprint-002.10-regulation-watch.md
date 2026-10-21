@@ -390,10 +390,11 @@ recorded.
 
 **Version needs:**
 
-- **Package `fr-urban-rules`:** **1.4.0** (after 002.8's 1.3.0): the
+- **Package `fr-urban-rules`:** **0.10.0** (renumbered 2026-10-21 from 0.9.0: 002.11 Planning Snapshot lands first and takes 0.9.0; earlier restated 2026-10-20 from 1.4.0 / 1.3.0): the
   overview line, the in-session signal, the reopen refinement, Géorisques
-  through the service. `sdkVersion` unchanged at **"1.32"** (002.8's):
-  `onDidChange` is 1.28's, already covered.
+  through the service. `sdkVersion` **"1.33"**, inherited from 002.11 (which needs
+  096.17's cache); this sprint needs nothing newer — `onDidChange` is 1.28's.
+  The in-session line reuses 002.11's « what changed » wording (DEC-6 there).
 - **`fr-urban-rules-service`:** a minor: the watcher, `documents/<partition>`,
   the Géorisques proxy, the eviction rules. Its environment gains
   `FR_URBAN_RULES_GEORISQUES_TOKEN` (optional).
@@ -440,7 +441,8 @@ recorded.
   cache current; confirmations stay derived at read time.
 - DEC-3, DEC-5, Dependencies: routes name the package id and 002.5a's `v1`
   prefix (`/plugins-api/com.archisimple.fr-urban-rules/v1/…`).
-- Version needs: package **1.4.0**, `sdkVersion` **"1.32"** unchanged.
+- Version needs: package **0.9.0**, `sdkVersion` **"1.32"** unchanged.
+  _(Renumbered 2026-10-21: **0.10.0** and **"1.33"**, after 002.11 Planning Snapshot.)_
 
 # Review (2026-10-19)
 

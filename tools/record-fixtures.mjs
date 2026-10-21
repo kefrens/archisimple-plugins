@@ -45,6 +45,20 @@
  *   writes nothing. The service's own variables apply
  *   (`FR_URBAN_RULES_EXTRACT_CHUNK_CHARS` for a slow local model).
  *
+ * - With `--extraction --acceptance` (Sprint 002.9 DEC-3): writes
+ *   `acceptance/<plot>/extraction/` instead, each call's metadata adding DEC-2's
+ *   `textSha256` and `promptVersion`, `calls.json` naming the sha256 of the
+ *   expected values it was made against; refuses a plot the expected values
+ *   (`acceptance/expected-002.9.json`, committed first — DEC-7) do not offer an
+ *   extraction for, and prints DEC-4's judgement. **Made with the owner's
+ *   production model** (002.9 DEC-7), never the development one.
+ * - With `--check --extraction --no-model` (002.9 DEC-3, criterion 7): **no
+ *   model call** — fetches the document through the service's own fetcher (the
+ *   host allow-list exercised), finds the chapter, and prints how the PDF's
+ *   sha256 and the chapter's pages differ from `<plot>/regulation/meta.json`,
+ *   the stored result (the acceptance one with `--acceptance`) and the expected
+ *   values. Writes nothing.
+ *
  * Run by hand, with the network. **Never imported by a test** (Design
  * Contract: no live call in any test).
  */
@@ -53,25 +67,33 @@ import { readFile, rm, writeFile } from 'node:fs/promises';
 
 import { __testing, createReader } from '../fr-urban-rules/src/index.js';
 import {
+  ACCEPTANCE_URL,
+  EXPECTED_URL,
+  callMetadata,
+  documentDifferences,
+  judgeExtraction,
+  recorderOptions,
+  sha256
+} from './acceptance.mjs';
+import {
   ACCEPTANCE,
   loadAcceptance,
   replayFetch,
   replayService
 } from '../fr-urban-rules/tests/helpers.mjs';
 
-const PLOTS = ['lyon', 'gordes', 'mouzay', 'brouennes', 'rochefort'];
-
-const args = process.argv.slice(2);
-const check = args.includes('--check');
-const trim = args.includes('--trim');
-const plot = args.find((a) => !a.startsWith('--'));
-if (!PLOTS.includes(plot)) {
-  console.error(`usage: node tools/record-fixtures.mjs <${PLOTS.join('|')}> [--check | --trim]`);
+let options;
+try {
+  options = recorderOptions(process.argv.slice(2));
+} catch (error) {
+  console.error(error.message);
   process.exit(2);
 }
+const { plot, check, trim } = options;
 
-if (args.includes('--extraction')) {
-  await recordExtraction(plot, check);
+if (options.extraction) {
+  if (options.noModel) await checkDocument(plot, options.acceptance);
+  else await recordExtraction(plot, check, options.acceptance);
   process.exit(0);
 }
 
@@ -255,10 +277,17 @@ async function trimCaptures(name, captured) {
       packageData: () => ({ read: () => section ?? undefined }),
       log: () => {}
     });
-    await reader.read(
+    const report = await reader.read(
       { site: captured.site, country: captured.site.country ?? 'FR', reason: 'site' },
       { signal: new AbortController().signal, progress: () => {} }
     );
+    // Sprint 002.8: the parked variations the capture checked keep their own measures.
+    for (const { variationId, buildings } of captured.variations ?? []) {
+      await reader.checkVariation(
+        { site: captured.site, country: 'FR', variationId, report, buildings },
+        { signal: new AbortController().signal }
+      );
+    }
     reader.dispose();
     const unrecorded = [
       ...fetch.unrecorded,
@@ -332,12 +361,20 @@ async function trimCaptures(name, captured) {
 
 // ── --extraction: one live extraction, recorded (002.5b DEC-11) ───────────────────
 
-async function recordExtraction(name, checkOnly) {
+async function recordExtraction(name, checkOnly, acceptance) {
   const { mkdir, mkdtemp } = await import('node:fs/promises');
   const { tmpdir } = await import('node:os');
   const { join } = await import('node:path');
   const { createService } = await import('../services/fr-urban-rules-service/src/service.mjs');
   const fixtures = new URL(`../test-fixtures/fr-urban-rules/${name}/`, import.meta.url);
+  // 002.9 DEC-7: the expected values come first; a plot they offer no extraction for is refused.
+  const expectedText = acceptance ? await readFile(EXPECTED_URL, 'utf8') : undefined;
+  const expected = expectedText === undefined ? undefined : JSON.parse(expectedText).plots?.[name];
+  if (acceptance && expected?.extraction?.offered !== true) {
+    console.error(`${name}: ${EXPECTED_URL.pathname} offers no extraction for this plot; nothing recorded`);
+    process.exit(2);
+  }
+  const folder = acceptance ? new URL(`${name}/extraction/`, ACCEPTANCE_URL) : new URL('extraction/', fixtures);
   const zoneUrba = JSON.parse(await readFile(new URL('apicarto-zone-urba.json', fixtures), 'utf8'));
   const zone = zoneUrba.features?.[0]?.properties;
   if (zone === undefined) throw new Error(`${name}: no zone in apicarto-zone-urba.json`);
@@ -350,8 +387,12 @@ async function recordExtraction(name, checkOnly) {
     log: (record) => process.stderr.write(`${JSON.stringify(record)}\n`),
     dataDir: await mkdtemp(join(tmpdir(), 'fr-urban-rules-record-')),
     aiServiceUrl,
-    onCall: ({ chunk, attempt, base, length, answer, error }) =>
-      calls.push({ request: { chunk, attempt, base, textLength: length, aiServiceUrl }, response: answer, error })
+    onCall: (record) =>
+      calls.push({
+        request: callMetadata(record, { acceptance, aiServiceUrl }),
+        response: record.answer,
+        error: record.error
+      })
   });
   const started = Date.now();
   const posted = await service.handle({
@@ -379,7 +420,7 @@ async function recordExtraction(name, checkOnly) {
   const line = (r) => `${r.kind} ${r.sector ?? '-'} ${r.statement} ${JSON.stringify(r.limit)} p.${r.page}`;
 
   if (checkOnly) {
-    const stored = JSON.parse(await readFile(new URL('extraction/result.json', fixtures), 'utf8'));
+    const stored = JSON.parse(await readFile(new URL('result.json', folder), 'utf8'));
     const before = new Set(stored.rules.map(line));
     const after = new Set(result.rules.map(line));
     console.log(`${name}: ${result.rules.length} rules now, ${stored.rules.length} recorded (${seconds} s)`);
@@ -387,10 +428,110 @@ async function recordExtraction(name, checkOnly) {
     for (const l of before) if (!after.has(l)) console.log(`  - ${l}`);
     return;
   }
-  const out = new URL('extraction/', fixtures);
+  const out = folder;
   await mkdir(out, { recursive: true });
-  await writeFile(new URL('calls.json', out), `${JSON.stringify({ recordedAt: new Date().toISOString(), body, seconds, calls }, null, 1)}\n`);
+  const recording = {
+    recordedAt: new Date().toISOString(),
+    body,
+    seconds,
+    ...(acceptance ? { acceptance: true, expectedSha256: sha256(expectedText) } : {}),
+    calls
+  };
+  await writeFile(new URL('calls.json', out), `${JSON.stringify(recording, null, 1)}\n`);
   await writeFile(new URL('result.json', out), `${JSON.stringify(result, null, 1)}\n`);
   console.log(`${name}: ${result.rules.length} rules, ${result.chunks.of} chunks (${result.chunks.failed} failed), dropped ${JSON.stringify(result.dropped)}, ${seconds} s`);
   for (const r of result.rules) console.log(`  ${line(r)}`);
+  if (acceptance) printJudgement(name, expected, result);
 }
+
+/** DEC-4's verdict, printed after an acceptance recording (the tests assert the same). */
+function printJudgement(name, expected, result) {
+  const verdict = judgeExtraction(expected, result);
+  console.log(`\n${name}: DEC-4 ${verdict.passed ? 'holds' : 'does not hold'} (${Object.keys(verdict.matched).length} required rows matched)`);
+  for (const failure of verdict.failures) console.log(`  ✗ ${failure.id}: ${failure.why}`);
+  for (const extra of verdict.extras) console.log(`  ${extra.accepted ? '·' : '+'} ${extra.rule}`);
+}
+
+// ── --check --extraction --no-model: the document, without a model (002.9 criterion 7) ──
+
+async function checkDocument(name, acceptance) {
+  const { mkdtemp, rm: remove } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const { createService } = await import('../services/fr-urban-rules-service/src/service.mjs');
+  const { cacheKey } = await import('../services/fr-urban-rules-service/src/cache.mjs');
+  const fixtures = new URL(`../test-fixtures/fr-urban-rules/${name}/`, import.meta.url);
+  const readJson = async (url) => {
+    try {
+      return JSON.parse(await readFile(url, 'utf8'));
+    } catch {
+      return undefined;
+    }
+  };
+  const zone = (await readJson(new URL('apicarto-zone-urba.json', fixtures)))?.features?.[0]?.properties;
+  if (zone === undefined) {
+    console.error(`${name}: no zone in apicarto-zone-urba.json — no written regulation to check`);
+    process.exit(2);
+  }
+  const meta = await readJson(new URL('regulation/meta.json', fixtures));
+  const stored = await readJson(
+    acceptance ? new URL(`${name}/extraction/result.json`, ACCEPTANCE_URL) : new URL('extraction/result.json', fixtures)
+  );
+  const expected = (await readJson(EXPECTED_URL))?.plots?.[name];
+  const dataDir = await mkdtemp(join(tmpdir(), 'fr-urban-rules-check-'));
+  // The chapter route never calls a model; an `ai` that throws makes sure of it.
+  const refuse = () => {
+    throw new Error('--no-model: no model call');
+  };
+  const service = await createService({
+    env: process.env,
+    log: (record) => process.stderr.write(`${JSON.stringify(record)}\n`),
+    dataDir,
+    ai: { extract: refuse, health: refuse }
+  });
+  const query = new URLSearchParams({
+    partition: zone.partition,
+    idurba: zone.idurba,
+    nomfic: zone.nomfic,
+    zone: zone.libelle
+  });
+  const answer = await service.handle({
+    method: 'GET',
+    segments: ['v1', 'chapter'],
+    query,
+    limitKey: 'recorder',
+    userHash: 'recorder',
+    userSource: 'header'
+  });
+  if (answer.status !== 200) {
+    console.error(`${name}: the chapter route answered ${answer.status} ${JSON.stringify(answer.body)}`);
+    await remove(dataDir, { recursive: true, force: true });
+    process.exit(1);
+  }
+  const cached = JSON.parse(
+    await readFile(
+      join(dataDir, service.packageId, 'documents', cacheKey(zone.idurba, zone.nomfic), 'meta.json'),
+      'utf8'
+    )
+  );
+  await remove(dataDir, { recursive: true, force: true });
+  const fresh = {
+    sha256: cached.sha256,
+    pages: answer.body.documentPages,
+    idurba: cached.idurba,
+    nomfic: cached.nomfic,
+    chapterPages: answer.body.pages
+  };
+  console.log(
+    `${name}: ${fresh.nomfic} (${fresh.idurba}), ${fresh.pages} pages, sha256 ${fresh.sha256}; ` +
+      `chapter « ${answer.body.title} » pages ${fresh.chapterPages.join('–')} (${answer.body.found}, ${answer.body.match}); no model called`
+  );
+  const differences = documentDifferences({ fresh, meta, stored, expected });
+  for (const d of differences) console.log(`  ${d.what}: ${JSON.stringify(d.recorded)} → ${JSON.stringify(d.now)}`);
+  console.log(
+    differences.length === 0
+      ? '  no difference: the PDF and the chapter are the recorded ones'
+      : `  ${differences.length} difference(s) — a new GPU version is 002.10's territory; explain each in the outcome`
+  );
+}
+

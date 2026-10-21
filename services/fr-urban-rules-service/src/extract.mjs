@@ -16,6 +16,8 @@
  * Nothing here makes a candidate a rule: 002.6b shows every one `to_confirm`.
  */
 
+import { createHash } from 'node:crypto';
+
 import { AiError } from './ai-client.mjs';
 import { allOccurrences, normalisePassage, normaliseText } from './normalise.mjs';
 import { articleAt, pageAt } from './text.mjs';
@@ -354,7 +356,8 @@ function ruleKey(rule) {
  *   onChunk?: (index: number, of: number) => void,
  *   onCall?: (record: object) => void,
  *   onAnswer?: () => void   the first model answer, for the job's refund (S7)
- * }} options `onCall` sees each 096.7 request's metadata and its answer (the recording mode)
+ * }} options `onCall` sees each 096.7 request's metadata — chunk, attempt, base, length, and
+ *   since 002.9 the text's `textSha256` and `promptVersion` — and its answer (the recording mode)
  * @returns {Promise<{ rules, dropped, chunks: { of, failed }, codes: string[], model }>}
  */
 export async function extractChapter({ prepared, ai, maxTextLength, maxItems, chunkChars, onChunk, onCall, onAnswer }) {
@@ -388,14 +391,26 @@ export async function extractChapter({ prepared, ai, maxTextLength, maxItems, ch
       maxItems: Math.min(MAX_ITEMS_PER_CHUNK, maxItems ?? MAX_ITEMS_PER_CHUNK)
     };
     let answer;
+    // 002.9 DEC-2: what a recording's replay checks beside the length — a hash of
+    // the chunk's text (never the text) and the instructions' version.
+    const sent =
+      onCall === undefined
+        ? undefined
+        : {
+            chunk: index + 1,
+            base: chunk.base,
+            length: chunk.text.length,
+            textSha256: createHash('sha256').update(chunk.text).digest('hex'),
+            promptVersion: PROMPT_VERSION
+          };
     for (let attempt = 1; attempt <= 2 && answer === undefined; attempt += 1) {
       try {
         answer = await ai.extract(request);
         onAnswer?.();
-        onCall?.({ chunk: index + 1, attempt, base: chunk.base, length: chunk.text.length, answer });
+        onCall?.({ ...sent, attempt, answer });
       } catch (error) {
         const code = error instanceof AiError ? error.code : 'provider_error';
-        onCall?.({ chunk: index + 1, attempt, base: chunk.base, length: chunk.text.length, error: code });
+        onCall?.({ ...sent, attempt, error: code });
         codes.push(code);
         if (!RETRIED.has(code)) {
           if (code === 'no_provider_configured') throw error;

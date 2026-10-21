@@ -3,6 +3,8 @@
  * 096.7's route, on Lyon's recorded UCe1 chapter and on small synthetic ones.
  */
 
+// 002.9 criterion 2: no network but loopback, before anything else is loaded.
+import '../../test-support/no-network.mjs';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';

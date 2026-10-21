@@ -1,6 +1,6 @@
 # Règles d'urbanisme (PLU) — `fr-urban-rules`
 
-**Status:** Proposal v2.2 — **Phase 1 implemented and walked, uncommitted (2026-10-20)**: 002.0–002.3 implemented (`fr-urban-rules` 0.4.0), 002.4 walked jointly with the platform's 096.6 and awaiting the owner's look; 002.5a, 002.5b, 002.6a (`fr-urban-rules` 0.5.0, the zone page link) and 002.6b (0.6.0, written rules to confirm) implemented and **walked in the editor with the platform's 096.7–096.8b** (Phase 2 integration pass, 2026-10-20; §12), uncommitted, awaiting the owner's look; 002.7–002.10 drafts (002.5 and 002.6 each split in two by the Phase 2 review, 2026-10-20). Sprints drafted and reconciled (§12). _(Read "nothing implemented" until 002.0.)_
+**Status:** Proposal v2.2 — **Phase 1 implemented and walked, uncommitted (2026-10-20)**: 002.0–002.3 implemented (`fr-urban-rules` 0.4.0), 002.4 walked jointly with the platform's 096.6 and awaiting the owner's look; 002.5a, 002.5b, 002.6a (`fr-urban-rules` 0.5.0, the zone page link) and 002.6b (0.6.0, written rules to confirm) implemented and **walked in the editor with the platform's 096.7–096.8b** (Phase 2 integration pass, 2026-10-20; §12), uncommitted, awaiting the owner's look; 002.7 (`fr-urban-rules` 0.7.0, SDK 1.30: the theoretical envelope's outline on concave plots and its 3D volume, the Envelope view and the regulation sheet's content) **implemented and walked on the five reference projects with the platform's 096.9 and 096.10 (2026-10-21), independently reviewed the same day (the inset rewritten, re-walked), uncommitted**; 002.8 (`fr-urban-rules` 0.8.0, SDK 1.32: the assistant's four questions on one headroom function, the _Confirm_ offer, `checkVariation` for parked variations, the manifest's `network.hosts`) **implemented, walked and independently reviewed with the platform's 096.11 and 096.12 (2026-10-21), uncommitted**; 002.9 (`fr-urban-rules` 0.8.1 — three defects the expected values found —, service 0.2.1) **locally walked jointly with the platform's 096.14 (2026-10-21), uncommitted; owner steps pending**: the hand check of `test-fixtures/fr-urban-rules/acceptance/expected-002.9.json`, the production model and its key, the two acceptance recordings, the Docker and NAS walks; 002.10 draft (002.5 and 002.6 each split in two by the Phase 2 review, 2026-10-20). Sprints drafted and reconciled (§12). _(Read "nothing implemented" until 002.0.)_
 **Date:** 2026-10-19. v2.2: corrections from drafting the sprints (§15).
 - v1: the initial proposal, commit `4e3acd7`.
 - v2: the live probe folded in.
@@ -561,7 +561,7 @@ shape:
 **Lockstep.** Once the package declares `regulations`, an older web image
 refuses the whole manifest (`unknown-capability`). The package declares
 `sdkVersion` 1.27 through Phase 1 (002.0–002.4), then 1.28 (002.6a–b), 1.30
-(002.7) and 1.32 (002.8, kept by 002.9 and 002.10) — §15.1's ledger — and
+(002.7), 1.32 (002.8, kept by 002.9) and 1.33 (002.11, kept by 002.10) — §15.1's ledger — and
 the plugins image and the web image ship together at each step.
 
 ### 7.2 Extension: `fr-urban-rules` (archisimple-plugins)
@@ -759,7 +759,8 @@ automatically" comment, and ADR-0059 Rules 2–4.
 | **0 — Platform** | archisimple, `docs/milestones/site-regulations/` | 083.12, 083.13, 096.0a–096.6 (all implemented; 096.6 walked 2026-10-20, awaiting the owner's look) | Boundary and setbacks, measures, Site view, `regulations` seam, tree and Properties, package data, plan layers, status bar, acceptance with a second-country stub |
 | **1 — Read the plot** | archisimple-plugins, `docs/sprints/` | 002.0–002.4 (all implemented; 002.4 walked 2026-10-20 with 096.6, awaiting the owner's look) | US-01–US-03, US-05, US-06 for RNU, CC, drawn and entered rules, surfaces; US-04 on the plan only. `urban-rules` retired |
 | **2 — Written rules** | both + service | 096.7 Structured Output Route, 096.8a Plugin Service Deployment, 096.8b Regulation Source Signal; 002.5a Service Gateway and Document Text, 002.5b Extraction Jobs, 002.6a Zone Page Link, 002.6b Written Rules Confirmation (drafted, reconciled, reviewed and split 2026-10-20) | US-01's zone page (002.6a, on 002.5a + 096.8a alone), US-03 extraction (D6, option C; 002.5b + 002.6b). **All implemented and walked 2026-10-20, awaiting the owner's look** (below) |
-| **3 — Design-time** | both | 096.9 Envelope in 3D, 096.10 Regulation Sheet, 096.11 Variation Figures, 096.12 Assistant Regulation Tools, 096.13 Deployment-Pinned Plugins, 096.14 Design-Time Acceptance; 002.7 Envelope and Sheet Content, 002.8 Assistant Plot Questions, 002.9 Design-Time Acceptance FR (drafted and reconciled) | 3D envelope, PLU sheet, variation figures, assistant tools, deployment trust |
+| **3 — Design-time** | both | 096.9 Envelope in 3D, 096.10 Regulation Sheet, 096.11 Variation Figures, 096.12 Assistant Regulation Tools, 096.13 Deployment-Pinned Plugins, 096.14 Design-Time Acceptance; 002.7 Envelope and Sheet Content (**implemented, walked and independently reviewed 2026-10-21 with 096.9 and 096.10, uncommitted**), 002.8 Assistant Plot Questions (**implemented, walked and reviewed 2026-10-21 with 096.11 and 096.12, uncommitted**), 002.9 Design-Time Acceptance FR (**locally walked 2026-10-21 with 096.14, uncommitted; owner steps pending** — expected values written, recorder `--acceptance` / `--no-model`, replay checks, 0.8.1) | 3D envelope, PLU sheet, variation figures, assistant tools, deployment trust |
+| **After 3 — Snapshot** | both | 096.17 Site Package Cache (platform, ADR-0115) and 002.11 Planning Snapshot (**drafted 2026-10-21**, owner-approved) | The reading and the written rules saved in the project: shown at open « read on <date> », re-read in the background, what changed said; offline, the snapshot stands. `fr-urban-rules` 0.9.0, SDK 1.33 |
 | **4 — Scale** | service | 002.10 Regulation Watch (drafted and reconciled) | Change detection, Géorisques v2 token, national coverage measured (a national cache stays a later decision) |
 
 **Phase 2 status (2026-10-20, uncommitted, awaiting the owner's look).**
@@ -951,6 +952,6 @@ The platform's ledger, phases 2–3:
 | 096.13 | — | — | — | — |
 
 So the package declares `sdkVersion` 1.28 at 002.6a–b (0.5.0 and 0.6.0, restated from 0.4.0 by the Phase 2 review, 2026-10-20; the later numbers below await the same restatement), 1.30 at 002.7
-(1.2.0) and 1.32 at 002.8 (1.3.0); 002.9 and 002.10 (1.4.0) keep 1.32. The
+(0.7.0, after 0.6.1; restated at its review, 2026-10-20) and 1.32 at 002.8 (0.8.0, restated 2026-10-20 from 1.3.0); 002.9 is 0.8.1 (a patch for three defects, 2026-10-21) 002.11 (0.9.0, drafted 2026-10-21) declares 1.33 with the platform's 096.17, and 002.10 (0.10.0, renumbered 2026-10-21 from 0.9.0, itself restated from 1.4.0) keeps 1.33. The
 companion service starts at 0.1.0 (002.5a) and is 0.2.0 after 002.5b. §7.1's lockstep paragraph says
 the same (it read "1.24 or later" until this reconciliation).

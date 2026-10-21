@@ -58,6 +58,20 @@ const PluginServiceToken = { name: 'plugin-service' };
 const APICARTO_GPU = 'https://apicarto.ign.fr/api/gpu/';
 const GPU_DOCUMENT_API = 'https://www.geoportail-urbanisme.gouv.fr/api/document';
 const GEORISQUES = 'https://georisques.gouv.fr/api/v1/';
+/**
+ * Sprint 002.8 DEC-9: the hosts this package's browser code fetches — the
+ * three bases above, and nothing else (`fetchJson` refuses any other). The
+ * manifest's `network.hosts` (096.13's field, the package card) is this list;
+ * `tests/package.test.mjs` holds the two equal. The companion service is
+ * "this deployment's service" on the card, never its hosts (RD-3).
+ */
+const FETCHED_HOSTS = ['apicarto.ign.fr', 'www.geoportail-urbanisme.gouv.fr', 'georisques.gouv.fr'];
+/**
+ * RD-4: hosts the package only links to — a page the user opens, never a
+ * request this code makes — so not on the card. Every other `https://`
+ * literal of this file is on one of the two lists (the test reads both).
+ */
+const LINK_HOSTS = ['www.legifrance.gouv.fr'];
 
 /** Per request (DEC-2): the mockups' "did not answer within 10 s". */
 const REQUEST_TIMEOUT_MS = 10_000;
@@ -342,6 +356,10 @@ class ReadAborted extends Error {
  */
 async function fetchJson(fetchImpl, url, readSignal, timeoutMs, body) {
   if (readSignal.aborted) throw new ReadAborted();
+  // 002.8 DEC-9: only the hosts the package card names are ever asked.
+  if (!FETCHED_HOSTS.includes(new URL(url).hostname)) {
+    return { failed: 'network', detail: { key: 'fr-urban-rules.status.network' } };
+  }
   const timeout = AbortSignal.timeout(timeoutMs);
   const signal = AbortSignal.any([readSignal, timeout]);
   try {
@@ -730,6 +748,54 @@ function footprintPercentOf(rule) {
     return limit.percent;
   return undefined;
 }
+
+/**
+ * 002.9 (a defect of 002.6b): the pleine terre share a green rule states, in
+ * percent — a value in percent, or a written minimum ratio **of the plot area**
+ * (the form « au minimum de 15 % » of a terrain takes as often). Any other base
+ * is not the plot's share.
+ */
+function greenPercentOf(rule) {
+  const limit = rule?.limit;
+  if (limit?.kind === 'value' && limit.quantity.unit === 'percent') return limit.quantity.value;
+  if (
+    limit?.kind === 'ratio' &&
+    limit.comparison === 'min' &&
+    limit.base?.key === WRITTEN_BASE_KEYS.plot_area
+  )
+    return limit.percent;
+  return undefined;
+}
+
+/**
+ * 002.9 (a defect of 002.6b): an extension cap in percent and the base it is
+ * a share of — `existing` for an entered ratio (002.2: of the existing emprise),
+ * a written ratio of the existing emprise or the emprise, or a value in percent;
+ * `other` for a written ratio of another base (the floor area), which the
+ * existing building's emprise must never stand for.
+ */
+function extensionShareOf(rule) {
+  const limit = rule?.limit;
+  if (limit?.kind === 'value' && limit.quantity.unit === 'percent')
+    return { percent: limit.quantity.value, base: 'existing' };
+  if (limit?.kind === 'ratio' && limit.comparison === 'max') {
+    const existing =
+      limit.base?.key === WRITTEN_BASE_KEYS.existing_emprise ||
+      limit.base?.key === WRITTEN_BASE_KEYS.emprise;
+    return { percent: limit.percent, base: existing ? 'existing' : 'other' };
+  }
+  return undefined;
+}
+
+/**
+ * 002.9 (criterion 6): why no written regulation is offered, by regime — a
+ * carte communale has no règlement and the RNU none at all; a plan not on the
+ * GPU says so in the overview already (`notice.askTownHall`).
+ */
+const WRITTEN_NOT_OFFERED_KEYS = {
+  cc: 'fr-urban-rules.written.notOffered.cc',
+  rnu: 'fr-urban-rules.written.notOffered.rnu'
+};
 
 /** One service rule, checked field by field; `undefined` when it is not 002.5b's shape. */
 function checkedServiceRule(item, documentPages) {
@@ -3396,6 +3462,14 @@ export function createReader({
     dispose,
     programme,
     onDidChange,
+    // Sprint 002.8: the parked variations' checks (096.11) and the questions (096.12).
+    checkVariation: (request, context) => rnu.checkVariation(request, context),
+    questions: rnu.questions,
+    /** The headroom readers (tests: DEC-2's one computation). */
+    heightHeadroom: rnu.heightHeadroom,
+    storeyLimit: rnu.storeyLimit,
+    measuredBuildings: rnu.measuredBuildings,
+    lastReadFor: rnu.lastReadFor,
     /** Extraction records held (tests). */
     extractionCount: () => extractions.size,
     /** Lookups held in the session map (tests: the LRU bound). */
@@ -3496,6 +3570,66 @@ const STREET_LEVELS = new Set(['ground', 'bridge']);
 const MAX_ACTIONS = 200;
 const SECTION_SCHEMA = 1;
 const LABEL_MAX = 80;
+
+/**
+ * Sprint 002.8 DEC-7: a parked variation's buildings on the variation's view
+ * of the Site service (`variationView`), read by `namedBuildings`. A symbol,
+ * so no host member is ever mistaken for it.
+ */
+const VARIATION_BUILDINGS = Symbol('variation buildings');
+
+/**
+ * Sprint 002.8 DEC-7: the Site service as one parked variation sees it — every
+ * measure asked with its `variationId`, `variations()` naming it open (so the
+ * per-variation answers of 002.3 DEC-3 are read under its id), and its
+ * buildings the host's list (096.11 RD-1). Everything else is the service's.
+ */
+function variationView(service, variationId, buildings) {
+  const measures = service?.measures;
+  const scoped = {};
+  for (const name of ['projection', 'floorAreas', 'distances', 'plotCoverage']) {
+    if (typeof measures?.[name] === 'function') {
+      scoped[name] = (input = {}) => measures[name]({ ...input, variationId });
+    }
+  }
+  return {
+    current: () => service.current(),
+    variations: () => [{ id: variationId, open: true }],
+    measures: scoped,
+    [VARIATION_BUILDINGS]: buildings.map((b) => ({
+      id: b.id,
+      name: typeof b.name === 'string' && b.name !== '' ? b.name : undefined
+    }))
+  };
+}
+
+/**
+ * Sprint 002.8 (DEC-2, DEC-3): the Site service with every measure answer kept
+ * — `{ method, args, answer }` — so the questions and the programme warning
+ * read the very measures the checks were computed from, never a second set.
+ */
+function recordedMeasures(service, calls) {
+  const measures = service?.measures;
+  if (measures === undefined) return service;
+  const kept = {};
+  for (const name of ['projection', 'floorAreas', 'distances', 'plotCoverage']) {
+    if (typeof measures[name] !== 'function') continue;
+    kept[name] = (...args) => {
+      const answer = measures[name](...args);
+      calls.push({ method: name, args: args[0] ?? {}, answer });
+      return answer;
+    };
+  }
+  // Over an empty target, so a frozen host service breaks no Proxy invariant.
+  return new Proxy(Object.create(null), {
+    has: (_, key) => key in service,
+    get(_, key) {
+      if (key === 'measures') return kept;
+      const value = Reflect.get(service, key);
+      return typeof value === 'function' ? value.bind(service) : value;
+    }
+  });
+}
 
 const EDGE_ROLES = ['street', 'side', 'rear'];
 const ROLE_KEYS = {
@@ -4257,62 +4391,519 @@ function ringsIntersect(a, b) {
   return false;
 }
 
+// ── The envelope's outline: a per-edge inset (Sprint 002.7 DEC-1) ───────────────
+
+/** A setback's rounded end is drawn by a tangent every 15°, never inside the circle (DEC-1). */
+const INSET_CAP_STEP = Math.PI / 12;
+/** The validation's tolerance (step 3): half a centimetre either way, the plan's own precision. */
+const INSET_TOLERANCE = 0.005;
+/** DEC-1 step 3: an envelope of 1 m² or less is no ground. */
+const INSET_MIN_AREA = 1;
 /**
- * DEC-7's plan envelope: the Site boundary cut by each edge's inward
- * half-plane at its confirmed setback (Sutherland–Hodgman). Exact on a convex
- * boundary only; on a concave one a half-plane cuts across the other wing, so
- * `envelopeFeature` draws none there (002.2 review fix S5).
+ * Each excluded strip is grown by a tenth of a millimetre, a little more for
+ * each edge, so no two strips' outlines lie on one line (collinear cadastral
+ * edges with one setback): the overlay below then meets no overlap. Growing
+ * is stricter, never looser.
  */
-function envelopeRing(edges, setbackOf) {
-  let ring = edges.map((e) => e.a);
-  for (const edge of edges) {
-    const d = setbackOf(edge);
-    if (!(d > 0)) continue;
-    const s = (p) => inEdgeFrame(edge, p).s + d; // ≤ 0 inside the half-plane
-    const next = [];
-    for (let i = 0; i < ring.length; i += 1) {
-      const p = ring[i];
-      const q = ring[(i + 1) % ring.length];
-      const sp = s(p);
-      const sq = s(q);
-      if (sp <= 0) next.push(p);
-      if ((sp < 0 && sq > 0) || (sp > 0 && sq < 0)) {
-        const k = sp / (sp - sq);
-        next.push({
-          easting: p.easting + k * (q.easting - p.easting),
-          northing: p.northing + k * (q.northing - p.northing)
-        });
-      }
+const INSET_GROWTH = 1e-4;
+/**
+ * Past this many edges no envelope is drawn (said as its shape): the overlay
+ * grows with the square of the strips' sides, a 1,000-edge boundary takes
+ * about 0.4 s, and a cadastral plot has tens (the host names 500 at most).
+ */
+const INSET_MAX_EDGES = 1000;
+
+const cross2 = (ax, ay, bx, by) => ax * by - ay * bx;
+
+/** The shortest distance between two segments that do not cross (step 3's check). */
+function segmentDistance(p, q, a, b) {
+  return Math.min(
+    pointSegmentDistance(p, a, b),
+    pointSegmentDistance(q, a, b),
+    pointSegmentDistance(a, p, q),
+    pointSegmentDistance(b, p, q)
+  );
+}
+
+/** Whether two segments cross properly: each one's ends strictly on both sides of the other. */
+function segmentsCross(p, q, a, b, eps) {
+  const d1 = cross2(q.easting - p.easting, q.northing - p.northing, a.easting - p.easting, a.northing - p.northing);
+  const d2 = cross2(q.easting - p.easting, q.northing - p.northing, b.easting - p.easting, b.northing - p.northing);
+  const d3 = cross2(b.easting - a.easting, b.northing - a.northing, p.easting - a.easting, p.northing - a.northing);
+  const d4 = cross2(b.easting - a.easting, b.northing - a.northing, q.easting - a.easting, q.northing - a.northing);
+  const lp = Math.hypot(q.easting - p.easting, q.northing - p.northing);
+  const la = Math.hypot(b.easting - a.easting, b.northing - a.northing);
+  // Signed distances, so the tolerance is in metres whatever the segments' lengths.
+  const s1 = d1 / (lp || 1);
+  const s2 = d2 / (lp || 1);
+  const s3 = d3 / (la || 1);
+  const s4 = d4 / (la || 1);
+  return (
+    ((s1 > eps && s2 < -eps) || (s1 < -eps && s2 > eps)) &&
+    ((s3 > eps && s4 < -eps) || (s3 < -eps && s4 > eps))
+  );
+}
+
+/** The convex hull of `{ x, y }` points, counter-clockwise, without collinear points. */
+function convexHull(points) {
+  const sorted = [...points].sort((a, b) => a.x - b.x || a.y - b.y);
+  const turn = (o, a, b) => cross2(a.x - o.x, a.y - o.y, b.x - o.x, b.y - o.y);
+  const half = (list) => {
+    const out = [];
+    for (const p of list) {
+      while (out.length >= 2 && turn(out.at(-2), out.at(-1), p) <= 1e-12) out.pop();
+      out.push(p);
     }
-    ring = next;
-    if (ring.length < 3) return undefined;
-  }
-  return ring;
+    out.pop();
+    return out;
+  };
+  return [...half(sorted), ...half(sorted.reverse())];
 }
 
 /**
- * Whether an open, counter-clockwise ring is convex: no vertex turns clockwise
- * by more than half a degree (a cadastral vertex a few centimetres off a
- * straight line does not make a plot concave).
+ * The region `P` less the convex shapes `cuts`, by overlay: every outline cut
+ * where it crosses another, each piece kept where the region lies on one side
+ * of it and not the other, the pieces chained into loops (region on the left).
+ * `{ loops }` (counter-clockwise outers, clockwise holes, `{ x, y }` points) or
+ * `{ degenerate: true }` when two outlines overlap along a line.
  */
-function convexRing(ring) {
-  const n = ring.length;
-  if (n < 3) return false;
-  const sign = Math.sign(signedRingArea(ring)) || 1;
-  for (let i = 0; i < n; i += 1) {
-    const a = ring[(i + n - 1) % n];
-    const b = ring[i];
-    const c = ring[(i + 1) % n];
-    const ux = b.easting - a.easting;
-    const uy = b.northing - a.northing;
-    const vx = c.easting - b.easting;
-    const vy = c.northing - b.northing;
-    const lengths = Math.hypot(ux, uy) * Math.hypot(vx, vy);
-    if (lengths === 0) continue;
-    const turn = Math.asin(Math.max(-1, Math.min(1, (ux * vy - uy * vx) / lengths))) * sign;
-    if (turn < -(0.5 * Math.PI) / 180) return false;
+function regionLess(P, cuts) {
+  const xs = [];
+  const ys = [];
+  const vertex = (p) => {
+    xs.push(p.x);
+    ys.push(p.y);
+    return xs.length - 1;
+  };
+  const parent = [];
+  const find = (i) => {
+    while (parent[i] !== undefined && parent[i] !== i) i = parent[i];
+    return i;
+  };
+  const union = (i, j) => {
+    const a = find(i);
+    const b = find(j);
+    if (a !== b) parent[Math.max(a, b)] = Math.min(a, b);
+  };
+  const segments = [];
+  const outline = (polygon) => {
+    const ids = polygon.map(vertex);
+    ids.forEach((id, k) => {
+      const next = ids[(k + 1) % ids.length];
+      segments.push({ a: id, b: next, cuts: [] });
+    });
+  };
+  outline(P);
+  for (const K of cuts) outline(K);
+  for (const s of segments) {
+    s.minX = Math.min(xs[s.a], xs[s.b]);
+    s.maxX = Math.max(xs[s.a], xs[s.b]);
+    s.minY = Math.min(ys[s.a], ys[s.b]);
+    s.maxY = Math.max(ys[s.a], ys[s.b]);
   }
-  return true;
+  // Sweep along x: only segments whose spans overlap are compared.
+  const order = segments.map((s, k) => k).sort((i, j) => segments[i].minX - segments[j].minX);
+  const EPS = 1e-9;
+  let degenerate = false;
+  for (let oi = 0; oi < order.length && !degenerate; oi += 1) {
+    const s = segments[order[oi]];
+    for (let oj = oi + 1; oj < order.length; oj += 1) {
+      const t = segments[order[oj]];
+      if (t.minX > s.maxX + EPS) break;
+      if (t.minY > s.maxY + EPS || t.maxY < s.minY - EPS) continue;
+      if (s.a === t.a || s.a === t.b || s.b === t.a || s.b === t.b) continue;
+      const ax = xs[s.a];
+      const ay = ys[s.a];
+      const rx = xs[s.b] - ax;
+      const ry = ys[s.b] - ay;
+      const cx = xs[t.a];
+      const cy = ys[t.a];
+      const sx = xs[t.b] - cx;
+      const sy = ys[t.b] - cy;
+      const lr = Math.hypot(rx, ry);
+      const ls = Math.hypot(sx, sy);
+      const den = cross2(rx, ry, sx, sy);
+      if (Math.abs(den) <= 1e-12 * lr * ls) {
+        // Parallel: an overlap along one line is degenerate; anything else, no crossing.
+        if (Math.abs(cross2(cx - ax, cy - ay, rx, ry)) / lr > EPS) continue;
+        const t0 = ((cx - ax) * rx + (cy - ay) * ry) / (lr * lr);
+        const t1 = t0 + (sx * rx + sy * ry) / (lr * lr);
+        if (Math.max(t0, t1) < -EPS / lr || Math.min(t0, t1) > 1 + EPS / lr) continue;
+        degenerate = true;
+        break;
+      }
+      const tt = cross2(cx - ax, cy - ay, sx, sy) / den;
+      const uu = cross2(cx - ax, cy - ay, rx, ry) / den;
+      const et = EPS / lr;
+      const eu = EPS / ls;
+      if (tt < -et || tt > 1 + et || uu < -eu || uu > 1 + eu) continue;
+      const sEnd = tt <= et ? s.a : tt >= 1 - et ? s.b : undefined;
+      const tEnd = uu <= eu ? t.a : uu >= 1 - eu ? t.b : undefined;
+      if (sEnd !== undefined && tEnd !== undefined) union(sEnd, tEnd);
+      else if (sEnd !== undefined) t.cuts.push({ t: uu, id: sEnd });
+      else if (tEnd !== undefined) s.cuts.push({ t: tt, id: tEnd });
+      else {
+        const id = vertex({ x: ax + tt * rx, y: ay + tt * ry });
+        s.cuts.push({ t: tt, id });
+        t.cuts.push({ t: uu, id });
+      }
+    }
+  }
+  if (degenerate) return { degenerate: true };
+
+  const inside = (x, y) => {
+    let within = false;
+    for (let i = 0, j = P.length - 1; i < P.length; j = i, i += 1) {
+      const a = P[i];
+      const b = P[j];
+      if (a.y > y !== b.y > y && x < ((b.x - a.x) * (y - a.y)) / (b.y - a.y) + a.x) within = !within;
+    }
+    if (!within) return false;
+    return !cuts.some((K) => {
+      if (x < K.minX || x > K.maxX || y < K.minY || y > K.maxY) return false;
+      for (let i = 0; i < K.length; i += 1) {
+        const a = K[i];
+        const b = K[(i + 1) % K.length];
+        if (cross2(b.x - a.x, b.y - a.y, x - a.x, y - a.y) <= 0) return false;
+      }
+      return true;
+    });
+  };
+  // The pieces on the region's outline, oriented with the region on their left.
+  const out = new Map();
+  const seen = new Set();
+  const pieces = [];
+  for (const s of segments) {
+    const ids = [s.a, ...s.cuts.sort((p, q) => p.t - q.t).map((c) => c.id), s.b].map(find);
+    for (let k = 0; k + 1 < ids.length; k += 1) {
+      const p = ids[k];
+      const q = ids[k + 1];
+      if (p === q) continue;
+      const key = p < q ? `${p}:${q}` : `${q}:${p}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const dx = xs[q] - xs[p];
+      const dy = ys[q] - ys[p];
+      const length = Math.hypot(dx, dy);
+      if (length < 1e-9) continue;
+      const delta = Math.min(1e-6, length / 4);
+      const mx = (xs[p] + xs[q]) / 2;
+      const my = (ys[p] + ys[q]) / 2;
+      const left = inside(mx - (dy / length) * delta, my + (dx / length) * delta);
+      const right = inside(mx + (dy / length) * delta, my - (dx / length) * delta);
+      if (left === right) continue;
+      const [from, to] = left ? [p, q] : [q, p];
+      const piece = { from, to, used: false };
+      pieces.push(piece);
+      if (!out.has(from)) out.set(from, []);
+      out.get(from).push(piece);
+    }
+  }
+  const loops = [];
+  for (const first of pieces) {
+    if (first.used) continue;
+    const loop = [];
+    let piece = first;
+    for (let guard = 0; guard <= pieces.length; guard += 1) {
+      piece.used = true;
+      loop.push({ x: xs[piece.from], y: ys[piece.from] });
+      if (piece.to === first.from) break;
+      const candidates = (out.get(piece.to) ?? []).filter((c) => !c.used);
+      if (candidates.length === 0) return { degenerate: true };
+      // Where the region touches itself, the sharpest left turn keeps each loop simple.
+      const ix = xs[piece.to] - xs[piece.from];
+      const iy = ys[piece.to] - ys[piece.from];
+      const turnOf = (c) =>
+        Math.atan2(
+          cross2(ix, iy, xs[c.to] - xs[c.from], ys[c.to] - ys[c.from]),
+          ix * (xs[c.to] - xs[c.from]) + iy * (ys[c.to] - ys[c.from])
+        );
+      piece = candidates.reduce((best, c) => (turnOf(c) > turnOf(best) ? c : best));
+    }
+    if (piece.to !== first.from) return { degenerate: true };
+    // Points along one straight line are one side.
+    const kept = loop.filter((p, k) => {
+      const a = loop[(k + loop.length - 1) % loop.length];
+      const b = loop[(k + 1) % loop.length];
+      const ab = Math.hypot(b.x - a.x, b.y - a.y);
+      return ab === 0 || Math.abs(cross2(p.x - a.x, p.y - a.y, b.x - a.x, b.y - a.y)) / ab > 1e-9;
+    });
+    loops.push(kept);
+  }
+  return { loops };
+}
+
+/**
+ * DEC-1: the Site boundary inset by one distance per edge — `distances[i]` for
+ * the edge from `ring[i]` to `ring[i + 1]` (an open ring, either winding) —
+ * on a concave boundary as on a convex one. Answers `{ ring, reentrant }` (one
+ * counter-clockwise ring) or `{ failed: 'collapsed' | 'shape' }`.
+ *
+ * The rule's set, "at least `d` from the limit", is the boundary less each
+ * edge's strip: every point within `d` of the edge, rounded at its ends. The
+ * strips are cut from the boundary by overlay (review 2026-10-21: the mitred
+ * offset with edge collapse this replaced refused or misread about one plot in
+ * ten among random cadastral shapes, saying "no ground" where hundreds of m²
+ * were left).
+ *
+ * - **A strip's rounded end** is drawn by tangents every 15°, just outside the
+ *   circle, so the outline stands just inside the rounded line — stricter than
+ *   the rule (assumption `envelope-reentrant-corners`).
+ * - **`lines[i]`** (a street edge): the alignment continues past the plot, so
+ *   at a convex corner the strip runs on along its line as far as the plot
+ *   reaches — the half-plane cut of 002.2, exact on a convex boundary. A side
+ *   or rear limit ends at its corner, so its strip ends rounded there.
+ * - **Validated**: one simple ring inside the boundary, more than 1 m², no
+ *   point closer to an edge than its distance (half a centimetre's
+ *   tolerance). `collapsed` when the setbacks leave no ground (nothing over
+ *   1 m²); `shape` when they split the plot into pieces, or the check fails —
+ *   never a silent absence (the caller says which).
+ */
+function insetByRole(ring, distances, lines = []) {
+  let points = ring.map((p) => ({ easting: p.easting, northing: p.northing }));
+  let ds = points.map((p, i) => {
+    const d = Number(distances[i]);
+    return Number.isFinite(d) && d > 0 ? d : 0;
+  });
+  let along = points.map((p, i) => lines[i] === true);
+  if (points.length < 3) return { failed: 'shape' };
+  // A zero-length edge is no edge: its neighbours meet at its point.
+  for (let i = 0; i < points.length && points.length >= 3; ) {
+    const a = points[i];
+    const b = points[(i + 1) % points.length];
+    if (Math.hypot(b.easting - a.easting, b.northing - a.northing) < 1e-6) {
+      points.splice((i + 1) % points.length, 1);
+      ds.splice(i, 1);
+      along.splice(i, 1);
+    } else i += 1;
+  }
+  if (points.length < 3 || points.length > INSET_MAX_EDGES) return { failed: 'shape' };
+  if (signedRingArea(points) < 0) {
+    // Clockwise: walk it the other way; edge k of the reversed ring is edge n-2-k reversed.
+    const n = points.length;
+    const [originalDs, originalAlong] = [ds, along];
+    points = [...points].reverse();
+    ds = points.map((p, k) => originalDs[(2 * n - 2 - k) % n]);
+    along = points.map((p, k) => originalAlong[(2 * n - 2 - k) % n]);
+  }
+  const n = points.length;
+  // A local frame: Lambert-93 coordinates run to millions of metres.
+  const origin = points[0];
+  const P = points.map((p) => ({ x: p.easting - origin.easting, y: p.northing - origin.northing }));
+  const edges = points.map((a, i) => {
+    const b = points[(i + 1) % n];
+    const length = Math.hypot(b.easting - a.easting, b.northing - a.northing);
+    const u = { x: (b.easting - a.easting) / length, y: (b.northing - a.northing) / length };
+    return { a, b, la: P[i], lb: P[(i + 1) % n], u, normal: { x: -u.y, y: u.x }, d: ds[i], line: along[i] };
+  });
+  const span = Math.hypot(
+    Math.max(...P.map((p) => p.x)) - Math.min(...P.map((p) => p.x)),
+    Math.max(...P.map((p) => p.y)) - Math.min(...P.map((p) => p.y))
+  );
+  /** The turn at the corner from `from` to `to`, in (−π, π]: positive where it is convex. */
+  const turnAt = (from, to) => Math.atan2(cross2(from.u.x, from.u.y, to.u.x, to.u.y), from.u.x * to.u.x + from.u.y * to.u.y);
+
+  // Rounded somewhere the rule's line is: a re-entrant corner, or a convex one
+  // past 90° where a side or rear limit with the larger distance ends.
+  let reentrant = false;
+  for (let i = 0; i < n; i += 1) {
+    const prev = edges[(i + n - 1) % n];
+    const edge = edges[i];
+    const D = Math.max(prev.d, edge.d);
+    if (!(D > 0)) continue;
+    const turn = turnAt(prev, edge);
+    const larger = prev.d >= edge.d ? prev : edge;
+    if (turn <= 1e-9 || (turn < Math.PI / 2 && !larger.line && Math.abs(prev.d - edge.d) > 1e-9))
+      reentrant = true;
+  }
+
+  const attempt = (growth) => {
+    const cuts = [];
+    edges.forEach((edge, i) => {
+      if (!(edge.d > 0)) return;
+      const r = edge.d + growth * (1 + ((i * 0.6180339887) % 1));
+      const R = r / Math.cos(INSET_CAP_STEP / 2);
+      const phi = Math.atan2(edge.normal.y, edge.normal.x);
+      const steps = Math.round(Math.PI / INSET_CAP_STEP);
+      const shape = [];
+      for (let j = 0; j < steps; j += 1) {
+        const atB = phi - (j + 0.5) * INSET_CAP_STEP;
+        shape.push({ x: edge.lb.x + R * Math.cos(atB), y: edge.lb.y + R * Math.sin(atB) });
+        const atA = phi + Math.PI - (j + 0.5) * INSET_CAP_STEP;
+        shape.push({ x: edge.la.x + R * Math.cos(atA), y: edge.la.y + R * Math.sin(atA) });
+      }
+      if (edge.line) {
+        // The alignment runs on past a convex corner, as far as the plot can reach within r of it.
+        const reach = (turn) =>
+          turn > 1e-9 && turn < Math.PI / 2 ? Math.min(r / Math.tan(turn), 2 * span) : 0;
+        const after = reach(turnAt(edge, edges[(i + 1) % n]));
+        const before = reach(turnAt(edges[(i + n - 1) % n], edge));
+        for (const side of [-1, 1]) {
+          const nx = edge.normal.x * r * side;
+          const ny = edge.normal.y * r * side;
+          if (after > 0)
+            shape.push({ x: edge.lb.x + edge.u.x * after + nx, y: edge.lb.y + edge.u.y * after + ny });
+          if (before > 0)
+            shape.push({ x: edge.la.x - edge.u.x * before + nx, y: edge.la.y - edge.u.y * before + ny });
+        }
+      }
+      const hull = convexHull(shape);
+      hull.minX = Math.min(...hull.map((p) => p.x));
+      hull.maxX = Math.max(...hull.map((p) => p.x));
+      hull.minY = Math.min(...hull.map((p) => p.y));
+      hull.maxY = Math.max(...hull.map((p) => p.y));
+      cuts.push(hull);
+    });
+    return regionLess(P, cuts);
+  };
+  let region = attempt(INSET_GROWTH);
+  for (let k = 2; region.degenerate && k <= 4; k += 1) region = attempt(INSET_GROWTH * k * 1.37);
+  if (region.degenerate) return { failed: 'shape' };
+  const areaOf = (loop) =>
+    loop.reduce((sum, a, i) => {
+      const b = loop[(i + 1) % loop.length];
+      return sum + cross2(a.x, a.y, b.x, b.y);
+    }, 0) / 2;
+  // No hole can form (every strip touches the boundary); one found is a shape this cannot draw.
+  if (region.loops.some((loop) => areaOf(loop) < -1e-6)) return { failed: 'shape' };
+  const ground = region.loops.filter((loop) => loop.length >= 3 && areaOf(loop) > INSET_MIN_AREA);
+  if (ground.length === 0) return { failed: 'collapsed' };
+  if (ground.length > 1) return { failed: 'shape' }; // the setbacks split the plot
+  const result = ground[0].map((p) => ({ easting: p.x + origin.easting, northing: p.y + origin.northing }));
+
+  // Validated against the boundary itself, whatever the overlay did.
+  const m = result.length;
+  for (let i = 0; i < m; i += 1) {
+    const p = result[i];
+    const q = result[(i + 1) % m];
+    const onBoundary = edges.some((e) => pointSegmentDistance(p, e.a, e.b) <= INSET_TOLERANCE);
+    if (!onBoundary && !insideRing(p, points)) return { failed: 'shape' };
+    for (const e of edges) {
+      if (segmentsCross(p, q, e.a, e.b, INSET_TOLERANCE)) return { failed: 'shape' };
+      // …never closer to an edge than its distance.
+      if (e.d > 0 && segmentDistance(p, q, e.a, e.b) < e.d - INSET_TOLERANCE) return { failed: 'shape' };
+    }
+  }
+  return { ring: result, reentrant };
+}
+
+/**
+ * 096.9 DEC-2's limits on a volume, mirrored here (Sprint 002.7 DEC-2): the
+ * host drops a volume **whole** for one malformed part, and refuses a report
+ * past 16 volumes, so the extension checks its own volume before sending it.
+ */
+const VOLUME_LIMITS = { ceilings: 8, rise: 20, metres: 500, start: 500, volumes: 16 };
+
+// ── The regulation sheet's content (Sprint 002.7 DEC-5) ──────────────────────────
+
+/** DEC-5 block 6: the plot plan's layers (the host draws them; the zone outline only). */
+const PLOT_PLAN_CATEGORIES = [
+  'zone',
+  'prescription',
+  'easement',
+  'risk',
+  'alignment',
+  'setback-band',
+  'envelope'
+];
+
+/**
+ * DEC-5: the regulation sheet — the plot, the flags, a notice when the plan is
+ * not on the GPU or a source failed, the checks with every rule not checked,
+ * the host-counted rules meter, the plot plan and the assumptions; the scope
+ * sentence. Pure: everything comes from the report, the Site view and what the
+ * read noted beside the report. The host prints its own header (document,
+ * version, read time) and footer (sources, attribution, its scope sentence),
+ * so neither is repeated here (096.10 DEC-4).
+ *
+ * DEC-6: every figure travels as a quantity or verbatim text, never as a
+ * phrase parameter — a number in `params` is formatted by the host's message
+ * formatter, which groups it with U+202F in French, a glyph the print font
+ * lacks.
+ *
+ * Absent (`undefined`) when the regime is `unknown` and nothing was read: the
+ * host then offers no sheet (096.10 DEC-2).
+ */
+function sheetOf(report, { site, zones = [] } = {}) {
+  const regime = report?.regime?.code;
+  if (regime === undefined) return undefined;
+  const read =
+    report.features.length > 0 ||
+    report.flags.length > 0 ||
+    report.rules.length > 0 ||
+    report.zones.length > 0;
+  if (regime === 'unknown' && !read) return undefined;
+  const overviewRows = (report.overview ?? [])
+    .filter((b) => b.kind === 'fields')
+    .flatMap((b) => b.rows);
+  const overviewValue = (...keys) => overviewRows.find((r) => keys.includes(r.label?.key))?.value;
+
+  const rows = [];
+  const commune = overviewValue('fr-urban-rules.field.commune');
+  if (commune !== undefined)
+    rows.push({ label: { key: 'fr-urban-rules.field.commune' }, value: commune });
+  const parcels = [
+    ...new Set((site?.parcels ?? []).map((p) => String(p.featureId ?? '')).filter(Boolean))
+  ];
+  if (parcels.length > 0)
+    rows.push({
+      label: { key: 'fr-urban-rules.sheet.field.parcels' },
+      value: { text: cut(parcels.join(', '), SHORT) }
+    });
+  if (typeof site?.plotArea === 'number' && site.plotArea > 0)
+    rows.push({
+      label: { key: 'fr-urban-rules.sheet.field.plotArea' },
+      value: { value: Math.round(site.plotArea * 10) / 10, unit: 'm2' }
+    });
+  const zoneValue = overviewValue('fr-urban-rules.field.zone', 'fr-urban-rules.field.sector');
+  if (zoneValue !== undefined)
+    rows.push({
+      label: {
+        key: regime === 'cc' ? 'fr-urban-rules.field.sector' : 'fr-urban-rules.field.zone'
+      },
+      value: zoneValue
+    });
+  // Gordes (002.2 DEC-4): a zone's `datvalid` is not its document's; said when they differ.
+  const zoneDate = isoDate(zones.find((z) => z.datvalid !== undefined)?.datvalid ?? '');
+  if (zoneDate !== undefined && zoneDate !== report.document?.validFrom)
+    rows.push({
+      label: { key: 'fr-urban-rules.sheet.field.zoneDate' },
+      value: { text: zoneDate }
+    });
+
+  const blocks = [{ kind: 'heading', text: { key: 'fr-urban-rules.sheet.heading.plot' } }];
+  if (rows.length > 0) blocks.push({ kind: 'fields', rows });
+  blocks.push({ kind: 'flags' });
+  if (regime === 'not_published') {
+    blocks.push({
+      kind: 'notice',
+      tone: 'warning',
+      text: { key: 'fr-urban-rules.sheet.notice.notPublished' }
+    });
+  }
+  if (regime === 'unknown' || report.sources.some((s) => s.state === 'unavailable')) {
+    blocks.push({
+      kind: 'notice',
+      tone: 'warning',
+      text: { key: 'fr-urban-rules.sheet.notice.sourceFailed' }
+    });
+  }
+  blocks.push({ kind: 'heading', text: { key: 'fr-urban-rules.sheet.heading.rules' } });
+  blocks.push({ kind: 'checks', unchecked: true });
+  // ADR-0111 Rule 10: the host counts the rules by status; no count travels beside them.
+  blocks.push({ kind: 'meter', rules: true });
+  blocks.push({
+    kind: 'plot-plan',
+    categories: PLOT_PLAN_CATEGORIES,
+    caption: { key: 'fr-urban-rules.sheet.plotPlan.caption' }
+  });
+  // The host titles the list itself ("Assumptions"): no heading of ours (walk, 2026-10-21).
+  if (report.assumptions.length > 0) blocks.push({ kind: 'assumptions' });
+  return {
+    title: { key: 'fr-urban-rules.sheet.title' },
+    blocks,
+    scope: { key: 'fr-urban-rules.sheet.scope' }
+  };
 }
 
 /** The parser's kinds as the SDK's rule kinds. */
@@ -4644,7 +5235,11 @@ function createRnu({
    * entities). Only a check with no Site boundary, which has no target to ask
    * `distances` with, learns whether a main building exists from `projection`.
    */
-  function namedBuildings() {
+  function namedBuildings(service) {
+    // 002.8 DEC-7: a parked variation's buildings are the host's list (096.11
+    // RD-1) — the `document` service reads the open Document only.
+    const given = service?.[VARIATION_BUILDINGS];
+    if (Array.isArray(given)) return given.map((b) => ({ id: b.id, name: b.name }));
     const buildings = [];
     try {
       for (const entity of documentOf()?.find('Building') ?? []) {
@@ -4921,8 +5516,11 @@ function createRnu({
     // 002.1a–b: the national rules under the RNU and a carte communale; 002.2:
     // drawn and entered rules wherever a regime is known.
     const national = regime === 'rnu' || regime === 'cc';
-    if (!national && regime !== 'plu' && regime !== 'plui' && regime !== 'not_published')
-      return report;
+    if (!national && regime !== 'plu' && regime !== 'plui' && regime !== 'not_published') {
+      // 002.7 DEC-5: no envelope for `unknown`, but a sheet when something was read.
+      const sheet = sheetOf(report, { site: request.site, zones: reportFacts?.zones ?? [] });
+      return sheet === undefined ? report : { ...report, sheet };
+    }
     const site = request.site;
     const service = siteOf();
     const sectors = reportFacts?.typesects ?? [];
@@ -5122,8 +5720,6 @@ function createRnu({
       });
     }
 
-    // The R.111-17 checks (DEC-6, DEC-7), from fresh measures on every read.
-    const checks = [];
     const note = (reason) =>
       assume(
         `not-checked-${reason}`,
@@ -5131,175 +5727,98 @@ function createRnu({
           ? { key: REASON_KEYS[reason] }
           : { key: 'fr-urban-rules.reason.other', params: { reason: cut(String(reason), 200) } }
       );
-    if (measure && national && service?.measures !== undefined) {
-      assume('site-boundary-parcel', { key: 'fr-urban-rules.assumption.siteBoundaryParcel' });
-      assume('balconies-not-modelled', { key: 'fr-urban-rules.assumption.balconies' });
-      if (edges === undefined) {
-        const main = service.measures.projection();
-        const buildings = [
-          ...(main.available ? [{ id: main.buildingId, name: undefined }] : []),
-          ...namedBuildings().filter((b) => !main.available || b.id !== main.buildingId)
-        ];
-        for (const building of buildings) {
-          checks.push({
-            id: `r111-17:${building.id ?? 'main'}:no-boundary`,
-            ruleId: 'rnu:R.111-17',
-            subject: {
-              kind: 'building',
-              ...(building.id === undefined ? {} : { id: building.id }),
-              label:
-                building.name === undefined
-                  ? { key: 'fr-urban-rules.check.subject.mainBuilding' }
-                  : { text: cut(building.name, 200) }
-            },
-            result: 'not_checked',
-            assumptionIds: ['site-boundary-parcel', note('no-boundary')]
-          });
-          // R.111-16 has no street edge without a boundary either: said the same way.
-          checks.push({
-            id: `r111-16:${building.id ?? 'main'}:no-boundary`,
-            ruleId: 'rnu:R.111-16',
-            subject: {
-              kind: 'building',
-              ...(building.id === undefined ? {} : { id: building.id }),
-              label:
-                building.name === undefined
-                  ? { key: 'fr-urban-rules.check.subject.mainBuilding' }
-                  : { text: cut(building.name, 200) }
-            },
-            result: 'not_checked',
-            assumptionIds: [note('no-boundary')]
-          });
-        }
-      } else if (roads !== undefined) {
-        const named = namedBuildings();
-        const buildings = [{ id: undefined, name: undefined }, ...named];
-        // Never past the host's 1,000 checks (refused whole): the targets each
-        // building is asked for are capped, and the cap said.
-        const perBuilding = Math.floor(HOST_LIMITS.checks / buildings.length);
-        const all = edges
-          .filter((e) => roleOf.get(e.edge)?.role !== 'street')
-          .map((e) => ({ kind: 'boundary-edge', edge: e.edge }));
-        const targets = all.slice(0, perBuilding);
-        if (all.length > targets.length) {
-          assume('checks-capped', {
-            key: 'fr-urban-rules.assumption.checksCapped',
-            params: { count: targets.length }
-          });
-        }
-        const seen = new Set();
-        if (targets.length > 0) {
-          for (const building of buildings) {
-            if (building.id !== undefined && seen.has(building.id)) continue;
+    // 002.8 DEC-7: the inputs a parked variation is checked against, kept below.
+    const inputs = {
+      report,
+      site,
+      regime,
+      national,
+      edges,
+      roads,
+      roleOf,
+      alignments,
+      planned,
+      section: readOnly ? undefined : section,
+      readOnly,
+      reportFacts,
+      flags
+    };
+    // Sprint 002.3 DEC-3 / 002.8 DEC-2: the measures the checks were computed from, kept.
+    const calls = [];
+    const measured = measure ? recordedMeasures(service, calls) : service;
+    // Sprint 002.7: the theoretical envelope — its outline, its volume and its view —
+    // drawn after the checks are folded, as before the refactor, so the
+    // assumptions keep their order; the bands are drawn from the per-edge checks.
+    let envelope = {};
+    const derivedFeatures = [];
+    const evaluated = evaluateChecks(
+      inputs,
+      { service: measured },
+      {
+        assume,
+        note,
+        measure,
+        beforeSurfaces: ({ perEdge, checks }) => {
+          derivedFeatures.push(
+            ...[...(alignments?.values() ?? [])]
+              .filter((a) => a.points !== undefined)
+              .map((a) => ({
+                id: `alignment:${a.edge}`,
+                category: 'alignment',
+                official: false,
+                line: a.points,
+                label: { key: ALIGNMENT_KEYS[a.path] }
+              }))
+          );
+          if (edges !== undefined && national) {
             try {
-              const made = evaluateBuilding(
-                service,
-                building,
-                targets,
-                (edge) => roleOf.get(edge)?.assumptionId,
-                note
+              derivedFeatures.push(
+                ...bandsFor(
+                  edges,
+                  roleOf,
+                  perEdge,
+                  alignments ?? new Map(),
+                  edges.map((e) => e.a),
+                  Math.max(0, 1900 - report.features.length - (alignments?.size ?? 0))
+                )
               );
-              // The main building's id, once answered, is not checked twice as a named one.
-              for (const c of made) seen.add(c.id.split(':')[1]);
-              checks.push(...made);
             } catch (cause) {
-              log(`${SOURCE_ID}: R.111-17 could not be evaluated: ${String(cause)}`);
-              for (const t of targets)
-                checks.push({
-                  id: `r111-17:${building.id ?? 'main'}:${t.edge}`,
-                  ruleId: 'rnu:R.111-17',
-                  subject: {
-                    kind: 'boundary-edge',
-                    id: String(t.edge),
-                    label: { key: 'fr-urban-rules.check.subject.main', params: { edge: t.edge } }
-                  },
-                  result: 'not_checked',
-                  assumptionIds: [note('unavailable')]
-                });
+              log(`${SOURCE_ID}: the bands could not be drawn: ${String(cause)}`);
             }
           }
+          try {
+            envelope = envelopeOf({
+              planned,
+              edges,
+              roleOf,
+              alignments,
+              regime,
+              reportFacts,
+              national,
+              assume
+            });
+            if (envelope.feature !== undefined) derivedFeatures.push(envelope.feature);
+          } catch (cause) {
+            log(`${SOURCE_ID}: the envelope could not be drawn: ${String(cause)}`);
+            envelope = {};
+          }
+          if (derivedFeatures.some((f) => f.category === 'setback-band')) {
+            assume('bands-approximate', { key: 'fr-urban-rules.assumption.bandsApproximate' });
+          }
+          if (checks.some((c) => c.assumptionIds.includes('contiguous-tolerance'))) {
+            assume('contiguous-tolerance', {
+              key: 'fr-urban-rules.assumption.contiguousTolerance',
+              params: { distance: ADJOINING.distance }
+            });
+          }
+          // 002.3 DEC-5: the capacity reads the envelope's ground area where a confirmed setback insets it.
+          return envelope.inset ? envelope.feature : undefined;
         }
       }
-      if (checks.some((c) => c.assumptionIds.includes('datum-derived'))) {
-        assume('datum-derived', { key: 'fr-urban-rules.assumption.datumDerived' });
-      }
-      if (checks.some((c) => c.assumptionIds.includes('roof-overhangs-unread'))) {
-        assume('roof-overhangs-unread', { key: 'fr-urban-rules.assumption.roofOverhangsUnread' });
-      }
-      // Sprint 002.1b: R.111-16 to each opposite alignment, R.111-15 between buildings.
-      const named = namedBuildings();
-      const projectBuildings = [{ id: undefined, name: undefined }, ...named];
-      if (alignments !== undefined && alignments.size > 0) {
-        try {
-          checks.push(
-            ...r11116Checks(service, site, projectBuildings, alignments, roleOf, note, assume)
-          );
-        } catch (cause) {
-          log(`${SOURCE_ID}: R.111-16 could not be evaluated: ${String(cause)}`);
-        }
-      }
-      if (alignments !== undefined && alignments.size === 0) {
-        // No street edge (002.1a DEC-3 item 5): R.111-16 has no alignment to
-        // measure to, and says why, once per building.
-        const reason = roads?.refused !== undefined ? 'roads-unavailable' : 'no-road';
-        const main = service.measures.projection();
-        const subjects = [
-          ...(main.available ? [{ id: main.buildingId, name: undefined }] : []),
-          ...named.filter((b) => !main.available || b.id !== main.buildingId)
-        ];
-        for (const building of subjects) {
-          checks.push({
-            id: `r111-16:${building.id}:no-street`,
-            ruleId: 'rnu:R.111-16',
-            subject: {
-              kind: 'building',
-              id: building.id,
-              label:
-                building.name === undefined
-                  ? { key: 'fr-urban-rules.check.subject.mainBuilding' }
-                  : { text: cut(building.name, 200) }
-            },
-            result: 'not_checked',
-            assumptionIds: [note(reason)]
-          });
-        }
-      }
-      try {
-        const main =
-          named.length > 0 || (site.existingBuilding?.parts ?? []).length > 0
-            ? service.measures.projection()
-            : undefined;
-        checks.push(
-          ...r11115Checks(service, site, main?.available ? main.buildingId : undefined, named, note)
-        );
-      } catch (cause) {
-        log(`${SOURCE_ID}: R.111-15 could not be evaluated: ${String(cause)}`);
-      }
-      for (const [id, key] of [
-        ['governed-by-floor', 'fr-urban-rules.assumption.governedByFloor'],
-        ['governed-by-rise', 'fr-urban-rules.assumption.governedByRise'],
-        ['adjoins-partially', 'fr-urban-rules.assumption.adjoinsPartially']
-      ]) {
-        if (checks.some((c) => c.assumptionIds.includes(id))) assume(id, { key });
-      }
-      if (checks.some((c) => c.assumptionIds.includes('adjoins'))) {
-        assume('adjoins', {
-          key: 'fr-urban-rules.assumption.adjoins',
-          params: { distance: ADJOINING.distance, length: 1 }
-        });
-      }
-    }
+    );
+    const { checks, surfaces } = evaluated;
 
-    // Sprint 002.2 (DEC-7): checks on the drawn and entered rules.
-    if (measure && service?.measures !== undefined) {
-      try {
-        checks.push(...plannedChecks(service, planned, edges, roleOf, note, assume));
-      } catch (cause) {
-        log(`${SOURCE_ID}: the drawn and entered rules could not be checked: ${String(cause)}`);
-      }
-    }
-
-    // DEC-4: R.111-28's neighbours, never a check; DEC-5's bands and DEC-1's alignments.
+    // DEC-4: R.111-28's neighbours, never a check (not part of the checks: 002.8 DEC-7).
     let neighbours;
     try {
       neighbours = neighboursOf(site, edges, context);
@@ -5342,7 +5861,7 @@ function createRnu({
         ];
         if (measure && service?.measures !== undefined) {
           const shown = new Set();
-          for (const building of [{ id: undefined, name: undefined }, ...namedBuildings()]) {
+          for (const building of [{ id: undefined, name: undefined }, ...namedBuildings(service)]) {
             const projection = service.measures.projection(
               building.id === undefined ? {} : { buildingId: building.id }
             );
@@ -5396,86 +5915,19 @@ function createRnu({
         }
       }
     }
-    const derivedFeatures = [
-      ...[...(alignments?.values() ?? [])]
-        .filter((a) => a.points !== undefined)
-        .map((a) => ({
-          id: `alignment:${a.edge}`,
-          category: 'alignment',
-          official: false,
-          line: a.points,
-          label: { key: ALIGNMENT_KEYS[a.path] }
-        })),
-      ...(() => {
-        if (edges === undefined || !national) return [];
-        try {
-          return bandsFor(
-            edges,
-            roleOf,
-            checks,
-            alignments ?? new Map(),
-            edges.map((e) => e.a),
-            Math.max(0, 1900 - report.features.length - (alignments?.size ?? 0))
-          );
-        } catch (cause) {
-          log(`${SOURCE_ID}: the bands could not be drawn: ${String(cause)}`);
-          return [];
-        }
-      })()
-    ];
-    // 002.4 Q5: the bands above were drawn per edge; the report shows one check per rule per building.
-    checks.splice(0, checks.length, ...oneCheckPerBuilding(checks));
-    let envelope;
-    try {
-      envelope = envelopeFeature(planned, edges, roleOf);
-      if (envelope?.notConvex === true) {
-        assume('envelope-not-convex', { key: 'fr-urban-rules.assumption.envelopeNotConvex' });
-      } else if (envelope !== undefined) {
-        derivedFeatures.push(envelope);
-        assume('envelope-approximate', { key: 'fr-urban-rules.assumption.envelopeApproximate' });
-      }
-    } catch (cause) {
-      log(`${SOURCE_ID}: the envelope could not be drawn: ${String(cause)}`);
-    }
-    if (derivedFeatures.some((f) => f.category === 'setback-band')) {
-      assume('bands-approximate', { key: 'fr-urban-rules.assumption.bandsApproximate' });
-    }
-    if (checks.some((c) => c.assumptionIds.includes('contiguous-tolerance'))) {
-      assume('contiguous-tolerance', {
-        key: 'fr-urban-rules.assumption.contiguousTolerance',
-        params: { distance: ADJOINING.distance }
-      });
-    }
-
-    // Sprint 002.3: the Surfaces view, its checks and the programme's figures.
-    let surfaces;
-    try {
-      surfaces = surfacesFor({
-        service,
-        site,
-        planned,
-        reportFacts,
-        regime,
-        report,
-        section: readOnly ? undefined : section,
-        readOnly,
-        envelope: envelope?.notConvex === true ? undefined : envelope,
-        flags,
-        assume,
-        note,
-        measure
-      });
-      checks.push(...surfaces.checks);
-    } catch (cause) {
-      log(`${SOURCE_ID}: the surfaces could not be composed: ${String(cause)}`);
-    }
 
     // 002.6b DEC-2: the written rules' state per zone — a source line and the Rules view's blocks.
     const writtenState = writtenStateOf(written, planned);
     sources.push(...writtenState.sources);
+    // 002.9 (criterion 6): where no règlement exists, the Rules view says why nothing is read.
+    const notOffered = WRITTEN_NOT_OFFERED_KEYS[report.regime?.code];
+    const writtenBlocks =
+      notOffered === undefined || writtenState.blocks.length > 0
+        ? writtenState.blocks
+        : [{ kind: 'notice', tone: 'info', text: { key: notOffered } }];
     const views = [
       ...report.views,
-      rulesView(planned, readOnly, writtenState.blocks),
+      rulesView(planned, readOnly, writtenBlocks),
       ...(surfaces === undefined ? [] : [surfaces.view]),
       edgesView(edges, reportEdges, corrections, plot, readOnly),
       {
@@ -5499,7 +5951,8 @@ function createRnu({
                 ...neighbourBlocks,
                 { kind: 'assumptions' }
               ]
-      }
+      },
+      ...(envelope.view === undefined ? [] : [envelope.view])
     ];
     const attribution = [
       report.attribution,
@@ -5507,7 +5960,7 @@ function createRnu({
     ]
       .filter((a, i, all) => a !== '' && all.indexOf(a) === i)
       .join(' · ');
-    return fitted({
+    const augmented = fitted({
       ...report,
       overview: overviewWith(report.overview, planned, regime, retiredStageRunning()),
       features: [...report.features, ...derivedFeatures],
@@ -5520,6 +5973,256 @@ function createRnu({
       attribution: cut(attribution, SHORT),
       views
     });
+    // Sprint 002.7 DEC-5: the regulation sheet, from the report as it is sent.
+    const sheet = sheetOf(augmented, { site, zones: reportFacts?.zones ?? [] });
+    const answered = sheet === undefined ? augmented : { ...augmented, sheet };
+    // 002.8 (RD-6, DEC-5, DEC-2): a read's answer — never a progress report —
+    // keeps its own inputs for `checkVariation`, the questions and the
+    // programme warning, with the measures its checks were computed from.
+    if (measure) {
+      remembered(lastReads, contextKey(site), {
+        documentVersion: answered.document?.version,
+        ruleIds: new Set(answered.rules.map((r) => r.id)),
+        inputs: { ...inputs, envelope: envelope.inset ? envelope.feature : undefined },
+        report: answered,
+        open: {
+          variationKey: variationKeyOf(service),
+          calls,
+          buildings: evaluated.buildings,
+          figures: surfaces?.figures
+        }
+      });
+    }
+    return answered;
+  }
+
+  /**
+   * Sprint 002.8 DEC-7: the checks of one design against one read's inputs —
+   * R.111-17, R.111-16 and R.111-15 under the national rules, the drawn,
+   * entered and written rules, and the surfaces' — separated out of `augment`
+   * so a parked variation is checked by the read's own pipeline.
+   *
+   * `inputs` are the read's: the report, the Site, the regime, the edges and
+   * their roles, the roads, the alignments, the planned rules and their
+   * metadata, the section, the report's facts and flags. `target.service` is
+   * the Site service the design is measured through — the open Document's, or
+   * a parked variation's view (`variationView`). `beforeSurfaces` runs once
+   * the per-building checks are folded (`augment` draws the bands and the
+   * envelope there) and answers the envelope the capacity reads. Between
+   * buildings and steps, an aborted `signal` stops it (it throws).
+   *
+   * `{ checks, perEdge, surfaces, buildings }`: the report's checks, the
+   * per-edge checks before 002.4 Q5's fold (the bands'), the Surfaces result
+   * and the buildings measured.
+   */
+  function evaluateChecks(inputs, target, { assume, note, measure = true, signal, beforeSurfaces }) {
+    const { site, national, edges, roads, roleOf, alignments, planned, section, readOnly } = inputs;
+    const service = target.service;
+    const stop = () => {
+      if (signal?.aborted) throw signal.reason ?? new Error('aborted');
+    };
+    const checks = [];
+    const named = measure && service?.measures !== undefined ? namedBuildings(service) : [];
+    // The R.111-17 checks (DEC-6, DEC-7), from fresh measures on every read.
+    if (measure && national && service?.measures !== undefined) {
+      assume('site-boundary-parcel', { key: 'fr-urban-rules.assumption.siteBoundaryParcel' });
+      assume('balconies-not-modelled', { key: 'fr-urban-rules.assumption.balconies' });
+      if (edges === undefined) {
+        const main = service.measures.projection();
+        const buildings = [
+          ...(main.available ? [{ id: main.buildingId, name: undefined }] : []),
+          ...named.filter((b) => !main.available || b.id !== main.buildingId)
+        ];
+        for (const building of buildings) {
+          checks.push({
+            id: `r111-17:${building.id ?? 'main'}:no-boundary`,
+            ruleId: 'rnu:R.111-17',
+            subject: {
+              kind: 'building',
+              ...(building.id === undefined ? {} : { id: building.id }),
+              label:
+                building.name === undefined
+                  ? { key: 'fr-urban-rules.check.subject.mainBuilding' }
+                  : { text: cut(building.name, 200) }
+            },
+            result: 'not_checked',
+            assumptionIds: ['site-boundary-parcel', note('no-boundary')]
+          });
+          // R.111-16 has no street edge without a boundary either: said the same way.
+          checks.push({
+            id: `r111-16:${building.id ?? 'main'}:no-boundary`,
+            ruleId: 'rnu:R.111-16',
+            subject: {
+              kind: 'building',
+              ...(building.id === undefined ? {} : { id: building.id }),
+              label:
+                building.name === undefined
+                  ? { key: 'fr-urban-rules.check.subject.mainBuilding' }
+                  : { text: cut(building.name, 200) }
+            },
+            result: 'not_checked',
+            assumptionIds: [note('no-boundary')]
+          });
+        }
+      } else if (roads !== undefined) {
+        const buildings = [{ id: undefined, name: undefined }, ...named];
+        // Never past the host's 1,000 checks (refused whole): the targets each
+        // building is asked for are capped, and the cap said.
+        const perBuilding = Math.floor(HOST_LIMITS.checks / buildings.length);
+        const all = edges
+          .filter((e) => roleOf.get(e.edge)?.role !== 'street')
+          .map((e) => ({ kind: 'boundary-edge', edge: e.edge }));
+        const targets = all.slice(0, perBuilding);
+        if (all.length > targets.length) {
+          assume('checks-capped', {
+            key: 'fr-urban-rules.assumption.checksCapped',
+            params: { count: String(targets.length) }
+          });
+        }
+        const seen = new Set();
+        if (targets.length > 0) {
+          for (const building of buildings) {
+            stop();
+            if (building.id !== undefined && seen.has(building.id)) continue;
+            try {
+              const made = evaluateBuilding(
+                service,
+                building,
+                targets,
+                (edge) => roleOf.get(edge)?.assumptionId,
+                note
+              );
+              // The main building's id, once answered, is not checked twice as a named one.
+              for (const c of made) seen.add(c.id.split(':')[1]);
+              checks.push(...made);
+            } catch (cause) {
+              log(`${SOURCE_ID}: R.111-17 could not be evaluated: ${String(cause)}`);
+              for (const t of targets)
+                checks.push({
+                  id: `r111-17:${building.id ?? 'main'}:${t.edge}`,
+                  ruleId: 'rnu:R.111-17',
+                  subject: {
+                    kind: 'boundary-edge',
+                    id: String(t.edge),
+                    label: { key: 'fr-urban-rules.check.subject.main', params: { edge: t.edge } }
+                  },
+                  result: 'not_checked',
+                  assumptionIds: [note('unavailable')]
+                });
+            }
+          }
+        }
+      }
+      if (checks.some((c) => c.assumptionIds.includes('datum-derived'))) {
+        assume('datum-derived', { key: 'fr-urban-rules.assumption.datumDerived' });
+      }
+      if (checks.some((c) => c.assumptionIds.includes('roof-overhangs-unread'))) {
+        assume('roof-overhangs-unread', { key: 'fr-urban-rules.assumption.roofOverhangsUnread' });
+      }
+      stop();
+      // Sprint 002.1b: R.111-16 to each opposite alignment, R.111-15 between buildings.
+      const projectBuildings = [{ id: undefined, name: undefined }, ...named];
+      if (alignments !== undefined && alignments.size > 0) {
+        try {
+          checks.push(
+            ...r11116Checks(service, site, projectBuildings, alignments, roleOf, note, assume)
+          );
+        } catch (cause) {
+          log(`${SOURCE_ID}: R.111-16 could not be evaluated: ${String(cause)}`);
+        }
+      }
+      if (alignments !== undefined && alignments.size === 0) {
+        // No street edge (002.1a DEC-3 item 5): R.111-16 has no alignment to
+        // measure to, and says why, once per building.
+        const reason = roads?.refused !== undefined ? 'roads-unavailable' : 'no-road';
+        const main = service.measures.projection();
+        const subjects = [
+          ...(main.available ? [{ id: main.buildingId, name: undefined }] : []),
+          ...named.filter((b) => !main.available || b.id !== main.buildingId)
+        ];
+        for (const building of subjects) {
+          checks.push({
+            id: `r111-16:${building.id}:no-street`,
+            ruleId: 'rnu:R.111-16',
+            subject: {
+              kind: 'building',
+              id: building.id,
+              label:
+                building.name === undefined
+                  ? { key: 'fr-urban-rules.check.subject.mainBuilding' }
+                  : { text: cut(building.name, 200) }
+            },
+            result: 'not_checked',
+            assumptionIds: [note(reason)]
+          });
+        }
+      }
+      stop();
+      try {
+        const main =
+          named.length > 0 || (site.existingBuilding?.parts ?? []).length > 0
+            ? service.measures.projection()
+            : undefined;
+        checks.push(
+          ...r11115Checks(service, site, main?.available ? main.buildingId : undefined, named, note)
+        );
+      } catch (cause) {
+        log(`${SOURCE_ID}: R.111-15 could not be evaluated: ${String(cause)}`);
+      }
+      for (const [id, key] of [
+        ['governed-by-floor', 'fr-urban-rules.assumption.governedByFloor'],
+        ['governed-by-rise', 'fr-urban-rules.assumption.governedByRise'],
+        ['adjoins-partially', 'fr-urban-rules.assumption.adjoinsPartially']
+      ]) {
+        if (checks.some((c) => c.assumptionIds.includes(id))) assume(id, { key });
+      }
+      if (checks.some((c) => c.assumptionIds.includes('adjoins'))) {
+        assume('adjoins', {
+          key: 'fr-urban-rules.assumption.adjoins',
+          params: { distance: ADJOINING.distance, length: 1 }
+        });
+      }
+    }
+
+    // Sprint 002.2 (DEC-7): checks on the drawn and entered rules.
+    if (measure && service?.measures !== undefined) {
+      stop();
+      try {
+        checks.push(...plannedChecks(service, planned, edges, roleOf, note, assume));
+      } catch (cause) {
+        log(`${SOURCE_ID}: the drawn and entered rules could not be checked: ${String(cause)}`);
+      }
+    }
+
+    // 002.4 Q5: the bands are drawn per edge; the report shows one check per rule per building.
+    const perEdge = [...checks];
+    const folded = oneCheckPerBuilding(checks);
+    const envelope = beforeSurfaces?.({ perEdge, checks: folded }) ?? inputs.envelope;
+
+    // Sprint 002.3: the Surfaces view, its checks and the programme's figures.
+    let surfaces;
+    stop();
+    try {
+      surfaces = surfacesFor({
+        service,
+        site,
+        planned,
+        reportFacts: inputs.reportFacts,
+        regime: inputs.regime,
+        report: inputs.report,
+        section,
+        readOnly,
+        envelope,
+        flags: inputs.flags,
+        assume,
+        note,
+        measure
+      });
+      folded.push(...surfaces.checks);
+    } catch (cause) {
+      log(`${SOURCE_ID}: the surfaces could not be composed: ${String(cause)}`);
+    }
+    return { checks: folded, perEdge, surfaces, buildings: named };
   }
 
   /**
@@ -5533,8 +6236,17 @@ function createRnu({
     let { edges, checks, assumptions, views, features } = report;
     const said = [];
     // The host refuses past 100,000 points: derived lines go first.
+    // 096.9 DEC-2: a volume's lines and rings count too.
     const pointsOf = (f) =>
-      (f.rings ?? []).reduce((sum, ring) => sum + ring.length, 0) + (f.line?.length ?? 0);
+      (f.rings ?? []).reduce((sum, ring) => sum + ring.length, 0) +
+      (f.line?.length ?? 0) +
+      (f.volume?.ceilings ?? []).reduce(
+        (sum, c) =>
+          sum +
+          (c.from?.length ?? 0) +
+          (c.within ?? []).reduce((total, ring) => total + ring.length, 0),
+        0
+      );
     let points = features.reduce((sum, f) => sum + pointsOf(f), 0);
     if (points > 95_000) {
       const kept = [];
@@ -5550,7 +6262,9 @@ function createRnu({
         id: 'features-capped',
         text: {
           key: 'fr-urban-rules.assumption.featuresCapped',
-          params: { count: features.length }
+          // A string, never a number: the sheet prints assumptions, and a number in a
+          // phrase is grouped with U+202F in French, outside the print font (002.7 DEC-6).
+          params: { count: String(features.length) }
         }
       });
     }
@@ -5560,7 +6274,7 @@ function createRnu({
       features = [...official, ...features.filter((f) => f.official === false)].slice(0, 1900);
       said.push({
         id: 'features-capped',
-        text: { key: 'fr-urban-rules.assumption.featuresCapped', params: { count: 1900 } }
+        text: { key: 'fr-urban-rules.assumption.featuresCapped', params: { count: '1900' } }
       });
     }
     if (edges.length > HOST_LIMITS.edges) {
@@ -5576,7 +6290,7 @@ function createRnu({
         id: 'checks-capped-report',
         text: {
           key: 'fr-urban-rules.assumption.checksCapped',
-          params: { count: HOST_LIMITS.checks }
+          params: { count: String(HOST_LIMITS.checks) }
         }
       });
     }
@@ -6067,6 +6781,14 @@ function createRnu({
 
   /** Ring digest (else the plot) → `{ streetKey, parcels, el7, buildings }`: per Site, per session. */
   const contextCache = new Map();
+  /**
+   * Sprint 002.8 (RD-6, DEC-5, DEC-2): context key → the last read's answer for
+   * that Site — `{ documentVersion, ruleIds, inputs, report, open }`, its own
+   * inputs and the measures its checks were computed from. Session memory,
+   * bounded as the other caches; what `checkVariation`, the questions and the
+   * programme warning read, never a network call.
+   */
+  const lastReads = new Map();
   const contextKey = (site) => ringDigest(site) ?? `plot#${plotIdsOf(site).join(',')}`;
   const contextKnown = (site) => contextCache.get(contextKey(site));
 
@@ -7215,6 +7937,8 @@ function createRnu({
         unit: parse.unit,
         provenance: 'drawn',
         rings: prescription.geometry?.rings ?? [],
+        // 002.7 DEC-2: a required setback line (CNIG 15) replaces R.111-16's alignment.
+        lines: prescription.geometry?.lines ?? [],
         kind,
         relabelled
       });
@@ -7659,7 +8383,7 @@ function createRnu({
     const main = service.measures.projection();
     const buildings = [
       ...(main.available ? [{ id: main.buildingId, name: undefined, projection: main }] : []),
-      ...namedBuildings().filter((b) => !main.available || b.id !== main.buildingId)
+      ...namedBuildings(service).filter((b) => !main.available || b.id !== main.buildingId)
     ];
     for (const rule of planned.rules) {
       const info = planned.meta.get(rule.id);
@@ -8052,56 +8776,566 @@ function createRnu({
     return checks;
   }
 
+  // ── Sprint 002.7: the theoretical envelope — outline, volume, view ─────────────
+
   /**
-   * DEC-7: the plan envelope from the confirmed setbacks, at the confirmed
-   * height as its label. Review fix S5: only on a convex Site boundary — on a
-   * concave one an edge's half-plane cuts across the other wing (an L-shaped
-   * plot loses a whole leg), so none is drawn there and the report says why
-   * (`{ notConvex: true }`). The strip-by-strip inset is 002.7's envelope.
+   * DEC-3: whether the regime can have an envelope. `none` carries the notice
+   * that says why; a carte communale whose plot is only partly in a
+   * restricted sector draws one, said (`partly`).
    */
-  function envelopeFeature(planned, edges, roleOf) {
-    if (edges === undefined) return undefined;
-    const confirmed = planned.rules.some(
-      (r) =>
-        r.status === 'confirmed' &&
-        r.limit?.kind === 'value' &&
-        (r.kind === 'road_setback' || r.kind === 'boundary_setback')
-    );
-    if (confirmed && !convexRing(edges.map((e) => e.a))) return { notConvex: true };
-    const setbacks = planned.rules.filter(
-      (r) =>
-        r.status === 'confirmed' &&
-        r.limit?.kind === 'value' &&
-        (r.kind === 'road_setback' || r.kind === 'boundary_setback')
-    );
-    if (setbacks.length === 0) return undefined;
-    const setbackOf = (edge) => {
-      let d = 0;
-      for (const rule of setbacks) {
-        const roles =
-          planned.meta.get(rule.id).roles ??
-          (rule.kind === 'road_setback' ? ['street'] : ['side', 'rear']);
-        if (roles.includes(roleOf.get(edge.edge)?.role)) d = Math.max(d, rule.limit.quantity.value);
+  function envelopeRegime(regime, reportFacts) {
+    if (regime === 'not_published') return { none: 'fr-urban-rules.envelope.notice.notPublished' };
+    if (regime === 'cc') {
+      const sectors = reportFacts?.typesects ?? [];
+      const closed = sectors.filter((t) => t === '03').length;
+      if (closed > 0 && closed === sectors.length)
+        return { none: 'fr-urban-rules.envelope.notice.ccRestricted' };
+      if (closed > 0) return { partly: true };
+    }
+    if (!['rnu', 'cc', 'plu', 'plui'].includes(regime)) return { skip: true };
+    return {};
+  }
+
+  const SETBACK_KINDS = new Set(['road_setback', 'boundary_setback']);
+  const BUDGET_KINDS = new Set([
+    'building_distance',
+    'footprint_ratio',
+    'green_ratio',
+    'floor_area_max',
+    'extension_max',
+    'annex_max',
+    'parking'
+  ]);
+  const NOT_APPLIED_STATUS = {
+    to_confirm: 'fr-urban-rules.envelope.reason.toConfirm',
+    information: 'fr-urban-rules.envelope.reason.information',
+    not_evaluable: 'fr-urban-rules.envelope.reason.notEvaluable',
+    not_applicable: 'fr-urban-rules.envelope.reason.notApplicable'
+  };
+  const rolesOfRule = (planned, rule) =>
+    planned.meta.get(rule.id)?.roles ??
+    (rule.kind === 'road_setback' ? ['street'] : ['side', 'rear']);
+  const INSET_EFFECT_KEYS = {
+    street: 'fr-urban-rules.envelope.effect.insetStreet',
+    side: 'fr-urban-rules.envelope.effect.insetSide',
+    rear: 'fr-urban-rules.envelope.effect.insetRear',
+    'side,rear': 'fr-urban-rules.envelope.effect.insetSideRear'
+  };
+
+  /**
+   * DEC-2: the Site boundary's edges of `roles` as polylines — each contiguous
+   * run one polyline (R.111-17 measures to "the nearest point of the limit"),
+   * the whole ring closed when every edge has one of the roles.
+   */
+  function chainsOf(edges, roleOf, roles, keep = () => true) {
+    const has = edges.map((e) => roles.includes(roleOf.get(e.edge)?.role) && keep(e));
+    if (!has.some(Boolean)) return [];
+    if (has.every(Boolean)) return [[...edges.map((e) => e.a), edges[0].a]];
+    const n = edges.length;
+    const start = has.findIndex((h, i) => !h && has[(i + 1) % n]);
+    const chains = [];
+    let current;
+    for (let step = 1; step <= n; step += 1) {
+      const i = (start + step) % n;
+      if (has[i]) {
+        current ??= [edges[i].a];
+        current.push(edges[i].b);
+      } else if (current !== undefined) {
+        chains.push(current);
+        current = undefined;
       }
-      return d;
+    }
+    if (current !== undefined) chains.push(current);
+    return chains;
+  }
+
+  /**
+   * DEC-2: the opposite alignments as polylines, one per street edge, those
+   * whose ends meet within a metre (consecutive street edges facing one line)
+   * joined into one.
+   */
+  function alignmentLines(alignments) {
+    const lines = [...(alignments?.values() ?? [])]
+      .sort((a, b) => a.edge - b.edge)
+      .map((a) => a.points)
+      .filter((points) => Array.isArray(points) && points.length >= 2);
+    const joined = [];
+    for (const line of lines) {
+      const last = joined.at(-1);
+      const end = last?.at(-1);
+      if (
+        end !== undefined &&
+        Math.hypot(end.easting - line[0].easting, end.northing - line[0].northing) <= 1
+      )
+        joined[joined.length - 1] = [...last, ...line.slice(1)];
+      else joined.push([...line]);
+    }
+    return joined;
+  }
+
+  /** A rise or a factor as a short string (screen words; never a figure the sheet carries). */
+  const shortNumber = (value) => String(Math.round(value * 100) / 100);
+
+  /**
+   * DEC-1 and DEC-2: what each rule does to the envelope — an inset per edge
+   * role (the largest confirmed minimum), a ceiling, or a reason it shapes
+   * nothing. Confirmed rules only (US-04); every other one is listed with its
+   * status.
+   */
+  function envelopeRulesOf(planned, { edges, roleOf, alignments, national, assume }) {
+    const contributions = [];
+    const ceilings = [];
+    const notApplied = [];
+    const assumptions = new Set();
+    const say = (id, text) => assumptions.add(assume(id, text));
+    // Review 2026-10-21: a confirmed rule the envelope cannot draw (a façade
+    // height, a maximum setback, a budget…) leaves it looser than the rules —
+    // said as an assumption, so the sheet carries it too, not only the view.
+    const NOT_LOOSER = new Set([
+      'fr-urban-rules.envelope.reason.notRegulated',
+      'fr-urban-rules.envelope.reason.minimumHeight'
+    ]);
+    let looser = false;
+    const skip = (rule, key) => {
+      notApplied.push({ rule, reason: { key } });
+      if (rule.status === 'confirmed' && !NOT_LOOSER.has(key)) looser = true;
     };
-    const ring = envelopeRing(edges, setbackOf);
-    if (ring === undefined) return undefined;
-    const heights = planned.rules.filter(
-      (r) => r.status === 'confirmed' && r.kind === 'height_total' && r.limit?.kind === 'value'
+    const presentRoles = new Set(edges.map((e) => roleOf.get(e.edge)?.role));
+    for (const rule of planned.rules) {
+      const info = planned.meta.get(rule.id) ?? {};
+      if (rule.status !== 'confirmed') {
+        skip(rule, NOT_APPLIED_STATUS[rule.status] ?? 'fr-urban-rules.envelope.reason.notEvaluable');
+        continue;
+      }
+      if (rule.statement === 'not_regulated') {
+        skip(rule, 'fr-urban-rules.envelope.reason.notRegulated');
+        continue;
+      }
+      if (rule.limit === undefined || rule.limit.kind === 'described') {
+        skip(rule, 'fr-urban-rules.envelope.reason.described');
+        continue;
+      }
+      if (BUDGET_KINDS.has(rule.kind)) {
+        skip(rule, 'fr-urban-rules.envelope.reason.budget');
+        continue;
+      }
+      if (rule.kind === 'height_facade') {
+        skip(rule, 'fr-urban-rules.envelope.reason.heightFacade');
+        continue;
+      }
+      if (rule.kind === 'height_total') {
+        const limit = rule.limit;
+        if (limit.kind !== 'value' || limit.quantity.unit !== 'm') {
+          skip(rule, 'fr-urban-rules.envelope.reason.other');
+        } else if (limit.comparison === 'min') {
+          skip(rule, 'fr-urban-rules.envelope.reason.minimumHeight');
+        } else if (!(limit.quantity.value > 0 && limit.quantity.value <= VOLUME_LIMITS.metres)) {
+          skip(rule, 'fr-urban-rules.envelope.reason.pastLimits');
+        } else {
+          const within =
+            info.provenance === 'drawn' && Array.isArray(info.rings) && info.rings.length > 0
+              ? info.rings
+              : undefined;
+          say('envelope-height-ground', { key: 'fr-urban-rules.assumption.envelopeHeightGround' });
+          if (within !== undefined)
+            say('envelope-height-within', {
+              key: 'fr-urban-rules.assumption.envelopeHeightWithin'
+            });
+          ceilings.push({
+            rule,
+            ceiling: {
+              kind: 'height',
+              metres: limit.quantity.value,
+              ...(within === undefined ? {} : { within })
+            },
+            effect: {
+              key:
+                within === undefined
+                  ? 'fr-urban-rules.envelope.effect.height'
+                  : 'fr-urban-rules.envelope.effect.heightWithin'
+            },
+            value: { value: limit.quantity.value, unit: 'm' }
+          });
+        }
+        continue;
+      }
+      if (!SETBACK_KINDS.has(rule.kind)) {
+        skip(rule, 'fr-urban-rules.envelope.reason.other');
+        continue;
+      }
+      const roles = rolesOfRule(planned, rule);
+      if (!roles.some((role) => presentRoles.has(role))) {
+        skip(rule, 'fr-urban-rules.envelope.reason.noEdge');
+        continue;
+      }
+      const limit = rule.limit;
+      if (limit.kind === 'value') {
+        if (limit.comparison !== 'min') {
+          skip(rule, 'fr-urban-rules.envelope.reason.maximum');
+        } else if (limit.quantity.unit !== 'm') {
+          skip(rule, 'fr-urban-rules.envelope.reason.other');
+        } else if (limit.quantity.value > 0) {
+          contributions.push({ rule, roles, distance: limit.quantity.value });
+        } else skip(rule, 'fr-urban-rules.envelope.reason.other');
+        continue;
+      }
+      if (limit.kind !== 'height_relative' || !(limit.factor > 0)) {
+        skip(rule, 'fr-urban-rules.envelope.reason.other');
+        continue;
+      }
+      // DEC-1: its minimum insets the outline on its edges, whatever its slope.
+      const minimum = limit.minimum?.unit === 'm' ? limit.minimum.value : undefined;
+      if (minimum > 0) contributions.push({ rule, roles, distance: minimum });
+      // DEC-2: distance ≥ factor × height + offset → height ≤ (distance − offset) / factor.
+      const rise = 1 / limit.factor;
+      const offset = limit.offset?.unit === 'm' ? limit.offset.value : 0;
+      const start = offset === 0 ? 0 : -offset / limit.factor;
+      if (!(rise > 0 && rise <= VOLUME_LIMITS.rise) || !(start >= 0 && start <= VOLUME_LIMITS.start)) {
+        skip(rule, 'fr-urban-rules.envelope.reason.facadeOffset');
+        continue;
+      }
+      let from;
+      let effect;
+      let effectFrom;
+      if (rule.kind === 'road_setback' && national) {
+        // R.111-16: from the opposite alignment — or a required setback line drawn (CNIG 15).
+        const setbackLines = planned.rules
+          .filter(
+            (r) =>
+              r.status === 'confirmed' &&
+              planned.meta.get(r.id)?.provenance === 'drawn' &&
+              r.id.startsWith('psc:15:')
+          )
+          .flatMap((r) => planned.meta.get(r.id)?.lines ?? [])
+          .filter((line) => Array.isArray(line) && line.length >= 2);
+        if (setbackLines.length > 0) {
+          from = setbackLines;
+          effect = 'fr-urban-rules.envelope.effect.slopeSetbackLine';
+          effectFrom = 'fr-urban-rules.envelope.effect.slopeSetbackLineFrom';
+          say('envelope-setback-line', { key: 'fr-urban-rules.assumption.envelopeSetbackLine' });
+        } else {
+          from = alignmentLines(alignments);
+          effect = 'fr-urban-rules.envelope.effect.slopeAlignment';
+          effectFrom = 'fr-urban-rules.envelope.effect.slopeAlignmentFrom';
+          for (const a of alignments?.values() ?? [])
+            if (a.path !== undefined && a.points !== undefined) assumptions.add(`alignment-${a.path}`);
+          // Review 2026-10-21: a street edge with no opposite alignment found is not
+          // left without R.111-16 — the slope rises from the edge itself, nearer
+          // than any alignment across the road, so stricter than the rule.
+          const bare = chainsOf(edges, roleOf, ['street'], (e) => alignments?.get(e.edge)?.points === undefined);
+          if (bare.length > 0) {
+            if (from.length === 0) {
+              effect = 'fr-urban-rules.envelope.effect.slopeStreet';
+              effectFrom = 'fr-urban-rules.envelope.effect.slopeStreetFrom';
+            }
+            from = [...from, ...bare];
+            say('envelope-alignment-missing', { key: 'fr-urban-rules.assumption.envelopeAlignmentMissing' });
+          }
+        }
+        if (from.length === 0) {
+          skip(rule, 'fr-urban-rules.envelope.reason.noAlignment');
+          continue;
+        }
+      } else {
+        from = chainsOf(edges, roleOf, rule.kind === 'road_setback' ? ['street'] : roles);
+        const street = rule.kind === 'road_setback';
+        effect = street
+          ? 'fr-urban-rules.envelope.effect.slopeStreet'
+          : 'fr-urban-rules.envelope.effect.slopeBoundary';
+        effectFrom = street
+          ? 'fr-urban-rules.envelope.effect.slopeStreetFrom'
+          : 'fr-urban-rules.envelope.effect.slopeBoundaryFrom';
+        if (rule.kind === 'boundary_setback')
+          say('envelope-boundary-slope', { key: 'fr-urban-rules.assumption.envelopeBoundarySlope' });
+      }
+      if (limit.reference === 'facade_height')
+        say('envelope-facade-ceiling', { key: 'fr-urban-rules.assumption.envelopeFacadeCeiling' });
+      if (rule.id === 'rnu:R.111-17')
+        say('envelope-adjoining', { key: 'fr-urban-rules.assumption.envelopeAdjoining' });
+      for (const line of from) {
+        ceilings.push({
+          rule,
+          ceiling: { kind: 'slope', from: line, rise, ...(start > 0 ? { start } : {}) },
+          effect: {
+            key: start > 0 ? effectFrom : effect,
+            ...(start > 0 ? { params: { start: shortNumber(start) } } : {})
+          },
+          value: { key: 'fr-urban-rules.envelope.value.rise', params: { rise: shortNumber(rise) } }
+        });
+      }
+    }
+    return { contributions, ceilings, notApplied, assumptions, looser };
+  }
+
+  /**
+   * DEC-2: the volume's ceilings, merged — the `height` ceilings over the same
+   * area keep the lowest, and one within a prescription that a lower height
+   * over the whole plot covers is dropped; the slopes as they are. `ruleIds`
+   * name the rules each one stands for.
+   */
+  function mergedCeilings(entries) {
+    const heights = new Map();
+    const slopes = [];
+    for (const entry of entries) {
+      const c = entry.ceiling;
+      if (c.kind === 'slope') {
+        slopes.push({ ...c, ruleIds: [entry.rule.id] });
+        continue;
+      }
+      const key = c.within === undefined ? '*' : JSON.stringify(c.within);
+      const held = heights.get(key);
+      if (held === undefined) heights.set(key, { ...c, ruleIds: [entry.rule.id] });
+      else {
+        held.metres = Math.min(held.metres, c.metres);
+        if (!held.ruleIds.includes(entry.rule.id)) held.ruleIds.push(entry.rule.id);
+      }
+    }
+    const whole = heights.get('*');
+    const kept = [...heights.values()].filter(
+      (c) => c.within === undefined || whole === undefined || c.metres < whole.metres
     );
-    const height =
-      heights.length === 0 ? undefined : Math.min(...heights.map((r) => r.limit.quantity.value));
-    return {
+    // Slopes from one line with one rise and start are one ceiling.
+    const uniqueSlopes = [];
+    for (const s of slopes) {
+      const same = uniqueSlopes.find(
+        (t) =>
+          t.rise === s.rise &&
+          (t.start ?? 0) === (s.start ?? 0) &&
+          JSON.stringify(t.from) === JSON.stringify(s.from)
+      );
+      if (same === undefined) uniqueSlopes.push(s);
+      else for (const id of s.ruleIds) if (!same.ruleIds.includes(id)) same.ruleIds.push(id);
+    }
+    return [...kept, ...uniqueSlopes];
+  }
+
+  /**
+   * DEC-2's self-check against 096.9's limits (the host drops a volume whole
+   * for one malformed part, so a volume past them is not sent at all).
+   */
+  function volumeExpressible(ceilings) {
+    const finitePoint = (p) => Number.isFinite(p?.easting) && Number.isFinite(p?.northing);
+    if (ceilings.length === 0 || ceilings.length > VOLUME_LIMITS.ceilings) return false;
+    return ceilings.every((c) => {
+      if (
+        c.within !== undefined &&
+        (c.within.length === 0 || c.within.some((r) => r.length < 3 || !r.every(finitePoint)))
+      )
+        return false;
+      if (c.kind === 'height') return c.metres > 0 && c.metres <= VOLUME_LIMITS.metres;
+      return (
+        Array.isArray(c.from) &&
+        c.from.length >= 2 &&
+        c.from.every(finitePoint) &&
+        c.rise > 0 &&
+        c.rise <= VOLUME_LIMITS.rise &&
+        (c.start ?? 0) >= 0 &&
+        (c.start ?? 0) <= VOLUME_LIMITS.start
+      );
+    });
+  }
+
+  /** DEC-1: the outline's per-edge distances and the rules that set them. */
+  function insetDistances(edges, roleOf, contributions) {
+    return edges.map((e) => {
+      const role = roleOf.get(e.edge)?.role;
+      let d = 0;
+      for (const c of contributions) if (c.roles.includes(role)) d = Math.max(d, c.distance);
+      return d;
+    });
+  }
+
+  /**
+   * DEC-1 to DEC-4: the envelope — `{ feature, groundArea, inset, view }`. The
+   * feature (`envelope`, derived) carries the outline and, when a confirmed
+   * rule shapes a ceiling the editor can draw, the volume; the view lists what
+   * shaped it, what did not and why, and the assumptions it rests on.
+   */
+  function envelopeOf({ planned, edges, roleOf, alignments, regime, reportFacts, national, assume }) {
+    const gate = envelopeRegime(regime, reportFacts);
+    const notices = [];
+    const view = (blocks) => ({
       id: 'envelope',
-      category: 'envelope',
-      official: false,
-      rings: [ring],
-      label:
-        height === undefined
-          ? { key: 'fr-urban-rules.envelope.label' }
-          : { key: 'fr-urban-rules.envelope.labelHeight', params: { height } }
-    };
+      label: { key: 'fr-urban-rules.view.envelope' },
+      blocks
+    });
+    const notice = (key, tone = 'info') => ({ kind: 'notice', tone, text: { key } });
+    if (gate.skip) return {};
+    if (gate.none !== undefined) return { view: view([notice(gate.none)]) };
+    if (edges === undefined)
+      return { view: view([notice('fr-urban-rules.envelope.notice.noBoundary')]) };
+    if (gate.partly) notices.push(notice('fr-urban-rules.envelope.notice.ccPartly', 'warning'));
+    const shaped = envelopeRulesOf(planned, { edges, roleOf, alignments, national, assume });
+    const distances = insetDistances(edges, roleOf, shaped.contributions);
+    const inset = distances.some((d) => d > 0);
+    const ceilings = mergedCeilings(shaped.ceilings);
+    const assumptionIds = new Set(shaped.assumptions);
+    for (const e of edges) {
+      const id = roleOf.get(e.edge)?.assumptionId;
+      if (id !== undefined) assumptionIds.add(id);
+    }
+    let ring;
+    let reentrant = false;
+    if (inset || ceilings.length > 0) {
+      const outline = insetByRole(
+        edges.map((e) => e.a),
+        distances,
+        // A street setback runs from the alignment, which continues past the plot.
+        edges.map((e) => roleOf.get(e.edge)?.role === 'street')
+      );
+      if (outline.ring !== undefined) {
+        ring = outline.ring;
+        reentrant = outline.reentrant && inset;
+      } else {
+        notices.push(
+          notice(
+            outline.failed === 'collapsed'
+              ? 'fr-urban-rules.envelope.notice.collapsed'
+              : 'fr-urban-rules.envelope.notice.shape',
+            'warning'
+          )
+        );
+      }
+    } else {
+      notices.push(notice('fr-urban-rules.envelope.notice.noRule'));
+    }
+    let volume;
+    if (ring !== undefined) {
+      if (ceilings.length === 0) {
+        notices.push(notice('fr-urban-rules.envelope.notice.noCeiling'));
+      } else if (!volumeExpressible(ceilings)) {
+        notices.push(notice('fr-urban-rules.envelope.notice.pastLimits', 'warning'));
+      } else {
+        volume = { ceilings };
+        assumptionIds.add(
+          assume('envelope-lattice', { key: 'fr-urban-rules.assumption.envelopeLattice' })
+        );
+      }
+      assumptionIds.add(
+        assume('envelope-approximate', { key: 'fr-urban-rules.assumption.envelopeApproximate' })
+      );
+      if (reentrant)
+        assumptionIds.add(
+          assume('envelope-reentrant-corners', {
+            key: 'fr-urban-rules.assumption.envelopeReentrantCorners'
+          })
+        );
+      assumptionIds.add(
+        assume('envelope-checks', { key: 'fr-urban-rules.assumption.envelopeChecks' })
+      );
+      // Review 2026-10-21: what makes the drawn envelope looser than the rules is
+      // an assumption, which the sheet prints — a view notice it does not.
+      if (shaped.looser)
+        assumptionIds.add(
+          assume('envelope-not-applied', { key: 'fr-urban-rules.assumption.envelopeNotApplied' })
+        );
+      if (gate.partly)
+        assumptionIds.add(
+          assume('envelope-cc-partly', { key: 'fr-urban-rules.envelope.notice.ccPartly' })
+        );
+    }
+    const groundArea = ring === undefined ? undefined : Math.abs(signedRingArea(ring));
+    const appliedIds = new Set();
+    const applied = [];
+    for (const c of shaped.contributions) {
+      const roles = c.roles.filter((role) => edges.some((e) => roleOf.get(e.edge)?.role === role));
+      const key = INSET_EFFECT_KEYS[[...roles].sort().join(',')] ?? INSET_EFFECT_KEYS['side,rear'];
+      applied.push([c.rule.label, { key }, { value: mm(c.distance), unit: 'm' }]);
+      appliedIds.add(c.rule.id);
+    }
+    if (volume !== undefined) {
+      // One row per rule and effect: two opposite alignments are one R.111-16 row (walk, Mouzay).
+      const seen = new Set();
+      for (const entry of shaped.ceilings) {
+        const key = JSON.stringify([entry.rule.id, entry.effect, entry.value]);
+        appliedIds.add(entry.rule.id);
+        if (seen.has(key)) continue;
+        seen.add(key);
+        applied.push([entry.rule.label, entry.effect, entry.value]);
+      }
+    }
+    const rows = [];
+    if (groundArea !== undefined)
+      rows.push({
+        label: { key: 'fr-urban-rules.envelope.field.groundArea' },
+        value: { value: Math.round(groundArea * 100) / 100, unit: 'm2' }
+      });
+    for (const c of ceilings) {
+      if (c.kind !== 'height') continue;
+      const rule = planned.rules.find((r) => r.id === c.ruleIds[0]);
+      rows.push({
+        label: {
+          key:
+            c.within === undefined
+              ? 'fr-urban-rules.envelope.field.height'
+              : 'fr-urban-rules.envelope.field.heightWithin'
+        },
+        value: { value: c.metres, unit: 'm' },
+        ...(rule === undefined ? {} : { detail: rule.label })
+      });
+    }
+    const blocks = [...notices];
+    if (rows.length > 0) blocks.push({ kind: 'fields', rows });
+    if (applied.length > 0) {
+      blocks.push({ kind: 'heading', text: { key: 'fr-urban-rules.envelope.heading.applied' } });
+      blocks.push({
+        kind: 'table',
+        columns: [
+          { key: 'fr-urban-rules.column.rule' },
+          { key: 'fr-urban-rules.envelope.column.effect' },
+          { key: 'fr-urban-rules.envelope.column.value' }
+        ],
+        rows: applied.slice(0, TABLE_ROWS)
+      });
+    }
+    // A ceiling the volume could not carry is listed as not applied, never as applied.
+    const notApplied = [
+      ...shaped.notApplied,
+      ...(volume === undefined
+        ? shaped.ceilings
+            .filter((entry) => !appliedIds.has(entry.rule.id))
+            .map((entry) => ({
+              rule: entry.rule,
+              reason: {
+                key:
+                  ring === undefined
+                    ? 'fr-urban-rules.envelope.reason.noOutline'
+                    : 'fr-urban-rules.envelope.reason.pastLimits'
+              }
+            }))
+        : [])
+    ].filter((entry, i, all) => all.findIndex((other) => other.rule.id === entry.rule.id) === i);
+    if (notApplied.length > 0) {
+      blocks.push({ kind: 'heading', text: { key: 'fr-urban-rules.envelope.heading.notApplied' } });
+      blocks.push({
+        kind: 'table',
+        columns: [{ key: 'fr-urban-rules.column.rule' }, { key: 'fr-urban-rules.envelope.column.reason' }],
+        rows: notApplied.slice(0, TABLE_ROWS).map((entry) => [entry.rule.label, entry.reason])
+      });
+      if (notApplied.length > TABLE_ROWS)
+        blocks.push({
+          kind: 'notice',
+          tone: 'info',
+          text: {
+            key: 'fr-urban-rules.envelope.notice.moreNotApplied',
+            params: { count: notApplied.length - TABLE_ROWS }
+          }
+        });
+    }
+    if (assumptionIds.size > 0) blocks.push({ kind: 'assumptions', ids: [...assumptionIds] });
+    const feature =
+      ring === undefined
+        ? undefined
+        : {
+            id: 'envelope',
+            category: 'envelope',
+            official: false,
+            rings: [ring],
+            label: { key: 'fr-urban-rules.envelope.label' },
+            ...(appliedIds.size > 0 ? { ruleIds: [...appliedIds] } : {}),
+            ...(volume === undefined ? {} : { volume })
+          };
+    return { feature, groundArea, inset: inset && ring !== undefined, view: view(blocks) };
   }
 
   // ── Sprint 002.3: surfaces, budgets, caps, capacity, procedure ────────────────
@@ -8147,7 +9381,7 @@ function createRnu({
     } catch {
       main = { available: false };
     }
-    const named = namedBuildings();
+    const named = namedBuildings(service);
     return [
       ...(main.available
         ? [{ id: main.buildingId, name: undefined, main: true, projection: main }]
@@ -8239,9 +9473,9 @@ function createRnu({
 
   /**
    * DEC-5: the project's floor-to-floor height — the typical `height` of the
-   * open Document's storeys when the `document` service shows it, else the
-   * editor's default storey height (3 m), said. The SDK's `Level` view holds
-   * no `height` today, so the default is what a host of SDK 1.27 gives.
+   * open Document's storeys, which the `document` service shows as the host
+   * field `Level.property('height')` (002.8: the draft's "holds no height"
+   * was false), else the editor's default storey height (3 m), said.
    */
   function floorToFloor() {
     const heights = [];
@@ -8632,8 +9866,7 @@ function createRnu({
     const greenRules = planned.rules.filter(
       (r) =>
         r.kind === 'green_ratio' &&
-        r.limit?.kind === 'value' &&
-        r.limit.quantity.unit === 'percent' &&
+        greenPercentOf(r) !== undefined &&
         (r.status === 'confirmed' || r.status === 'to_confirm')
     );
     const ground = coverage.available ? coverage.levels?.ground : undefined;
@@ -8646,7 +9879,7 @@ function createRnu({
       const confirmedGreen = greenRules.filter((r) => r.status === 'confirmed');
       const required =
         confirmedGreen.length > 0 && plotArea !== undefined
-          ? (Math.max(...confirmedGreen.map((r) => r.limit.quantity.value)) / 100) * plotArea
+          ? (Math.max(...confirmedGreen.map((r) => greenPercentOf(r))) / 100) * plotArea
           : undefined;
       blocks.push({
         kind: 'fields',
@@ -8669,7 +9902,7 @@ function createRnu({
       });
       for (const rule of greenRules) {
         const limit =
-          plotArea === undefined ? undefined : (rule.limit.quantity.value / 100) * plotArea;
+          plotArea === undefined ? undefined : (greenPercentOf(rule) / 100) * plotArea;
         if (limit === undefined) continue;
         checks.push({
           id: `srf:${rule.id}`,
@@ -8698,7 +9931,8 @@ function createRnu({
     const capRules = planned.rules.filter(
       (r) =>
         ['extension_max', 'annex_max', 'floor_area_max'].includes(r.kind) &&
-        r.limit?.kind === 'value' &&
+        (r.limit?.kind === 'value' ||
+          (r.kind === 'extension_max' && extensionShareOf(r) !== undefined)) &&
         (r.status === 'confirmed' || r.status === 'to_confirm')
     );
     const levelArea = (id) =>
@@ -8762,12 +9996,24 @@ function createRnu({
     const extensionLimits = [];
     for (const rule of capRules) {
       const subject = { kind: 'plot', label: { key: CAP_SUBJECT_KEYS[rule.kind] } };
-      const ratio = rule.limit.quantity.unit === 'percent';
+      const ratio = rule.limit.kind === 'ratio' || rule.limit.quantity.unit === 'percent';
       if (rule.kind === 'extension_max') {
+        // 002.9: a written share of the floor area is never measured against the emprise.
+        const share = ratio ? extensionShareOf(rule) : undefined;
+        if (share?.base === 'other') {
+          checks.push({
+            id: `srf:${rule.id}`,
+            ruleId: rule.id,
+            subject,
+            result: 'not_checked',
+            assumptionIds: [note('ratio-base-unknown')]
+          });
+          continue;
+        }
         const limit = ratio
           ? existing === undefined
             ? undefined
-            : (rule.limit.quantity.value / 100) * pluExistingArea
+            : (share.percent / 100) * pluExistingArea
           : rule.limit.quantity.value;
         if (limit === undefined || extended === undefined) {
           checks.push({
@@ -8989,6 +10235,31 @@ function createRnu({
     return {
       view: view(blocks),
       checks,
+      // Sprint 002.8 DEC-3: the figures `remaining_area` states — this view's own.
+      figures: {
+        emprise: plu.area,
+        empriseRefused: plu.area === undefined ? String(plu.refused ?? 'unavailable') : undefined,
+        definition: definitionLabel,
+        plotArea,
+        allowed,
+        ces:
+          limits.ces === undefined
+            ? undefined
+            : { percent: limits.ces.percent, ruleId: limits.ces.rule.id },
+        notRegulatedRuleId: limits.notRegulated
+          ? planned.rules.find(
+              (r) =>
+                r.status === 'confirmed' &&
+                r.kind === 'footprint_ratio' &&
+                r.statement === 'not_regulated'
+            )?.id
+          : undefined,
+        sdp: { total: sdp.total, missing: sdp.missing ?? 0, estimate: sdp.estimate === true },
+        capacity,
+        groundArea,
+        storeys,
+        floor
+      },
       programme: {
         plotArea,
         allowed,
@@ -9881,7 +11152,8 @@ function createRnu({
         : undefined;
     let envelopeArea;
     const edges = boundaryEdges(site);
-    if (edges !== undefined) {
+    const gate = envelopeRegime(regime, reportFacts);
+    if (edges !== undefined && gate.none === undefined && !gate.skip) {
       const corrections = readOnly ? [] : edgeRolesOf(section);
       const derived = deriveRoles(edges, roadsKnown(site)).roles;
       const roleOf = new Map(
@@ -9890,28 +11162,56 @@ function createRnu({
           return [e.edge, { role: set?.role ?? derived.get(e.edge)?.role ?? 'side' }];
         })
       );
-      const envelope = envelopeFeature(planned, edges, roleOf);
-      if (envelope?.rings?.[0] !== undefined)
-        envelopeArea = Math.abs(signedRingArea(envelope.rings[0]));
+      // 002.7 DEC-1: the outline alone (the capacity reads its ground area where a setback insets it).
+      const contributions = envelopeRulesOf(planned, {
+        edges,
+        roleOf,
+        alignments: undefined,
+        national,
+        assume: (id) => id
+      }).contributions;
+      const distances = insetDistances(edges, roleOf, contributions);
+      if (distances.some((d) => d > 0)) {
+        const outline = insetByRole(
+          edges.map((e) => e.a),
+          distances,
+          edges.map((e) => roleOf.get(e.edge)?.role === 'street')
+        );
+        if (outline.ring !== undefined) envelopeArea = Math.abs(signedRingArea(outline.ring));
+      }
     }
     const floor = floorToFloor();
     const storeys = storeysOf(limits.heights, floor.value);
     const groundLimits = [envelopeArea, allowed].filter((v) => v !== undefined);
     const ground = groundLimits.length === 0 ? undefined : Math.min(...groundLimits);
-    const totals = limits.heights.filter((h) => h.rule.kind === 'height_total');
+    // Sprint 002.8 DEC-2: the storey count is `heightHeadroom`'s — the tightest
+    // confirmed limit, absolute or relative to a distance, over the last read's
+    // main building — no longer the absolute heights alone (002.3 DEC-7).
+    const { headroom, storeys: storeysAllowed } = programmeHeadroom(site, planned.rules, floor.value);
+    const governing = headroom.confirmed;
     return {
       plotArea,
       allowed,
       ces: limits.ces?.percent,
       notRegulated: limits.notRegulated,
       heights: limits.heights,
-      storeysAllowed: storeysOf(totals.length > 0 ? totals : limits.heights, floor.value)?.high,
+      storeysAllowed,
+      governing:
+        governing === undefined
+          ? undefined
+          : governing.kind === 'absolute'
+            ? { kind: 'absolute', height: governing.limit, ruleId: governing.rule.id }
+            : { kind: 'relative', ruleId: governing.rule.id },
       floorToFloor: floor,
       capacity:
         storeys === undefined || ground === undefined
           ? undefined
           : { low: ground * storeys.low, high: ground * storeys.high },
-      anyConfirmed: limits.heights.length > 0 || limits.ces !== undefined || limits.notRegulated
+      anyConfirmed:
+        limits.heights.length > 0 ||
+        limits.ces !== undefined ||
+        limits.notRegulated ||
+        governing !== undefined
     };
   }
 
@@ -10152,6 +11452,1124 @@ function createRnu({
     while (map.size > CACHE_PLOTS) map.delete(map.keys().next().value);
   }
 
+  // ── Sprint 002.8: per-variation checks, height headroom, the assistant's questions ──
+
+  /**
+   * RD-6: the last read's own entry for the Site, when it is the report given —
+   * the same document version and every rule of the report among its own (a
+   * rule the read did not hold means another read). `undefined` otherwise.
+   */
+  function lastReadFor(report, site) {
+    if (!isRecord(report) || !Array.isArray(report.rules) || site === undefined) return undefined;
+    let entry;
+    try {
+      entry = lastReads.get(contextKey(site));
+    } catch {
+      return undefined;
+    }
+    if (entry === undefined) return undefined;
+    if ((report.document?.version ?? undefined) !== entry.documentVersion) return undefined;
+    if (!report.rules.every((rule) => entry.ruleIds.has(rule?.id))) return undefined;
+    return entry;
+  }
+
+  /**
+   * DEC-7: one parked variation's checks, by the read's own pipeline
+   * (`evaluateChecks`) over the variation's view of the Site service, the
+   * host's buildings (096.11 RD-1) and the last read's inputs (RD-6). Reads no
+   * network and starts no read; throws when no read of this Site is the report
+   * given, and when the signal is aborted (between buildings and steps). The
+   * assumptions a check names are kept only where the report holds them — the
+   * host would drop the others and count them.
+   */
+  async function checkVariation(request, { signal } = {}) {
+    const entry = lastReadFor(request?.report, request?.site);
+    if (entry === undefined) {
+      throw new Error(`${SOURCE_ID}: no read of this Site matches the report; read it again`);
+    }
+    if (typeof request.variationId !== 'string' || request.variationId === '') {
+      throw new Error(`${SOURCE_ID}: a variation check needs a variation id`);
+    }
+    const service = siteOf();
+    if (service?.measures === undefined) throw new Error(`${SOURCE_ID}: no Site measures`);
+    if (signal?.aborted) throw signal.reason ?? new Error('aborted');
+    const view = variationView(
+      service,
+      request.variationId,
+      Array.isArray(request.buildings) ? request.buildings : []
+    );
+    const assume = (id) => id;
+    const note = (reason) => `not-checked-${reason}`;
+    const { checks } = evaluateChecks(entry.inputs, { service: view }, { assume, note, signal });
+    const known = new Set(
+      (Array.isArray(request.report.assumptions) ? request.report.assumptions : []).map((a) => a?.id)
+    );
+    // The host refuses more than 1,000 checks whole (096.11), as a read's (`fitted`).
+    return {
+      checks: checks.slice(0, HOST_LIMITS.checks).map((check) =>
+        check.assumptionIds === undefined
+          ? check
+          : { ...check, assumptionIds: check.assumptionIds.filter((id) => known.has(id)) }
+      )
+    };
+  }
+
+  /**
+   * DEC-2 / DEC-3: what the read measured for each building of the open
+   * Document — its projection (height), its storeys and top storey's floor,
+   * and the worst pairs of the relative limits (R.111-17's ratio ½ to the
+   * non-street edges, R.111-16's ratio 1 to the opposite alignments) — taken
+   * from the measures the read's checks were computed from (`open.calls`).
+   */
+  function measuredBuildings(open) {
+    const calls = Array.isArray(open?.calls) ? open.calls : [];
+    const mainCall = calls.find(
+      (c) => c.method === 'projection' && c.args?.buildingId === undefined && c.answer?.available
+    );
+    const mainId = mainCall?.answer.buildingId;
+    const list = [];
+    if (typeof mainId === 'string') list.push({ id: mainId, name: undefined, main: true });
+    for (const b of open?.buildings ?? []) {
+      if (!list.some((x) => x.id === b.id)) list.push({ id: b.id, name: b.name, main: false });
+    }
+    const mine = (building, c) =>
+      c.args?.buildingId === building.id ||
+      (building.main && c.args?.buildingId === undefined);
+    return list.map((building) => {
+      const projection = calls.find(
+        (c) => c.method === 'projection' && mine(building, c) && c.answer?.available
+      )?.answer;
+      const floors = calls.find(
+        (c) => c.method === 'floorAreas' && mine(building, c) && c.answer?.available
+      )?.answer;
+      const storeys = Array.isArray(floors?.storeys) ? floors.storeys : undefined;
+      const top = storeys?.at(-1)?.insideExternalWalls;
+      const relative = [];
+      for (const [ruleId, ratio, kind] of [
+        ['rnu:R.111-17', R111_17.factor, 'boundary-edge'],
+        ['rnu:R.111-16', 1, 'line']
+      ]) {
+        const asked = calls.find(
+          (c) =>
+            c.method === 'distances' &&
+            mine(building, c) &&
+            c.answer?.available &&
+            Array.isArray(c.args?.ratios) &&
+            c.args.ratios.includes(ratio) &&
+            (c.args.targets ?? []).every((t) => t?.kind === kind)
+        );
+        if (asked === undefined) continue;
+        const facades = Array.isArray(asked.answer.facades) ? asked.answer.facades : [];
+        let worst;
+        (asked.answer.targets ?? []).forEach((target, index) => {
+          if (target?.nearest === undefined) return;
+          // R.111-17: an edge the building adjoins is no limit on its height (002.1a DEC-6).
+          if (kind === 'boundary-edge' && adjoining(facades, index, target.nearest) !== undefined) {
+            return;
+          }
+          const pair = (target.worst ?? []).find((w) => w.ratio === ratio);
+          if (pair === undefined || typeof pair.rise !== 'number') return;
+          if (worst === undefined || pair.margin < worst.margin) worst = pair;
+        });
+        if (worst !== undefined) relative.push({ ruleId, factor: ratio, margin: worst.margin });
+      }
+      return {
+        ...building,
+        projection,
+        storeys: storeys?.length,
+        topStoreyArea: top !== undefined && top.refused === undefined ? top.area : undefined,
+        relative
+      };
+    });
+  }
+
+  const ABSOLUTE_HEIGHT_KINDS = new Set(['height_total', 'height_facade']);
+
+  /** A building's measured top and eaves above the lowest ground at its foot, as the checks read them. */
+  function currentHeight(projection) {
+    const height = projection?.height;
+    if (projection === undefined) return { reason: 'no-building' };
+    if (height === undefined || height.unavailable !== undefined) {
+      return { reason: height?.unavailable ?? 'unavailable' };
+    }
+    const top = height.topAboveGround?.fromLowest;
+    const eaves = height.eavesAboveGround?.fromLowest ?? top;
+    if (!Number.isFinite(top)) return { reason: height.relativeUnavailable ?? 'unavailable' };
+    return { top, eaves: Number.isFinite(eaves) ? eaves : top };
+  }
+
+  /**
+   * DEC-2: the height a building may still gain under each height rule of the
+   * report, and the tightest among the confirmed rules and among those to
+   * confirm. Absolute limits (`height_total`, `height_facade`, a drawn
+   * « Hauteur Max-n »): limit − current, from the rule's check where it has
+   * one (so a drawn limit counts only where it is drawn). Relative limits:
+   * the worst pair's margin `m = d − k·Δz` over `k` — conservative, the top
+   * raised by `h` everywhere (R.111-17, R.111-16) — or, for a PLU's own
+   * façade-relative setback, its check's margin over its factor. A rule that
+   * cannot be measured is listed `notChecked`. With no building measured, an
+   * absolute limit leaves its whole value and a relative one is not checked.
+   *
+   * One computation, three readers: `can_add_storey`, `max_height` and the
+   * programme warning (`storeyLimit`).
+   */
+  function heightHeadroom(report, building, storeyHeight) {
+    const current = currentHeight(building?.projection);
+    const checks = Array.isArray(report?.checks) ? report.checks : [];
+    const limits = [];
+    const notChecked = [];
+    const ofBuilding = (rule) =>
+      checks.find(
+        (c) =>
+          c.ruleId === rule.id &&
+          (building?.id === undefined || c.subject?.id === building.id || c.subject?.id === undefined)
+      );
+    for (const rule of Array.isArray(report?.rules) ? report.rules : []) {
+      if (rule.status !== 'confirmed' && rule.status !== 'to_confirm' && rule.status !== 'not_evaluable')
+        continue;
+      const absolute = ABSOLUTE_HEIGHT_KINDS.has(rule.kind);
+      const relative = rule.limit?.kind === 'height_relative';
+      if (!absolute && !relative) continue;
+      if (rule.status === 'not_evaluable' || (absolute && rule.limit?.kind !== 'value')) {
+        if (absolute && rule.statement !== 'not_regulated') notChecked.push(rule);
+        continue;
+      }
+      if (absolute) {
+        const { quantity, comparison } = rule.limit;
+        if (comparison !== 'max' || quantity.unit !== 'm') continue;
+        const check = ofBuilding(rule);
+        let headroom;
+        if (check?.measured !== undefined && check?.limit !== undefined) {
+          // The rule's value as it stands, against the height its check measured:
+          // the programme warning reads the section's rules, which may hold a
+          // value edited since that read (review 2026-10-21).
+          headroom = quantity.value - check.measured.value;
+        } else if (check?.result === 'not_checked') {
+          notChecked.push(rule);
+          continue;
+        } else if (rule.id.startsWith('psc:') && current.top !== undefined) {
+          // A drawn limit with no check for this building is drawn elsewhere on the plot.
+          continue;
+        } else if (current.top !== undefined) {
+          headroom = quantity.value - (rule.kind === 'height_facade' ? current.eaves : current.top);
+        } else if (current.reason === 'no-building') {
+          headroom = quantity.value;
+        } else {
+          notChecked.push(rule);
+          continue;
+        }
+        limits.push({ rule, kind: 'absolute', limit: quantity.value, headroom: mm(headroom) });
+        continue;
+      }
+      const factor = rule.limit.factor;
+      if (!(factor > 0)) continue;
+      const measured = (building?.relative ?? []).find((r) => r.ruleId === rule.id);
+      if (measured !== undefined) {
+        // A target the read could not measure (an alignment off the terrain) is said too.
+        const unmeasured = checks.some(
+          (c) =>
+            c.ruleId === rule.id &&
+            c.result === 'not_checked' &&
+            (c.subject?.id === undefined || c.subject.id === building.id)
+        );
+        limits.push({
+          rule,
+          kind: 'relative',
+          factor,
+          headroom: mm(measured.margin / factor),
+          ...(unmeasured ? { partly: true } : {})
+        });
+        continue;
+      }
+      const check = ofBuilding(rule);
+      if (
+        !rule.id.startsWith('rnu:') &&
+        check?.measured !== undefined &&
+        check?.limit !== undefined &&
+        rule.limit.reference === 'facade_height'
+      ) {
+        limits.push({
+          rule,
+          kind: 'relative',
+          factor,
+          headroom: mm((check.measured.value - check.limit.value) / factor)
+        });
+        continue;
+      }
+      // R.111-16 and R.111-17 with nothing measured (no boundary, no alignment) stay unchecked.
+      if (current.reason !== 'no-building') notChecked.push(rule);
+    }
+    limits.sort((a, b) => a.headroom - b.headroom);
+    const tightest = (status) => limits.find((l) => l.rule.status === status);
+    return {
+      current,
+      limits,
+      notChecked,
+      confirmed: tightest('confirmed'),
+      toConfirm: tightest('to_confirm'),
+      storeyHeight
+    };
+  }
+
+  /**
+   * DEC-2: the storeys the confirmed headroom allows — the current storeys
+   * plus the storeys the headroom holds. When the storeys are not measured
+   * (no floor answered), the height the rules allow — the current top plus the
+   * headroom, the limit itself for an absolute one — over the storey height,
+   * which is 002.3 DEC-5's count for an absolute limit.
+   */
+  function storeyLimit(headroom, storeyHeight, currentStoreys) {
+    if (headroom?.confirmed === undefined || !(storeyHeight > 0)) return undefined;
+    const room = headroom.confirmed.headroom;
+    if (Number.isInteger(currentStoreys)) {
+      return currentStoreys + Math.floor((room + RESOLUTION_HALF) / storeyHeight);
+    }
+    // An absolute limit is the height itself — a façade limit counts the
+    // storeys under the eaves, never the roof above them (review 2026-10-21:
+    // top + (façade limit − eaves) counted the roof as storeys).
+    const allowed =
+      headroom.confirmed.kind === 'absolute'
+        ? headroom.confirmed.limit
+        : (headroom.current.top ?? 0) + room;
+    return Math.max(0, Math.floor((allowed + RESOLUTION_HALF) / storeyHeight));
+  }
+
+  /**
+   * The programme warning's reading (002.3 DEC-7, moved onto `heightHeadroom`
+   * here): the main building of the last read for the Site, or none.
+   */
+  function programmeHeadroom(site, rules, storeyHeight) {
+    const entry = site === undefined ? undefined : lastReads.get(contextKey(site));
+    const buildings = entry === undefined ? [] : measuredBuildings(entry.open);
+    const building = buildings.find((b) => b.main) ?? buildings[0];
+    // The rules as the section stands now (the enricher's own), the checks and
+    // measures of the last read: a rule entered since is limit − current height.
+    const headroom = heightHeadroom(
+      { rules, checks: entry?.report?.checks ?? [] },
+      building,
+      storeyHeight
+    );
+    return { headroom, storeys: storeyLimit(headroom, storeyHeight, building?.storeys) };
+  }
+
+  // ── The questions (096.12; DEC-1 to DEC-6) ──
+
+  const metres = (value) => ({ value: mm(value), unit: 'm' });
+  const squareMetres = (value) => ({ value: Math.round(value * 100) / 100, unit: 'm2' });
+  const cannotAnswer = (key, params) => ({
+    status: 'cannot-answer',
+    summary: params === undefined ? { key } : { key, params },
+    claims: []
+  });
+  /** DEC-6: the closed list, offered only on its condition; `interp.notADecision` always, last. */
+  const INTERPRETATIONS = {
+    attic: 'fr-urban-rules.question.interp.attic',
+    relativeEstimate: 'fr-urban-rules.question.interp.relativeEstimate',
+    notADecision: 'fr-urban-rules.question.interp.notADecision'
+  };
+  const interpretations = (...conditions) => [
+    ...conditions.filter(Boolean).map((key) => ({ key })),
+    { key: INTERPRETATIONS.notADecision }
+  ];
+  /** 096.12: at most twelve claims; past them the host drops and counts. */
+  const MAX_CLAIMS = 12;
+  const QUESTION_BUILDINGS = 4;
+
+  /** The read the answer stands on, or the reason it cannot answer (criterion 13). */
+  function questionRead(input) {
+    const report = input?.report;
+    if (!isRecord(report) || !Array.isArray(report.rules) || report.rules.length === 0) {
+      if (report?.regime?.code === 'not_published') {
+        return { refused: cannotAnswer('fr-urban-rules.question.notPublished') };
+      }
+      return { refused: cannotAnswer('fr-urban-rules.question.notRead') };
+    }
+    const entry = lastReadFor(report, input.site);
+    if (entry === undefined) return { refused: cannotAnswer('fr-urban-rules.question.readAgain') };
+    return { report, entry };
+  }
+
+  /**
+   * DEC-1: the buildings an answer is about — the one named (matched on the
+   * open Document's names), the only one, or up to four; `{ refused }` when
+   * none is drawn or the name matches none.
+   */
+  function questionBuildings(entry, name) {
+    const all = measuredBuildings(entry.open);
+    if (all.length === 0) return { refused: cannotAnswer('fr-urban-rules.question.noBuilding') };
+    if (typeof name === 'string' && name.trim() !== '') {
+      const wanted = name.trim().toLocaleLowerCase('fr');
+      const found = all.filter((b) => b.name?.trim().toLocaleLowerCase('fr') === wanted);
+      if (found.length === 0) {
+        return {
+          refused: cannotAnswer('fr-urban-rules.question.buildingUnknown', {
+            building: cut(name.trim(), 80)
+          })
+        };
+      }
+      return { buildings: found.slice(0, 1), more: 0 };
+    }
+    return {
+      buildings: all.slice(0, QUESTION_BUILDINGS),
+      more: Math.max(0, all.length - QUESTION_BUILDINGS)
+    };
+  }
+
+  /** The claim that heads a building's part when an answer covers several. */
+  const buildingHeading = (building) =>
+    building.name === undefined
+      ? { text: { key: 'fr-urban-rules.question.forMainBuilding' }, basis: 'report' }
+      : {
+          text: {
+            key: 'fr-urban-rules.question.forBuilding',
+            params: { building: cut(building.name, 200) }
+          },
+          basis: 'report'
+        };
+
+  /**
+   * DEC-5: **Confirm {value}** for a rule to confirm with a value — the very
+   * section 002.2's Confirm action builds (`nextSection`, `nextWritten` for a
+   * written rule) with the target the Rules view's action carries. Nothing
+   * when the read holds no such action, the section is a newer version's, or
+   * the builder refuses.
+   */
+  function confirmOffer(entry, ruleId, input) {
+    const planned = entry.inputs.planned;
+    const rule = planned.rules.find((r) => r.id === ruleId);
+    if (rule === undefined || rule.status !== 'to_confirm' || !planned.meta.has(ruleId)) {
+      return undefined;
+    }
+    let action;
+    try {
+      action = planned.actionsFor(rule).find((a) => a.id === 'confirm');
+    } catch {
+      return undefined;
+    }
+    if (action === undefined) return undefined;
+    const { section, readOnly } = sectionOf(input.sectionData);
+    if (readOnly) return undefined;
+    const built = nextSection(section, { actionId: 'confirm', target: action.target }, plotIdsOf(input.site));
+    if (built.refused !== undefined || built.next === undefined) return undefined;
+    const limit = rule.limit;
+    // The value as the rule states it, in the rule's own unit — what Confirm
+    // records — never converted to the project's: an offer label is a phrase,
+    // with no quantities (096.12). A number parameter, so the host's message
+    // formatter writes it in the reader's locale (« Confirmer 11,5 m »).
+    const shown =
+      limit?.kind === 'value'
+        ? {
+            value: mm(limit.quantity.value),
+            unit: UNIT_SYMBOLS[limit.quantity.unit] ?? limit.quantity.unit
+          }
+        : limit?.kind === 'ratio' && Number.isFinite(limit.percent)
+          ? { value: limit.percent, unit: '%' }
+          : undefined;
+    if (shown === undefined) return undefined;
+    return {
+      label: { key: 'fr-urban-rules.question.offer.confirm', params: shown },
+      data: built.next
+    };
+  }
+
+  /**
+   * DEC-4 / DEC-8: a rule's name inside a claim — its own label, by key in the
+   * extension's words (`fr-urban-rules.rule.*`), or a drawn prescription's label
+   * in guillemets, cut. The host cites the rule; this only says which one.
+   */
+  function ruleName(rule) {
+    const label = rule?.label;
+    if (!isRecord(label)) return '—';
+    if (typeof label.text === 'string') return `« ${cut(label.text, 80)} »`;
+    let text;
+    try {
+      text = translate(label.key, label.params);
+    } catch {
+      text = undefined;
+    }
+    return cut(typeof text === 'string' && text !== '' ? text : String(label.key), 120);
+  }
+
+  /** A relative rule measured only in part: the targets left unchecked are said. */
+  const partlyClaim = (rule) => ({
+    text: { key: 'fr-urban-rules.question.limit.partlyChecked', params: { rule: ruleName(rule) } },
+    basis: 'rule',
+    ruleId: rule.id
+  });
+
+  /** The claims of one height limit for `can_add_storey`. */
+  function storeyLimitClaim(limit, storey) {
+    // Already past the limit today: said as such, never as a negative room.
+    if (limit.headroom < -RESOLUTION_HALF) {
+      return {
+        text: {
+          key:
+            limit.kind === 'absolute'
+              ? 'fr-urban-rules.question.limit.over'
+              : 'fr-urban-rules.question.relative.over',
+          params: { rule: ruleName(limit.rule) }
+        },
+        values: {
+          ...(limit.kind === 'absolute' ? { limit: metres(limit.limit) } : {}),
+          excess: metres(-limit.headroom)
+        },
+        basis: 'rule',
+        ruleId: limit.rule.id
+      };
+    }
+    const after = limit.headroom - storey;
+    const fits = after >= -RESOLUTION_HALF;
+    if (limit.kind === 'absolute') {
+      return {
+        text: {
+          key: fits
+            ? 'fr-urban-rules.question.limit.fits'
+            : 'fr-urban-rules.question.limit.exceeds',
+          params: { rule: ruleName(limit.rule) }
+        },
+        values: {
+          limit: metres(limit.limit),
+          headroom: metres(limit.headroom),
+          storey: metres(storey),
+          ...(fits ? { after: metres(after) } : { excess: metres(-after) })
+        },
+        basis: 'rule',
+        ruleId: limit.rule.id
+      };
+    }
+    return {
+      text: {
+        key: fits
+          ? 'fr-urban-rules.question.relative.fits'
+          : 'fr-urban-rules.question.relative.exceeds',
+        params: { rule: ruleName(limit.rule) }
+      },
+      values: {
+        headroom: metres(limit.headroom),
+        storey: metres(storey),
+        ...(fits ? { after: metres(after) } : { excess: metres(-after) })
+      },
+      basis: 'rule',
+      ruleId: limit.rule.id
+    };
+  }
+
+  /**
+   * The potential issues of the report no height changes: setbacks by value,
+   * budgets, distances — and a relative limit's own floor (R.111-17's 3 m),
+   * which no height lowers (review 2026-10-21). An edge's check is this
+   * building's by its id (`…:<building>:<edge>`, folded to `…:<building>`).
+   */
+  function issuesWhateverTheHeight(report, building) {
+    const rules = new Map(report.rules.map((r) => [r.id, r]));
+    const own = (c) => {
+      const about = c.subject?.kind === 'plot' || c.subject?.id === undefined;
+      if (about || c.subject.id === building.id) return true;
+      if (c.subject.kind !== 'boundary-edge') return false;
+      const parts = String(c.id).split(':');
+      return parts.includes(building.id) || (building.main === true && parts.includes('main'));
+    };
+    return report.checks.filter((c) => {
+      if (c.result !== 'potential_issue') return false;
+      const rule = rules.get(c.ruleId);
+      if (rule === undefined || ABSOLUTE_HEIGHT_KINDS.has(rule.kind)) return false;
+      if (rule.limit?.kind === 'height_relative') {
+        const minimum = rule.limit.minimum?.value;
+        const floored =
+          Number.isFinite(minimum) &&
+          c.limit !== undefined &&
+          c.measured !== undefined &&
+          Math.abs(c.limit.value - minimum) <= RESOLUTION_HALF &&
+          c.measured.value < minimum - RESOLUTION_HALF;
+        if (!floored) return false;
+      }
+      return own(c);
+    });
+  }
+
+  function answerCanAddStorey(input) {
+    const read = questionRead(input);
+    if (read.refused !== undefined) return read.refused;
+    const { report, entry } = read;
+    const chosen = questionBuildings(entry, input.args?.building);
+    if (chosen.refused !== undefined) return chosen.refused;
+    const given = input.args?.storeyHeight;
+    const floor = typeof given === 'number' ? { value: given, assumed: false } : floorToFloor();
+    const storey = floor.value;
+    const several = chosen.buildings.length > 1;
+    const claims = [];
+    let exceeds = false;
+    let toConfirmExceeds = false;
+    let anyLimit = false;
+    let attic = false;
+    let relativeGoverns = false;
+    let governing;
+    let measuredOne = false;
+    for (const building of chosen.buildings) {
+      const headroom = heightHeadroom(report, building, storey);
+      if (several) claims.push(buildingHeading(building));
+      if (headroom.current.top === undefined) {
+        if (!several) {
+          return cannotAnswer('fr-urban-rules.question.heightUnavailable', {
+            reason: cut(String(headroom.current.reason), 80)
+          });
+        }
+        claims.push({
+          text: {
+            key: 'fr-urban-rules.question.heightUnavailable',
+            params: { reason: cut(String(headroom.current.reason), 80) }
+          },
+          basis: 'measured'
+        });
+        continue;
+      }
+      measuredOne = true;
+      claims.push({
+        text: { key: 'fr-urban-rules.question.height.current' },
+        values: { current: metres(headroom.current.top) },
+        basis: 'measured'
+      });
+      claims.push({
+        text: { key: 'fr-urban-rules.question.height.next' },
+        values: { next: metres(headroom.current.top + storey) },
+        basis: 'measured'
+      });
+      for (const limit of headroom.limits) {
+        anyLimit = true;
+        claims.push(storeyLimitClaim(limit, storey));
+        if (limit.partly) claims.push(partlyClaim(limit.rule));
+        if (limit.rule.kind === 'height_facade') attic = true;
+        const over = limit.headroom - storey < -RESOLUTION_HALF;
+        if (over && limit.rule.status === 'confirmed') exceeds = true;
+        if (over && limit.rule.status === 'to_confirm') toConfirmExceeds = true;
+        if (governing === undefined || limit.headroom < governing.headroom) governing = limit;
+      }
+      for (const rule of headroom.notChecked) {
+        claims.push({
+          text: { key: 'fr-urban-rules.question.limit.notChecked', params: { rule: ruleName(rule) } },
+          basis: 'rule',
+          ruleId: rule.id
+        });
+      }
+      for (const check of issuesWhateverTheHeight(report, building)) {
+        claims.push({
+          text: {
+            key:
+              check.measured !== undefined && check.limit !== undefined
+                ? 'fr-urban-rules.question.issueStays'
+                : 'fr-urban-rules.question.issueStaysUnmeasured',
+            params: { rule: ruleName(report.rules.find((r) => r.id === check.ruleId)) }
+          },
+          ...(check.measured !== undefined && check.limit !== undefined
+            ? { values: { measured: check.measured, limit: check.limit } }
+            : {}),
+          basis: 'rule',
+          ruleId: check.ruleId,
+          checkId: check.id
+        });
+      }
+      const now = entry.open.figures?.sdp?.total;
+      if (!several && typeof now === 'number' && typeof building.topStoreyArea === 'number') {
+        const after = now + building.topStoreyArea;
+        claims.push({
+          text: { key: 'fr-urban-rules.question.sdpAfter' },
+          values: { now: squareMetres(now), after: squareMetres(after) },
+          basis: 'measured'
+        });
+        const threshold = PROCEDURE_THRESHOLDS.architect;
+        if (now <= threshold + RESOLUTION_HALF && after > threshold + RESOLUTION_HALF) {
+          claims.push({
+            text: { key: 'fr-urban-rules.question.architect' },
+            values: { threshold: squareMetres(threshold) },
+            basis: 'report'
+          });
+        }
+      }
+    }
+    if (measuredOne && !several) {
+      claims.splice(2, 0, {
+        text: { key: 'fr-urban-rules.question.can_add_storey.empriseUnchanged' },
+        basis: 'report'
+      });
+    }
+    relativeGoverns = governing?.kind === 'relative';
+    // RD-2: the storey height an answer used — assumed (the editor's default), or the
+    // open design's own floor-to-floor height — is said whenever the user named none.
+    const storeySaid = typeof given !== 'number';
+    if (storeySaid) {
+      claims.push({
+        text: {
+          key: floor.assumed
+            ? 'fr-urban-rules.question.storeyHeightAssumed'
+            : 'fr-urban-rules.question.storeyHeightProject'
+        },
+        values: { height: metres(storey) },
+        basis: 'report'
+      });
+    }
+    if (chosen.more > 0) {
+      claims.push({
+        text: { key: 'fr-urban-rules.question.andMore', params: { count: chosen.more } },
+        basis: 'report'
+      });
+    }
+    const summaryKey = exceeds
+      ? 'fr-urban-rules.question.can_add_storey.exceeds'
+      : toConfirmExceeds
+        ? 'fr-urban-rules.question.can_add_storey.roomButToConfirm'
+        : anyLimit
+          ? 'fr-urban-rules.question.can_add_storey.room'
+          : 'fr-urban-rules.question.can_add_storey.noLimit';
+    const offer =
+      governing !== undefined && governing.kind === 'absolute' && !several
+        ? confirmOffer(entry, governing.rule.id, input)
+        : undefined;
+    return {
+      status: 'answered',
+      summary: { key: summaryKey },
+      values: { storey: metres(storey) },
+      claims: keepClaims(claims, storeySaid && chosen.more === 0),
+      interpretation: interpretations(
+        attic && INTERPRETATIONS.attic,
+        relativeGoverns && INTERPRETATIONS.relativeEstimate
+      ).slice(-3),
+      ...(offer === undefined ? {} : { offer })
+    };
+  }
+
+  /**
+   * At most twelve claims, in order; the assumed storey height (RD-2) is kept
+   * whatever is cut, since every figure after it depends on it.
+   */
+  function keepClaims(claims, keepLast) {
+    if (claims.length <= MAX_CLAIMS) return claims;
+    if (!keepLast) return claims.slice(0, MAX_CLAIMS);
+    const last = claims.at(-1);
+    return [...claims.slice(0, MAX_CLAIMS - 1), last];
+  }
+
+  function answerMaxHeight(input) {
+    const read = questionRead(input);
+    if (read.refused !== undefined) return read.refused;
+    const { report, entry } = read;
+    const chosen = questionBuildings(entry, input.args?.building);
+    if (chosen.refused !== undefined) return chosen.refused;
+    const several = chosen.buildings.length > 1;
+    const claims = [];
+    // The tightest limit of any status (the offer's, DEC-5) and the tightest
+    // confirmed one (the summary's): a summary carries no rule, so the host
+    // cannot mark a rule to confirm in it (review 2026-10-21).
+    let governing;
+    let governingHeight;
+    let confirmed;
+    let confirmedHeight;
+    for (const building of chosen.buildings) {
+      const headroom = heightHeadroom(report, building, floorToFloor().value);
+      if (several) claims.push(buildingHeading(building));
+      const top = headroom.current.top;
+      if (top !== undefined) {
+        claims.push({
+          text: { key: 'fr-urban-rules.question.height.current' },
+          values: { current: metres(top) },
+          basis: 'measured'
+        });
+      }
+      for (const limit of headroom.limits) {
+        if (limit.kind === 'absolute') {
+          claims.push({
+            text: {
+              key:
+                top === undefined
+                  ? 'fr-urban-rules.question.max.absoluteOnly'
+                  : limit.headroom < -RESOLUTION_HALF
+                    ? 'fr-urban-rules.question.limit.over'
+                    : 'fr-urban-rules.question.max.absolute',
+              params: { rule: ruleName(limit.rule) }
+            },
+            values: {
+              limit: metres(limit.limit),
+              ...(top === undefined
+                ? {}
+                : limit.headroom < -RESOLUTION_HALF
+                  ? { excess: metres(-limit.headroom) }
+                  : { headroom: metres(limit.headroom) })
+            },
+            basis: 'rule',
+            ruleId: limit.rule.id
+          });
+        } else if (top === undefined) {
+          // A relative limit is a height only above a measured top.
+          claims.push({
+            text: { key: 'fr-urban-rules.question.limit.notChecked', params: { rule: ruleName(limit.rule) } },
+            basis: 'rule',
+            ruleId: limit.rule.id
+          });
+          continue;
+        } else {
+          claims.push({
+            text: {
+              key:
+                limit.headroom < -RESOLUTION_HALF
+                  ? 'fr-urban-rules.question.max.relativeOver'
+                  : 'fr-urban-rules.question.max.relative',
+              params: { rule: ruleName(limit.rule) }
+            },
+            values:
+              limit.headroom < -RESOLUTION_HALF
+                ? { height: metres(top + limit.headroom), excess: metres(-limit.headroom) }
+                : { height: metres(top + limit.headroom), headroom: metres(limit.headroom) },
+            basis: 'rule',
+            ruleId: limit.rule.id
+          });
+        }
+        if (limit.partly) claims.push(partlyClaim(limit.rule));
+        const height = limit.kind === 'absolute' ? limit.limit : top + limit.headroom;
+        if (governing === undefined || limit.headroom < governing.headroom) {
+          governing = limit;
+          governingHeight = height;
+        }
+        if (
+          limit.rule.status === 'confirmed' &&
+          (confirmed === undefined || limit.headroom < confirmed.headroom)
+        ) {
+          confirmed = limit;
+          confirmedHeight = height;
+        }
+      }
+      for (const rule of headroom.notChecked) {
+        claims.push({
+          text: { key: 'fr-urban-rules.question.limit.notChecked', params: { rule: ruleName(rule) } },
+          basis: 'rule',
+          ruleId: rule.id
+        });
+      }
+    }
+    if (chosen.more > 0) {
+      claims.push({
+        text: { key: 'fr-urban-rules.question.andMore', params: { count: chosen.more } },
+        basis: 'report'
+      });
+    }
+    const offer =
+      governing !== undefined && governing.kind === 'absolute' && !several
+        ? confirmOffer(entry, governing.rule.id, input)
+        : undefined;
+    const lower = governing !== undefined && governing !== confirmed;
+    let summaryKey;
+    let summaryValues;
+    if (governing === undefined) {
+      summaryKey = 'fr-urban-rules.question.max_height.none';
+    } else if (confirmed === undefined) {
+      summaryKey = 'fr-urban-rules.question.max_height.toConfirmOnly';
+      summaryValues = { height: metres(governingHeight) };
+    } else {
+      summaryKey = {
+        absolute: lower
+          ? 'fr-urban-rules.question.max_height.absoluteButToConfirm'
+          : 'fr-urban-rules.question.max_height.absolute',
+        relative: lower
+          ? 'fr-urban-rules.question.max_height.relativeButToConfirm'
+          : 'fr-urban-rules.question.max_height.relative'
+      }[confirmed.kind];
+      summaryValues = {
+        height: metres(confirmedHeight),
+        ...(lower ? { lower: metres(governingHeight) } : {})
+      };
+    }
+    return {
+      status: 'answered',
+      summary: { key: summaryKey },
+      ...(summaryValues === undefined ? {} : { values: summaryValues }),
+      claims: keepClaims(claims, false),
+      interpretation: interpretations(
+        (governing?.kind === 'relative' || confirmed?.kind === 'relative') &&
+          INTERPRETATIONS.relativeEstimate
+      ),
+      ...(offer === undefined ? {} : { offer })
+    };
+  }
+
+  /** The result word of a check, by key (`no_issue` is the strongest — never « compliant »). */
+  const RESULT_CLAIM_KEYS = {
+    no_issue: 'fr-urban-rules.question.road.setbackNoIssue',
+    potential_issue: 'fr-urban-rules.question.road.setbackIssue',
+    not_checked: 'fr-urban-rules.question.road.setbackNotChecked'
+  };
+  const ALIGNMENT_CLAIM_KEYS = {
+    no_issue: 'fr-urban-rules.question.road.alignmentNoIssue',
+    potential_issue: 'fr-urban-rules.question.road.alignmentIssue',
+    not_checked: 'fr-urban-rules.question.road.alignmentNotChecked'
+  };
+
+  function answerRoadDistance(input) {
+    const read = questionRead(input);
+    if (read.refused !== undefined) return read.refused;
+    const { report, entry } = read;
+    const streets = (Array.isArray(report.edges) ? report.edges : []).filter(
+      (e) => e.role === 'street'
+    );
+    if (streets.length === 0) return cannotAnswer('fr-urban-rules.question.road_distance.noStreet');
+    const chosen = questionBuildings(entry, input.args?.building);
+    if (chosen.refused !== undefined) return chosen.refused;
+    const several = chosen.buildings.length > 1;
+    const service = siteOf();
+    const claims = [];
+    let nearest;
+    for (const building of chosen.buildings) {
+      if (several) claims.push(buildingHeading(building));
+      // DEC-3: the horizontal distance to each street edge, the setback checks' own level.
+      let answer;
+      try {
+        answer = service?.measures?.distances?.({
+          ...(building.main ? {} : { buildingId: building.id }),
+          outline: 'storeys',
+          targets: streets.slice(0, MAX_LINE_TARGETS).map((e) => ({ kind: 'boundary-edge', edge: e.edge }))
+        });
+      } catch (cause) {
+        answer = { available: false, reason: 'unavailable' };
+        log(`${SOURCE_ID}: road_distance could not measure: ${String(cause)}`);
+      }
+      streets.slice(0, 4).forEach((edge, index) => {
+        const target = answer?.available ? answer.targets?.[index] : undefined;
+        const d = target?.nearest?.distance;
+        if (Number.isFinite(d)) {
+          if (nearest === undefined || d < nearest) nearest = d;
+          claims.push({
+            text: { key: 'fr-urban-rules.question.road.edge', params: { edge: edge.edge } },
+            values: { distance: metres(d) },
+            basis: 'measured'
+          });
+        } else {
+          claims.push({
+            text: {
+              key: 'fr-urban-rules.question.road.edgeUnmeasured',
+              params: {
+                edge: edge.edge,
+                reason: cut(String(target?.unavailable ?? answer?.reason ?? 'unavailable'), 80)
+              }
+            },
+            basis: 'measured'
+          });
+        }
+      });
+      for (const check of report.checks) {
+        if (check.ruleId === 'rnu:R.111-16' && (check.subject?.id ?? building.id) === building.id) {
+          claims.push({
+            text: {
+              key: ALIGNMENT_CLAIM_KEYS[check.result] ?? ALIGNMENT_CLAIM_KEYS.not_checked,
+              params: { edge: check.id.split(':').at(-1) }
+            },
+            ...(check.measured !== undefined && check.limit !== undefined
+              ? { values: { measured: check.measured, limit: check.limit } }
+              : {}),
+            basis: 'rule',
+            ruleId: check.ruleId,
+            checkId: check.id
+          });
+        }
+      }
+      const setbacks = report.rules.filter(
+        (r) => r.kind === 'road_setback' && r.id !== 'rnu:R.111-16' && r.status !== 'not_applicable'
+      );
+      for (const rule of setbacks) {
+        const check = report.checks.find(
+          (c) =>
+            c.ruleId === rule.id &&
+            (c.id === `chk:${rule.id}:${building.id}` ||
+              c.id.startsWith(`chk:${rule.id}:${building.id}:`))
+        );
+        if (check === undefined) {
+          claims.push({
+            text: { key: 'fr-urban-rules.question.limit.notChecked', params: { rule: ruleName(rule) } },
+            basis: 'rule',
+            ruleId: rule.id
+          });
+          continue;
+        }
+        claims.push({
+          text: {
+            key: RESULT_CLAIM_KEYS[check.result] ?? RESULT_CLAIM_KEYS.not_checked,
+            params: { rule: ruleName(rule) }
+          },
+          ...(check.measured !== undefined && check.limit !== undefined
+            ? { values: { measured: check.measured, limit: check.limit } }
+            : {}),
+          basis: 'rule',
+          ruleId: rule.id,
+          checkId: check.id
+        });
+      }
+    }
+    // DEC-3: the edge-role assumption, in the report's own words.
+    const assumptions = new Map((report.assumptions ?? []).map((a) => [a.id, a]));
+    const said = new Set();
+    for (const edge of streets) {
+      const assumption = assumptions.get(edge.assumptionId);
+      if (assumption === undefined || said.has(assumption.id) || !('key' in (assumption.text ?? {})))
+        continue;
+      said.add(assumption.id);
+      claims.push({ text: assumption.text, basis: 'report' });
+    }
+    if (chosen.more > 0) {
+      claims.push({
+        text: { key: 'fr-urban-rules.question.andMore', params: { count: chosen.more } },
+        basis: 'report'
+      });
+    }
+    return {
+      status: 'answered',
+      summary: {
+        key:
+          nearest === undefined
+            ? 'fr-urban-rules.question.road_distance.unmeasured'
+            : 'fr-urban-rules.question.road_distance.summary'
+      },
+      ...(nearest === undefined ? {} : { values: { distance: metres(nearest) } }),
+      claims: keepClaims(claims, false),
+      interpretation: interpretations()
+    };
+  }
+
+  function answerRemainingArea(input) {
+    const read = questionRead(input);
+    if (read.refused !== undefined) return read.refused;
+    const { entry } = read;
+    const figures = entry.open.figures;
+    if (figures === undefined) return cannotAnswer('fr-urban-rules.question.notMeasured');
+    const claims = [];
+    const used = figures.emprise;
+    if (used !== undefined) {
+      claims.push({
+        text: { key: 'fr-urban-rules.question.area.empriseUsed' },
+        values: { used: squareMetres(used) },
+        basis: 'measured'
+      });
+      claims.push({ text: figures.definition, basis: 'report' });
+    } else {
+      claims.push({
+        text: {
+          key: 'fr-urban-rules.question.area.empriseUnmeasured',
+          params: { reason: cut(figures.empriseRefused ?? 'unavailable', 80) }
+        },
+        basis: 'measured'
+      });
+    }
+    let summary;
+    let values;
+    if (figures.ces !== undefined && figures.allowed !== undefined) {
+      claims.push({
+        text: { key: 'fr-urban-rules.question.area.allowed' },
+        values: {
+          allowed: squareMetres(figures.allowed),
+          percent: { value: figures.ces.percent, unit: 'percent' }
+        },
+        basis: 'rule',
+        ruleId: figures.ces.ruleId
+      });
+      if (used !== undefined) {
+        const remaining = figures.allowed - used;
+        claims.push({
+          text: { key: 'fr-urban-rules.question.area.remaining' },
+          values: { remaining: squareMetres(remaining) },
+          basis: 'rule',
+          ruleId: figures.ces.ruleId
+        });
+        summary =
+          remaining < -RESOLUTION_HALF
+            ? 'fr-urban-rules.question.remaining_area.over'
+            : 'fr-urban-rules.question.remaining_area.summary';
+        values =
+          remaining < -RESOLUTION_HALF
+            ? { excess: squareMetres(-remaining) }
+            : { remaining: squareMetres(remaining), allowed: squareMetres(figures.allowed) };
+      }
+    } else if (figures.notRegulatedRuleId !== undefined) {
+      claims.push({
+        text: { key: 'fr-urban-rules.question.area.notRegulated' },
+        basis: 'rule',
+        ruleId: figures.notRegulatedRuleId
+      });
+      summary = 'fr-urban-rules.question.remaining_area.notRegulated';
+    }
+    summary ??= 'fr-urban-rules.question.remaining_area.noBudget';
+    const sdp = figures.sdp;
+    if (typeof sdp?.total === 'number') {
+      claims.push({
+        text: {
+          key:
+            sdp.missing > 0 || sdp.estimate
+              ? 'fr-urban-rules.question.area.sdpEstimate'
+              : 'fr-urban-rules.question.area.sdp'
+        },
+        values: { total: squareMetres(sdp.total) },
+        basis: 'measured'
+      });
+    }
+    if (figures.capacity !== undefined) {
+      claims.push({
+        text: { key: 'fr-urban-rules.question.area.capacity' },
+        values: { low: squareMetres(figures.capacity.low), high: squareMetres(figures.capacity.high) },
+        basis: 'report'
+      });
+    } else {
+      claims.push({ text: { key: 'fr-urban-rules.question.area.capacityMissing' }, basis: 'report' });
+    }
+    return {
+      status: 'answered',
+      summary: { key: summary },
+      ...(values === undefined ? {} : { values }),
+      claims: keepClaims(claims, false),
+      interpretation: interpretations()
+    };
+  }
+
+  const buildingParameter = {
+    kind: 'text',
+    description:
+      'The name of one building of the project, as the user calls it. Leave it out to answer for every building (up to four).',
+    maxLength: 80
+  };
+
+  /** DEC-1: the four questions, offered to a model as `regulations_<id>` (096.12). */
+  const questions = [
+    {
+      id: 'can_add_storey',
+      description:
+        'Answers whether one more storey fits the height rules of the planning report for this French plot, from the measured building height and each height limit (confirmed or to confirm), with the potential issues that stay whatever the height and the floor area after the storey. Pass storeyHeight when the user names a floor-to-floor height; otherwise the design’s own storey height, or an assumed 3 m, is used and said. Does not decide whether a permit will be granted.',
+      parameters: {
+        storeyHeight: {
+          kind: 'number',
+          description: 'The floor-to-floor height of the storey to add.',
+          unit: 'm',
+          min: 2,
+          max: 6
+        },
+        building: buildingParameter
+      },
+      answer: (input) => answerCanAddStorey(input)
+    },
+    {
+      id: 'road_distance',
+      description:
+        'Answers how far the building stands from the street on this French plot: the measured horizontal distance to each Site boundary edge set as the street, and the street setback rules of the planning report with their checks (R.111-16 to the opposite alignment under the national rules). Does not measure to a road the boundary does not face, and does not decide whether a permit will be granted.',
+      parameters: { building: buildingParameter },
+      answer: (input) => answerRoadDistance(input)
+    },
+    {
+      id: 'max_height',
+      description:
+        'Answers what the maximum building height is on this French plot under the planning report: every height limit, tightest first, the limits relative to a distance stated as heights at the building, and the measured current height; rules not read or not checked are listed as such. Does not say what may be built and does not decide whether a permit will be granted.',
+      parameters: { building: buildingParameter },
+      answer: (input) => answerMaxHeight(input)
+    },
+    {
+      id: 'remaining_area',
+      description:
+        'Answers how much more can be built on this French plot: the emprise au sol used, allowed and remaining under its definition, the surface de plancher, and the theoretical capacity range, which is an estimate and never a right to build. Does not decide whether a permit will be granted.',
+      answer: (input) => answerRemainingArea(input)
+    }
+  ];
+
   return {
     roadsFor,
     roadsKnown,
@@ -10159,9 +12577,16 @@ function createRnu({
     augment,
     runAction,
     programmeFacts,
+    checkVariation,
+    questions,
+    heightHeadroom,
+    storeyLimit,
+    measuredBuildings,
+    lastReadFor,
     clear: () => {
       roadCache.clear();
       contextCache.clear();
+      lastReads.clear();
       writtenSession = new Map();
     }
   };
@@ -10546,13 +12971,24 @@ function createProgrammeStage({ facts, site, translate = () => undefined }) {
         } else if (read.notRegulated) {
           assumptions.push(say('fr-urban-rules.programme.notRegulated'));
         }
+        // 002.8 DEC-2: the storeys `heightHeadroom` allows, and the rule that governs them.
+        const relative = read.governing?.kind === 'relative';
+        const governingHeight =
+          read.governing?.kind === 'absolute'
+            ? read.governing.height
+            : Math.max(...read.heights.map((h) => h.value));
         if (read.storeysAllowed !== undefined) {
           assumptions.push(
-            say('fr-urban-rules.programme.storeys', {
-              height: Math.max(...read.heights.map((h) => h.value)),
-              storeys: read.storeysAllowed,
-              floor: read.floorToFloor.value
-            })
+            relative
+              ? say('fr-urban-rules.programme.storeysRelative', {
+                  storeys: read.storeysAllowed,
+                  floor: read.floorToFloor.value
+                })
+              : say('fr-urban-rules.programme.storeys', {
+                  height: governingHeight,
+                  storeys: read.storeysAllowed,
+                  floor: read.floorToFloor.value
+                })
           );
         }
         if (read.floorToFloor.assumed && read.storeysAllowed !== undefined) {
@@ -10584,11 +13020,16 @@ function createProgrammeStage({ facts, site, translate = () => undefined }) {
           storeys > read.storeysAllowed
         ) {
           warnings.push(
-            say('fr-urban-rules.programme.overStoreys', {
-              storeys,
-              allowed: read.storeysAllowed,
-              height: Math.max(...read.heights.map((h) => h.value))
-            })
+            relative
+              ? say('fr-urban-rules.programme.overStoreysRelative', {
+                  storeys,
+                  allowed: read.storeysAllowed
+                })
+              : say('fr-urban-rules.programme.overStoreys', {
+                  storeys,
+                  allowed: read.storeysAllowed,
+                  height: governingHeight
+                })
           );
         }
       }
@@ -10785,9 +13226,10 @@ async function downloadJson(name, value) {
  * Files, renamed to `test-fixtures/fr-urban-rules/acceptance/<plot>/…` by
  * dropping the `fr-capture-` prefix: `site` (the request's Site view),
  * `site-calls`, `context` (`roads`, `map-features`, `document`), `section`,
- * `answers`, `report`.
+ * `answers`, `report` — and, since 002.8, `variations` when the host has asked
+ * for a parked variation's checks: `[{ variationId, buildings, checks }]`.
  */
-async function captureFixtures(context, lastRequest) {
+async function captureFixtures(context, lastRequest, variations = []) {
   const optional = (token) => context.services.getOptional(token);
   const siteService = optional(SiteServiceToken);
   const view = lastRequest?.site ?? siteService?.current();
@@ -10825,10 +13267,26 @@ async function captureFixtures(context, lastRequest) {
   });
   const hrefs = [];
   try {
+    const country = lastRequest?.country ?? view.country ?? 'FR';
     const report = await reader.read(
-      { site: view, country: lastRequest?.country ?? view.country ?? 'FR', reason: 'site' },
+      { site: view, country, reason: 'site' },
       { signal: new AbortController().signal, progress: () => {} }
     );
+    // Sprint 002.8 DEC-7: each parked variation the host last asked about, checked
+    // again over the recording service — so its measures, asked with its
+    // `variationId`, land in `site-calls` — with the host's own buildings.
+    const checked = [];
+    for (const { variationId, buildings } of variations) {
+      try {
+        const { checks } = await reader.checkVariation(
+          { site: view, country, variationId, report, buildings },
+          { signal: new AbortController().signal }
+        );
+        checked.push({ variationId, buildings, checks: jsonClone(checks) });
+      } catch (cause) {
+        checked.push({ variationId, buildings, error: String(cause) });
+      }
+    }
     const files = [
       ['fr-capture-site.json', jsonClone(view)],
       ['fr-capture-site-calls.json', calls.site],
@@ -10842,7 +13300,8 @@ async function captureFixtures(context, lastRequest) {
       ],
       ['fr-capture-section.json', jsonClone(packageData?.read()) ?? null],
       ['fr-capture-answers.json', answers],
-      ['fr-capture-report.json', jsonClone(report)]
+      ['fr-capture-report.json', jsonClone(report)],
+      ...(checked.length === 0 ? [] : [['fr-capture-variations.json', checked]])
     ];
     for (const [name, value] of files) hrefs.push(await downloadJson(name, value));
     // The last download has started before its Blob URL goes.
@@ -10879,6 +13338,8 @@ export function activate(context) {
   });
   // 002.4 DEC-2: the capture replays the host's own request (its `plotArea`).
   let lastRequest;
+  // 002.8 DEC-7: and the host's last variation checks (their buildings), per variation id.
+  const variationRequests = new Map();
   context.subscriptions.add(
     regulations.registerRegulationSource({
       id: SOURCE_ID,
@@ -10889,7 +13350,19 @@ export function activate(context) {
       },
       runAction: (request, actionContext) => reader.runAction(request, actionContext),
       // Review decision Q1: a late chapter asks the host to read again (SDK 1.28).
-      onDidChange: (listener) => reader.onDidChange(listener)
+      onDidChange: (listener) => reader.onDidChange(listener),
+      // Sprint 002.8 DEC-7: a parked variation, checked by the read's own pipeline (SDK 1.31).
+      checkVariation: (request, variationContext) => {
+        if (typeof request?.variationId === 'string') {
+          variationRequests.set(request.variationId, {
+            variationId: request.variationId,
+            buildings: Array.isArray(request.buildings) ? request.buildings : []
+          });
+        }
+        return reader.checkVariation(request, variationContext);
+      },
+      // Sprint 002.8 DEC-1: the assistant's four questions (SDK 1.32; offered with `ai`).
+      questions: reader.questions
     })
   );
   // Sprint 002.3 (DEC-7): the programme warning, `urban-rules`' replacement.
@@ -10923,7 +13396,7 @@ export function activate(context) {
         categoryKey: LABEL_KEY,
         keywords: ['fixtures', 'capture', 'developer'],
         run: () => {
-          captureFixtures(context, lastRequest).catch((cause) =>
+          captureFixtures(context, lastRequest, [...variationRequests.values()]).catch((cause) =>
             context.logger.error(`${CAPTURE_COMMAND_ID}: ${String(cause)}`)
           );
         }
@@ -10942,6 +13415,9 @@ export function deactivate() {
 
 export const __testing = {
   SOURCE_ID,
+  FETCHED_HOSTS,
+  LINK_HOSTS,
+  variationView,
   SOURCES,
   TYPEPSC_KEYS,
   TYPEZONE_KEYS,
@@ -10969,6 +13445,10 @@ export const __testing = {
   R111_17,
   ADJOINING,
   boundaryEdges,
+  insetByRole,
+  sheetOf,
+  VOLUME_LIMITS,
+  PLOT_PLAN_CATEGORIES,
   deriveRoles,
   sectionOf,
   withEdgeRole,

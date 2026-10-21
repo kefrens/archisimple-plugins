@@ -1,6 +1,6 @@
 # Règles d'urbanisme (PLU) — `fr-urban-rules`
 
-`com.archisimple.fr-urban-rules` · extension · SDK **1.28** · capabilities `regulations`, `document`, `ai`, `commands`
+`com.archisimple.fr-urban-rules` · extension · SDK **1.32** · capabilities `regulations`, `document`, `ai`, `commands`
 
 Reads the planning rules that apply to a French plot and hands ArchiSimple a
 country-neutral `RegulationReport` (platform ADR-0111): which regime applies
@@ -19,6 +19,78 @@ Phase 1 of the [fr-urban-rules milestone](../docs/milestones/fr-urban-rules/fr-u
 **0.4.0** is Sprint [002.3 Surfaces and Capacity](../docs/sprints/sprint-002.3-surfaces-and-capacity.md).
 Phase 2: **0.5.0** is Sprint [002.6a Zone Page Link](../docs/sprints/sprint-002.6a-zone-page-link.md);
 **0.6.0** is Sprint [002.6b Written Rules Confirmation](../docs/sprints/sprint-002.6b-written-rules-confirmation.md).
+Phase 3: **0.7.0** is Sprint [002.7 Envelope and Sheet Content](../docs/sprints/sprint-002.7-envelope-and-sheet-content.md);
+**0.8.0** is Sprint [002.8 Assistant Plot Questions](../docs/sprints/sprint-002.8-assistant-plot-questions.md);
+**0.8.1** is Sprint [002.9 Design-Time Acceptance FR](../docs/sprints/sprint-002.9-design-time-acceptance-fr.md)'s
+three defects: a written pleine terre ratio of the plot area is checked like a
+percentage, a written extension share of the floor area is never measured
+against the existing emprise (« not checked », the base named), and the Rules
+view of a carte communale or the RNU says why no written regulation is read.
+
+## The assistant's questions and the parked variations (0.8.0)
+
+- **Four questions** the editor offers a language-model assistant as tools
+  (`regulations_<id>`, SDK 1.32, platform 096.12) while the package declares
+  `ai`: `can_add_storey` (`storeyHeight?` in metres, 2–6; `building?`),
+  `road_distance` (`building?`), `max_height` (`building?`) and
+  `remaining_area`. Each answers synchronously from the reader's last read of
+  the Site — never a fetch — and only when that read is the report the host
+  hands it (the same document version, every rule its own); otherwise it says
+  to read again. A question about several buildings answers per building, up to
+  four.
+- **Claims, never text.** A limit is a claim on its rule (`basis: 'rule'`), which
+  the host cites from the report; a figure is the editor's measure
+  (`basis: 'measured'`); nothing is read out of a passage. Rule labels are the
+  report's own words. Beyond the text, at most three *Interpretation* phrases
+  from a closed list (the attic note, the relative-limit estimate, « these
+  figures do not prejudge the decision »). No answer says « compliant ».
+- **One headroom.** `heightHeadroom` gives the height a building may still gain
+  under each height rule — absolute limits from their checks, R.111-17 and
+  R.111-16 from the worst pair's margin over the factor (conservative: the top
+  raised everywhere), a PLU's façade-relative setback from its check — and the
+  same function now gives the programme warning its storey count (002.3 DEC-7
+  moved). The storey height is the one named, else the design's own
+  (`Level.height`), else the editor's 3 m, and the answer says which.
+- **Confirm, offered.** When the tightest height limit is a rule to confirm
+  with a value, `can_add_storey` and `max_height` offer **Confirm {value}**:
+  the very section the Rules view's Confirm action writes, which the host
+  proposes as one change (one undo entry), refused if the section changed.
+- **Parked variations** (`checkVariation`, SDK 1.31, platform 096.11): the
+  editor's variation figures — the Variations cards, « Compared with master »,
+  the Checks view's « Across variations » — are measured by the read's own
+  checks over the parked design (`site.measures` with its `variationId`, the
+  host's list of its buildings) and the last read's rules, roads, alignments
+  and section; no network, no read. Without a read of the Site matching the
+  report it throws, and the host says *Could not be measured*.
+- **The network list.** The manifest's `network.hosts` names the three hosts the
+  browser code fetches (`FETCHED_HOSTS`; `fetchJson` refuses any other), for the
+  package card once the platform renders it (096.13). Links the user opens
+  (Légifrance) are not contacts.
+
+## The theoretical envelope and the sheet (0.7.0)
+
+- **From confirmed rules only.** Each Site boundary edge is set back by the
+  largest confirmed minimum of its role (street, side, rear): a value setback,
+  or a height-relative setback's minimum (R.111-17's 3 m). `insetByRole` works
+  on a concave boundary: the boundary less each edge's strip, cut by overlay —
+  a street edge's strip running on along its line past a convex corner (the
+  half-plane cut, as 0.6.1 drew on a convex plot), a side or rear limit's ends
+  and every re-entrant corner rounded, by tangents just inside the rounded
+  line; setbacks that leave no ground or split the plot, or a result that fails
+  its own check, are refused and said.
+- **The volume** (SDK 1.29) hangs off the same `envelope` feature: slopes for
+  the height-relative rules (R.111-17 from the side and rear chains, R.111-16
+  from the opposite alignments, façade-relative setbacks with their start),
+  heights for the total-height limits (within a drawn prescription), merged and
+  checked against the host's limits before it is sent. The host draws it in 3D.
+- **The « Enveloppe théorique » view** lists the ground area, the confirmed
+  heights, the rules applied and not applied with their reasons, and the
+  assumptions. Never "buildable": the checks, not the volume, say whether a
+  design is within the rules.
+- **The regulation sheet** (SDK 1.30): the report declares its blocks — plot,
+  flags, checks with the rules not checked, the rules meter, the plot plan,
+  assumptions — and its scope sentence; the host prints them with its own header
+  and footer. Every string is in the print font's WinAnsi (`sheet.test.mjs`).
 
 ## Written rules (0.6.0)
 
@@ -197,8 +269,11 @@ from the published index):
 
 ## What it needs from the platform
 
-- **SDK 1.28** (since 0.5.0, for `plugin-service`) and the `regulations`
-  capability. An older web image refuses the manifest whole
+- **SDK 1.32** (since 0.8.0: `checkVariation`, 096.11's 1.31, and the
+  questions, 096.12's 1.32; 1.30 since 0.7.0 for the volume and the sheet; 1.28
+  since 0.5.0 for `plugin-service`) and the `regulations`
+  capability; `ai` for the programme enricher and the questions, `document` for
+  every section write and an answer's offer. An older web image refuses the manifest whole
   (`unknown-capability` / SDK too old): the two move in lockstep.
 - Optionally, the deployment's **companion service** (platform ADR-0114, the
   `plugin-services` compose profile). Without it everything works as in 0.4.0
@@ -211,8 +286,10 @@ from the published index):
 - Since 0.4.0, the host's **measures** (`site.measures.plotCoverage`,
   `floorAreas`, `projection`; 096.0a–c through 096.1), the `ai` capability for
   the programme enricher, and `site.variations()` to key the Surfaces answers.
-  The storeys' floor-to-floor height is not on the SDK's `Level` view: the
-  capacity takes the editor's default, 3 m, and says so.
+  The storeys' floor-to-floor height is read from each `Level`'s `height`
+  property through the `document` service (the captures show it answered,
+  3 m); where none is shown the capacity takes the editor's default, 3 m, and
+  says so.
 
 ## The contract with carte-gouv-fr
 
@@ -223,6 +300,9 @@ extensions; the host is not in it. A parcel from another source falls back to
 API Carto's `municipality` answer.
 
 ## Hosts contacted
+
+The first three rows are `FETCHED_HOSTS` in `src/index.js` and the manifest's
+`network.hosts`; `tests/package.test.mjs` holds the three lists equal.
 
 | Host | What |
 | --- | --- |
@@ -297,6 +377,10 @@ its `fr-capture-` prefix) or re-recording its answers:
 node tools/record-fixtures.mjs <plot> --trim    # offline: keep what the tests read, minify
 node tools/record-fixtures.mjs <plot> --check   # live: has the GPU changed?
 ```
+
+Since 0.8.0 a capture taken after the editor measured a parked variation also
+writes `variations.json` (`{ variationId, buildings, checks }`), and its
+`site-calls` hold that variation's measures; `--trim` keeps them.
 
 `--trim` keeps the pairs and answers the tests' two reads use, rounds the
 platform's `fromGeographicRing` results to 1 mm, writes those pairs compact

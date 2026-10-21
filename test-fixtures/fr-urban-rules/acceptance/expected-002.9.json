@@ -1,0 +1,799 @@
+{
+  "sprint": "002.9",
+  "writtenAt": "2026-10-21",
+  "writtenBy": "agent (Claude), on the owner's behalf, from the règlements' committed text layer (`<plot>/regulation/pages.jsonl`, the PDF's own text, page by page) and the five plots' recorded captures; never from an extraction result",
+  "handCheck": {
+    "state": "pending",
+    "by": null,
+    "date": null,
+    "how": "002.9 step 1 (the contract: a person, against the PDF read at the page): open each PDF at the page of every row whose `handChecked` is false, check value, page and key phrase, compare the PDF's sha256 with `<plot>/regulation/meta.json`, then set `handChecked: true` per row and fill `by` and `date` here. A value changed after a run is recorded as changed, with the reason, in 002.9's Outcome."
+  },
+  "judgement": "002.9 DEC-4: per required row, a rule of the extraction with the same kind, statement and sector whose limit equals one of `limitAnyOf` exactly (value, unit, base), whose page is within `pages`, whose passage contains one of the key phrases (whitespace, ligatures, apostrophes and the definition asterisk normalised), and whose conditions or exceptions contain each `expectedConditions` phrase. Extras are listed, never failed. A `forbidden` row fails when any rule matches it. A rule the table says is not regulated must come back as a `not_regulated` rule with its passage.",
+  "recording": {
+    "command": "node tools/record-fixtures.mjs <lyon|gordes> --extraction --acceptance",
+    "where": "test-fixtures/fr-urban-rules/acceptance/<plot>/extraction/ (calls.json, result.json)",
+    "model": "the owner's production model (002.9 DEC-7), through a local apps/ai-service; never the development model",
+    "order": "after this file is committed (002.9 Design Contract 1)"
+  },
+  "plots": {
+    "lyon": {
+      "label": "P1 Lyon 2e, 69382000AB0105, UCe1b",
+      "regime": "plui",
+      "document": {
+        "documentId": "4f3ddc27a9611b4bc94fa161443b8e86",
+        "idurba": "200046977_PLUi_20260326",
+        "nomfic": "200046977_reglement_20260326.pdf",
+        "sha256": "2aee20bf0dc394e1a23bab0a3f2906498bfaacefc50bd773d1e6d50fd3655920",
+        "pages": 803
+      },
+      "chapter": {
+        "zone": "UCe1b",
+        "pages": [
+          121,
+          144
+        ],
+        "found": "outline",
+        "title": "Zone UCe1",
+        "printedPage": "PDF page − 2"
+      },
+      "extraction": {
+        "offered": true,
+        "required": [
+          {
+            "id": "lyon-green-ratio",
+            "kind": "green_ratio",
+            "sector": null,
+            "statement": "limit",
+            "limitAnyOf": [
+              {
+                "kind": "ratio",
+                "comparison": "min",
+                "percent": 15,
+                "base": "plot_area"
+              },
+              {
+                "kind": "value",
+                "comparison": "min",
+                "value": 15,
+                "unit": "percent"
+              }
+            ],
+            "pages": [
+              133,
+              133
+            ],
+            "article": "3.2.1",
+            "phrases": [
+              "Le coefficient de pleine terre* est au minimum de 15%"
+            ],
+            "expectedConditions": [
+              "équipements d'intérêt collectif et services publics"
+            ],
+            "handChecked": false,
+            "note": "The public-facilities carve-out is an exception; it may come back under conditions or exceptions."
+          },
+          {
+            "id": "lyon-footprint-not-regulated",
+            "kind": "footprint_ratio",
+            "sector": null,
+            "statement": "not_regulated",
+            "pages": [
+              128,
+              128
+            ],
+            "article": "2.4.1",
+            "phrases": [
+              "L'emprise au sol* des constructions n'est pas réglementée"
+            ],
+            "handChecked": false
+          },
+          {
+            "id": "lyon-facade-height-see-graphic",
+            "kind": "height_facade",
+            "sector": null,
+            "statement": "see_graphic",
+            "pages": [
+              129,
+              129
+            ],
+            "article": "2.5.1.1",
+            "phrases": [
+              "La hauteur de façade* maximale des constructions figure aux documents graphiques"
+            ],
+            "handChecked": false,
+            "note": "With it, the drawn « Hauteur Max-22 » is relabelled height_facade (002.6b DEC-5); it never overrides the drawn 22 m. 002.5b's 8 B recording has no such rule."
+          },
+          {
+            "id": "lyon-boundary-setback-uce1b",
+            "kind": "boundary_setback",
+            "sector": "UCe1b",
+            "statement": "limit",
+            "limitAnyOf": [
+              {
+                "kind": "value",
+                "comparison": "min",
+                "value": 4,
+                "unit": "m"
+              }
+            ],
+            "pages": [
+              126,
+              126
+            ],
+            "article": "2.2.1.2",
+            "phrases": [
+              "Le retrait* est au moins égal à 4 mètres"
+            ],
+            "handChecked": false,
+            "note": "In the band of constructibility secondaire (2.2.1.2 b); README §9 confirmed it in the editor."
+          },
+          {
+            "id": "lyon-building-distance-uce1b",
+            "kind": "building_distance",
+            "sector": "UCe1b",
+            "statement": "limit",
+            "limitAnyOf": [
+              {
+                "kind": "value",
+                "comparison": "min",
+                "value": 4,
+                "unit": "m"
+              }
+            ],
+            "pages": [
+              127,
+              127
+            ],
+            "article": "2.3.1",
+            "phrases": [
+              "dans le secteur UCe1b, à 4 mètres"
+            ],
+            "handChecked": false
+          },
+          {
+            "id": "lyon-road-setback-described",
+            "kind": "road_setback",
+            "sector": null,
+            "statement": "described",
+            "pages": [
+              124,
+              124
+            ],
+            "article": "2.1.1",
+            "phrases": [
+              "Les constructions sont implantées en limite de référence* ou en limite de la marge de recul*"
+            ],
+            "handChecked": false,
+            "note": "No value: on the reference line or the setback-margin line (« limite de référence* », defined in Part I)."
+          }
+        ],
+        "alsoAccepted": [
+          {
+            "kind": "footprint_ratio",
+            "statement": "see_graphic",
+            "pages": [
+              128,
+              128
+            ],
+            "phrases": [
+              "Dès lors que figure aux documents graphiques du règlement un coefficient d'emprise"
+            ]
+          },
+          {
+            "kind": "boundary_setback",
+            "sector": "UCe1b",
+            "statement": "described",
+            "pages": [
+              125,
+              125
+            ],
+            "phrases": [
+              "Les constructions sont implantées sur les deux limites séparatives latérales*"
+            ],
+            "note": "2.2.1.1, the main band: on both side boundaries; also UCe1a"
+          },
+          {
+            "kind": "boundary_setback",
+            "sector": "UCe1a",
+            "pages": [
+              126,
+              126
+            ],
+            "note": "R ≥ Hf − 4 m, minimum 2 m: another sector, not shown on UCe1b"
+          },
+          {
+            "kind": "building_distance",
+            "sector": "UCe1a",
+            "pages": [
+              127,
+              127
+            ],
+            "note": "D ≥ Hf/2: another sector"
+          },
+          {
+            "kind": "other",
+            "pages": [
+              129,
+              131
+            ],
+            "note": "ground floor 3.50 m minimum (2.5.1.1 b), the gabarit near URi zones (2.5.1.1 c), the VETC (2.5.1.2), the +20 % for exemplary buildings (2.5.2 f)"
+          },
+          {
+            "kind": "parking",
+            "statement": "described",
+            "pages": [
+              142,
+              143
+            ],
+            "note": "5.2.2.1: underground in parking sectors Aa…C; numbers are in Part I"
+          }
+        ],
+        "forbidden": [
+          {
+            "id": "lyon-no-numeric-footprint",
+            "kind": "footprint_ratio",
+            "numericLimit": true,
+            "why": "the footprint is not regulated (2.4.1); a coefficient exists only where drawn (2.4.2)"
+          },
+          {
+            "id": "lyon-no-numeric-parking",
+            "kind": "parking",
+            "numericLimit": true,
+            "why": "this chapter sets no parking number (5.2.1 refers to Part I)"
+          },
+          {
+            "id": "lyon-no-unconditional-height",
+            "kindAnyOf": [
+              "height_total",
+              "height_facade"
+            ],
+            "numericLimit": true,
+            "unconditional": true,
+            "why": "the chapter's façade height is on the graphic documents (2.5.1.1 a); its numbers (3.50 m) are conditional"
+          }
+        ]
+      },
+      "designTime": {
+        "plotArea": {
+          "value": 1183.3,
+          "tolerance": 0.05,
+          "unit": "m2"
+        },
+        "zoneLink": {
+          "text": "Open the regulation, zone UCe1b, chapter Zone UCe1, p. 121",
+          "hrefEndsWith": "200046977_reglement_20260326.pdf#page=121"
+        },
+        "drawnHeight": {
+          "label": "Hauteur Max-22",
+          "value": 22,
+          "unit": "m",
+          "kindWithoutWrittenSeeGraphic": "height_total",
+          "kindWithWrittenSeeGraphic": "height_facade"
+        },
+        "twoFifteens": {
+          "empriseMeasured": {
+            "value": 150.0,
+            "tolerance": 0.05,
+            "unit": "m2",
+            "shareOfPlot": 12.7,
+            "role": "measured (R.420-1, storeys outline)"
+          },
+          "pleineTerreLimit": {
+            "percent": 15,
+            "requiredWhenConfirmed": {
+              "value": 177.5,
+              "tolerance": 0.1,
+              "unit": "m2"
+            },
+            "role": "limit"
+          },
+          "openGroundMeasured": {
+            "value": 1033.32,
+            "tolerance": 0.05,
+            "unit": "m2"
+          },
+          "note": "Re-derived after 002.4/002.7: the design's emprise is 150.0 m² (12.7 % of 1 183.3 m²), not 002.3's 179.4 m² (15 %); the two figures are never one."
+        },
+        "envelope": {
+          "fromConfirmedOnly": true,
+          "withWalkSection": {
+            "groundArea": {
+              "value": 1072.1,
+              "tolerance": 0.5,
+              "unit": "m2"
+            },
+            "heightCeiling": {
+              "value": 22,
+              "unit": "m",
+              "within": "Hauteur Max-22"
+            },
+            "insetRearEdges": [
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "insetMetres": 4
+          },
+          "label": "Theoretical envelope",
+          "never": [
+            "buildable",
+            "constructible",
+            "compliant",
+            "conforme"
+          ]
+        },
+        "checksWithWalkSection": {
+          "rearSetbackEdge9": {
+            "measured": 2.6,
+            "limit": 4,
+            "result": "potential_issue"
+          },
+          "height": {
+            "measured": 12.09,
+            "limit": 22,
+            "result": "no_issue"
+          }
+        },
+        "assistant": {
+          "can_add_storey": {
+            "withWalkSection": {
+              "summaryKey": "fr-urban-rules.question.can_add_storey.room",
+              "storeyMetres": 3,
+              "storeySource": "the design's own Level height (002.8 decision 1)",
+              "measuredHeight": 12.087
+            },
+            "note": "Changed from the draft (002.8, decision 1): the floor-to-floor height is the design's own 3 m, said as taken, not called an assumption; the limit cited is « Hauteur Max-22 » (height_total without a written see-graphic façade rule)."
+          },
+          "max_height": {
+            "withWalkSection": {
+              "summaryKey": "fr-urban-rules.question.max_height.absolute",
+              "height": 22
+            },
+            "toConfirm": {
+              "summaryKey": "fr-urban-rules.question.max_height.toConfirmOnly",
+              "height": 22,
+              "offer": "Confirm 22 m"
+            },
+            "note": "002.8 review R1: the summary names the tightest confirmed limit; a rule to confirm only ever gives …toConfirmOnly."
+          },
+          "greenSpace": "No question tool covers green space (002.8's four questions: can_add_storey, road_distance, max_height, remaining_area). « What green space must I keep? » is answered by the live model from the context fragment, which carries the green rule's kind, limit and citation page (no passage); walked live, not tested. Changed from the draft with this reason."
+        },
+        "sheet": {
+          "scopeSentences": 2,
+          "never": [
+            "compliant",
+            "conforme"
+          ]
+        }
+      }
+    },
+    "gordes": {
+      "label": "P2 Gordes, 84050000AC0323, zone A",
+      "regime": "plu",
+      "document": {
+        "documentId": "703e6c2a3130ed9396d8100fde318c2e",
+        "idurba": "84050_PLU_20241017",
+        "nomfic": "84050_reglement_20220411.pdf",
+        "sha256": "7daad1fb6d26202bd70153df29d1e52095c160fc2fba57dea609067f7c851eae",
+        "pages": 60,
+        "zoneValidFrom": "2022-04-11"
+      },
+      "chapter": {
+        "zone": "A",
+        "pages": [
+          44,
+          51
+        ],
+        "found": "contents",
+        "printedPage": "PDF page − 1"
+      },
+      "extraction": {
+        "offered": true,
+        "required": [
+          {
+            "id": "gordes-extension-ratio",
+            "kind": "extension_max",
+            "sector": null,
+            "statement": "limit",
+            "limitAnyOf": [
+              {
+                "kind": "ratio",
+                "comparison": "max",
+                "percent": 30,
+                "base": "surface_de_plancher"
+              }
+            ],
+            "pages": [
+              45,
+              45
+            ],
+            "article": "A 2",
+            "phrases": [
+              "à 30% de la surface de plancher de la construction à usage d'habitation existante"
+            ],
+            "expectedConditions": [
+              "zone rouge du PPRIF"
+            ],
+            "handChecked": false,
+            "note": "Outside the PPRIF red zone; inside it the table below applies (70–120 m²: 30 % within 140 m² in all; 121–200 m²: +20 m²; from 201 m²: +10 % within 250 m²). Whether AC0323 lies in the red zone is the owner's hand check."
+          },
+          {
+            "id": "gordes-extension-total",
+            "kindAnyOf": [
+              "floor_area_max",
+              "extension_max"
+            ],
+            "sector": null,
+            "statement": "limit",
+            "limitAnyOf": [
+              {
+                "kind": "value",
+                "comparison": "max",
+                "value": 250,
+                "unit": "m2"
+              }
+            ],
+            "pages": [
+              45,
+              45
+            ],
+            "article": "A 2",
+            "phrases": [
+              "dans la limite de 250 m2 de surface de plancher (existant + extension)"
+            ],
+            "handChecked": false
+          },
+          {
+            "id": "gordes-annex",
+            "kind": "annex_max",
+            "sector": null,
+            "statement": "limit",
+            "limitAnyOf": [
+              {
+                "kind": "value",
+                "comparison": "max",
+                "value": 30,
+                "unit": "m2"
+              }
+            ],
+            "pages": [
+              45,
+              48
+            ],
+            "article": "A 2 / A 9",
+            "phrases": [
+              "dans la limite de 30 m2 de surface de plancher par annexe",
+              "limitées à 30 m2 d'emprise au sol par annexe"
+            ],
+            "handChecked": false,
+            "note": "Three annexes at most, within 20 m of the dwelling (A 2); 30 m² of floor area (A 2) and of emprise (A 9) each."
+          },
+          {
+            "id": "gordes-height-ridge",
+            "kind": "height_total",
+            "sector": null,
+            "statement": "limit",
+            "limitAnyOf": [
+              {
+                "kind": "value",
+                "comparison": "max",
+                "value": 8.5,
+                "unit": "m"
+              }
+            ],
+            "pages": [
+              48,
+              48
+            ],
+            "article": "A 10",
+            "phrases": [
+              "8,50 mètres au faîtage pour les constructions à usage"
+            ],
+            "handChecked": false,
+            "note": "Dwellings; annexes 4.50 m at the ridge, other buildings 10 m."
+          },
+          {
+            "id": "gordes-height-eaves",
+            "kind": "height_facade",
+            "sector": null,
+            "statement": "limit",
+            "limitAnyOf": [
+              {
+                "kind": "value",
+                "comparison": "max",
+                "value": 7,
+                "unit": "m"
+              }
+            ],
+            "pages": [
+              48,
+              48
+            ],
+            "article": "A 10",
+            "phrases": [
+              "7 mètres à l'égout du toit"
+            ],
+            "handChecked": false,
+            "note": "À l'égout (the eaves), read as the façade height."
+          },
+          {
+            "id": "gordes-boundary-setback",
+            "kind": "boundary_setback",
+            "sector": null,
+            "statement": "limit",
+            "limitAnyOf": [
+              {
+                "kind": "value",
+                "comparison": "min",
+                "value": 4,
+                "unit": "m"
+              }
+            ],
+            "pages": [
+              48,
+              48
+            ],
+            "article": "A 7",
+            "phrases": [
+              "doit être au moins égale à 4 mètres"
+            ],
+            "handChecked": false
+          },
+          {
+            "id": "gordes-road-setback-vc",
+            "kind": "road_setback",
+            "sector": null,
+            "statement": "limit",
+            "limitAnyOf": [
+              {
+                "kind": "value",
+                "comparison": "min",
+                "value": 10,
+                "unit": "m"
+              }
+            ],
+            "pages": [
+              47,
+              47
+            ],
+            "article": "A 6",
+            "phrases": [
+              "Voies communales : 10 mètres de l'axe de la voie"
+            ],
+            "handChecked": false,
+            "note": "Measured from the road's axis, not its edge; D900 75 m, D2 25 m, other departmental roads 15 m (alsoAccepted). Which road borders AC0323 is the owner's hand check."
+          },
+          {
+            "id": "gordes-building-distance-not-regulated",
+            "kind": "building_distance",
+            "sector": null,
+            "statement": "not_regulated",
+            "pages": [
+              48,
+              48
+            ],
+            "article": "A 8",
+            "phrases": [
+              "Non réglementé"
+            ],
+            "handChecked": false
+          },
+          {
+            "id": "gordes-dwelling-emprise",
+            "kind": "footprint_ratio",
+            "sector": null,
+            "statement": "limit",
+            "limitAnyOf": [
+              {
+                "kind": "value",
+                "comparison": "max",
+                "value": 250,
+                "unit": "m2"
+              }
+            ],
+            "pages": [
+              48,
+              48
+            ],
+            "article": "A 9",
+            "phrases": [
+              "est limitée à 250 m2"
+            ],
+            "handChecked": false
+          }
+        ],
+        "alsoAccepted": [
+          {
+            "kind": "road_setback",
+            "pages": [
+              47,
+              47
+            ],
+            "note": "D900 75 m, D2 25 m, other departmental roads 15 m from the axis; rivers and canals 10 m from the bank"
+          },
+          {
+            "kind": "annex_max",
+            "pages": [
+              48,
+              48
+            ],
+            "note": "annexes 4.50 m at the ridge (A 10)"
+          },
+          {
+            "kind": "height_total",
+            "pages": [
+              48,
+              48
+            ],
+            "note": "4.50 m (annexes) or 10 m (other buildings) at the ridge, with their condition"
+          },
+          {
+            "kind": "floor_area_max",
+            "pages": [
+              44,
+              44
+            ],
+            "note": "new farm dwellings within 250 m² of floor area (A 2 1-); local sales within 50 m²"
+          },
+          {
+            "kind": "other",
+            "pages": [
+              44,
+              51
+            ],
+            "note": "pools 60 m² / 80 m² of basin, 20 m radius; the PPRIF red-zone table; the aspect rules of A 11"
+          }
+        ],
+        "forbidden": [
+          {
+            "id": "gordes-no-example-caps",
+            "kind": "extension_max",
+            "limitEquals": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 50,
+              "unit": "m2"
+            },
+            "why": "the proposal's « ≤ 50 m² » is an example (002.9 correction 3), not Gordes' text"
+          }
+        ]
+      },
+      "designTime": {
+        "existingEmprise": {
+          "value": 144.04,
+          "tolerance": 0.01,
+          "unit": "m2"
+        },
+        "extensionMeasured": {
+          "value": 30.0,
+          "tolerance": 0.01,
+          "unit": "m2"
+        },
+        "extensionCheck": {
+          "base": "surface_de_plancher",
+          "expected": "not_checked, with the base named (« the floor area » of the existing dwelling): the reference design has no roof, so its surface de plancher is 0 m² (002.4 P2) and 30 % of it is no measure of the 30.0 m² extension",
+          "changedFromDraft": "002.4's walk entered example caps (30 % of the existing emprise → 43.2 m², and 50 m²); Gordes' text caps 30 % of the existing dwelling's floor area within 250 m² in all. The draft's « 6 × 7 m » extension measures 30.0 m² on the committed design (002.4 P2)."
+        },
+        "sheet": {
+          "flags": [
+            "site"
+          ],
+          "flagNames": "AC2 Site inscrit « … plan de Gordes »",
+          "zoneValidFrom": "2022-04-11"
+        }
+      }
+    },
+    "mouzay": {
+      "label": "P3 Mouzay, 55364000AB0415, carte communale sector C / Ci",
+      "regime": "cc",
+      "extraction": {
+        "offered": false,
+        "companionRequests": 0,
+        "reasonKey": "fr-urban-rules.written.notOffered.cc",
+        "reason": "No written regulation to read: a carte communale has no règlement, so the national rules (RNU) listed here apply.",
+        "changedFromDraft": "The draft's « carte communale: no written regulation on the GPU » named no key; the package said only the regime (« Carte communale »). 0.8.1 adds the Rules view's notice (002.9 defect 3)."
+      },
+      "designTime": {
+        "envelope": {
+          "groundArea": {
+            "value": 550.9,
+            "tolerance": 0.5,
+            "unit": "m2"
+          },
+          "rules": [
+            "R.111-16",
+            "R.111-17"
+          ]
+        }
+      }
+    },
+    "brouennes": {
+      "label": "P4 Brouennes, 55083000AB0291, RNU",
+      "regime": "rnu",
+      "extraction": {
+        "offered": false,
+        "companionRequests": 0,
+        "reasonKey": "fr-urban-rules.written.notOffered.rnu",
+        "reason": "No written regulation to read: no local plan applies here, so the national rules (RNU) listed here apply.",
+        "changedFromDraft": "The draft's « RNU » named no sentence; 0.8.1 adds the Rules view's notice (002.9 defect 3)."
+      },
+      "designTime": {
+        "envelope": {
+          "groundArea": {
+            "value": 1264.2,
+            "tolerance": 0.5,
+            "unit": "m2"
+          }
+        },
+        "variations": {
+          "open": {
+            "potentialIssues": 1,
+            "rulesChecked": 2,
+            "countable": 5,
+            "r111_17": {
+              "edge": 2,
+              "measured": 2.5,
+              "limit": 4.469
+            }
+          },
+          "parked": {
+            "id": "0e5b1c6a-2222-4c2a-9a55-002800000001",
+            "name": "Moved from the side boundary",
+            "potentialIssues": 0,
+            "rulesChecked": 2,
+            "countable": 5,
+            "r111_17": {
+              "edge": 2,
+              "measured": 5.814,
+              "limit": 4.543
+            }
+          },
+          "note": "Re-derived after 002.8: 4.469 m is half the altitude difference on this slope (above R.111-17's 3 m floor); the parked variation (the house moved 3.5 m from side edge 2) gives 5.814 m against 4.543 m."
+        }
+      }
+    },
+    "rochefort": {
+      "label": "P5 Rochefort-en-Terre, 56196000AB0149, not on the GPU",
+      "regime": "not_published",
+      "extraction": {
+        "offered": false,
+        "companionRequests": 0,
+        "reasonKeys": [
+          "fr-urban-rules.notice.notPublished",
+          "fr-urban-rules.notice.askTownHall"
+        ],
+        "reason": "Plan not on the GPU: ask the town hall for the règlement, and enter its rules by hand."
+      },
+      "designTime": {
+        "flags": [
+          "abf",
+          "seismic",
+          "radon",
+          "risk"
+        ],
+        "flagNames": "AC4 « Site patrimonial remarquable de ROCHEFORT-EN-TERRE »",
+        "enteredHeight": {
+          "value": 10,
+          "measured": 7.93,
+          "result": "no_issue"
+        },
+        "sheetNotice": "Plan not available on the Géoportail de l’Urbanisme: no local rule is presented.",
+        "assistant": {
+          "withoutEnteredRule": {
+            "summaryKey": "fr-urban-rules.question.notPublished",
+            "cites": 0
+          },
+          "withWalkEnteredHeight": {
+            "can_add_storey": "fr-urban-rules.question.can_add_storey.exceeds",
+            "citesEnteredRule": true
+          },
+          "note": "Changed from the draft: « says no regulation is published and offers hand entry, citing nothing » holds before any rule is entered; once the walk's 10 m height is entered (by hand, from the town hall's copy), the questions answer from it — 7.93 m + a 3 m storey exceeds it — and cite the entered rule, never a published one."
+        },
+        "sheetNoticeKey": "fr-urban-rules.sheet.notice.notPublished",
+        "flagsNote": "Changed from the draft's « only the AC4 flag »: AC4 is the only planning easement (abf); the Géorisques flags (seismic zone, radon class, the commune's risks) are national and listed on every plot."
+      }
+    }
+  }
+}

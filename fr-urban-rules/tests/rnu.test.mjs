@@ -11,7 +11,17 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 import { __testing, createReader } from '../src/index.js';
-import { FIXTURES, loadPlot, recordedFetch, recordedSiteService, requestFor } from './helpers.mjs';
+import {
+  FIXTURES,
+  PLOTS,
+  loadAcceptance,
+  loadPlot,
+  recordedFetch,
+  recordedSiteService,
+  replayFetch,
+  replayService,
+  requestFor
+} from './helpers.mjs';
 
 globalThis.fetch = () => {
   throw new Error('no network in tests');
@@ -1197,6 +1207,13 @@ test('review 3: a 20,000-edge Site boundary stays within the host’s counts; ru
     )
   );
   assert.ok(view(report, 'edges').blocks.find((b) => b.kind === 'actions').actions.length <= 200);
+  // 002.7 review (2026-10-21): past 1,000 edges no envelope is drawn — said, never a stall.
+  assert.equal(report.features.some((f) => f.id === 'envelope'), false);
+  assert.ok(
+    view(report, 'envelope').blocks.some(
+      (b) => b.kind === 'notice' && b.text.key === 'fr-urban-rules.envelope.notice.shape'
+    )
+  );
 });
 
 test('review 4: runAction never throws: a section that cannot be read is a refusal', async () => {
@@ -2069,4 +2086,196 @@ test('002.1b review: no source serving buildings is said, not read as none', asy
       (x) => x.kind === 'notice' && x.text.key === 'fr-urban-rules.notice.neighboursNoSource'
     )
   );
+});
+
+// ── Sprint 002.8 DEC-7: the parked variations' checks, by the read's own pipeline ──
+
+/**
+ * An acceptance read (002.4 DEC-2), replays only, its reader kept open. The
+ * Site service is the replay, except that a measure asked with `variationId`
+ * equal to `alias` is answered as the open variation's (asked without one) —
+ * so the variation path can be compared with the read's own on one design.
+ */
+async function acceptanceReader(plot, { alias, spy } = {}) {
+  const captured = await loadAcceptance(plot);
+  const replayed = replayService(captured.siteCalls, { name: 'site' });
+  const strip = (input = {}) => {
+    if (alias === undefined || input.variationId !== alias) return input;
+    const { variationId, ...rest } = input;
+    return rest;
+  };
+  const measures = {};
+  for (const name of Object.keys(replayed.measures ?? {})) {
+    measures[name] = (...args) => {
+      spy?.(name, args[0]);
+      if (args.length === 0) return replayed.measures[name]();
+      const input = strip(args[0]);
+      // `projection({ variationId })` stripped is `{}`; the read asked `projection()`.
+      if (Object.keys(input).length === 0 && args[0]?.variationId !== undefined) {
+        try {
+          return replayed.measures[name](input);
+        } catch {
+          return replayed.measures[name]();
+        }
+      }
+      return replayed.measures[name](input);
+    };
+  }
+  const site = new Proxy(replayed, {
+    get: (target, key) => (key === 'measures' ? measures : Reflect.get(target, key))
+  });
+  const documentService = replayService(captured.context.document, { name: 'document' });
+  const reader = createReader({
+    fetch: replayFetch(captured.answers),
+    now: () => new Date(Date.UTC(2026, 9, 21, 9, 0)),
+    site: () => site,
+    roads: () => replayService(captured.context.roads, { name: 'roads' }),
+    mapFeatures: () => replayService(captured.context['map-features'], { name: 'map-features' }),
+    document: () => documentService,
+    packageData: () => ({ read: () => captured.section ?? undefined })
+  });
+  const report = await reader.read(
+    { site: captured.site, country: 'FR', reason: 'site' },
+    { signal: signal(), progress: () => {} }
+  );
+  // The open Document's id and its `Building` entities, as the host lists them (096.11 RD-1).
+  const variations = captured.siteCalls.find((c) => c.path === 'variations')?.result ?? [];
+  const openId = variations.find((v) => v.open)?.id;
+  const buildings = (captured.context.document ?? [])
+    .filter((c) => c.path === 'find' && JSON.stringify(c.args) === '["Building"]')
+    .flatMap((c) => c.result ?? [])
+    .map((entity, index) => {
+      const name = (captured.context.document ?? []).find(
+        (c) => c.path === `find(["Building"])[${index}].property` && JSON.stringify(c.args) === '["name"]'
+      )?.result;
+      return { id: entity.id, ...(name?.kind === 'string' ? { name: name.value } : {}) };
+    });
+  return { captured, reader, report, openId, buildings };
+}
+
+test('002.8 criterion 10: on every plot, the variation path over the open design gives the report’s own checks (the refactor holds)', async () => {
+  let compared = 0;
+  for (const plot of PLOTS) {
+    const probe = await acceptanceReader(plot);
+    const alias = probe.openId ?? 'open-variation';
+    probe.reader.dispose();
+    const context = await acceptanceReader(plot, { alias });
+    const { checks } = await context.reader.checkVariation(
+      {
+        site: context.captured.site,
+        country: 'FR',
+        variationId: alias,
+        report: context.report,
+        buildings: context.buildings
+      },
+      { signal: signal() }
+    );
+    assert.deepEqual(checks, context.report.checks, `${plot}: ${context.report.checks.length} checks`);
+    compared += checks.length;
+    context.reader.dispose();
+  }
+  // Lyon 2, Gordes 2, Brouennes 3, Mouzay 5: the comparison is not of empty lists.
+  assert.ok(compared >= 12, `${compared} checks compared`);
+});
+
+test('002.8 criterion 10: Brouennes, a second variation parked — the open design 1 potential issue (R.111-17), the parked one 0, with the same rules checked', async (t) => {
+  const context = await acceptanceReader('brouennes');
+  const parked = context.captured.variations;
+  if (parked === undefined || parked.length === 0) {
+    t.skip('Brouennes’ capture holds no parked variation yet (variations.json)');
+    context.reader.dispose();
+    return;
+  }
+  const issues = (checks) => checks.filter((c) => c.result === 'potential_issue');
+  assert.equal(issues(context.report.checks).length, 1, 'the open design');
+  assert.equal(issues(context.report.checks)[0].ruleId, 'rnu:R.111-17');
+  for (const recorded of parked) {
+    assert.equal(recorded.error, undefined, recorded.error);
+    const { checks } = await context.reader.checkVariation(
+      {
+        site: context.captured.site,
+        country: 'FR',
+        variationId: recorded.variationId,
+        report: context.report,
+        buildings: recorded.buildings
+      },
+      { signal: signal() }
+    );
+    assert.deepEqual(checks, recorded.checks, 'as the editor answered it during the capture');
+    assert.equal(issues(checks).length, 0, 'the parked variation');
+    // The same rules are checked: every check names a rule of the report, and the
+    // rules checked in one are checked in the other.
+    const rulesOf = (list) => [...new Set(list.map((c) => c.ruleId))].sort();
+    assert.deepEqual(rulesOf(checks), rulesOf(context.report.checks));
+    for (const check of checks) {
+      for (const id of check.assumptionIds ?? []) {
+        assert.ok(context.report.assumptions.some((a) => a.id === id), `${id} is the report’s`);
+      }
+    }
+  }
+  context.reader.dispose();
+});
+
+test('002.8 criterion 11: checkVariation throws with no read of the Site, for another document version or a rule it did not read, and on an aborted signal', async () => {
+  const context = await acceptanceReader('lyon', { alias: 'parked' });
+  const request = {
+    site: context.captured.site,
+    country: 'FR',
+    variationId: 'parked',
+    report: context.report,
+    buildings: []
+  };
+  const fresh = createReader({ fetch: async () => undefined, site: () => undefined });
+  await assert.rejects(() => fresh.checkVariation(request, { signal: signal() }), /no read of this Site/);
+  fresh.dispose();
+  const otherVersion = structuredClone(context.report);
+  otherVersion.document.version = '200046977_PLUI_20990101';
+  await assert.rejects(
+    () => context.reader.checkVariation({ ...request, report: otherVersion }, { signal: signal() }),
+    /no read of this Site/
+  );
+  const otherRule = structuredClone(context.report);
+  otherRule.rules.push({ ...otherRule.rules[0], id: 'entered:never-read' });
+  await assert.rejects(
+    () => context.reader.checkVariation({ ...request, report: otherRule }, { signal: signal() }),
+    /no read of this Site/
+  );
+  const aborted = new AbortController();
+  aborted.abort();
+  await assert.rejects(() => context.reader.checkVariation(request, { signal: aborted.signal }));
+  context.reader.dispose();
+  // Read no more: it reads no network and starts no read of its own.
+  assert.equal(context.report.checks.length > 0, true);
+});
+
+test('002.8 criterion 11: aborted while measuring, checkVariation stops at the next building or step', async () => {
+  const controller = new AbortController();
+  let measured = 0;
+  let afterAbort = 0;
+  const context = await acceptanceReader('brouennes', {
+    alias: 'parked',
+    spy: (name, input) => {
+      if (input?.variationId !== 'parked') return;
+      measured += 1;
+      if (controller.signal.aborted) afterAbort += 1;
+      // The first measure of the variation aborts the call.
+      controller.abort();
+    }
+  });
+  await assert.rejects(() =>
+    context.reader.checkVariation(
+      {
+        site: context.captured.site,
+        country: 'FR',
+        variationId: 'parked',
+        report: context.report,
+        buildings: []
+      },
+      { signal: controller.signal }
+    )
+  );
+  assert.ok(measured >= 1);
+  // Only the step under way when the signal came (one building's own measures) finishes.
+  assert.ok(afterAbort <= 2, `${afterAbort} measures after the abort`);
+  context.reader.dispose();
 });

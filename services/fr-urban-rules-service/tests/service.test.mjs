@@ -3,8 +3,10 @@
  * with a fake fetcher and a fake parser over the recorded Gordes text.
  */
 
+// 002.9 criterion 2: no network but loopback, before anything else is loaded.
+import '../../test-support/no-network.mjs';
 import assert from 'node:assert/strict';
-import { mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -314,11 +316,22 @@ test('the image installs without optional dependencies: no @napi-rs/canvas', () 
   assert.match(dockerfile, /npm ci --omit=dev --omit=optional/u);
   const pkg = JSON.parse(readFileSync(join(REPO, 'services/fr-urban-rules-service/package.json'), 'utf8'));
   assert.equal(pkg.dependencies['pdfjs-dist'], '6.2.108', 'pinned exactly');
-  const installed = readdirSync(join(REPO, 'services/fr-urban-rules-service/node_modules'));
-  assert.ok(
-    !installed.includes('@napi-rs'),
+  // npm 10 (Node 22, CI) leaves the omitted packages' scope folder behind,
+  // empty; npm 11 does not. A package inside it is what must not be there.
+  const scope = join(REPO, 'services/fr-urban-rules-service/node_modules/@napi-rs');
+  const installed = existsSync(scope) ? readdirSync(scope) : [];
+  assert.deepEqual(
+    installed,
+    [],
     'install with `npm ci --omit=optional`, as the image does: the tests must run without the canvas'
   );
+});
+
+test('the image’s base is pinned by digest (archisimple Sprint 096.13, Q6)', () => {
+  const dockerfile = readFileSync(join(REPO, 'services/Dockerfile'), 'utf8');
+  const from = dockerfile.split('\n').filter((line) => line.startsWith('FROM '));
+  assert.ok(from.length > 0);
+  for (const line of from) assert.match(line, /@sha256:[0-9a-f]{64}/u, line);
 });
 
 test('the cache swaps an entry atomically: a rewrite keeps it readable', async () => {

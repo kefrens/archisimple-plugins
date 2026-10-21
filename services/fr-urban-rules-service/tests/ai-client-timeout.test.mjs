@@ -6,6 +6,8 @@
  * after 1.5 s: a plain `fetch` fails, the client's extract call completes.
  */
 
+// 002.9 criterion 2: no network but loopback, before anything else is loaded.
+import '../../test-support/no-network.mjs';
 import assert from 'node:assert/strict';
 import http from 'node:http';
 import { after, test } from 'node:test';

@@ -29,19 +29,63 @@ const SDK_CATEGORIES = [
   'information'
 ];
 
-test('criterion 1: the manifest declares an SDK 1.28 extension (002.6a: the plugin service) needing `regulations` and, since 002.1a, `document`', () => {
+test('criterion 1: the manifest declares an SDK 1.32 extension (002.8: questions and parked-variation checks) needing `regulations` and, since 002.1a, `document`', () => {
   assert.equal(manifest.id, 'com.archisimple.fr-urban-rules');
   assert.equal(manifest.type, 'extension');
-  assert.equal(manifest.version, '0.6.1');
-  // 1.28 since 002.6a: `plugin-service` and `locate()` (096.8a); 002.6b uses 096.8b's
-  // `onDidChange` and `source` reads, the same minor. No capability: both are ambient.
-  assert.equal(manifest.sdkVersion, '1.28');
+  assert.equal(manifest.version, '0.8.1');
+  // 1.32 since 002.8 (DEC-10): `checkVariation` (1.31, 096.11) and `questions`
+  // (1.32, 096.12). 1.30 since 002.7: an envelope's `volume` (1.29) and the report's
+  // `sheet` (1.30). 1.28 since 002.6a: `plugin-service` and `locate()`.
+  assert.equal(manifest.sdkVersion, '1.32');
   assert.equal(manifest.entryPoint, 'src/index.js');
-  // `document` since 002.1a: `SitePackageDataService.write` requires it (096.4 DEC-7).
-  // `commands` since 002.4: the developer capture command (DEC-2).
+  // `document` since 002.1a: `SitePackageDataService.write` requires it (096.4 DEC-7),
+  // and an answer's offer too (096.12 DEC-12). `ai` since 002.3: the programme stage,
+  // and since 002.8 the questions (without it the host offers none). `commands` since
+  // 002.4: the developer capture command (DEC-2).
   assert.deepEqual(manifest.capabilities, ['regulations', 'document', 'ai', 'commands']);
   assert.deepEqual(manifest.resources, ['i18n']);
   assert.deepEqual(manifest.dependencies, []);
+});
+
+test('002.8 DEC-9 / criterion 1: `network.hosts` is FETCHED_HOSTS, and every other https:// literal of the source is a link host (RD-4)', () => {
+  const { FETCHED_HOSTS, LINK_HOSTS } = __testing;
+  assert.deepEqual(manifest.network, { hosts: FETCHED_HOSTS });
+  // The fetch bases are on the list the code reads (fetchJson refuses any other).
+  const literals = [...source.matchAll(/https?:\/\/([A-Za-z0-9.-]+)/g)].map((m) => m[1]);
+  assert.ok(literals.length > 0);
+  for (const host of literals) {
+    assert.ok(
+      FETCHED_HOSTS.includes(host) || LINK_HOSTS.includes(host),
+      `${host} is on neither FETCHED_HOSTS nor LINK_HOSTS`
+    );
+  }
+  for (const host of FETCHED_HOSTS) assert.ok(literals.includes(host), `${host} is fetched`);
+  // A link is never a contact: legifrance stays off the card.
+  for (const host of LINK_HOSTS) assert.equal(FETCHED_HOSTS.includes(host), false);
+  // The companion service's hosts are its own (002.5a), never the package's.
+  assert.equal(manifest.network.hosts.includes('data.geopf.fr'), false);
+});
+
+test('002.8 DEC-9: the README’s « Hosts contacted » table names exactly FETCHED_HOSTS, besides the editor’s own origin', async () => {
+  const readme = await read('../README.md');
+  const section = readme.split('## Hosts contacted')[1].split('\n## ')[0];
+  const hosts = [...section.matchAll(/^\| `([a-z0-9.-]+\.[a-z]+)` \|/gm)].map((m) => m[1]);
+  assert.deepEqual(hosts, __testing.FETCHED_HOSTS);
+});
+
+test('002.8 DEC-9: fetchJson refuses a host that is not on FETCHED_HOSTS, without fetching', async () => {
+  let asked = 0;
+  const answer = await __testing.fetchJson(
+    async () => {
+      asked += 1;
+      return { ok: true, status: 200, text: async () => '{}' };
+    },
+    'https://example.org/api',
+    new AbortController().signal,
+    1000
+  );
+  assert.equal(asked, 0);
+  assert.equal(answer.failed, 'network');
 });
 
 test('exports the extension contract', () => {
@@ -99,6 +143,12 @@ test('activate registers one regulation source, by token name, into subscription
   assert.equal(typeof registered[0].read, 'function');
   // 002.0 had none (Refresh is the host's); 002.1a's edge-role actions run here.
   assert.equal(typeof registered[0].runAction, 'function');
+  // 002.8: the parked variations' checks (SDK 1.31) and the four questions (SDK 1.32).
+  assert.equal(typeof registered[0].checkVariation, 'function');
+  assert.deepEqual(
+    registered[0].questions.map((q) => q.id),
+    ['can_add_storey', 'road_distance', 'max_height', 'remaining_area']
+  );
   assert.equal(subscriptions.length, 2, 'the source, and the reader’s own disposal');
   assert.equal(typeof subscriptions[1].dispose, 'function');
   subscriptions[1].dispose();
@@ -256,4 +306,36 @@ test('DEC-4: a geometry past 6,000 encoded characters travels in a POST body', (
   const small = __testing.apiCartoRequest('zone-urba', { type: 'Point', coordinates: [4.8, 45.7] });
   assert.equal(small.body, undefined);
   assert.match(small.url, /\?geom=%7B/);
+});
+
+test('002.8 criterion 2: four questions, ids and parameters as DEC-1, descriptions in English within 500 characters saying what they do not answer', () => {
+  const { createReader } = __testing;
+  const reader = createReader({ fetch: async () => undefined, site: () => undefined });
+  const byId = Object.fromEntries(reader.questions.map((q) => [q.id, q]));
+  assert.deepEqual(Object.keys(byId), ['can_add_storey', 'road_distance', 'max_height', 'remaining_area']);
+  for (const question of reader.questions) {
+    assert.match(question.id, /^[a-z0-9_]{1,40}$/);
+    // 096.12: the tool name `regulations_<id>` within a provider's ^[a-zA-Z0-9_-]{1,64}$.
+    assert.match(`regulations_${question.id}`, /^[a-zA-Z0-9_-]{1,64}$/);
+    assert.ok(question.description.length >= 1 && question.description.length <= 500, question.id);
+    assert.match(question.description, /does not decide whether a permit will be granted/i);
+    assert.ok(Object.keys(question.parameters ?? {}).length <= 6);
+    for (const key of Object.keys(question.parameters ?? {})) assert.match(key, /^[A-Za-z0-9_]{1,40}$/);
+    assert.equal(typeof question.answer, 'function');
+  }
+  assert.deepEqual(byId.can_add_storey.parameters.storeyHeight, {
+    kind: 'number',
+    description: byId.can_add_storey.parameters.storeyHeight.description,
+    unit: 'm',
+    min: 2,
+    max: 6
+  });
+  for (const id of ['can_add_storey', 'road_distance', 'max_height']) {
+    assert.equal(byId[id].parameters.building.kind, 'text');
+    assert.equal(byId[id].parameters.building.required, undefined, 'optional');
+  }
+  assert.deepEqual(Object.keys(byId.road_distance.parameters), ['building']);
+  assert.deepEqual(Object.keys(byId.max_height.parameters), ['building']);
+  assert.equal(byId.remaining_area.parameters, undefined);
+  reader.dispose();
 });

@@ -4,6 +4,8 @@
  * Never on the real règlements, which are not committed.
  */
 
+// 002.9 criterion 2: no network but loopback, before anything else is loaded.
+import '../../test-support/no-network.mjs';
 import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';

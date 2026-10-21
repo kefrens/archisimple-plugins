@@ -308,7 +308,8 @@ export function expandSiteCalls(pairs) {
  * does not exist. The command's downloads lose their `fr-capture-` prefix:
  * `site.json` (the host's Site view), `site-calls.json`, `context.json`
  * (`roads`, `map-features`, `document` pairs), `section.json` and
- * `answers.json` (re-recorded by `tools/record-fixtures.mjs`).
+ * `answers.json` (re-recorded by `tools/record-fixtures.mjs`); since 002.8,
+ * `variations.json` where the capture checked a parked variation.
  */
 export async function loadAcceptance(plot) {
   const folder = new URL(`${plot}/`, ACCEPTANCE);
@@ -319,11 +320,21 @@ export async function loadAcceptance(plot) {
     throw cause;
   }
   const read = async (name) => JSON.parse(await readFile(new URL(name, folder), 'utf8'));
+  // Sprint 002.8: the parked variations the capture checked, where the walk had one.
+  const optional = async (name) => {
+    try {
+      return await read(name);
+    } catch (cause) {
+      if (cause?.code === 'ENOENT') return undefined;
+      throw cause;
+    }
+  };
   return {
     site: await read('site.json'),
     siteCalls: expandSiteCalls(await read('site-calls.json')),
     context: await read('context.json'),
     section: await read('section.json'),
-    answers: await read('answers.json')
+    answers: await read('answers.json'),
+    variations: await optional('variations.json')
   };
 }

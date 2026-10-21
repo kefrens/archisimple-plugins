@@ -95,7 +95,7 @@ const theme = context.services.get(ThemeServiceToken);
 ```
 
 Well-known token names — read from `defineServiceToken(...)` in
-`../archisimple/packages/extension-sdk/src/services.ts` (SDK 1.28, 2026-10-20) and
+`../archisimple/packages/extension-sdk/src/services.ts` (SDK 1.32, 2026-10-21; no token added since 1.28) and
 `plugin-services.ts` beside it; diff against them when this table looks short:
 
 | Service              | Token name          | Notes                                                                     |
@@ -116,7 +116,7 @@ Well-known token names — read from `defineServiceToken(...)` in
 | Vegetation (canopy)  | `vegetation`        | registering needs `vegetation`; listing does not (SDK 1.22)               |
 | Roads                | `roads`             | registering needs `map-features`; listing and querying do not (SDK 1.23)  |
 | Site                 | `site`              | **ambient**, read-only; resolve with `getOptional` (SDK 1.24)             |
-| Regulations          | `regulations`       | registering needs `regulations`; listing does not (SDK 1.25)              |
+| Regulations          | `regulations`       | registering needs `regulations`; listing does not (SDK 1.25). A source's `checkVariation` (1.31) needs nothing more; its `questions` (1.32) are offered only with `ai`, an answer's offer only with `document` |
 | Site package data    | `site-package-data` | your own section only; reading ambient, `write` needs `document` (1.27)   |
 | Plugin service       | `plugin-service`    | **ambient**, bound to your package; `locate()` → your companion's base URL or `undefined` (1.28) |
 | Country profiles     | `country-profile`   | registering needs `country-profile`; listing does not                     |
@@ -184,11 +184,12 @@ my-plugin/
   content (themes, translations, materials, templates, icons, textures).
 - `sdkVersion` is `major.minor`, **not** semver. Read the current one from
   `SDK_VERSION` in `../archisimple/packages/extension-sdk/src/sdk-version.ts`
-  rather than from this line (it said `1.1` long after `1.23`; it is **`1.28`**
-  on 2026-10-20). A `1.0` extension runs on a `1.4` host (additive only); a
+  rather than from this line (it said `1.1` long after `1.23`; it is **`1.32`**
+  on 2026-10-21). A `1.0` extension runs on a `1.4` host (additive only); a
   different major is refused outright. Declare the minor that added the seam you
   use — `1.1` for an importer, `1.24` for the Site view, `1.25` for
-  `regulations`, `1.27` for Site package data, `1.28` for the plugin service — so an older host refuses the
+  `regulations`, `1.27` for Site package data, `1.28` for the plugin service,
+  `1.31` for a source's `checkVariation`, `1.32` for its `questions` — so an older host refuses the
   manifest with a reason instead of handing you a runtime `undefined`.
 - `entryPoint` here is a **path relative to the package root** (`src/index.js`),
   because that is what the Development Repository reads.
@@ -274,8 +275,8 @@ the model, and reaching around this is not possible from an extension.
 ## Capabilities — declare exactly what you use
 
 Read from `EXTENSION_CAPABILITIES` in
-`../archisimple/packages/extension-sdk/src/capabilities.ts` (SDK 1.28, unchanged since 1.25;
-2026-10-20):
+`../archisimple/packages/extension-sdk/src/capabilities.ts` (SDK 1.32, unchanged since 1.25;
+2026-10-21):
 
 | Capability        | Actually grants something today                                                     |
 | ----------------- | ----------------------------------------------------------------------------------- |
@@ -284,7 +285,7 @@ Read from `EXTENSION_CAPABILITIES` in
 | `document`        | ✅ document **writes** (`transact`), and since SDK 1.27 your Site section's `write` |
 | `components`      | ✅ registering components and entity kinds                                          |
 | `geo`             | ✅ contributing base-map layers (and a profile's geocoder)                          |
-| `ai`              | ✅ contributing Skills and planning stages (Sprint 28.3)                            |
+| `ai`              | ✅ contributing Skills and planning stages (Sprint 28.3), and a regulation source's questions to the assistant (096.12, SDK 1.32) |
 | `assets`          | ✅ contributing Library asset definitions (Sprint 040.4)                            |
 | `import`          | ✅ registering an importer (Sprint 041.1)                                           |
 | `export`          | ✅ registering an exporter or a sheet exporter (Sprint 044.0, 080.5)                |
@@ -442,6 +443,17 @@ what you know — never what happens.
 [fr-urban-rules/](fr-urban-rules/) is the working reference for the planning-stage
 seam (`fr-urban-rules.programme`, Sprint 002.3); no package here contributes a
 Skill since `urban-rules` was retired (002.3 DEC-7, DEC-8).
+
+The same `ai` capability lets a **regulation source's questions** reach the
+assistant (SDK 1.32, platform 096.12): `questions` on the source registered with
+`regulations`, each `answer(input)` **synchronous** within 250 ms on a
+deep-frozen `{ args, report, site, variationId, sectionData }` (the budget is
+measured, not enforced: a loop hangs the editor), answering claims —
+`basis: 'rule'` with a `ruleId` the host cites, `'measured'`, `'report'` — never
+a citation or a passage of your own; up to three *Interpretation* phrases; and
+one optional `offer`, your next Site section, which the host proposes (it needs
+`document`). A tool name is `regulations_<id>`, `[a-z0-9_]{1,40}`.
+[fr-urban-rules/](fr-urban-rules/) is the reference (Sprint 002.8).
 
 ---
 

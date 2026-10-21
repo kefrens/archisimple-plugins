@@ -761,7 +761,8 @@ test('DEC-7: a confirmed rear setback is checked on the rear edges from the stor
   assert.equal(envelope.category, 'envelope');
   assert.equal(envelope.official, false);
   const ys = envelope.rings[0].map((q) => q.northing);
-  assert.equal(Math.max(...ys), 26, 'the north (rear) edge cut 4 m in');
+  // Within a millimetre: 002.7's inset grows each strip by a tenth of one (its review, 2026-10-21).
+  assert.ok(Math.abs(Math.max(...ys) - 26) < 1e-3, 'the north (rear) edge cut 4 m in');
   assert.ok(report.assumptions.some((a) => a.id === 'envelope-approximate'));
 });
 
@@ -1103,7 +1104,7 @@ test('S4: the key reads the unsimplified area centroid; same words without a pla
   assert.deepEqual(notice.text.params, { duplicates: 1, suffixed: 1 });
 });
 
-test('S5: on an L-shaped boundary no envelope is drawn, and the report says why', async () => {
+test('S5, rewritten by 002.7 (DEC-1): on an L-shaped boundary the envelope is L-shaped, the rear setback taken edge by edge', async () => {
   const L = [p(0, 0), p(20, 0), p(20, 10), p(10, 10), p(10, 30), p(0, 30)];
   const section = store(undefined);
   const measured = measuresFor({
@@ -1118,12 +1119,31 @@ test('S5: on an L-shaped boundary no envelope is drawn, and the report says why'
     source: 'Règlement'
   });
   report = await read(context);
-  assert.equal(
-    report.features.find((f) => f.id === 'envelope'),
-    undefined
-  );
-  assert.ok(report.assumptions.some((a) => a.id === 'envelope-not-convex'));
+  const roles = Object.fromEntries(report.edges.map((e) => [e.edge, e.role]));
+  const envelope = report.features.find((f) => f.id === 'envelope');
+  assert.ok(envelope, 'an envelope on the concave boundary');
+  assert.equal(report.assumptions.some((a) => a.id === 'envelope-not-convex'), false);
+  const ring = envelope.rings[0];
+  // Both legs kept: the lower one still reaches x = 20, the upper one y > 10.
+  assert.ok(Math.max(...ring.map((q) => q.easting)) > 19.99, 'the lower leg is kept');
+  assert.ok(Math.max(...ring.map((q) => q.northing)) > 20, 'the upper leg is kept');
+  // Every rear edge's 4 m is respected at every vertex; no point outside the L.
+  const rear = [1, 2, 3, 4, 5, 6].filter((edge) => roles[edge] === 'rear');
+  assert.ok(rear.length > 0);
+  for (const edge of rear) {
+    const a = L[edge - 1];
+    const b = L[edge % L.length];
+    for (const q of ring) assert.ok(segmentGap(q, a, b) >= 4 - 0.006, `edge ${edge}`);
+  }
+  assert.ok(report.assumptions.some((a) => a.id === 'envelope-approximate'));
 });
+
+function segmentGap(q, a, b) {
+  const dx = b.easting - a.easting;
+  const dy = b.northing - a.northing;
+  const t = Math.max(0, Math.min(1, ((q.easting - a.easting) * dx + (q.northing - a.northing) * dy) / (dx * dx + dy * dy)));
+  return Math.hypot(a.easting + t * dx - q.easting, a.northing + t * dy - q.northing);
+}
 
 test('S6: a decision no longer in the plan shows the value it stored, with its unit', async () => {
   const section = store(

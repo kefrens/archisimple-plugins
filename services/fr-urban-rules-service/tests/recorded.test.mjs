@@ -10,6 +10,8 @@
  * through the post-validation of promptVersion 2. Not re-recorded live.
  */
 
+// 002.9 criterion 2: no network but loopback, before anything else is loaded.
+import '../../test-support/no-network.mjs';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';

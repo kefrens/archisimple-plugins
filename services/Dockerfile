@@ -17,7 +17,13 @@
 # ARCHISIMPLE_AI_SERVICE_URL (unused before 002.5b), and each service's own
 # variables (see its README). No model key, ever (ADR-0114 Rule 7).
 
-FROM node:22-alpine
+# The base image pinned by digest (archisimple Sprint 096.13, DEC-9/DEC-12, Q6):
+# this image is built from the same plugins commit as the web image's pins, and
+# is trusted the way any image is — by digest — so its base is not left to
+# whatever the tag points at today. A security update is a deliberate bump:
+# `docker buildx imagetools inspect node:22-alpine` prints the new index digest.
+# Read 2026-10-21 (the multi-architecture index).
+FROM node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
 
 ENV NODE_ENV=production \
     PLUGIN_SERVICES_DATA_DIR=/data \

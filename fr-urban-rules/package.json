@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "id": "com.archisimple.fr-urban-rules",
   "name": "Règles d'urbanisme (PLU)",
-  "version": "0.6.1",
+  "version": "0.8.1",
   "author": "ArchiSimple",
-  "description": "Reads the planning rules that apply to a French plot: the regime, the document in force and its zone, prescriptions, easements and risks, with a link to the regulation — opened at the zone's page where the deployment runs the companion service, whose reading of the written regulation (on request) gives written rules to confirm, edit or set aside; under the national rules (RNU) and a carte communale, the coded rules, the Site boundary's edges, the R.111-15, R.111-16 and R.111-17 checks, the neighbours' height for R.111-28 and the setback bands; drawn prescriptions with a number and hand-entered rules to confirm, edit or set aside, saved in the project; the emprise au sol and surface de plancher under their French definitions, the footprint budget, extension caps, a capacity estimate and indicative procedure flags; and the programme warning that replaces Urban Rules.",
+  "description": "Reads the planning rules that apply to a French plot: the regime, the document in force and its zone, prescriptions, easements and risks, with a link to the regulation — opened at the zone's page where the deployment runs the companion service, whose reading of the written regulation (on request) gives written rules to confirm, edit or set aside; under the national rules (RNU) and a carte communale, the coded rules, the Site boundary's edges, the R.111-15, R.111-16 and R.111-17 checks, the neighbours' height for R.111-28 and the setback bands; the theoretical envelope from the confirmed rules, drawn on the plan and as a volume in 3D, with the rules it applies and those it does not; the regulation sheet's content for Print & PDF; drawn prescriptions with a number and hand-entered rules to confirm, edit or set aside, saved in the project; the emprise au sol and surface de plancher under their French definitions, the footprint budget, extension caps, a capacity estimate and indicative procedure flags; the programme warning that replaces Urban Rules; the assistant's questions on the plot (a storey more, the street distance, the maximum height, what is left to build), each limit cited from the report; and the planning figures of every parked design variation.",
   "type": "extension",
   "minimumApplicationVersion": "0.1.0",
-  "sdkVersion": "1.28",
+  "sdkVersion": "1.32",
   "entryPoint": "src/index.js",
   "capabilities": [
     "regulations",
@@ -15,6 +15,13 @@
     "ai",
     "commands"
   ],
+  "network": {
+    "hosts": [
+      "apicarto.ign.fr",
+      "www.geoportail-urbanisme.gouv.fr",
+      "georisques.gouv.fr"
+    ]
+  },
   "dependencies": [],
   "resources": [
     "i18n"

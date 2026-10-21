@@ -1,0 +1,111 @@
+[
+  {
+    "variationId": "0e5b1c6a-2222-4c2a-9a55-002800000001",
+    "buildings": [],
+    "checks": [
+      {
+        "id": "r111-17:building-main",
+        "ruleId": "rnu:R.111-17",
+        "subject": {
+          "kind": "boundary-edge",
+          "id": "2",
+          "label": {
+            "key": "fr-urban-rules.check.subject.mainEdges",
+            "params": {
+              "edge": 2,
+              "others": "1 (22.997 m / 3.006 m), 4 (11.776 m / 4.213 m), 6 (31.807 m / 3.909 m)"
+            }
+          }
+        },
+        "measured": {
+          "value": 5.814,
+          "unit": "m"
+        },
+        "limit": {
+          "value": 4.543,
+          "unit": "m"
+        },
+        "figure": {
+          "dimension": {
+            "from": {
+              "easting": 863516.2006106771,
+              "northing": 6937528.490696882
+            },
+            "to": {
+              "easting": 863521.6511914938,
+              "northing": 6937530.515321145
+            }
+          }
+        },
+        "result": "no_issue",
+        "assumptionIds": [
+          "site-boundary-parcel",
+          "balconies-not-modelled",
+          "edges-derived",
+          "datum-derived"
+        ]
+      },
+      {
+        "id": "r111-16:building-main:3",
+        "ruleId": "rnu:R.111-16",
+        "subject": {
+          "kind": "building",
+          "id": "building-main",
+          "label": {
+            "key": "fr-urban-rules.check.subject.r11116",
+            "params": {
+              "edge": 3
+            }
+          }
+        },
+        "result": "not_checked",
+        "assumptionIds": [
+          "alignment-parcels",
+          "not-checked-alignment-outside-terrain",
+          "street-214d6e78"
+        ]
+      },
+      {
+        "id": "r111-16:building-main:5",
+        "ruleId": "rnu:R.111-16",
+        "subject": {
+          "kind": "building",
+          "id": "building-main",
+          "label": {
+            "key": "fr-urban-rules.check.subject.r11116",
+            "params": {
+              "edge": 5
+            }
+          }
+        },
+        "measured": {
+          "value": 39.372,
+          "unit": "m"
+        },
+        "limit": {
+          "value": 16.969,
+          "unit": "m"
+        },
+        "result": "no_issue",
+        "figure": {
+          "dimension": {
+            "from": {
+              "easting": 863512.4509370343,
+              "northing": 6937527.09787683
+            },
+            "to": {
+              "easting": 863480.3798671998,
+              "northing": 6937549.936329321
+            }
+          }
+        },
+        "assumptionIds": [
+          "alignment-parcels",
+          "balconies-not-modelled",
+          "datum-derived",
+          "street-214d6e78"
+        ]
+      }
+    ]
+  }
+]
