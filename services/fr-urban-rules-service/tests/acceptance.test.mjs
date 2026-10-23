@@ -272,7 +272,7 @@ for (const plot of ['lyon', 'gordes']) {
 // ── DEC-3 and criterion 7 ────────────────────────────────────────────────────────
 
 test('DEC-3: the recording tool’s options — --acceptance with --extraction, --no-model with --check --extraction', () => {
-  assert.deepEqual(recorderOptions(['lyon', '--extraction', '--acceptance']), { plot: 'lyon', check: false, trim: false, extraction: true, acceptance: true, noModel: false });
+  assert.deepEqual(recorderOptions(['lyon', '--extraction', '--acceptance']), { plot: 'lyon', check: false, trim: false, extraction: true, acceptance: true, noModel: false, snapshot: false });
   assert.equal(recorderOptions(['gordes', '--extraction', '--check', '--no-model']).noModel, true);
   assert.equal(recorderOptions(['brouennes', '--trim']).trim, true);
   for (const bad of [
