@@ -1,6 +1,6 @@
 # Règles d'urbanisme (PLU) — `fr-urban-rules`
 
-`com.archisimple.fr-urban-rules` · extension · SDK **1.33** · capabilities `regulations`, `document`, `ai`, `commands`
+`com.archisimple.fr-urban-rules` · extension · SDK **1.35** · capabilities `regulations`, `document`, `ai`, `commands`
 
 Reads the planning rules that apply to a French plot and hands ArchiSimple a
 country-neutral `RegulationReport` (platform ADR-0111): which regime applies
@@ -30,7 +30,45 @@ percentage, a written extension share of the floor area is never measured
 against the existing emprise (« not checked », the base named), and the Rules
 view of a carte communale or the RNU says why no written regulation is read.
 After Phase 3: **0.9.0** is Sprint [002.11 Planning Snapshot](../docs/sprints/sprint-002.11-planning-snapshot.md)
-(SDK 1.33, platform 096.17).
+(SDK 1.33, platform 096.17); **0.10.0** is Sprint [002.12 PLU Panel Content](../docs/sprints/sprint-002.12-plu-panel-content.md)
+(SDK 1.35, platform 096.19–096.21); **0.11.0** is Sprint [002.13 PLU Panel Diagrams](../docs/sprints/sprint-002.13-plu-panel-diagrams.md)
+(SDK 1.36, platform 096.22); **0.12.0** is Sprint [002.14 PLU Flag Content](../docs/sprints/sprint-002.14-plu-flag-content.md)
+(SDK 1.37, platform 096.25); **0.13.0** is Sprint [002.15 PLU Surfaces Content](../docs/sprints/sprint-002.15-plu-surfaces-content.md)
+(SDK 1.38, platform 096.27).
+
+## The Surfaces view (0.13.0)
+
+A headline figure (the emprise au sol as a share of the plot, with its limit and result), the
+definition as a choice of three cards that runs the same `emprise-definition` action as the form,
+the budget as a used / remaining / allowed bar, and folded rows — détail, base de calcul, pleine terre,
+surface de plancher, extensions et annexes, capacité théorique, procédure — each with a one-line
+summary. Nothing read, measured or checked changes.
+
+## The Risks view (0.12.0)
+
+Each flag says what kind of thing it is, so the host draws the boards' Risks view: servitudes and
+perimeters as rows (a short title by the SUP category, the source's own code beneath), the seismic
+zone, the radon class and the clay exposure as tiles with a segmented level bar, a PPRN as a row, and
+the risks listed for the commune folded to one line of chips. Nothing read changes: the labels, details
+and citations are 0.11.0's.
+
+The report places three blocks and one figure word; the host draws them. **Limites et reculs** shows
+the host's plot top view (the parcel, the boundary with its edges lettered A, B…, the envelope, the
+design, each measured distance in the tone of its result, the failing stretch in red) and its edge
+list (« A · Voie · 3,20 m · min. 4,00 m », the role's assumption as a chip), then the **Set role**
+actions; the edge table and its length column are gone. **Enveloppe** shows « Enveloppe en coupe », a
+schematic section of the measured height checks, and « Hauteur depuis le terrain le plus bas » carries
+a figure. Nothing read, measured or checked changes.
+
+## The panel's report (0.10.0)
+
+The host's Properties panel is one panel whose sections are the report's views, so the
+report is shaped for it, and only shaped: the views come in the boards' order with an `icon` and
+a `group` (the site and its rules, then the project against them), a **Document** view holds the
+overview's fields, the link and its notices, the overview keeps its notices alone, the flags are in
+**Risques**, each view without a count of the host's has a `summary`, the commune is the report's
+`locality`, and each of the 57 assumptions is a short title with a `.detail` line. A written rule
+to confirm offers « Confirmer 15 % ». Nothing read, measured or checked changes.
 
 ## The planning snapshot (0.9.0)
 

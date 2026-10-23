@@ -1,6 +1,10 @@
 # Sprint 002.1b — Alignment and Neighbours
 
-> **Status:** **Implemented, uncommitted (2026-10-20)** — `fr-urban-rules` 0.2.1;
+> **Status:** **Closed (2026-10-22)** — committed, deployed to the NAS and
+> closed by the owner with
+> [fr-urban-rules](../milestones/fr-urban-rules/fr-urban-rules.md) Phases
+> 0–3 and the platform's Site Regulations milestone ("you can close phase3. it works for the moment and has been deployed to the NAS").
+> As it read before the close: **Implemented, uncommitted (2026-10-20)** — `fr-urban-rules` 0.2.1;
 > 113 tests green; the editor walk (criterion 6) goes to the 096.6 / 002.4
 > joint walk, as 002.1a's criterion 10 did.
 >
@@ -201,7 +205,7 @@ reports, the 20,000-edge boundary and 002.0's five plots pass the platform's
 
 - [x] Package `README.md` (0.2.1 bullets, `capture-features.mjs`).
 - [ ] Criterion 6: the editor walk — to the joint walk.
-- [ ] Commit (the owner's).
+- [x] Commit (the owner's). _(Done at the close, 2026-10-22: `1cedc63`, `5808887`, `05db2a6`.)_
 
 ---
 

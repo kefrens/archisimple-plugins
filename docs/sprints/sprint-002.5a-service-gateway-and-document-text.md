@@ -1,6 +1,10 @@
 # Sprint 002.5a — Service Gateway and Document Text
 
-> **Status:** **Implemented (2026-10-20), uncommitted.** Gateway 0.1.0 and
+> **Status:** **Closed (2026-10-22)** — committed, deployed to the NAS and
+> closed by the owner with
+> [fr-urban-rules](../milestones/fr-urban-rules/fr-urban-rules.md) Phases
+> 0–3 and the platform's Site Regulations milestone ("you can close phase3. it works for the moment and has been deployed to the NAS").
+> As it read before the close: **Implemented (2026-10-20), uncommitted.** Gateway 0.1.0 and
 > `fr-urban-rules-service` 0.1.0 in `services/`; `GET v1/chapter` answers Lyon
 > UCe1 (PDF pp. 121–144) and Gordes A (pp. 44–51) live. **Not done:** the
 > image was not built or walked behind 096.8a's override (no Docker on this
@@ -978,3 +982,5 @@ supersede the Outcome above where the two differ (deviations 2, 7, 11 and
   44–51 `contents`; `tmp/` empty afterwards.
 - Still not done: the image build and the walk behind 096.8a's override (no
   Docker here).
+
+_Noted at the close (2026-10-22): this sprint carries no post-sprint list; what it changed in the documents is recorded in its Outcome. Not invented after the fact._

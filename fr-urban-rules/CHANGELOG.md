@@ -1,5 +1,95 @@
 # Changelog — `fr-urban-rules`
 
+## 0.13.0 — Sprint 002.15, PLU Surfaces Content
+
+- **SDK 1.38** (from 1.37): the `stat`, `choice` and `section` blocks (platform 096.27). Lockstep:
+  ship this version only with a web image carrying 096.27; an older host refuses the manifest.
+  Nothing read, measured or checked changes: every `srf:` check and assumption equals 0.11.0's on
+  the five recorded reads (`tests/surfaces-composition.test.mjs`).
+- **Surfaces** is composed. A **headline figure** for the emprise au sol (the share of the plot, « 480 m² sur
+  1 500 m² de parcelle », a gauge with the footprint limit's marker, the result as a chip); the
+  **definition as a choice of three cards** — R.420-1, Lexique (p. N), Toutes saillies — each with its
+  area, the selected one outlined, a tap running the same `emprise-definition` action as the form's
+  button (the form stays for the four counts and the page); the **budget** as the host's used /
+  remaining / allowed bar; then folded rows with their own summaries: **détail et définition
+  légale**, **base de calcul**, **pleine terre** (the shortfall « manque 4 % (60 m²) », the rule with
+  « Confirmer 15 % » and « Voir le passage »), **surface de plancher**, **extensions et annexes**,
+  **capacité théorique** (a range bar, « une estimation, pas un droit à construire ») and **procédure**.
+
+## 0.12.0 — Sprint 002.14, PLU Flag Content
+
+- **SDK 1.37** (from 1.36): a flag's `icon`, `group`, `title`, `code` and `level` (platform 096.25).
+  Lockstep: ship this version only with a web image carrying 096.25; an older host refuses the
+  manifest. Capabilities and `network.hosts` unchanged. Nothing read, measured or checked changes:
+  each flag's `id`, `kind`, `label`, `detail` and `citation` equal 0.11.0's on the five recorded
+  reads (`tests/flags.test.mjs`).
+- **Servitudes et périmètres**: an easement flag has a short title by its SUP category (AC1 «
+  Monuments historiques · périmètre ABF », AC4 « Site patrimonial remarquable · ABF », a mixed set
+  « Périmètre patrimonial · ABF », AC2 « Site classé ou inscrit », PM1/PM3 « Servitude de plan de
+  prévention des risques ») and the source's own code beneath (« AC1 », « AC1 · AC4 »).
+- **Risques naturels et sol**: the seismic zone (of 5), the radon class and the clay exposure (of 3)
+  carry the number Géorisques gave as a `level`, with « Zone 3 », « Classe 2 », « Niveau 3 » and the
+  official word of the grade; a PPRN is a row.
+- **Risques recensés dans la commune**: the risks Géorisques lists for the commune are the
+  `listed` group, each titled by its own name.
+- **Relevés des services**: the Risks view's rows that listed the same readings in one line each
+  (« Sismicité · Zone 3 », the risks joined by « · ») are **folded beneath the flags**, in a section
+  that opens itself and says so in its summary when a service is still loading or did not answer.
+  Found by the walk: above the tiles they said everything twice, in a line past the panel's width.
+
+## 0.11.0 — Sprint 002.13, PLU Panel Diagrams
+
+- **SDK 1.36** (from 1.35): `plot-plan` valid in a view, the `edges` and `height-section` blocks and
+  an assumption's `figure` (platform 096.22). Lockstep: ship this version only with a web image
+  carrying 096.22; an older host refuses the manifest. Capabilities and `network.hosts`
+  unchanged. Nothing read, measured or checked changes: 002.9's expected values and 002.12's
+  digests hold.
+- **Limites et reculs** shows the host's **plot top view** — the parcel, the boundary with its edges
+  lettered, the buildable zone, the design, the measured distances in their tones, the failing
+  stretch in red — then its **edge list** (« A · Voie · 3,20 m · min. 4,00 m », the role's
+  assumption as an amber chip), then the **Set role** actions as before. The edge table is gone:
+  its role and « why » are the edge list's, and its **length column is dropped** (the letter on the
+  plot view identifies an edge). Without a Site boundary the view keeps its notice and no diagram.
+- **Enveloppe** shows « Enveloppe en coupe » — a schematic section of the plot's measured height
+  checks (the main building's total and façade heights, a prescription's) — after the view's notices.
+- **« Hauteur depuis le terrain le plus bas »** carries a figure: a building on sloping ground,
+  the height measured from the lowest point of the ground at its foot.
+- **Set role** names an edge by the host's letter (« Fixer le rôle de la limite A »), as the plot view and the edge list letter it; the view is labelled « Limites et reculs » (it read « Côtés de la limite du site »).
+- The edge table's keys (`edges.column.edge`, `.length`, `.why`, `edges.why.*`) are removed from both
+  catalogues; `fr-urban-rules.envelope.section` is new.
+
+## 0.10.0 — Sprint 002.12, PLU Panel Content
+
+- **SDK 1.35** (from 1.33): a view's `icon`, `group` and `summary` and the report's `locality`
+  (platform 096.19, SDK 1.34); an assumption's `detail` (096.21, SDK 1.35). Lockstep: ship this
+  version only with a web image carrying 096.19–096.21; an older host refuses the manifest.
+  Capabilities and `network.hosts` unchanged. Nothing read, measured or checked changes: the
+  rules, checks, features, edges, flags, zones, document and sources of the five reference reads
+  are byte-identical to 0.9.0's.
+- **The views in the boards' order, with an icon and a group**: Document, Zone (Secteur under a
+  carte communale), Prescriptions, Informations, Servitudes, Risques — *le terrain et ses règles* —
+  then Vérifications, Règles, Limites, Enveloppe, Surfaces — *le projet face aux règles*. A view
+  the regime lacks is absent; the order of the rest holds.
+- **A Document view**: the overview's fields (regime, commune, document, version, approval date,
+  zone), the link to the regulation and the notices about it. The overview keeps its **notices
+  only** (the host draws them under its status line); its `assumptions` (now on the checks that
+  name them) and `sources` (the host's own section) leave it; **the flags move into Risques**,
+  after its fields.
+- **Summaries** where the host derives none: the document's date, the zones (« UF »), the counts
+  of prescriptions, informations and servitudes, the strongest risk read (clay, else seismic,
+  else radon — « Argiles · moyen »), « 4 limites », the lowest height ceiling of the envelope
+  (a quantity) and « Emprise 32 % ». Vérifications and Règles carry none: the host counts them.
+- **The commune as the report's `locality`** (« Lyon », not the service's « LYON »).
+- **57 assumptions as a short title and one line of detail**, in English and French (the ids and
+  keys are unchanged; the detail is the title's key plus `.detail`). The table of old and new is
+  in Sprint 002.12's Outcome.
+- **« Confirmer 15 % »** on a written rule to confirm with a value or ratio limit (a number
+  parameter, written in the reader's locale, as the assistant's offer is); a described limit keeps
+  « Confirmer ».
+- **`allowed` is not sent**: every rule shape here — coded, drawn, written, entered — states one
+  comparison and one value, so none bounds a measure on both sides (the SDK field stays for the
+  next country).
+
 ## 0.9.0 — Sprint 002.11, Planning Snapshot
 
 - **SDK 1.33** (from 1.32): `SitePackageDataService.readCache` / `writeCache` /

@@ -1,6 +1,10 @@
 # Sprint 002.6a — Zone Page Link
 
-> **Status:** **Implemented (2026-10-20), uncommitted** — `fr-urban-rules`
+> **Status:** **Closed (2026-10-22)** — committed, deployed to the NAS and
+> closed by the owner with
+> [fr-urban-rules](../milestones/fr-urban-rules/fr-urban-rules.md) Phases
+> 0–3 and the platform's Site Regulations milestone ("you can close phase3. it works for the moment and has been deployed to the NAS").
+> As it read before the close: **Implemented (2026-10-20), uncommitted** — `fr-urban-rules`
 > 0.5.0, SDK 1.28; see the Outcome at the end. **Not done:** the walk behind
 > 096.8a's local override (no Docker here) and the Firefox half of the
 > fragment check (no Firefox here); Chromium was checked. _(Read "Draft
@@ -591,3 +595,5 @@ owner's decisions; they supersede the Outcome above where the two differ
   a `written:` section, plus Gordes and Brouennes: **155 reports, 0 dropped,
   0 refused**; the unpaged-first case answers `#page=121`.
 - `prettier --check` on the changed files: clean.
+
+_Noted at the close (2026-10-22): this sprint carries no post-sprint list; what it changed in the documents is recorded in its Outcome. Not invented after the fact._

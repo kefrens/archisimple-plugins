@@ -21,7 +21,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 import { createReader } from '../src/index.js';
-import { loadAcceptance, replayFetch, replayService } from './helpers.mjs';
+import { flattenBlocks, loadAcceptance, replayFetch, replayService } from './helpers.mjs';
 
 // Criterion 2: no network, for the whole file — and a call counted even if the reader swallows it.
 let globalFetchCalls = 0;
@@ -106,7 +106,9 @@ const near = (actual, expected, what, tolerance = 0.01) =>
 const view = (report, id) => report.views?.find((v) => v.id === id);
 const rowsOf = (v) => (v?.blocks ?? []).filter((b) => b.kind === 'fields').flatMap((b) => b.rows);
 const rowValue = (rows, key) => rows.find((r) => r.label.key === key)?.value;
-const surfaceRow = (report, key) => rowsOf(view(report, 'surfaces')).find((r) => r.label.key === key);
+// 002.15: the Surfaces view is composed of folds — its rows are read from the flattened blocks.
+const surfaceRow = (report, key) =>
+  rowsOf({ blocks: flattenBlocks(view(report, 'surfaces')?.blocks) }).find((r) => r.label.key === key);
 const ruleOf = (report, check) => report.rules.find((r) => r.id === check.ruleId);
 const heightChecks = (report) =>
   report.checks.filter((c) => ['height_total', 'height_facade'].includes(ruleOf(report, c)?.kind));

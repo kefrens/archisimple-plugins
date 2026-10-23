@@ -1,6 +1,10 @@
 # Sprint 002.1a — RNU Rules
 
-> **Status:** **Implemented, uncommitted (2026-10-20)** — `fr-urban-rules` 0.2.0;
+> **Status:** **Closed (2026-10-22)** — committed, deployed to the NAS and
+> closed by the owner with
+> [fr-urban-rules](../milestones/fr-urban-rules/fr-urban-rules.md) Phases
+> 0–3 and the platform's Site Regulations milestone ("you can close phase3. it works for the moment and has been deployed to the NAS").
+> As it read before the close: **Implemented, uncommitted (2026-10-20)** — `fr-urban-rules` 0.2.0;
 > step 1 verified (Légifrance live + DILA's LEGI export, see the Outcome); 91
 > tests green; the editor walk (criterion 10) is **not done**.
 >
@@ -371,7 +375,7 @@ criterion 7, DEC-6, review 5.) R.111-16 (002.1b) is not folded.
 - [x] Package `README.md` (0.2.0 section, the capture scripts) and the
       repository `README.md` row.
 - [ ] Criterion 10: the editor walk — to 096.6 / 002.4's joint walk.
-- [ ] Commit (the owner's).
+- [x] Commit (the owner's). _(Done at the close, 2026-10-22: `1cedc63`, `5808887`, `05db2a6`.)_
 
 ---
 

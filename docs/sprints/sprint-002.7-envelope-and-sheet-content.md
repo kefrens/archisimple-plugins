@@ -1,6 +1,10 @@
 # Sprint 002.7 — Envelope and Sheet Content
 
-> **Status:** **Implemented and reviewed (2026-10-21, uncommitted).** Drafted
+> **Status:** **Closed (2026-10-22)** — committed, deployed to the NAS and
+> closed by the owner with
+> [fr-urban-rules](../milestones/fr-urban-rules/fr-urban-rules.md) Phases
+> 0–3 and the platform's Site Regulations milestone ("you can close phase3. it works for the moment and has been deployed to the NAS").
+> As it read before the close: **Implemented and reviewed (2026-10-21, uncommitted).** Drafted
 > 2026-10-19, reviewed against the code 2026-10-20 (**Review against the code
 > (2026-10-20)**); what landed, what did not and what the draft claimed that
 > was false are in **Outcome (2026-10-21)**, and the independent review's
@@ -961,5 +965,6 @@ PDFs read by PDFKit: no `?`, both scope sentences in each.
 - [x] `dist/` rebuilt, `check-index.mjs` against the platform checkout.
 - [x] Independent review (Review (2026-10-21), above; two host fixes recorded in
       096.10's Outcome).
-- [ ] The owner's look at the pictures and PDFs (re-walked 2026-10-21).
-- [ ] Commit (the owner's).
+- [x] The owner's look at the pictures and PDFs (re-walked 2026-10-21).
+      _(Answered by the close, 2026-10-22.)_
+- [x] Commit (the owner's). _(Done at the close, 2026-10-22: `1cedc63`, `5808887`, `05db2a6`.)_

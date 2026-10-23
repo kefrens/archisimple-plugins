@@ -1,6 +1,10 @@
 # Sprint 002.8 — Assistant Plot Questions
 
-> **Status:** **Implemented and reviewed (2026-10-21, uncommitted).**
+> **Status:** **Closed (2026-10-22)** — committed, deployed to the NAS and
+> closed by the owner with
+> [fr-urban-rules](../milestones/fr-urban-rules/fr-urban-rules.md) Phases
+> 0–3 and the platform's Site Regulations milestone ("you can close phase3. it works for the moment and has been deployed to the NAS").
+> As it read before the close: **Implemented and reviewed (2026-10-21, uncommitted).**
 > `fr-urban-rules` **0.8.0**, `sdkVersion` **"1.32"**, on the
 > platform's 096.11 (SDK 1.31) and 096.12 (SDK 1.32) as implemented and
 > reviewed; walked in the editor with the live services and a scripted AI
@@ -946,7 +950,9 @@ apostrophe broke the module (caught by the suite).
 - [x] The walk (`fr-assistant-questions`), pictures read.
 - [x] Independent review (2026-10-21, § Review below).
 - [ ] The owner's review of the three interpretation sentences (RD-1).
-- [ ] Commit (the owner's).
+      _(Not recorded as done at the close, 2026-10-22; the owner closed on the
+      deployment working.)_
+- [x] Commit (the owner's). _(Done at the close, 2026-10-22: `1cedc63`, `5808887`, `05db2a6`.)_
 
 ## Review (2026-10-21)
 

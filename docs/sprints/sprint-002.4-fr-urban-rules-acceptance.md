@@ -1,6 +1,10 @@
 # Sprint 002.4 — FR Urban Rules Acceptance
 
-> **Status:** **Walked (2026-10-20), uncommitted — awaiting the owner's look.**
+> **Status:** **Closed (2026-10-22)** — committed, deployed to the NAS and
+> closed by the owner with
+> [fr-urban-rules](../milestones/fr-urban-rules/fr-urban-rules.md) Phases
+> 0–3 and the platform's Site Regulations milestone ("you can close phase3. it works for the moment and has been deployed to the NAS").
+> As it read before the close: **Walked (2026-10-20), uncommitted — awaiting the owner's look.**
 > Expected values written before the walk; the five plots captured from the
 > editor and replayed by `tests/acceptance.test.mjs` (5 pass, and the Gordes
 > procedure test, a todo blocked by the platform's 096.6c until its acceptance
@@ -753,7 +757,7 @@ work); `sh3f-importer` 99 pass; `archisimple package validate
 ## Acceptance fix 096.6c (2026-10-20)
 
 The platform's defect 096.6c is fixed there (`archisimple`
-`docs/sprints/sprint-096.6-site-regulations-acceptance.md`, § Acceptance fix
+`docs/archive/sprints/sprint-096.6-site-regulations-acceptance.md`, § Acceptance fix
 096.6c): the room ring of walls stored on their outer face was squared at a
 re-entrant corner by a rounding residue (`squaresTheJoin` against
 `MITER_LIMIT × 0`), and crossed itself; it now uses the wall join's own
@@ -793,3 +797,5 @@ Mouzay 1.51, Gordes 0.94, Brouennes 0.12, Rochefort 0.08 — **4.63 MB**. Then
 `sh3f-importer` 99 pass; `archisimple package validate` passed for both
 packages; build-index (fr-urban-rules 0.4.0, sh3f-importer 1.3.0) and
 check-index ("2 of 2 package(s) accepted") into the scratchpad.
+
+_Noted at the close (2026-10-22): this sprint carries no post-sprint list; what it changed in the documents is recorded in its Outcome. Not invented after the fact._

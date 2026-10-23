@@ -311,6 +311,74 @@ const FLAG_KEYS = {
   ppr: 'fr-urban-rules.flag.pprEasement'
 };
 
+/**
+ * Sprint 002.14 (platform 096.25, SDK 1.37): what each flag kind says to the host's Risks view —
+ * an icon and a group (the SDK's closed words), a short title and, for an easement, the source's
+ * own code. Titles shorten the label by the easement's category (the SUP nomenclature: AC1,
+ * protection of monuments historiques; AC4, the heritage protection zones); a mixed set reads as
+ * the generic heritage title, never as a guess.
+ */
+const FLAG_PRESENTATION = {
+  abf: { icon: 'heritage', group: 'constraint' },
+  site: { icon: 'heritage', group: 'constraint' },
+  ppr: { icon: 'easement', group: 'constraint' }
+};
+const FLAG_TITLE_KEYS = {
+  abf: 'fr-urban-rules.flag.title.abf',
+  abfAc1: 'fr-urban-rules.flag.title.abfAc1',
+  abfAc4: 'fr-urban-rules.flag.title.abfAc4',
+  site: 'fr-urban-rules.flag.title.site',
+  ppr: 'fr-urban-rules.flag.title.pprEasement'
+};
+/** The graded Géorisques flags: their scale's top, the big value's key and one word per grade. */
+const FLAG_LEVELS = {
+  seismic: {
+    max: 5,
+    display: 'fr-urban-rules.flag.display.seismic',
+    qualifiers: {
+      1: 'fr-urban-rules.flag.qualifier.seismic.1',
+      2: 'fr-urban-rules.flag.qualifier.seismic.2',
+      3: 'fr-urban-rules.flag.qualifier.seismic.3',
+      4: 'fr-urban-rules.flag.qualifier.seismic.4',
+      5: 'fr-urban-rules.flag.qualifier.seismic.5'
+    }
+  },
+  radon: {
+    max: 3,
+    display: 'fr-urban-rules.flag.display.radon',
+    qualifiers: {
+      1: 'fr-urban-rules.flag.qualifier.radon.1',
+      2: 'fr-urban-rules.flag.qualifier.radon.2',
+      3: 'fr-urban-rules.flag.qualifier.radon.3'
+    }
+  },
+  clay: {
+    max: 3,
+    display: 'fr-urban-rules.flag.display.clay',
+    qualifiers: {
+      1: 'fr-urban-rules.flag.qualifier.clay.1',
+      2: 'fr-urban-rules.flag.qualifier.clay.2',
+      3: 'fr-urban-rules.flag.qualifier.clay.3'
+    }
+  }
+};
+
+/**
+ * A graded flag's `level` (SDK 1.37): the number Géorisques gave, on its scale; none when the
+ * number is not an integer of that scale (the flag is then sent without one, as before).
+ */
+function flagLevel(kind, grade, displayParam) {
+  const scale = FLAG_LEVELS[kind];
+  const value = Number(grade);
+  if (!Number.isInteger(value) || value < 1 || value > scale.max) return undefined;
+  return {
+    value,
+    max: scale.max,
+    display: { key: scale.display, params: { [displayParam]: value } },
+    qualifier: { key: scale.qualifiers[value] }
+  };
+}
+
 /** `rga.codeExposition` (Géorisques v1): the clay shrink-swell exposure. */
 const RGA_KEYS = {
   0: 'fr-urban-rules.rga.0',
@@ -318,6 +386,15 @@ const RGA_KEYS = {
   2: 'fr-urban-rules.rga.2',
   3: 'fr-urban-rules.rga.3'
 };
+
+/** Sprint 002.12: the Risks section's summary for the clay's exposure (0 is nothing to say). */
+const CLAY_SUMMARY_KEYS = {
+  1: 'fr-urban-rules.summary.clay.1',
+  2: 'fr-urban-rules.summary.clay.2',
+  3: 'fr-urban-rules.summary.clay.3'
+};
+/** The assumptions' key prefix, built so the key audit does not read it as a key. */
+const ASSUMPTION_PREFIX = ['fr-urban-rules', 'assumption', ''].join('.');
 
 const GEOMETRY_KEYS = {
   surface: 'fr-urban-rules.geometry.surface',
@@ -2300,6 +2377,16 @@ export function createReader({
     log
   });
 
+  /**
+   * Sprint 002.12: every report that leaves the reader — a progress and the answer — has the
+   * panel's shape (`panelShaped`); what the report was assembled from stays with it (`facts`).
+   */
+  function panelShapedKeepingFacts(report) {
+    const next = panelShaped(report);
+    if (next !== report && facts.has(report)) facts.set(next, facts.get(report));
+    return next;
+  }
+
   async function read(request, context = {}) {
     // A newer read supersedes an older one (DEC-2), whatever its reason. So a
     // `design` read arriving during a Refresh aborts the Refresh and answers
@@ -2314,7 +2401,8 @@ export function createReader({
     if (context.signal !== undefined) signals.push(context.signal);
     const signal = AbortSignal.any(signals);
     const progress = (report) => {
-      if (!signal.aborted && typeof context.progress === 'function') context.progress(report);
+      if (!signal.aborted && typeof context.progress === 'function')
+        context.progress(panelShapedKeepingFacts(report));
     };
     // Sprint 002.6a: the zones' chapters, started as soon as the zones are known
     // (after wave 2, or at once from the cache) so the 2 s wait overlaps the
@@ -2365,7 +2453,7 @@ export function createReader({
         pages
       );
       // Sprint 002.11: the snapshot written when the reading changed, and said.
-      return withSnapshot(answer, request.site, written?.zones ?? []);
+      return panelShapedKeepingFacts(withSnapshot(answer, request.site, written?.zones ?? []));
     } finally {
       pages?.stop();
       if (active === controller) active = undefined;
@@ -4292,35 +4380,57 @@ export function createReader({
       const flag = own(SUPTYPES, item.suptype)?.flag;
       if (flag === undefined) continue;
       // One perimeter served as an area, a line and a point counts once.
-      if (!groups.has(flag)) groups.set(flag, new Set());
-      groups.get(flag).add(item.nomass ?? item.suptype.toUpperCase());
+      if (!groups.has(flag)) groups.set(flag, { names: new Set(), codes: new Set() });
+      groups.get(flag).names.add(item.nomass ?? item.suptype.toUpperCase());
+      groups.get(flag).codes.add(item.suptype.toUpperCase());
     }
-    return [...groups.entries()]
-      .map(([kind, set]) => [kind, [...set]])
-      .map(([kind, names]) => ({
+    return [...groups.entries()].map(([kind, { names, codes }]) => {
+      const sorted = [...codes].sort();
+      // 002.14: the heritage title names the category when the set is one the SUP names.
+      const titleKey =
+        kind === 'abf' && sorted.length === 1 && sorted[0] === 'AC1'
+          ? FLAG_TITLE_KEYS.abfAc1
+          : kind === 'abf' && sorted.length === 1 && sorted[0] === 'AC4'
+            ? FLAG_TITLE_KEYS.abfAc4
+            : FLAG_TITLE_KEYS[kind];
+      return {
         id: `sup-${kind}`,
         kind,
-        label: { key: FLAG_KEYS[kind], params: { count: names.length } },
-        detail: verbatim(names.join(' · '), LONG)
-      }));
+        label: { key: FLAG_KEYS[kind], params: { count: names.size } },
+        detail: verbatim([...names].join(' · '), LONG),
+        ...FLAG_PRESENTATION[kind],
+        title: { key: titleKey },
+        code: cut(sorted.join(' · '), 80)
+      };
+    });
   }
 
   function georisquesFlags(state) {
     const flags = [];
     const sismique = usable(state, 'georisques-sismique');
     if (sismique?.zone !== undefined && sismique.zone !== '') {
+      const level = flagLevel('seismic', sismique.zone, 'zone');
       flags.push({
         id: 'seismic',
         kind: 'seismic',
-        label: { key: 'fr-urban-rules.flag.seismic', params: { zone: sismique.zone } }
+        label: { key: 'fr-urban-rules.flag.seismic', params: { zone: sismique.zone } },
+        icon: 'seismic',
+        group: 'hazard',
+        title: { key: 'fr-urban-rules.flag.title.seismic' },
+        ...(level === undefined ? {} : { level })
       });
     }
     const radon = usable(state, 'georisques-radon');
     if (radon?.radonClass !== undefined && radon.radonClass !== '') {
+      const level = flagLevel('radon', radon.radonClass, 'class');
       flags.push({
         id: 'radon',
         kind: 'radon',
-        label: { key: 'fr-urban-rules.flag.radon', params: { class: radon.radonClass } }
+        label: { key: 'fr-urban-rules.flag.radon', params: { class: radon.radonClass } },
+        icon: 'radon',
+        group: 'hazard',
+        title: { key: 'fr-urban-rules.flag.title.radon' },
+        ...(level === undefined ? {} : { level })
       });
     }
     const rga = usable(state, 'georisques-rga');
@@ -4329,18 +4439,26 @@ export function createReader({
       own(RGA_KEYS, rga.exposure) !== undefined &&
       rga.exposure !== '0'
     ) {
+      const level = flagLevel('clay', rga.exposure, 'exposure');
       flags.push({
         id: 'clay',
         kind: 'clay',
         label: { key: 'fr-urban-rules.flag.clay', params: { exposure: rga.exposure } },
-        detail: { key: own(RGA_KEYS, rga.exposure) }
+        detail: { key: own(RGA_KEYS, rga.exposure) },
+        icon: 'clay',
+        group: 'hazard',
+        title: { key: 'fr-urban-rules.flag.title.clay' },
+        ...(level === undefined ? {} : { level })
       });
     }
     for (const ppr of usable(state, 'georisques-pprn')?.pprs ?? []) {
       flags.push({
         id: `ppr-${ppr.id}`,
         kind: 'ppr',
-        label: { key: 'fr-urban-rules.flag.ppr', params: { name: cut(ppr.label, 500) } }
+        label: { key: 'fr-urban-rules.flag.ppr', params: { name: cut(ppr.label, 500) } },
+        icon: 'hazard',
+        group: 'hazard',
+        title: verbatim(ppr.label)
       });
     }
     for (const risk of usable(state, 'georisques-risques')?.risks ?? []) {
@@ -4348,7 +4466,10 @@ export function createReader({
         id: `risk-${risk.code}`,
         kind: 'risk',
         label: { key: 'fr-urban-rules.flag.risk', params: { name: cut(risk.label, 500) } },
-        detail: { key: 'fr-urban-rules.flag.riskDetail' }
+        detail: { key: 'fr-urban-rules.flag.riskDetail' },
+        icon: 'hazard',
+        group: 'listed',
+        title: verbatim(risk.label)
       });
     }
     return flags;
@@ -4610,6 +4731,9 @@ export function createReader({
         badge: {
           value: { key: 'fr-urban-rules.badge.count', params: { count: prescriptions.length } }
         },
+        summary: {
+          value: { key: 'fr-urban-rules.badge.count', params: { count: prescriptions.length } }
+        },
         blocks: itemTable(
           state,
           PRESCRIPTION_LAYERS,
@@ -4635,6 +4759,9 @@ export function createReader({
       list.push({
         id: 'information',
         label: { key: 'fr-urban-rules.view.information' },
+        summary: {
+          value: { key: 'fr-urban-rules.badge.count', params: { count: information.length } }
+        },
         blocks: itemTable(
           state,
           INFORMATION_LAYERS,
@@ -4660,6 +4787,7 @@ export function createReader({
       id: 'easements',
       label: { key: 'fr-urban-rules.view.easements' },
       badge: { value: { key: 'fr-urban-rules.badge.count', params: { count: easements.length } } },
+      summary: { value: { key: 'fr-urban-rules.badge.count', params: { count: easements.length } } },
       blocks: itemTable(
         state,
         EASEMENT_LAYERS,
@@ -4680,12 +4808,44 @@ export function createReader({
         notDrawn
       )
     });
+    const riskSummary = riskSummaryOf(state);
     list.push({
       id: 'risks',
       label: { key: 'fr-urban-rules.view.risks' },
+      ...(riskSummary === undefined ? {} : { summary: riskSummary }),
       blocks: riskBlocks(state)
     });
     return list;
+  }
+
+  /**
+   * Sprint 002.12 (DEC-3): the risk a designer acts on first, said in the Risks section's
+   * summary — the clay's shrink-swell exposure, else the seismic zone, else the radon class,
+   * in that order; none when no risk is read. Notable ones are amber.
+   */
+  function riskSummaryOf(state) {
+    const rga = usable(state, 'georisques-rga');
+    if (rga?.exposure !== undefined && Number(rga.exposure) >= 1 && Number(rga.exposure) <= 3) {
+      return {
+        value: { key: CLAY_SUMMARY_KEYS[Number(rga.exposure)] },
+        ...(Number(rga.exposure) >= 2 ? { tone: 'warning' } : {})
+      };
+    }
+    const seismic = usable(state, 'georisques-sismique');
+    if (seismic?.zone) {
+      return {
+        value: { key: 'fr-urban-rules.summary.seismic', params: { zone: String(seismic.zone) } },
+        ...(Number(seismic.zone) >= 3 ? { tone: 'warning' } : {})
+      };
+    }
+    const radon = usable(state, 'georisques-radon');
+    if (radon?.radonClass) {
+      return {
+        value: { key: 'fr-urban-rules.summary.radon', params: { class: String(radon.radonClass) } },
+        ...(String(radon.radonClass) === '3' ? { tone: 'warning' } : {})
+      };
+    }
+    return undefined;
   }
 
   function itemTable(state, ids, items, noneKey, row, columns, notDrawn) {
@@ -4848,6 +5008,279 @@ export function createReader({
       WRITTEN_ACTIONS.has(request?.actionId)
         ? runWrittenAction(request)
         : rnu.runAction(request, context)
+  };
+}
+
+// ── The panel's shape (Sprint 002.12, DEC-1 to DEC-4; platform 096.19–096.21) ───────────────
+
+/** The boards' order: the site and its rules, then the project against them. */
+const VIEW_ORDER = [
+  'document',
+  'zone',
+  'sector',
+  'prescriptions',
+  'information',
+  'easements',
+  'risks',
+  'checks',
+  'rules',
+  'edges',
+  'envelope',
+  'surfaces'
+];
+/** A view's SDK icon and group (1.34): words of the host's closed vocabularies. */
+const VIEW_SHAPE = {
+  document: ['document', 'site'],
+  zone: ['zone', 'site'],
+  sector: ['zone', 'site'],
+  prescriptions: ['prescription', 'site'],
+  information: ['information', 'site'],
+  easements: ['easement', 'site'],
+  risks: ['risk', 'site'],
+  checks: ['checks', 'project'],
+  rules: ['rules', 'project'],
+  edges: ['boundary', 'project'],
+  envelope: ['envelope', 'project'],
+  surfaces: ['area', 'project']
+};
+/** The overview's notices that belong with the document's link: they move to the Document view. */
+const LINK_NOTICE_KEYS = new Set([
+  'fr-urban-rules.notice.linkUnavailable',
+  'fr-urban-rules.notice.newerDocument',
+  'fr-urban-rules.notice.fileNotFound',
+  'fr-urban-rules.notice.writtenRulesUnavailable'
+]);
+
+/** A calendar day (`YYYY-MM-DD`) as a local-midnight timestamp, so no zone shifts the day. */
+function dayNumber(iso) {
+  const match = typeof iso === 'string' ? /^(\d{4})-(\d{2})-(\d{2})/.exec(iso) : null;
+  if (match === null) return undefined;
+  const time = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3])).getTime();
+  return Number.isFinite(time) ? time : undefined;
+}
+
+/**
+ * A commune's name as a card writes it: the services answer « LYON » and « ROCHEFORT-EN-TERRE »;
+ * a name in capitals is cased word by word (« Lyon », « Rochefort-en-Terre »), the small words
+ * of a French name staying lower-case, an elision cased on both sides (« L'Isle »). A name
+ * that already has lower-case letters is the source's, left as it is.
+ */
+function communeCase(name) {
+  if (name !== name.toUpperCase() || name === name.toLowerCase()) return name;
+  const small = new Set(['de', 'du', 'des', 'la', 'le', 'les', 'en', 'sur', 'sous', 'aux', 'au', 'et', 'lès', 'lez']);
+  const cap = (word) => word.charAt(0).toUpperCase() + word.slice(1);
+  return name
+    .toLowerCase()
+    .split(/(\s+|-)/)
+    .map((part, index) => {
+      if (/^(\s+|-)$/.test(part) || part === '') return part;
+      if (index > 0 && small.has(part)) return part;
+      // « l'isle » → « L'Isle »: each side of an elision is a word.
+      return part
+        .split("'")
+        .map(cap)
+        .join("'");
+    })
+    .join('');
+}
+
+/**
+ * The report as the redesigned panel reads it. **Presentation only**: no rule, check, feature,
+ * edge or source changes. The overview keeps its notices (the host draws them under its status
+ * line); its fields and the link with its own notices become a **Document** view; its `flags`
+ * go into the Risks view after its first block; its `assumptions` (shown on the checks that
+ * name them) and `sources` (the host's own section) leave it. The views come in the boards'
+ * order with an icon, a group and, where the host does not derive one, a summary; the commune
+ * is the report's `locality`; each assumption's title has a detail by the key's own `.detail`.
+ * Idempotent: a report that has a Document view is returned as it is.
+ */
+function panelShaped(report) {
+  if (!Array.isArray(report?.overview) || !Array.isArray(report.views)) return report;
+  if (report.views.some((view) => view.id === 'document')) return report;
+  const kept = [];
+  const documentBlocks = [];
+  let flags = false;
+  for (const block of report.overview) {
+    if (block.kind === 'notice') {
+      (LINK_NOTICE_KEYS.has(block.text?.key) ? documentBlocks : kept).push(block);
+    } else if (block.kind === 'fields' || block.kind === 'link') {
+      documentBlocks.push(block);
+    } else if (block.kind === 'flags') {
+      flags = report.flags.length > 0;
+    } else if (block.kind !== 'assumptions' && block.kind !== 'sources') {
+      kept.push(block);
+    }
+  }
+  const communeRow = report.overview
+    .filter((block) => block.kind === 'fields')
+    .flatMap((block) => block.rows)
+    .find((row) => row.label?.key === 'fr-urban-rules.field.commune');
+  const zoneLabels = [
+    ...new Set(
+      (report.zones ?? []).map((zone) => zone.label?.text).filter((t) => typeof t === 'string' && t !== '')
+    )
+  ];
+  const withFlags = (view) => {
+    if (!flags || view.id !== 'risks') return view;
+    const [first, ...rest] = view.blocks;
+    if (first === undefined) return { ...view, blocks: [{ kind: 'flags' }] };
+    // Sprint 002.14 (round 2): the flags say each reading (a tile, a row), so the rows that listed
+    // the same readings in one line each are folded beneath them as « Relevés des services » —
+    // nothing is dropped: a service still loading or down is said in the fold's summary, and the
+    // fold is open then.
+    if (first.kind !== 'fields') return { ...view, blocks: [first, { kind: 'flags' }, ...rest] };
+    const waiting = first.rows.some(
+      (row) =>
+        row.value?.key === 'fr-urban-rules.value.loading' ||
+        row.value?.key === 'fr-urban-rules.value.unavailable'
+    );
+    const readings = {
+      kind: 'section',
+      id: 'risk-readings',
+      title: { key: 'fr-urban-rules.risk.readings' },
+      icon: 'information',
+      ...(waiting
+        ? { summary: { value: { key: 'fr-urban-rules.risk.readingsWaiting' }, tone: 'warning' }, open: true }
+        : {}),
+      blocks: [first]
+    };
+    return { ...view, blocks: [{ kind: 'flags' }, readings, ...rest] };
+  };
+  const summaryOf = (view) => {
+    if (view.summary !== undefined) return view.summary;
+    switch (view.id) {
+      case 'zone':
+      case 'sector':
+        return zoneLabels.length > 0 ? { value: verbatim(zoneLabels.join(', ')) } : undefined;
+      case 'edges':
+        return report.edges.length > 0
+          ? { value: { key: 'fr-urban-rules.summary.edges', params: { count: report.edges.length } } }
+          : undefined;
+      case 'envelope': {
+        const heights = (report.features ?? [])
+          .filter((feature) => feature.category === 'envelope')
+          .flatMap((feature) => feature.volume?.ceilings ?? [])
+          .filter((ceiling) => ceiling.kind === 'height' && Number.isFinite(ceiling.metres))
+          .map((ceiling) => ceiling.metres);
+        // A quantity, which the host writes in the project's unit; the volume's "3D" is the
+        // host's Display summary (the SDK's summary is a phrase or a quantity, not both).
+        return heights.length > 0 ? { value: { value: Math.min(...heights), unit: 'm' } } : undefined;
+      }
+      case 'surfaces': {
+        const share = view.blocks
+          .filter((block) => block.kind === 'fields')
+          .flatMap((block) => block.rows)
+          .find((row) => row.label?.key === 'fr-urban-rules.surfaces.emprise.share');
+        return Number.isFinite(share?.value?.value)
+          ? {
+              value: {
+                key: 'fr-urban-rules.summary.footprint',
+                params: { percent: String(Math.round(share.value.value)) }
+              }
+            }
+          : undefined;
+      }
+      default:
+        return undefined;
+    }
+  };
+  const documentView =
+    documentBlocks.length === 0
+      ? []
+      : [
+          {
+            id: 'document',
+            label: { key: 'fr-urban-rules.view.document' },
+            ...(dayNumber(report.document?.validFrom) === undefined
+              ? {}
+              : {
+                  // A date as a number, formatted by the host's message formatter in the
+                  // reader's locale (`{date, date, medium}`): « 26 mars 2026 ».
+                  summary: {
+                    value: {
+                      key: 'fr-urban-rules.summary.date',
+                      params: { date: dayNumber(report.document.validFrom) }
+                    }
+                  }
+                }),
+            blocks: documentBlocks
+          }
+        ];
+  // 002.13 DEC-2: the Envelope view shows its height checks in section (platform 096.22): the
+  // measured height checks of a height rule, after the view's notices.
+  const heightRuleIds = new Set(
+    (report.rules ?? [])
+      .filter((rule) => rule.kind === 'height_total' || rule.kind === 'height_facade')
+      .map((rule) => rule.id)
+  );
+  const heightCheckIds = (report.checks ?? [])
+    .filter(
+      (check) =>
+        heightRuleIds.has(check.ruleId) &&
+        check.subject?.kind === 'building' &&
+        check.measured !== undefined
+    )
+    .map((check) => check.id);
+  const withSection = (view) => {
+    if (view.id !== 'envelope' || heightCheckIds.length === 0) return view;
+    const afterNotices = view.blocks.findIndex((block) => block.kind !== 'notice');
+    const at = afterNotices === -1 ? view.blocks.length : afterNotices;
+    return {
+      ...view,
+      blocks: [
+        ...view.blocks.slice(0, at),
+        {
+          kind: 'height-section',
+          checkIds: heightCheckIds,
+          caption: { key: 'fr-urban-rules.envelope.section' }
+        },
+        ...view.blocks.slice(at)
+      ]
+    };
+  };
+  const shaped = [...documentView, ...report.views].map((view) => {
+    const [icon, group] = VIEW_SHAPE[view.id] ?? ['other', undefined];
+    const summary = summaryOf(view);
+    return withSection(withFlags({
+      ...view,
+      icon,
+      ...(group === undefined ? {} : { group }),
+      ...(summary === undefined ? {} : { summary })
+    }));
+  });
+  const rank = (view) => {
+    const index = VIEW_ORDER.indexOf(view.id);
+    return index === -1 ? VIEW_ORDER.length : index;
+  };
+  const ordered = shaped
+    .map((view, index) => ({ view, index }))
+    .sort((a, b) => rank(a.view) - rank(b.view) || a.index - b.index)
+    .map(({ view }) => view);
+  return {
+    ...report,
+    ...(communeRow === undefined || typeof communeRow.value?.text !== 'string'
+      ? {}
+      : { locality: { ...communeRow.value, text: communeCase(communeRow.value.text) } }),
+    assumptions: report.assumptions.map((assumption) => {
+      const detailed =
+        typeof assumption.text?.key === 'string' &&
+        assumption.text.key.startsWith(ASSUMPTION_PREFIX) &&
+        assumption.detail === undefined
+          ? {
+              ...assumption,
+              detail: {
+                key: `${assumption.text.key}.detail`,
+                ...(assumption.text.params === undefined ? {} : { params: assumption.text.params })
+              }
+            }
+          : assumption;
+      // 002.13 DEC-3: the one figure the host draws (platform 096.22, SDK 1.36).
+      return assumption.id === 'height-lowest-ground' && detailed.figure === undefined
+        ? { ...detailed, figure: 'height-from-lowest-ground' }
+        : detailed;
+    }),
+    overview: kept,
+    views: ordered
   };
 }
 
@@ -6911,6 +7344,10 @@ function createRnu({
         label: {
           key: partly ? 'fr-urban-rules.flag.ccRestrictedSome' : 'fr-urban-rules.flag.ccRestricted'
         },
+        icon: 'ground',
+        group: 'constraint',
+        title: { key: 'fr-urban-rules.flag.title.ccRestricted' },
+        code: 'L.161-4',
         citation: {
           document: {
             text: `Code de l’urbanisme, version en vigueur depuis le ${ARTICLES['L.161-4'].versionText}`,
@@ -7929,7 +8366,18 @@ function createRnu({
       : [...overview.slice(0, at), ...notices, ...overview.slice(at)];
   }
 
-  /** DEC-5: the edges view — the table, one action per edge, and the corrections not applied. */
+  /** An edge's letter as the host's panel writes it: 1 → A … 26 → Z, 27 → AA (the same arithmetic as the host's). */
+const edgeLetter = (number) => {
+  let rest = Math.max(1, Math.floor(number));
+  let letters = '';
+  while (rest > 0) {
+    letters = String.fromCharCode(65 + ((rest - 1) % 26)) + letters;
+    rest = Math.floor((rest - 1) / 26);
+  }
+  return letters;
+};
+
+/** DEC-5: the edges view — the plot view and edge list (002.13), one action per edge, and the corrections not applied. */
   function edgesView(edges, reportEdges, corrections, plot, readOnly) {
     const label = { key: 'fr-urban-rules.view.edges' };
     if (edges === undefined) {
@@ -7941,25 +8389,11 @@ function createRnu({
         ]
       };
     }
-    const blocks = [
-      {
-        kind: 'table',
-        columns: [
-          { key: 'fr-urban-rules.edges.column.edge' },
-          { key: 'fr-urban-rules.edges.column.role' },
-          { key: 'fr-urban-rules.edges.column.length' },
-          { key: 'fr-urban-rules.edges.column.why' }
-        ],
-        rows: reportEdges
-          .slice(0, TABLE_ROWS)
-          .map((r, i) => [
-            { text: String(r.edge) },
-            { key: ROLE_KEYS[r.role] },
-            { value: cm(edges[i].length), unit: 'm' },
-            { key: whyOf(r.assumptionId) }
-          ])
-      }
-    ];
+    // 002.13 DEC-1: the host draws the plot view and the edge list (platform 096.22, SDK 1.36) from
+    // the report's own edges, checks and envelope; the table that stood here — number, role,
+    // length, why — is the edge list's letter, role and assumption chip. The length is dropped
+    // (the owner's answer to 002.13 question 1): the letter on the plot view identifies an edge.
+    const blocks = [{ kind: 'plot-plan', categories: ['envelope'] }, { kind: 'edges' }];
     if (readOnly) {
       blocks.push({
         kind: 'notice',
@@ -7972,7 +8406,9 @@ function createRnu({
       kind: 'actions',
       actions: edges.slice(0, MAX_ACTIONS).map((e) => ({
         id: 'set-edge-role',
-        label: { key: 'fr-urban-rules.edges.setRole', params: { edge: e.edge } },
+        // 002.13: the host letters the edges in the panel (platform 096.22: 1 → A, 27 → AA), so the
+        // button names the edge by the letter the plot view and the edge list show.
+        label: { key: 'fr-urban-rules.edges.setRole', params: { edge: edgeLetter(e.edge) } },
         target: { subjectId: endsKey(e.a, e.b) },
         fields: [
           {
@@ -8033,19 +8469,6 @@ function createRnu({
     }
     return { id: 'edges', label, blocks };
   }
-
-  const WHY_KEYS = {
-    street: 'fr-urban-rules.edges.why.street',
-    'edge-set-by-you': 'fr-urban-rules.edges.why.setByYou',
-    'no-road': 'fr-urban-rules.edges.why.noRoad',
-    'no-street-edge': 'fr-urban-rules.edges.why.noStreetEdge',
-    'roads-unavailable': 'fr-urban-rules.edges.why.roadsUnavailable',
-    'edges-derived': 'fr-urban-rules.edges.why.derived'
-  };
-  const whyOf = (assumptionId) =>
-    assumptionId?.startsWith('street-')
-      ? WHY_KEYS.street
-      : (own(WHY_KEYS, assumptionId) ?? WHY_KEYS['edges-derived']);
 
   /**
    * DEC-5: `set-edge-role` and `forget-edge-role`. One write, with `expected`
@@ -8960,9 +9383,25 @@ function createRnu({
     const open = rule.status !== 'information' && rule.status !== 'not_evaluable';
     if (!info.fromSection && open) {
       if (rule.status === 'to_confirm') {
+        // Sprint 002.12 (DEC-5): « Confirmer 15 % » — the value in the rule's own unit, as the
+        // assistant's offer says it (a number parameter, written in the reader's locale); a
+        // described limit keeps « Confirmer ».
+        const stated = rule.limit;
+        const shown =
+          stated?.kind === 'value'
+            ? {
+                value: mm(stated.quantity.value),
+                unit: UNIT_SYMBOLS[stated.quantity.unit] ?? stated.quantity.unit
+              }
+            : stated?.kind === 'ratio' && Number.isFinite(stated.percent)
+              ? { value: stated.percent, unit: '%' }
+              : undefined;
         list.push({
           id: 'confirm',
-          label: { key: 'fr-urban-rules.action.confirm' },
+          label:
+            shown === undefined
+              ? { key: 'fr-urban-rules.action.confirm' }
+              : { key: 'fr-urban-rules.action.confirmValue', params: shown },
           emphasis: 'primary',
           target
         });
@@ -11039,8 +11478,8 @@ function createRnu({
           ? coverage.plotArea
           : undefined;
 
-    blocks.push({ kind: 'heading', text: { key: 'fr-urban-rules.surfaces.heading.emprise' } });
-    blocks.push(articleQuote('R.420-1'));
+    // Sprint 002.15 (platform 096.27, SDK 1.38): the emprise au sol is composed, not stacked — a
+    // headline figure, the definition as a segmented choice, and what is not the headline folded.
     if (!coverage.available) {
       blocks.push({
         kind: 'notice',
@@ -11073,45 +11512,150 @@ function createRnu({
             params: { reason: cut(String(f.refused), 200) }
           }
         : m2(f.area);
-    const rows = [
-      {
-        label: definitionLabel,
-        value: value(plu),
-        detail:
-          balconies.length === 0
-            ? { key: 'fr-urban-rules.surfaces.emprise.detailNoBalconies' }
-            : {
-                key: 'fr-urban-rules.surfaces.emprise.detailBalconies',
-                params: { area: area2(balconyTotal) }
-              }
-      }
-    ];
+    // The confirmed footprint limit, for the headline's gauge and verdict: the one the budget and
+    // the checks below use.
+    const governingLimits = confirmedLimits(planned);
     if (plu.area !== undefined && plotArea !== undefined) {
-      rows.push({
-        label: { key: 'fr-urban-rules.surfaces.emprise.share' },
-        value: { value: Math.round((plu.area / plotArea) * 1000) / 10, unit: 'percent' }
+      const share = Math.round((plu.area / plotArea) * 1000) / 10;
+      const cesPercent = governingLimits.ces?.percent;
+      // A verdict only on a confirmed limit: a rule still to confirm gives none (the host's own
+      // rule for a check, ADR-0111 Rule 4).
+      const within =
+        cesPercent === undefined ? undefined : plu.area <= (cesPercent / 100) * plotArea + RESOLUTION_HALF;
+      blocks.push({
+        kind: 'stat',
+        label: { key: 'fr-urban-rules.surfaces.heading.emprise' },
+        value: { value: share, unit: 'percent' },
+        detail: {
+          key: 'fr-urban-rules.surfaces.stat.of',
+          params: { area: area2(plu.area), plot: area2(plotArea) }
+        },
+        gauge: {
+          value: { value: share, unit: 'percent' },
+          ...(cesPercent === undefined ? {} : { limit: { value: cesPercent, unit: 'percent' } }),
+          max: { value: 100, unit: 'percent' }
+        },
+        ...(within === undefined ? {} : { verdict: { result: within ? 'no_issue' : 'potential_issue' } })
+      });
+    } else {
+      // No plot area, or no area: the definition's own value as a row, as before.
+      blocks.push({
+        kind: 'fields',
+        rows: [
+          {
+            label: definitionLabel,
+            value: value(plu),
+            detail:
+              balconies.length === 0
+                ? { key: 'fr-urban-rules.surfaces.emprise.detailNoBalconies' }
+                : {
+                    key: 'fr-urban-rules.surfaces.emprise.detailBalconies',
+                    params: { area: area2(balconyTotal) }
+                  }
+          }
+        ]
       });
     }
-    if (choice.definition !== 'r420-1') {
-      rows.push({ label: { key: 'fr-urban-rules.surfaces.emprise.r420' }, value: value(r420) });
-    }
-    if (choice.definition !== 'all-overhangs') {
-      rows.push({
-        label: { key: 'fr-urban-rules.surfaces.emprise.allOverhangs' },
-        value:
-          allOverhangs.area === undefined && allOverhangs.refused === 'roof-refused'
-            ? { key: 'fr-urban-rules.surfaces.emprise.roofRefused' }
-            : value(allOverhangs)
+    // The three definitions, one card each with its area; the setting is the same action as ever.
+    const lexiconReading = figure(empriseReading('lexicon', choice.counts));
+    const card = (reading) =>
+      reading.area === undefined
+        ? {
+            figure: { key: 'fr-urban-rules.surfaces.card.notComputed' },
+            detail:
+              reading.refused === 'roof-refused'
+                ? { key: 'fr-urban-rules.surfaces.emprise.roofRefused' }
+                : {
+                    key: 'fr-urban-rules.surfaces.notComputed',
+                    params: { reason: cut(String(reading.refused ?? 'unavailable'), 200) }
+                  }
+          }
+        : { figure: m2(reading.area) };
+    const toggles = Object.fromEntries(
+      EMPRISE_COUNTS.map((key) => [key, choice.counts[key] ? 'yes' : 'no'])
+    );
+    const cardValues = (definition) => ({
+      definition,
+      ...toggles,
+      ...(choice.page === undefined ? {} : { page: choice.page })
+    });
+    blocks.push({
+      kind: 'choice',
+      label: { key: 'fr-urban-rules.surfaces.field.definition' },
+      options: [
+        {
+          value: 'r420-1',
+          label: { key: 'fr-urban-rules.surfaces.card.r420' },
+          ...card(r420),
+          ...(choice.definition === 'r420-1' ? { selected: true } : {}),
+          values: cardValues('r420-1')
+        },
+        {
+          value: 'lexicon',
+          label:
+            choice.page === undefined
+              ? { key: 'fr-urban-rules.surfaces.card.lexicon' }
+              : { key: 'fr-urban-rules.surfaces.card.lexiconPage', params: { page: choice.page } },
+          ...card(lexiconReading),
+          ...(choice.definition === 'lexicon' ? { selected: true } : {}),
+          values: cardValues('lexicon')
+        },
+        {
+          value: 'all-overhangs',
+          label: { key: 'fr-urban-rules.surfaces.card.allOverhangs' },
+          ...card(allOverhangs),
+          ...(choice.definition === 'all-overhangs' ? { selected: true } : {}),
+          values: cardValues('all-overhangs')
+        }
+      ],
+      ...(readOnly ? {} : { action: definitionActionOf(choice) }),
+      note:
+        balconies.length === 0
+          ? { key: 'fr-urban-rules.surfaces.choice.noBalconies' }
+          : { key: 'fr-urban-rules.surfaces.choice.balconies', params: { area: area2(balconyTotal) } }
+    });
+    // What the headline and the cards do not say, folded: the definition's own detail, the entered
+    // balconies, the per-building areas — listed for the breakdown only, never summed (DEC-1) — and
+    // the definition's legal text.
+    const detailBlocks = [];
+    if (plu.area !== undefined && plotArea !== undefined) {
+      detailBlocks.push({
+        kind: 'fields',
+        rows: [
+          {
+            label: definitionLabel,
+            value: value(plu),
+            detail:
+              balconies.length === 0
+                ? { key: 'fr-urban-rules.surfaces.emprise.detailNoBalconies' }
+                : {
+                    key: 'fr-urban-rules.surfaces.emprise.detailBalconies',
+                    params: { area: area2(balconyTotal) }
+                  }
+          },
+          ...(balconies.length > 0
+            ? [
+                {
+                  label: { key: 'fr-urban-rules.surfaces.emprise.balconies' },
+                  value: m2(balconyTotal),
+                  detail: { key: 'fr-urban-rules.surfaces.emprise.balconiesEntered' }
+                }
+              ]
+            : [])
+        ]
+      });
+    } else if (balconies.length > 0) {
+      detailBlocks.push({
+        kind: 'fields',
+        rows: [
+          {
+            label: { key: 'fr-urban-rules.surfaces.emprise.balconies' },
+            value: m2(balconyTotal),
+            detail: { key: 'fr-urban-rules.surfaces.emprise.balconiesEntered' }
+          }
+        ]
       });
     }
-    if (balconies.length > 0) {
-      rows.push({
-        label: { key: 'fr-urban-rules.surfaces.emprise.balconies' },
-        value: m2(balconyTotal),
-        detail: { key: 'fr-urban-rules.surfaces.emprise.balconiesEntered' }
-      });
-    }
-    blocks.push({ kind: 'fields', rows });
     // Per building, for the breakdown only: listed, never summed into the total (DEC-1).
     // The host's 200 rows, the existing building's two included (review NIT).
     const perBuilding = (plu.buildings ?? []).slice(
@@ -11119,7 +11663,7 @@ function createRnu({
       TABLE_ROWS - (existing === undefined ? 0 : 2)
     );
     if (perBuilding.length > 0 || existing !== undefined) {
-      blocks.push({
+      detailBlocks.push({
         kind: 'table',
         columns: [
           { key: 'fr-urban-rules.surfaces.column.building' },
@@ -11146,12 +11690,19 @@ function createRnu({
               ])
         ]
       });
-      blocks.push({
+      detailBlocks.push({
         kind: 'notice',
         tone: 'info',
         text: { key: 'fr-urban-rules.surfaces.emprise.notSummed' }
       });
     }
+    blocks.push({
+      kind: 'section',
+      id: 'emprise-detail',
+      title: { key: 'fr-urban-rules.surfaces.section.empriseDetail' },
+      icon: 'area',
+      blocks: detailBlocks.length === 0 ? [articleQuote('R.420-1')] : [...detailBlocks, articleQuote('R.420-1')]
+    });
 
     // ── DEC-2: the budget, and pleine terre ──
     const limits = confirmedLimits(planned);
@@ -11165,8 +11716,10 @@ function createRnu({
       limits.ces !== undefined && plotArea !== undefined
         ? (limits.ces.percent / 100) * plotArea
         : undefined;
-    blocks.push({ kind: 'heading', text: { key: 'fr-urban-rules.surfaces.heading.budget' } });
-    if (allowed !== undefined && allowed > 0 && plu.area !== undefined) {
+    // Sprint 002.15: the budget is the host's used / remaining / allowed bar; the basis it rests on
+    // is folded beneath. Without the bar (no allowance, or nothing measured) the rows say it all.
+    const barDrawn = allowed !== undefined && allowed > 0 && plu.area !== undefined;
+    if (barDrawn) {
       blocks.push({
         kind: 'meter',
         label: { key: 'fr-urban-rules.surfaces.budget.meter' },
@@ -11209,7 +11762,7 @@ function createRnu({
         detail: { key: 'fr-urban-rules.surfaces.budget.boundaryAreaDetail' }
       });
     }
-    if (allowed !== undefined) {
+    if (allowed !== undefined && !barDrawn) {
       budgetRows.push({
         label: { key: 'fr-urban-rules.surfaces.budget.allowed' },
         value: m2(allowed)
@@ -11221,13 +11774,20 @@ function createRnu({
           ...(allowed - plu.area < -RESOLUTION_HALF ? { tone: 'warning' } : {})
         });
     }
-    if (plu.area !== undefined)
+    if (plu.area !== undefined && !barDrawn)
       budgetRows.push({
         label: { key: 'fr-urban-rules.surfaces.budget.used' },
         value: m2(plu.area),
         detail: definitionLabel
       });
-    blocks.push({ kind: 'fields', rows: budgetRows });
+    blocks.push({
+      kind: 'section',
+      id: 'budget-basis',
+      title: { key: 'fr-urban-rules.surfaces.section.budgetBasis' },
+      icon: 'information',
+      summary: { value: budgetRows[0].value },
+      blocks: [{ kind: 'fields', rows: budgetRows }]
+    });
     for (const rule of footprintRules) {
       const limit =
         plotArea === undefined ? undefined : (footprintPercentOf(rule) / 100) * plotArea;
@@ -11271,7 +11831,39 @@ function createRnu({
         confirmedGreen.length > 0 && plotArea !== undefined
           ? (Math.max(...confirmedGreen.map((r) => greenPercentOf(r))) / 100) * plotArea
           : undefined;
-      blocks.push({
+      // Sprint 002.15: a fold — its summary says the shortfall, its body the gauge, the two figures,
+      // the rule with its confirm button and its passage (the host's rules list).
+      const short = required !== undefined && unbuilt + RESOLUTION_HALF < required;
+      const round1 = (value) => Math.round(value * 10) / 10;
+      const unbuiltPercent = plotArea === undefined ? undefined : round1((unbuilt / plotArea) * 100);
+      const requiredPercent =
+        confirmedGreen.length > 0 ? Math.max(...confirmedGreen.map((r) => greenPercentOf(r))) : undefined;
+      const greenBlocks = [];
+      if (unbuiltPercent !== undefined) {
+        greenBlocks.push({
+          kind: 'stat',
+          label: { key: 'fr-urban-rules.surfaces.green.unbuilt' },
+          value: { value: unbuiltPercent, unit: 'percent' },
+          detail: short
+            ? {
+                key: 'fr-urban-rules.surfaces.green.short',
+                params: {
+                  percent: round1((required - unbuilt) / plotArea * 100),
+                  area: area2(required - unbuilt)
+                }
+              }
+            : { key: 'fr-urban-rules.surfaces.green.free', params: { area: area2(unbuilt) } },
+          gauge: {
+            value: { value: unbuiltPercent, unit: 'percent' },
+            ...(requiredPercent === undefined
+              ? {}
+              : { limit: { value: requiredPercent, unit: 'percent' } }),
+            max: { value: 100, unit: 'percent' }
+          },
+          ...(short ? { tone: 'warning' } : {})
+        });
+      }
+      greenBlocks.push({
         kind: 'fields',
         rows: [
           {
@@ -11285,10 +11877,34 @@ function createRnu({
                 {
                   label: { key: 'fr-urban-rules.surfaces.green.required' },
                   value: m2(required),
-                  ...(unbuilt + RESOLUTION_HALF < required ? { tone: 'warning' } : {})
+                  ...(short ? { tone: 'warning' } : {})
                 }
               ])
         ]
+      });
+      if (greenRules.length > 0) {
+        greenBlocks.push({ kind: 'rules', ids: greenRules.map((r) => r.id) });
+        const greenActions = readOnly ? [] : greenRules.flatMap((r) => planned.actionsFor(r));
+        if (greenActions.length > 0) greenBlocks.push({ kind: 'actions', actions: greenActions });
+      }
+      blocks.push({
+        kind: 'section',
+        id: 'green',
+        title: { key: 'fr-urban-rules.surfaces.section.green' },
+        icon: 'area',
+        summary: short
+          ? {
+              value: {
+                key: 'fr-urban-rules.surfaces.green.short',
+                params: {
+                  percent: round1((required - unbuilt) / plotArea * 100),
+                  area: area2(required - unbuilt)
+                }
+              },
+              tone: 'warning'
+            }
+          : { value: { key: 'fr-urban-rules.surfaces.green.free', params: { area: area2(unbuilt) } } },
+        blocks: greenBlocks
       });
       for (const rule of greenRules) {
         const limit =
@@ -11308,9 +11924,14 @@ function createRnu({
 
     // ── DEC-3: the surface de plancher ──
     const sdp = floorArea(service, buildings, answersOf(section?.sdp, variation) ?? {});
-    blocks.push({ kind: 'heading', text: { key: 'fr-urban-rules.surfaces.heading.sdp' } });
-    blocks.push(articleQuote('R.111-22'));
-    blocks.push(...sdp.blocks);
+    blocks.push({
+      kind: 'section',
+      id: 'floor-area',
+      title: { key: 'fr-urban-rules.surfaces.heading.sdp' },
+      icon: 'document',
+      ...(sdp.total === undefined ? {} : { summary: { value: m2(sdp.total) } }),
+      blocks: [articleQuote('R.111-22'), ...sdp.blocks]
+    });
     if (sdp.partitions)
       said.push(assume('sdp-partitions', { key: 'fr-urban-rules.assumption.sdpPartitions' }));
 
@@ -11332,7 +11953,6 @@ function createRnu({
       plu.covered !== undefined && existing !== undefined
         ? Math.max(0, plu.covered - pluExistingArea - annexArea)
         : undefined;
-    blocks.push({ kind: 'heading', text: { key: 'fr-urban-rules.surfaces.heading.caps' } });
     const capRows = [
       {
         label: { key: 'fr-urban-rules.surfaces.caps.existing' },
@@ -11500,7 +12120,25 @@ function createRnu({
         }
       });
     }
-    blocks.push({ kind: 'fields', rows: capRows });
+    blocks.push({
+      kind: 'section',
+      id: 'caps',
+      title: { key: 'fr-urban-rules.surfaces.heading.caps' },
+      icon: 'rules',
+      ...(extensionLimits.length === 0
+        ? {}
+        : {
+            summary: {
+              value: {
+                key: 'fr-urban-rules.surfaces.caps.summary',
+                params: {
+                  area: area2(extensionLimits.reduce((a, b) => (b.limit < a.limit ? b : a)).limit)
+                }
+              }
+            }
+          }),
+      blocks: [{ kind: 'fields', rows: capRows }]
+    });
 
     // ── DEC-5: the theoretical capacity ──
     const floor = floorToFloor();
@@ -11518,13 +12156,11 @@ function createRnu({
       storeys === undefined || groundArea === undefined
         ? undefined
         : { low: groundArea * storeys.low, high: groundArea * storeys.high };
-    blocks.push({
-      kind: 'heading',
-      text: { key: 'fr-urban-rules.surfaces.heading.capacity' },
-      detail: { key: 'fr-urban-rules.surfaces.capacity.estimate' }
-    });
+    // Sprint 002.15: a fold — its summary the range, its body the range as a bar, « not a right to
+    // build » in the headline's own detail, the ground and the storeys, and what was not applied.
+    const capacityBlocks = [];
     if (capacity === undefined) {
-      blocks.push({
+      capacityBlocks.push({
         kind: 'notice',
         tone: 'info',
         text: {
@@ -11537,17 +12173,23 @@ function createRnu({
         }
       });
     } else {
-      blocks.push({
+      const range = {
+        key: 'fr-urban-rules.surfaces.capacity.rangeValue',
+        params: { low: area2(capacity.low), high: area2(capacity.high) }
+      };
+      capacityBlocks.push({
+        kind: 'stat',
+        label: { key: 'fr-urban-rules.surfaces.capacity.range' },
+        value: range,
+        detail: { key: 'fr-urban-rules.surfaces.capacity.notARight' },
+        gauge: {
+          value: m2(capacity.high),
+          from: m2(capacity.low)
+        }
+      });
+      capacityBlocks.push({
         kind: 'fields',
         rows: [
-          {
-            label: { key: 'fr-urban-rules.surfaces.capacity.range' },
-            value: {
-              key: 'fr-urban-rules.surfaces.capacity.rangeValue',
-              params: { low: area2(capacity.low), high: area2(capacity.high) }
-            },
-            detail: { key: 'fr-urban-rules.surfaces.capacity.notARight' }
-          },
           {
             label: { key: 'fr-urban-rules.surfaces.capacity.ground' },
             value: m2(groundArea),
@@ -11572,7 +12214,7 @@ function createRnu({
         ]
       });
     }
-    blocks.push({
+    capacityBlocks.push({
       kind: 'notice',
       tone: 'info',
       text: {
@@ -11582,13 +12224,25 @@ function createRnu({
             : 'fr-urban-rules.surfaces.capacity.notApplied'
       }
     });
+    blocks.push({
+      kind: 'section',
+      id: 'capacity',
+      title: { key: 'fr-urban-rules.surfaces.heading.capacity' },
+      icon: 'envelope',
+      summary:
+        capacity === undefined
+          ? { value: { key: 'fr-urban-rules.surfaces.capacity.estimate' } }
+          : {
+              value: {
+                key: 'fr-urban-rules.surfaces.capacity.rangeValue',
+                params: { low: area2(capacity.low), high: area2(capacity.high) }
+              },
+              tone: 'info'
+            },
+      blocks: capacityBlocks
+    });
 
     // ── DEC-6: the procedure, indicative ──
-    blocks.push({
-      kind: 'heading',
-      text: { key: 'fr-urban-rules.surfaces.heading.procedure' },
-      detail: { key: 'fr-urban-rules.surfaces.procedure.indicative' }
-    });
     const procedure = procedureFlags({
       site,
       buildings,
@@ -11601,7 +12255,17 @@ function createRnu({
       reportFacts,
       flags
     });
-    blocks.push({ kind: 'fields', rows: procedure.rows });
+    blocks.push({
+      kind: 'section',
+      id: 'procedure',
+      title: { key: 'fr-urban-rules.surfaces.heading.procedure' },
+      icon: 'information',
+      summary: { value: { key: 'fr-urban-rules.surfaces.procedure.indicative' } },
+      blocks: [
+        { kind: 'notice', tone: 'info', text: { key: 'fr-urban-rules.surfaces.procedure.indicative' } },
+        { kind: 'fields', rows: procedure.rows }
+      ]
+    });
 
     // ── The answers: one action each, one Request each (096.4) ──
     if (!readOnly)
@@ -12159,8 +12823,12 @@ function createRnu({
     return { rows, procedure, architect: architect.flag === true, article };
   }
 
-  /** The Surfaces view's actions (DEC-1, DEC-3, DEC-4): each a choice-led form, one Request when applied. */
-  function surfaceActions({ choice, buildings, sdp, roles, balconyAnswers }) {
+  /**
+   * The emprise definition's action (DEC-1): a `definition` choice, the four yes/no counts and an
+   * optional page. The Surfaces view's choice runs it from a card (Sprint 002.15) and its actions
+   * block offers the same object, so the two share one identity — and one busy state.
+   */
+  function definitionActionOf(choice) {
     const yesNo = [
       { value: 'yes', label: { key: 'fr-urban-rules.surfaces.answer.yes' } },
       { value: 'no', label: { key: 'fr-urban-rules.surfaces.answer.no' } }
@@ -12173,24 +12841,7 @@ function createRnu({
       initial: choice.counts[key] ? 'yes' : 'no',
       options: yesNo
     });
-    const buildingOptions = buildings
-      .slice(0, 50)
-      .map((b) => ({ value: b.main ? 'main' : b.id, label: buildingLabel(b) }));
-    const roomOptions = sdp.rooms.slice(0, 50).map((r, i) => ({
-      value: r.id,
-      label:
-        r.name === undefined || r.name === ''
-          ? { key: 'fr-urban-rules.surfaces.room', params: { index: i + 1 } }
-          : { text: cut(r.name, 200) }
-    }));
-    const storeyOptions = [...new Map(sdp.storeys.map((s) => [s.id, s])).values()]
-      .slice(0, 50)
-      .map((s, i) => ({
-        value: s.id,
-        label: { key: 'fr-urban-rules.surfaces.storey', params: { index: i + 1 } }
-      }));
-    const actions = [
-      {
+    return {
         id: 'emprise-definition',
         label: { key: 'fr-urban-rules.surfaces.action.definition' },
         fields: [
@@ -12214,8 +12865,32 @@ function createRnu({
             ...(choice.page === undefined ? {} : { initial: choice.page })
           }
         ]
-      }
+      };
+  }
+
+  /** The Surfaces view's actions (DEC-1, DEC-3, DEC-4): each a choice-led form, one Request when applied. */
+  function surfaceActions({ choice, buildings, sdp, roles, balconyAnswers }) {
+    const yesNo = [
+      { value: 'yes', label: { key: 'fr-urban-rules.surfaces.answer.yes' } },
+      { value: 'no', label: { key: 'fr-urban-rules.surfaces.answer.no' } }
     ];
+    const buildingOptions = buildings
+      .slice(0, 50)
+      .map((b) => ({ value: b.main ? 'main' : b.id, label: buildingLabel(b) }));
+    const roomOptions = sdp.rooms.slice(0, 50).map((r, i) => ({
+      value: r.id,
+      label:
+        r.name === undefined || r.name === ''
+          ? { key: 'fr-urban-rules.surfaces.room', params: { index: i + 1 } }
+          : { text: cut(r.name, 200) }
+    }));
+    const storeyOptions = [...new Map(sdp.storeys.map((s) => [s.id, s])).values()]
+      .slice(0, 50)
+      .map((s, i) => ({
+        value: s.id,
+        label: { key: 'fr-urban-rules.surfaces.storey', params: { index: i + 1 } }
+      }));
+    const actions = [definitionActionOf(choice)];
     if (buildingOptions.length > 0) {
       actions.push({
         id: 'emprise-balconies',

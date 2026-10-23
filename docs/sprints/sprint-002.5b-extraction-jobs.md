@@ -1,6 +1,10 @@
 # Sprint 002.5b — Extraction Jobs
 
-> **Status:** **Implemented (2026-10-20), uncommitted.**
+> **Status:** **Closed (2026-10-22)** — committed, deployed to the NAS and
+> closed by the owner with
+> [fr-urban-rules](../milestones/fr-urban-rules/fr-urban-rules.md) Phases
+> 0–3 and the platform's Site Regulations milestone ("you can close phase3. it works for the moment and has been deployed to the NAS").
+> As it read before the close: **Implemented (2026-10-20), uncommitted.**
 > `fr-urban-rules-service` 0.2.0: the three extraction routes, jobs, the
 > result cache, the limits; one live Lyon UCe1 extraction recorded
 > (`qwen/qwen3-vl-8b` through a local ai-service). **Not done:** the walk
@@ -820,3 +824,5 @@ this service's side is fixed the same way, in `src/ai-client.mjs`:
 - Gates: `node --test 'services/*/tests/*.test.mjs'` **126/126** on Node
   24.18.0 and on Node 22.13.0. Question 2 of the Outcome (the 5-minute
   cut-off) is answered by the two fixes.
+
+_Noted at the close (2026-10-22): this sprint carries no post-sprint list; what it changed in the documents is recorded in its Outcome. Not invented after the fact._

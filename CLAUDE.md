@@ -95,7 +95,7 @@ const theme = context.services.get(ThemeServiceToken);
 ```
 
 Well-known token names — read from `defineServiceToken(...)` in
-`../archisimple/packages/extension-sdk/src/services.ts` (SDK 1.33, 2026-10-21; no token added since 1.28) and
+`../archisimple/packages/extension-sdk/src/services.ts` (SDK 1.35, 2026-10-22; no token added since 1.28) and
 `plugin-services.ts` beside it; diff against them when this table looks short:
 
 | Service              | Token name          | Notes                                                                     |
@@ -132,7 +132,9 @@ Well-known token names — read from `defineServiceToken(...)` in
 finding its companion service with `getOptional` and `locate()` on each read,
 and since 0.9.0 (Sprint 002.11, SDK 1.33) for keeping what it read in the Site
 cache: a snapshot dated, fitted to a budget and said, restored at open, written
-only when it changed (ADR-0115).
+only when it changed (ADR-0115); and since 0.10.0 (Sprint 002.12, SDK 1.35) for shaping a
+report for the redesigned panel — icons, groups, summaries, a locality, assumptions as title and
+detail — without changing what it says.
 
 `context.commands` and `context.events` arrive **directly on the context** — no
 token, no lookup.
@@ -187,12 +189,12 @@ my-plugin/
   content (themes, translations, materials, templates, icons, textures).
 - `sdkVersion` is `major.minor`, **not** semver. Read the current one from
   `SDK_VERSION` in `../archisimple/packages/extension-sdk/src/sdk-version.ts`
-  rather than from this line (it said `1.1` long after `1.23`; it is **`1.33`**
-  on 2026-10-21). A `1.0` extension runs on a `1.4` host (additive only); a
+  rather than from this line (it said `1.1` long after `1.23`; it is **`1.35`**
+  on 2026-10-22). A `1.0` extension runs on a `1.4` host (additive only); a
   different major is refused outright. Declare the minor that added the seam you
   use — `1.1` for an importer, `1.24` for the Site view, `1.25` for
   `regulations`, `1.27` for Site package data, `1.28` for the plugin service,
-  `1.31` for a source's `checkVariation`, `1.32` for its `questions`, `1.33` for the Site cache and a source's `saved` state — so an older host refuses the
+  `1.31` for a source's `checkVariation`, `1.32` for its `questions`, `1.33` for the Site cache and a source's `saved` state, `1.34` for a view's icon, group and summary and a report's `locality`, `1.35` for an assumption's `detail` and a check's `allowed` — so an older host refuses the
   manifest with a reason instead of handing you a runtime `undefined`.
 - `entryPoint` here is a **path relative to the package root** (`src/index.js`),
   because that is what the Development Repository reads.

@@ -344,3 +344,24 @@ export async function loadAcceptance(plot, base = ACCEPTANCE) {
     variations: await optional('variations.json')
   };
 }
+
+/**
+ * Sprint 002.12 (DEC-2): the Document view's blocks — the overview's fields and the link with its
+ * own notices, which the panel's report moved out of the overview.
+ */
+export const documentView = (report) => report.views.find((v) => v.id === 'document');
+
+/**
+ * The blocks the 0.9.0 overview held before 002.12 split it: what is left in the overview (the
+ * notices) and the Document view's (fields, link and its notices). For the assertions about the
+ * link and its notices, which did not change — only where they are.
+ */
+export const docBlocks = (report) => [...report.overview, ...(documentView(report)?.blocks ?? [])];
+
+/**
+ * Sprint 002.15: a view's blocks with each `section`'s blocks in its place. The Surfaces view is
+ * composed of folds, so what a test asks of its rows, tables and notices — wherever they now sit —
+ * is asked of the flattened list.
+ */
+export const flattenBlocks = (blocks) =>
+  (blocks ?? []).flatMap((b) => (b.kind === 'section' ? flattenBlocks(b.blocks) : [b]));

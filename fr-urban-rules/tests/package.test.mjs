@@ -29,15 +29,20 @@ const SDK_CATEGORIES = [
   'information'
 ];
 
-test('criterion 1: the manifest declares an SDK 1.33 extension (002.11: the planning snapshot in the Site cache) needing `regulations` and, since 002.1a, `document`', () => {
+test('criterion 1: the manifest declares an SDK 1.38 extension (002.15: the `stat`, `choice` and `section` blocks; 002.14: a flag’s icon, group, title, code and level; 002.13: the plot view, the edge list, the height section, an assumption’s figure) needing `regulations` and, since 002.1a, `document`', () => {
   assert.equal(manifest.id, 'com.archisimple.fr-urban-rules');
   assert.equal(manifest.type, 'extension');
-  assert.equal(manifest.version, '0.9.0');
-  // 1.33 since 002.11: `readCache` / `writeCache` / `onDidChangeCache` (096.17,
+  assert.equal(manifest.version, '0.13.0');
+  // 1.38 since 002.15: the `stat`, `choice` and `section` blocks (platform 096.27).
+  // 1.37 since 002.14: a flag's `icon`, `group`, `title`, `code` and `level` (platform 096.25).
+  // 1.36 since 002.13: `plot-plan` in a view, the `edges` and `height-section` blocks and an
+  // assumption's `figure` (platform 096.22). 1.35 since 002.12: a view's `icon`, `group` and `summary`, the report's `locality` (platform
+  // 096.19, SDK 1.34) and an assumption's `detail` (096.21, SDK 1.35; `allowed` is the host's too,
+  // sent by no rule shape here). 1.33 since 002.11: `readCache` / `writeCache` / `onDidChangeCache` (096.17,
   // ADR-0115). 1.32 since 002.8 (DEC-10): `checkVariation` (1.31, 096.11) and
   // `questions` (1.32, 096.12). 1.30 since 002.7: an envelope's `volume` (1.29)
   // and the report's `sheet` (1.30). 1.28 since 002.6a: `plugin-service` and `locate()`.
-  assert.equal(manifest.sdkVersion, '1.33');
+  assert.equal(manifest.sdkVersion, '1.38');
   assert.equal(manifest.entryPoint, 'src/index.js');
   // `document` since 002.1a: `SitePackageDataService.write` requires it (096.4 DEC-7),
   // and an answer's offer too (096.12 DEC-12). `ai` since 002.3: the programme stage,
@@ -116,7 +121,34 @@ test('criterion 2: both locales hold the same keys, and every key the source nam
     assert.ok(key in en, `${key} missing from en.json`);
     assert.ok(key in fr, `${key} missing from fr.json`);
   }
-  for (const key of Object.keys(en)) assert.ok(named.has(key), `${key} is shipped but never named`);
+  // Sprint 002.12: an assumption's `.detail` is named by convention — the title's key plus
+  // `.detail`, added when the report is shaped for the panel — never written out.
+  for (const key of Object.keys(en)) {
+    const detailOf = key.endsWith('.detail') ? key.slice(0, -'.detail'.length) : undefined;
+    assert.ok(
+      named.has(key) || (detailOf !== undefined && named.has(detailOf)),
+      `${key} is shipped but never named`
+    );
+  }
+});
+
+test('002.12 criterion 5: every assumption has a short title and a detail, in en and fr', () => {
+  const titles = Object.keys(en).filter(
+    (key) => key.startsWith('fr-urban-rules.assumption.') && !key.endsWith('.detail')
+  );
+  assert.equal(titles.length, 57);
+  for (const [language, strings] of [
+    ['en', en],
+    ['fr', fr]
+  ]) {
+    for (const key of titles) {
+      assert.ok(strings[key].length <= 80, `${language} ${key}: the title is ${strings[key].length} characters`);
+      assert.equal(typeof strings[`${key}.detail`], 'string', `${language} ${key} has no detail`);
+      assert.ok(strings[`${key}.detail`].length > 0, `${language} ${key}: an empty detail`);
+      // Placeholders are preserved: whatever the old sentence named, title and detail say.
+      assert.doesNotMatch(strings[key], /\.$/, `${language} ${key}: a title is not a sentence`);
+    }
+  }
 });
 
 test('DEC-10: the row keeps its French legal name in both locales', () => {

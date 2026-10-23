@@ -547,10 +547,11 @@ test('carte-gouv-fr’s recorded roads: Mouzay’s plot faces a street; Brouenne
 // ── Criterion 4: correcting a role ──────────────────────────────────────────────
 
 const SOUTH = [road([p(-20, -6), p(40, -6)])];
+// 002.13: the button names the edge by the host's letter (1 → A), not its number.
 const subjectOf = (report, edge) =>
   view(report, 'edges')
     .blocks.find((b) => b.kind === 'actions')
-    .actions.find((a) => a.label.params?.edge === edge).target.subjectId;
+    .actions.find((a) => a.label.params?.edge === String.fromCharCode(64 + edge)).target.subjectId;
 
 test('criterion 4: set-edge-role writes one section with expected, keeps what it does not own, and wins', async () => {
   // Members of later sprints (002.3's ticks, say), opaque to this one.
@@ -732,15 +733,19 @@ test('DEC-8: a section of an unknown schema is read-only: no action, never rewri
 
 // ── Criterion 5: the views ──────────────────────────────────────────────────────
 
-test('criterion 5: the edges view holds the table and one three-option set-edge-role per edge; rules and checks views exist', async () => {
+test('criterion 5: the edges view holds the plot view, the edge list and one three-option set-edge-role per edge; rules and checks views exist', async () => {
   const report = await read(
     rnuReader({ boundary: BOX, roadAnswer: SOUTH, measured: replay(measures.pitched) })
   );
   const edges = view(report, 'edges');
-  const table = edges.blocks[0];
-  assert.equal(table.kind, 'table');
-  assert.equal(table.rows.length, 4);
-  assert.deepEqual(table.rows[0][2], { value: 20, unit: 'm' });
+  // 002.13: the table (number, role, length, why) is the host's plot view and edge list now; the
+  // length column went with it (the letter identifies an edge, the owner's answer to Q1).
+  assert.deepEqual(edges.blocks.slice(0, 2), [
+    { kind: 'plot-plan', categories: ['envelope'] },
+    { kind: 'edges' }
+  ]);
+  assert.equal(edges.blocks.some((b) => b.kind === 'table'), false);
+  assert.equal(report.edges.length, 4);
   const actions = edges.blocks.find((b) => b.kind === 'actions').actions;
   assert.equal(actions.length, 4);
   for (const action of actions) {

@@ -1,6 +1,10 @@
 # Sprint 002.11 — Planning Snapshot
 
-> **Status:** **Implemented and reviewed (2026-10-21, uncommitted).** Walked
+> **Status:** **Closed (2026-10-22)** — committed, deployed to the NAS and
+> closed by the owner with
+> [fr-urban-rules](../milestones/fr-urban-rules/fr-urban-rules.md) Phases
+> 0–3 and the platform's Site Regulations milestone ("you can close phase3. it works for the moment and has been deployed to the NAS").
+> As it read before the close: **Implemented and reviewed (2026-10-21, uncommitted).** Walked
 > in the editor the same day (§ Outcome), independently reviewed and walked
 > again after the review's fixes (§ Outcome, "Review (2026-10-21)"). Drafted
 > and reviewed against the code 2026-10-21.

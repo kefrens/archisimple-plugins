@@ -21,6 +21,21 @@
 >
 > **Sizes:** a watcher and a store in the service, a Géorisques proxy, a
 > measurement script and its report, one extension change. Medium.
+>
+> **Version (renumbered again 2026-10-22, round 2):** `fr-urban-rules`
+> **0.14.0**, with `sdkVersion` **"1.38"**, inherited — Phase 5's second round
+> takes 0.12.0 ([002.14 PLU Flag Content](sprint-002.14-plu-flag-content.md),
+> SDK 1.37) and 0.13.0 ([002.15 PLU Surfaces Content](sprint-002.15-plu-surfaces-content.md),
+> SDK 1.38). _(Read 0.12.0 and "1.36" until round 2; 0.10.0 and "1.33" before.)_
+> The previous note follows, for the history:
+> `fr-urban-rules` **0.12.0**, with
+> `sdkVersion` **"1.36"**, inherited. Phase 5 (PLU panel UX), approved by the
+> owner on 2026-10-22 while this sprint is on hold, lands first:
+> [002.12 PLU Panel Content](sprint-002.12-plu-panel-content.md) takes 0.10.0
+> (SDK 1.35) and [002.13 PLU Panel Diagrams](sprint-002.13-plu-panel-diagrams.md)
+> 0.11.0 (SDK 1.36). This sprint needs nothing from them; it declares their SDK
+> because a package declares the newest it was built against. _(Read 0.10.0
+> and "1.33" until 2026-10-22, and 0.9.0 and "1.32" until 2026-10-21.)_
 
 ---
 
@@ -390,10 +405,11 @@ recorded.
 
 **Version needs:**
 
-- **Package `fr-urban-rules`:** **0.10.0** (renumbered 2026-10-21 from 0.9.0: 002.11 Planning Snapshot lands first and takes 0.9.0; earlier restated 2026-10-20 from 1.4.0 / 1.3.0): the
+- **Package `fr-urban-rules`:** **0.14.0** (renumbered again 2026-10-22, round 2, from 0.12.0: 002.14 and 002.15 land first and take 0.12.0 and 0.13.0; renumbered 2026-10-22 from 0.10.0: Phase 5's 002.12 and 002.13 land first and take 0.10.0 and 0.11.0; renumbered 2026-10-21 from 0.9.0: 002.11 Planning Snapshot lands first and takes 0.9.0; earlier restated 2026-10-20 from 1.4.0 / 1.3.0): the
   overview line, the in-session signal, the reopen refinement, Géorisques
-  through the service. `sdkVersion` **"1.33"**, inherited from 002.11 (which needs
-  096.17's cache); this sprint needs nothing newer — `onDidChange` is 1.28's.
+  through the service. `sdkVersion` **"1.38"**, inherited from 002.15 (was "1.36", from 002.13; renumbered
+  2026-10-22; "1.33" before, inherited from 002.11, which needs 096.17's cache);
+  this sprint needs nothing newer — `onDidChange` is 1.28's.
   The in-session line reuses 002.11's « what changed » wording (DEC-6 there).
 - **`fr-urban-rules-service`:** a minor: the watcher, `documents/<partition>`,
   the Géorisques proxy, the eviction rules. Its environment gains
@@ -442,7 +458,8 @@ recorded.
 - DEC-3, DEC-5, Dependencies: routes name the package id and 002.5a's `v1`
   prefix (`/plugins-api/com.archisimple.fr-urban-rules/v1/…`).
 - Version needs: package **0.9.0**, `sdkVersion` **"1.32"** unchanged.
-  _(Renumbered 2026-10-21: **0.10.0** and **"1.33"**, after 002.11 Planning Snapshot.)_
+  _(Renumbered 2026-10-21: **0.10.0** and **"1.33"**, after 002.11 Planning Snapshot;
+  renumbered 2026-10-22: **0.12.0** and **"1.36"**, after Phase 5's 002.12 and 002.13; renumbered again, round 2: **0.14.0** and **"1.38"**, after 002.14 and 002.15.)_
 
 # Review (2026-10-19)
 

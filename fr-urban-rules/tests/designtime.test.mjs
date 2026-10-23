@@ -22,7 +22,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 
 import { createReader } from '../src/index.js';
-import { ACCEPTANCE, FIXTURES, loadAcceptance, replayFetch, replayService } from './helpers.mjs';
+import { ACCEPTANCE, FIXTURES, flattenBlocks, loadAcceptance, replayFetch, replayService } from './helpers.mjs';
 
 let globalFetchCalls = 0;
 globalThis.fetch = () => {
@@ -101,7 +101,7 @@ const area = (ring) => Math.abs(ring.reduce((sum, p, i) => sum + p.easting * rin
 const envelopeOf = (report) => report.features.find((f) => f.id === 'envelope');
 const view = (report, id) => report.views?.find((v) => v.id === id);
 const surfaceRow = (report, key) =>
-  (view(report, 'surfaces')?.blocks ?? []).filter((b) => b.kind === 'fields').flatMap((b) => b.rows).find((r) => r.label.key === key);
+  flattenBlocks(view(report, 'surfaces')?.blocks).filter((b) => b.kind === 'fields').flatMap((b) => b.rows).find((r) => r.label.key === key);
 const rulesNotices = (report) => (view(report, 'rules')?.blocks ?? []).filter((b) => b.kind === 'notice').map((b) => b.text.key);
 const confirmedIssues = (report) =>
   report.checks.filter((c) => c.result === 'potential_issue' && report.rules.find((r) => r.id === c.ruleId)?.status === 'confirmed');

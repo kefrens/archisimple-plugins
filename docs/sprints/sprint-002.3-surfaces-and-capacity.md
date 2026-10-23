@@ -1,6 +1,10 @@
 # Sprint 002.3 — Surfaces and Capacity
 
-> **Status:** **Implemented, uncommitted (2026-10-20)** — `fr-urban-rules` 0.4.0,
+> **Status:** **Closed (2026-10-22)** — committed, deployed to the NAS and
+> closed by the owner with
+> [fr-urban-rules](../milestones/fr-urban-rules/fr-urban-rules.md) Phases
+> 0–3 and the platform's Site Regulations milestone ("you can close phase3. it works for the moment and has been deployed to the NAS").
+> As it read before the close: **Implemented, uncommitted (2026-10-20)** — `fr-urban-rules` 0.4.0,
 > `urban-rules` removed; 201 tests green (review fixes included). The two walks (step 10) go to the
 > 096.6 / 002.4 joint walk.
 >
@@ -222,7 +226,7 @@ the 096.6 / 002.4 joint walk.
 - [x] Milestone § 5.4: the architect sentence corrected (step 1).
 - [ ] Step 10: the walks on Gordes AC0323 and Lyon AB0105 — to the joint walk.
 - [ ] Platform: the storeys' floor-to-floor height on the SDK (deviation 2).
-- [ ] Commit (the owner's).
+- [x] Commit (the owner's). _(Done at the close, 2026-10-22: `1cedc63`, `5808887`, `05db2a6`.)_
 
 ## Review fixes (2026-10-20)
 

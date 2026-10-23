@@ -1,10 +1,21 @@
 # Sprint 002.9 — Design-Time Acceptance FR
 
-> **Status:** **Locally walked (2026-10-21, uncommitted); owner steps
-> pending** — the hand check against the PDFs, the production model and its
-> key, the two acceptance recordings, the Docker lines of DEC-5 and the NAS
-> walk (Outcome, at the end). _(Read "Draft (2026-10-19), reviewed against the
-> code 2026-10-20 — nothing implemented" until 2026-10-21.)_
+> **Status:** **Closed (2026-10-22)** — committed (`5808887`), deployed to
+> the NAS, and closed by the owner with the
+> [fr-urban-rules](../milestones/fr-urban-rules/fr-urban-rules.md) Phases 2–3
+> and the platform's Site Regulations milestone: _"you can close phase3. it
+> works for the moment and has been deployed to the NAS. Choosing another
+> model is another piece of work that will be done later on on the AI revamp
+> milestone"_. The production model, its key and the two acceptance
+> recordings (criteria 3 and 4's recorded half) are **deferred to the AI
+> revamp milestone**, not done; the hand check against the PDFs and DEC-5's
+> local Docker lines are **not recorded as done**. See
+> [Closure (2026-10-22)](#closure-2026-10-22) at the end. _(Read "Locally
+> walked (2026-10-21, uncommitted); owner steps pending — the hand check
+> against the PDFs, the production model and its key, the two acceptance
+> recordings, the Docker lines of DEC-5 and the NAS walk" until the close, and
+> "Draft (2026-10-19), reviewed against the code 2026-10-20 — nothing
+> implemented" until 2026-10-21.)_
 >
 > **Draft (2026-10-19), reviewed against the code 2026-10-20.** Written from the proposal v2.2, the platform's
 > milestone README (§3 "Phases 2–4") and 002.4's acceptance draft, which this
@@ -68,7 +79,9 @@
       to a loopback server of its own.
 - [ ] **Hand-checked means by a person**, against the regulation PDF read at
       the page, not against this package's extraction. _Not yet: every row
-      reads `handChecked: false`; the owner's step 1._
+      reads `handChecked: false`; the owner's step 1. Still so at the close
+      (2026-10-22): committed in `5808887` with `handCheck.state: "pending"`;
+      not recorded as done._
 - [x] **Nothing extracted is a constraint until confirmed** (proposal §5.2). _Held: the
       walk confirmed the 15 % by its button; no fixture ships a confirmed
       `written` rule._
@@ -816,3 +829,35 @@ those two files, which were unmodified before), and the suites re-run green.
   assistant's offer. Code holds (nothing counts until confirmed); the
   production model decides how many there are.
 - No question tool answers « what green space must I keep? ».
+
+## Closure (2026-10-22)
+
+The owner closed Phases 2–3 with the platform's 096.14: _"you can close
+phase3. it works for the moment and has been deployed to the NAS. Choosing
+another model is another piece of work that will be done later on on the AI
+revamp milestone"_. Phase 4 (002.10) stays a draft. The owner steps above,
+one by one:
+
+1. **Hand check, and the expected values committed alone, first** — **the
+   hand check is not recorded as done.** `expected-002.9.json` was committed
+   in `5808887`, with other files rather than alone, and every one of its 15
+   rows still reads `handChecked: false` (`handCheck.state: "pending"`). The
+   Gordes PPRIF and road questions stay unanswered. Criterion 1 is met for
+   the order only, as before.
+2. **Name the production model and supply its key** — **deferred to the AI
+   revamp milestone.**
+3. **Record** the Lyon and Gordes acceptance extractions — **deferred with
+   it.** No acceptance recording exists; the four tests that judge them
+   still skip. Criteria 3 and 4's recorded half stay open, now the AI
+   revamp's.
+4. **DEC-5's Docker lines and the NAS walk** — **the NAS deployment is
+   done**, on the owner's word (images built, `plugin-services` running
+   there, the extension in use). DEC-5's lines 1, 5 (Docker form) and 6 as
+   written — the local run from clean and the probe — are **not recorded as
+   done**; the owner closed on the NAS deployment working.
+
+**Residual, known.** The 8 B development model's spurious to-confirm rules
+(§ Open above; the platform README §10 "Seen") remain. Nothing counts until
+confirmed; the remedy is the AI revamp's choice of model.
+
+_Noted at the close (2026-10-22): this sprint carries no post-sprint list; what it changed in the documents is recorded in its Outcome. Not invented after the fact._

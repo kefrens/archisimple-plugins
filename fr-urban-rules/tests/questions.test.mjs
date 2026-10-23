@@ -20,6 +20,7 @@ import { __testing, createReader } from '../src/index.js';
 import {
   FIXTURES,
   PLOTS,
+  flattenBlocks,
   loadAcceptance,
   loadPlot,
   recordedFetch,
@@ -559,13 +560,22 @@ test('criterion 9: remaining_area states the Surfaces view’s figures, the capa
     const answer = ask(context, 'remaining_area');
     if (answer.status !== 'answered') continue;
     const surfaces = context.report.views.find((v) => v.id === 'surfaces');
-    const rows = surfaces.blocks.filter((b) => b.kind === 'fields').flatMap((b) => b.rows);
-    const used = rows.find((r) => r.label.key === 'fr-urban-rules.surfaces.budget.used');
+    // 002.15: the view is composed of folds, read flattened; the budget's used / allowed are the
+    // bar's (`meter`), the capacity's range the headline figure's.
+    const flat = flattenBlocks(surfaces.blocks);
+    const rows = flat.filter((b) => b.kind === 'fields').flatMap((b) => b.rows);
+    const meter = flat.find((b) => b.kind === 'meter');
+    const used =
+      meter === undefined
+        ? rows.find((r) => r.label.key === 'fr-urban-rules.surfaces.budget.used')
+        : { value: meter.used };
     const claim = answer.claims.find((c) => c.text.key === 'fr-urban-rules.question.area.empriseUsed');
     if (used !== undefined) assert.deepEqual(claim.values.used, used.value, `${plot}: emprise used`);
     const capacity = answer.claims.find((c) => c.text.key === 'fr-urban-rules.question.area.capacity');
     if (capacity !== undefined) {
-      const range = rows.find((r) => r.label.key === 'fr-urban-rules.surfaces.capacity.range');
+      const range = flat.find(
+        (b) => b.kind === 'stat' && b.label.key === 'fr-urban-rules.surfaces.capacity.range'
+      );
       assert.deepEqual(
         [capacity.values.low.value, capacity.values.high.value],
         [range.value.params.low, range.value.params.high],

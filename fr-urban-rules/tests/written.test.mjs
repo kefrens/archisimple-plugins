@@ -12,8 +12,10 @@ import { readFile } from 'node:fs/promises';
 
 import { __testing, createReader } from '../src/index.js';
 import {
-  FIXTURES,
   answering,
+  docBlocks,
+  FIXTURES,
+  flattenBlocks,
   loadPlot,
   recordedFetch,
   recordedSiteService,
@@ -1088,6 +1090,24 @@ test('criterion 10: Edit value is offered on a value and a ratio written rule, n
     .filter((a) => a.target?.ruleId === relative.id)
     .map((a) => a.id);
   assert.deepEqual(offered, ['confirm', 'not-applicable']);
+  // Sprint 002.12 (DEC-5; criterion 7): Confirm names the value it confirms, in the rule's own unit
+  // — « Confirmer 15 % » — and a limit that is no number keeps « Confirmer ».
+  const confirmOf = (rule) =>
+    actions(report).find((a) => a.id === 'confirm' && a.target.ruleId === rule.id)?.label;
+  assert.deepEqual(confirmOf(ratio), {
+    key: 'fr-urban-rules.action.confirmValue',
+    params: { value: 15, unit: '%' }
+  });
+  assert.deepEqual(confirmOf(value), {
+    key: 'fr-urban-rules.action.confirmValue',
+    params: {
+      value: value.limit.quantity.value,
+      unit: { m: 'm', m2: 'm²', percent: '%' }[value.limit.quantity.unit]
+    }
+  });
+  assert.deepEqual(confirmOf(relative), { key: 'fr-urban-rules.action.confirm' });
+  assert.match(en['fr-urban-rules.action.confirmValue'], /^Confirm \{value\} \{unit\}$/);
+  assert.match(fr['fr-urban-rules.action.confirmValue'], /^Confirmer \{value\} \{unit\}$/);
   // A written rule's subject carries its version alone (DEC-4): no passage, no value.
   const subject = actions(report).find((a) => a.target?.ruleId === value.id).target.subjectId;
   assert.deepEqual(Object.keys(__testing.subjectFieldsOf(subject)), ['i', 'd']);
@@ -1338,9 +1358,10 @@ test('decision Q3: a confirmed written « ≤ 40 % of the plot area » feeds the
     let report = await read(context);
     await confirmAll(context, report, (r) => r?.kind === 'footprint_ratio');
     report = await read(context, 'action');
-    const rows = report.views
-      .find((v) => v.id === 'surfaces')
-      .blocks.filter((b) => b.kind === 'fields')
+    // 002.15: the Surfaces view is composed of folds (read flattened); with no plot coverage there
+    // is no bar, so the allowance is a row of the budget's basis.
+    const rows = flattenBlocks(report.views.find((v) => v.id === 'surfaces').blocks)
+      .filter((b) => b.kind === 'fields')
       .flatMap((b) => b.rows);
     return rows.find((r) => r.label.key === 'fr-urban-rules.surfaces.budget.allowed')?.value;
   };
@@ -1854,7 +1875,7 @@ test('002.11 criterion 7: restored extraction stands without the service', async
   );
   assert.match(fr['fr-urban-rules.snapshot.writtenAsRead'], /^Règles écrites telles que lues le \{date\}/);
   assert.ok(
-    report.overview.some((b) => b.text?.key === 'fr-urban-rules.notice.writtenRulesUnavailable')
+    docBlocks(report).some((b) => b.text?.key === 'fr-urban-rules.notice.writtenRulesUnavailable')
   );
   // Extract again is not offered: the notice says why.
   const ids = actions(report).map((a) => a.id);
@@ -1882,7 +1903,7 @@ test('002.11 review: the règlement’s link comes back from a written reading w
   const report = await read(context);
   context.reader.dispose();
   const href = `https://www.geoportail-urbanisme.gouv.fr/api/document/${documentId}/files/${encodeURIComponent(nomfic)}`;
-  const link = report.overview.find((b) => b.kind === 'link');
+  const link = docBlocks(report).find((b) => b.kind === 'link');
   assert.equal(link?.href, href);
   assert.equal(link.detail.key, 'fr-urban-rules.link.detailAsRead');
   assert.equal(link.detail.params.date, written.result.extractedAt.slice(0, 10));
@@ -1890,7 +1911,7 @@ test('002.11 review: the règlement’s link comes back from a written reading w
   assert.match(fr['fr-urban-rules.link.detailAsRead'], /^Le fichier tel que listé le \{date\}/);
   assert.equal(report.document.href, href);
   assert.equal(
-    report.overview.some((b) => b.text?.key === 'fr-urban-rules.notice.linkUnavailable'),
+    docBlocks(report).some((b) => b.text?.key === 'fr-urban-rules.notice.linkUnavailable'),
     false,
     'never « could not be resolved » while the file is known'
   );
@@ -1958,7 +1979,7 @@ test('002.11 review: at the zone’s page, a link read earlier still says when',
   await settle();
   const report = await read(context, 'source');
   context.reader.dispose();
-  const link = report.overview.find((b) => b.kind === 'link' && b.href.includes('#page='));
+  const link = docBlocks(report).find((b) => b.kind === 'link' && b.href.includes('#page='));
   assert.ok(link !== undefined, 'the zone’s page is known');
   assert.equal(link.detail.key, 'fr-urban-rules.link.detailPageAsRead');
   assert.equal(link.detail.params.date, recorded.extractedAt.slice(0, 10));
@@ -1981,8 +2002,8 @@ test('002.11 review: a written reading of another version names no link', async 
   });
   const report = await read(context);
   context.reader.dispose();
-  assert.equal(report.overview.some((b) => b.kind === 'link'), false);
-  assert.ok(report.overview.some((b) => b.text?.key === 'fr-urban-rules.notice.linkUnavailable'));
+  assert.equal(docBlocks(report).some((b) => b.kind === 'link'), false);
+  assert.ok(docBlocks(report).some((b) => b.text?.key === 'fr-urban-rules.notice.linkUnavailable'));
 });
 
 test('002.11 criterion 8: a newer reading is offered, never applied; « Use it » writes the cache once', async () => {

@@ -680,7 +680,8 @@ test('DEC-3: Mouzay (carte communale, constructible sector) draws as the RNU —
 test('criterion 9: the Envelope view — ground area, the confirmed height, applied and not applied rules, the corrected volume sentence — after the checks, no volume in m³', async () => {
   const report = await readAcceptance('lyon');
   const ids = report.views.map((v) => v.id);
-  assert.equal(ids.indexOf('envelope'), ids.indexOf('checks') + 1, 'after the checks view');
+  // Sprint 002.12: the boards' order — checks, rules, edges, then the envelope.
+  assert.ok(ids.indexOf('envelope') > ids.indexOf('checks'), 'after the checks view');
   const view = envelopeView(report);
   assert.deepEqual(view.label, { key: 'fr-urban-rules.view.envelope' });
   const rows = blocksOf(report, 'fields')[0].rows;

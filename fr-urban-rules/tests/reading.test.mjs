@@ -10,10 +10,13 @@ import assert from 'node:assert/strict';
 
 import { createReader } from '../src/index.js';
 import {
-  PLOTS,
   answering,
+  docBlocks,
+  documentView,
+  flattenBlocks,
   hanging,
   loadPlot,
+  PLOTS,
   recordedFetch,
   recordedSiteService,
   requestFor
@@ -119,7 +122,8 @@ test('DEC-6: Lyon’s Géorisques reads become flags and the risks view', async 
   assert.deepEqual(report.flags.find((f) => f.kind === 'clay').label.params, { exposure: '2' });
   assert.ok(report.flags.find((f) => f.id === 'ppr-69DDT20080006'));
   assert.ok(report.flags.filter((f) => f.kind === 'risk').length > 5);
-  const rows = rowsOf(view(report, 'risks'));
+  // 002.14: the readings' rows are folded into a section beneath the flags — read flattened.
+  const rows = rowsOf({ blocks: flattenBlocks(view(report, 'risks').blocks) });
   assert.deepEqual(rowValue(rows, 'fr-urban-rules.risk.seismic'), {
     key: 'fr-urban-rules.value.seismic',
     params: { zone: '2' }
@@ -180,7 +184,7 @@ test('Gordes: a PLU, zone A, its AC2 site, and a zone datvalid older than its do
     '2022-04-11'
   );
   assert.ok(report.flags.some((f) => f.kind === 'site'));
-  assert.ok(report.overview.some((b) => b.kind === 'link'));
+  assert.ok(docBlocks(report).some((b) => b.kind === 'link'));
 });
 
 // ── Criterion 5: failures stay apart ────────────────────────────────────────────
@@ -235,7 +239,7 @@ test('criterion 6: Lyon’s link is resolved through the filtered list and a cas
   const href =
     'https://www.geoportail-urbanisme.gouv.fr/api/document/4f3ddc27a9611b4bc94fa161443b8e86/files/200046977_reglement_20260326.pdf';
   assert.equal(report.document.href, href);
-  assert.equal(report.overview.find((b) => b.kind === 'link').href, href);
+  assert.equal(docBlocks(report).find((b) => b.kind === 'link').href, href);
   const urls = fetched.requests.map((r) => r.url);
   assert.ok(
     urls.some((u) => u.endsWith('/api/document?partition=DU_200046977&status=document.production'))
@@ -264,7 +268,7 @@ test('criterion 6: the unfiltered first page (deleted versions only) would find 
   });
   assert.equal(report.document.href, undefined);
   assert.ok(
-    report.overview.some(
+    docBlocks(report).some(
       (b) => b.kind === 'notice' && b.text.key === 'fr-urban-rules.notice.newerDocument'
     )
   );
@@ -287,11 +291,11 @@ test('criterion 6: a missing file leaves no link and a message; the document is 
     assert.equal(report.document.version, '200046977_PLUI_20260326');
     assert.equal(report.document.href, undefined);
     assert.equal(
-      report.overview.some((b) => b.kind === 'link'),
+      docBlocks(report).some((b) => b.kind === 'link'),
       false
     );
     assert.ok(
-      report.overview.some(
+      docBlocks(report).some(
         (b) => b.kind === 'notice' && b.text.key === 'fr-urban-rules.notice.fileNotFound'
       )
     );
@@ -751,12 +755,20 @@ test('review 8: a plot past 6,000 encoded characters is read by POST, end to end
 
 // ── Criterion 14: overview and views ────────────────────────────────────────────
 
-test('criterion 14: the overview carries fields, link, flags and sources; the four views have stable ids', async () => {
+test('criterion 14 (002.12): the overview keeps its notices; the fields and the link are the Document view’s; the views have stable ids', async () => {
   const { report } = await readOnce('lyon');
-  const kinds = report.overview.map((b) => b.kind);
-  // 002.6a: no plugin service here, so the not-available notice follows the link.
-  assert.deepEqual(kinds, ['fields', 'link', 'notice', 'flags', 'sources']);
-  assert.equal(report.overview[2].text.key, 'fr-urban-rules.notice.writtenRulesUnavailable');
+  // The overview is notices only (the host draws them under its status line).
+  assert.deepEqual(
+    report.overview.map((b) => b.kind),
+    report.overview.map(() => 'notice')
+  );
+  // The Document view: the fields, the link, and — 002.6a: no plugin service here — the
+  // not-available notice that follows the link.
+  assert.deepEqual(
+    documentView(report).blocks.map((b) => b.kind),
+    ['fields', 'link', 'notice']
+  );
+  assert.equal(documentView(report).blocks[2].text.key, 'fr-urban-rules.notice.writtenRulesUnavailable');
   const ids = report.views.map((v) => v.id);
   for (const id of ['zone', 'prescriptions', 'easements', 'risks']) assert.ok(ids.includes(id), id);
   for (const id of ids) assert.match(id, /^[a-z0-9-]{1,64}$/);
@@ -840,7 +852,9 @@ test('criterion 15: a 200,000-point zone is sent without rings, with the assumpt
   assert.equal(zone.rings, undefined);
   assert.ok(report.assumptions.some((a) => a.id === 'outline-too-detailed'));
   assert.ok(pointsOf(report) <= 100_000);
-  assert.ok(report.overview.some((b) => b.kind === 'assumptions'));
+  // Sprint 002.12: the assumptions are shown on the checks that name them (the host's cards), not
+  // listed in the overview; the report still holds them.
+  assert.equal(report.overview.some((b) => b.kind === 'assumptions'), false);
 });
 
 test('DEC-14: past 1,900 features the rest are listed and counted, never sent', async () => {

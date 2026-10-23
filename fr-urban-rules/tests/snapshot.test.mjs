@@ -17,11 +17,12 @@ import { readFile } from 'node:fs/promises';
 
 import { __testing, createReader } from '../src/index.js';
 import {
-  PLOTS,
-  SNAPSHOT_FIXTURES,
+  docBlocks,
   loadAcceptance,
+  PLOTS,
   replayFetch,
   replayService,
+  SNAPSHOT_FIXTURES,
   stableJson
 } from './helpers.mjs';
 
@@ -152,7 +153,7 @@ const facts = (report) => ({
 });
 const ruleKeys = (report) => report.rules.map((r) => r.id).sort();
 const overviewKeys = (report) =>
-  report.overview.filter((b) => b.kind === 'notice' || b.kind === 'heading').map((b) => b.text.key);
+  docBlocks(report).filter((b) => b.kind === 'notice' || b.kind === 'heading').map((b) => b.text.key);
 
 function sixPlots(name, body) {
   for (const plot of SIX) {
@@ -794,7 +795,7 @@ test('002.11 review: offline, the restored link opens the file it named, dated â
   assert.equal(kept.link, 'found');
   const data = packageData({ section: captured.section, cache: online.snapshot });
   const { report } = await readOnce(captured, { data, fetch: offline(), now: LATER });
-  const link = report.overview.find((b) => b.kind === 'link');
+  const link = docBlocks(report).find((b) => b.kind === 'link');
   assert.equal(link?.href, kept.href);
   assert.equal(report.document.href, kept.href);
   assert.deepEqual(link.detail, {
@@ -807,7 +808,7 @@ test('002.11 review: offline, the restored link opens the file it named, dated â
   );
   assert.equal(overviewKeys(report).includes('fr-urban-rules.notice.linkUnavailable'), false);
   // Online, the fresh link says nothing of a date.
-  const fresh = online.report.overview.find((b) => b.kind === 'link');
+  const fresh = docBlocks(online.report).find((b) => b.kind === 'link');
   assert.equal(fresh.detail.key, 'fr-urban-rules.link.detail');
 });
 

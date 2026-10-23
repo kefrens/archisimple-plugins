@@ -1,0 +1,827 @@
+{
+ "lyon": {
+  "digests": {
+   "rules": "6fd1b067cf4e203f5c62ac37ace66b32acb06f411114cfa15e98002e994047cf",
+   "checks": "5f315752728f66bd1be37774542b9ed0c2e46de7dda3d18bda9ab352b3c4c4bd",
+   "features": "2fcbc6700a1e4aa394aec73c4c9c48bb0cbdbeb47c381514fe749326d54c5698",
+   "edges": "5b77a4e22486d50ef1546f1f82893bc6e5ca0577efb9575b548aec9469149953",
+   "flags": "afa4aa897e701b5532b25cc5d9904e898f3a0657e96dd4b2cd81f65b008a9bb7",
+   "zones": "bdcdb74fb3aaea420a6e1b2d94963a180ffa1544433e8d14e8f9e91363e9b44d",
+   "document": "5afb169f0a8192bb1d1757334307816eddf4e742284904c7e30b96280f2f6076",
+   "sources": "b8e94ed4eda72ca227a7e1cdee4bbd7376d3b173cd175b975adbc1c0e14acc9d"
+  },
+  "assumptionIds": [
+   "street-338f0c39",
+   "street-52a4a453",
+   "street-7cb576a6",
+   "edge-set-by-you",
+   "edges-derived",
+   "height-lowest-ground",
+   "applies-where-drawn",
+   "datum-derived",
+   "setback-storeys",
+   "envelope-height-ground",
+   "envelope-height-within",
+   "envelope-lattice",
+   "envelope-approximate",
+   "envelope-reentrant-corners",
+   "envelope-checks",
+   "balconies-not-modelled",
+   "overhangs-unsupported",
+   "no-ornaments",
+   "pleine-terre-unbuilt",
+   "sdp-partitions",
+   "existing-as-modelled"
+  ],
+  "assumptionTexts": [
+   {
+    "key": "fr-urban-rules.assumption.streetEdge",
+    "params": {
+     "road": "Rue Grenette"
+    }
+   },
+   {
+    "key": "fr-urban-rules.assumption.streetEdge",
+    "params": {
+     "road": "Rue de la République"
+    }
+   },
+   {
+    "key": "fr-urban-rules.assumption.streetEdge",
+    "params": {
+     "road": "Rue Henri Germain"
+    }
+   },
+   {
+    "key": "fr-urban-rules.assumption.edgeSetByYou"
+   },
+   {
+    "key": "fr-urban-rules.assumption.edgesDerived"
+   },
+   {
+    "key": "fr-urban-rules.assumption.heightLowestGround"
+   },
+   {
+    "key": "fr-urban-rules.assumption.appliesWhereDrawn"
+   },
+   {
+    "key": "fr-urban-rules.assumption.datumDerived"
+   },
+   {
+    "key": "fr-urban-rules.assumption.setbackStoreys"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeHeightGround"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeHeightWithin"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeLattice"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeApproximate"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeReentrantCorners"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeChecks"
+   },
+   {
+    "key": "fr-urban-rules.assumption.balconies"
+   },
+   {
+    "key": "fr-urban-rules.assumption.overhangsUnsupported"
+   },
+   {
+    "key": "fr-urban-rules.assumption.noOrnaments"
+   },
+   {
+    "key": "fr-urban-rules.assumption.pleineTerre"
+   },
+   {
+    "key": "fr-urban-rules.assumption.sdpPartitions"
+   },
+   {
+    "key": "fr-urban-rules.assumption.existingAsModelled",
+    "params": {
+     "date": "2026-03-26"
+    }
+   }
+  ],
+  "overview": [
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.field.regime"
+      },
+      "value": {
+       "key": "fr-urban-rules.regime.plui"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.field.commune"
+      },
+      "value": {
+       "text": "LYON",
+       "lang": "fr"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.field.document"
+      },
+      "value": {
+       "text": "PLUI GRAND LYON LA METROPOLE",
+       "lang": "fr"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.field.version"
+      },
+      "value": {
+       "text": "200046977_PLUI_20260326"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.field.approved"
+      },
+      "value": {
+       "text": "2026-03-26"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.field.zone"
+      },
+      "value": {
+       "text": "UCe1b",
+       "lang": "fr"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "label": {
+     "key": "fr-urban-rules.link.regulation"
+    },
+    "href": "https://www.geoportail-urbanisme.gouv.fr/api/document/4f3ddc27a9611b4bc94fa161443b8e86/files/200046977_reglement_20260326.pdf",
+    "detail": {
+     "key": "fr-urban-rules.link.detail"
+    }
+   },
+   {
+    "kind": "notice",
+    "tone": "info",
+    "text": {
+     "key": "fr-urban-rules.notice.writtenRulesUnavailable"
+    }
+   },
+   {
+    "kind": "flags"
+   },
+   {
+    "kind": "sources"
+   }
+  ],
+  "views": [
+   "zone",
+   "prescriptions",
+   "information",
+   "easements",
+   "risks",
+   "rules",
+   "surfaces",
+   "edges",
+   "checks",
+   "envelope"
+  ],
+  "assumptions": 21,
+  "flags": 24
+ },
+ "gordes": {
+  "digests": {
+   "rules": "753ec9f450a4fd09e50a48346f572a605b7652792ec583c83d5d3b95404f8992",
+   "checks": "fc1d87139e074adca5df7fedbfd5e86e55225521fa3288a4c58cf2d5ec618e70",
+   "features": "42296e1d1bb329764de0f67f0670e927814dcbbe1a81e94cb4c0b15376a5c061",
+   "edges": "9d6a3c8590d003f5cdba54e36e1da38a10ab65180e468d223021fa1add06c23b",
+   "flags": "80b2f1074a2f430827e085b81c8a7887d69a01c1c6bf79cb087ba9ed0d453e5b",
+   "zones": "724a9131300625a8c3db6656ec5129f2b44e079f25cfaac71700751f4100d455",
+   "document": "ef0f84dcdf8d1ca47bc1ac2b315908f808f45ff7636adb182b96a4660700ba31",
+   "sources": "a53dc44a775f295d3e2d6dd1d971bdf544caac1b0165532c31c75d109af90b12"
+  },
+  "assumptionIds": [
+   "edges-derived",
+   "street-22ce63e2",
+   "street-28ad28fe",
+   "balconies-not-modelled",
+   "overhangs-unsupported",
+   "no-ornaments",
+   "pleine-terre-unbuilt",
+   "sdp-partitions",
+   "existing-as-modelled"
+  ],
+  "assumptionTexts": [
+   {
+    "key": "fr-urban-rules.assumption.edgesDerived"
+   },
+   {
+    "key": "fr-urban-rules.assumption.streetEdge",
+    "params": {
+     "road": "Chemin de la Bastide Neuve"
+    }
+   },
+   {
+    "key": "fr-urban-rules.assumption.streetEdge",
+    "params": {
+     "road": "Route des Adams"
+    }
+   },
+   {
+    "key": "fr-urban-rules.assumption.balconies"
+   },
+   {
+    "key": "fr-urban-rules.assumption.overhangsUnsupported"
+   },
+   {
+    "key": "fr-urban-rules.assumption.noOrnaments"
+   },
+   {
+    "key": "fr-urban-rules.assumption.pleineTerre"
+   },
+   {
+    "key": "fr-urban-rules.assumption.sdpPartitions"
+   },
+   {
+    "key": "fr-urban-rules.assumption.existingAsModelled",
+    "params": {
+     "date": "2024-10-17"
+    }
+   }
+  ],
+  "overview": [
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.field.regime"
+      },
+      "value": {
+       "key": "fr-urban-rules.regime.plu"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.field.commune"
+      },
+      "value": {
+       "text": "GORDES",
+       "lang": "fr"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.field.document"
+      },
+      "value": {
+       "text": "PLU GORDES",
+       "lang": "fr"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.field.version"
+      },
+      "value": {
+       "text": "84050_PLU_20241017"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.field.approved"
+      },
+      "value": {
+       "text": "2024-10-17"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.field.zone"
+      },
+      "value": {
+       "text": "A",
+       "lang": "fr"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "label": {
+     "key": "fr-urban-rules.link.regulation"
+    },
+    "href": "https://www.geoportail-urbanisme.gouv.fr/api/document/703e6c2a3130ed9396d8100fde318c2e/files/84050_reglement_20220411.pdf",
+    "detail": {
+     "key": "fr-urban-rules.link.detail"
+    }
+   },
+   {
+    "kind": "notice",
+    "tone": "info",
+    "text": {
+     "key": "fr-urban-rules.notice.writtenRulesUnavailable"
+    }
+   },
+   {
+    "kind": "flags"
+   },
+   {
+    "kind": "sources"
+   }
+  ],
+  "views": [
+   "zone",
+   "prescriptions",
+   "information",
+   "easements",
+   "risks",
+   "rules",
+   "surfaces",
+   "edges",
+   "checks",
+   "envelope"
+  ],
+  "assumptions": 9,
+  "flags": 14
+ },
+ "brouennes": {
+  "digests": {
+   "rules": "764aedac886234f7f295ce46b7d2c12d8f46007f65364b8efed733cbc2ed9f34",
+   "checks": "cce4cc3faa3282a728b2dd9a905272e599527eace6cd55ac8d47d9db3efdba5c",
+   "features": "100c1185c6371d9afec890d588a3bad83d094d462ac4d0bad1f625fa1046fafb",
+   "edges": "eff0bc7dee94595f0d991cafd086141b00799a4b51d89a06c0ccca8c80cb9120",
+   "flags": "247c4ff4f56abe6bd29b1f439cf35873a835a09fb80ce3b8924215b8b940032e",
+   "zones": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "document": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+   "sources": "9453494bd0c50e0e153387bb92afc2e17d295b7be5cf95e39b1f0c952222f71d"
+  },
+  "assumptionIds": [
+   "edges-derived",
+   "street-214d6e78",
+   "alignment-parcels",
+   "site-boundary-parcel",
+   "balconies-not-modelled",
+   "datum-derived",
+   "not-checked-alignment-outside-terrain",
+   "governed-by-rise",
+   "envelope-boundary-slope",
+   "envelope-adjoining",
+   "envelope-lattice",
+   "envelope-approximate",
+   "envelope-reentrant-corners",
+   "envelope-checks",
+   "envelope-not-applied",
+   "bands-approximate",
+   "overhangs-unsupported",
+   "no-ornaments",
+   "pleine-terre-unbuilt",
+   "sdp-partitions",
+   "existing-as-modelled"
+  ],
+  "assumptionTexts": [
+   {
+    "key": "fr-urban-rules.assumption.edgesDerived"
+   },
+   {
+    "key": "fr-urban-rules.assumption.streetEdge",
+    "params": {
+     "road": "Rue du Haut Pâquis"
+    }
+   },
+   {
+    "key": "fr-urban-rules.assumption.alignment.parcels"
+   },
+   {
+    "key": "fr-urban-rules.assumption.siteBoundaryParcel"
+   },
+   {
+    "key": "fr-urban-rules.assumption.balconies"
+   },
+   {
+    "key": "fr-urban-rules.assumption.datumDerived"
+   },
+   {
+    "key": "fr-urban-rules.reason.alignment-outside-terrain"
+   },
+   {
+    "key": "fr-urban-rules.assumption.governedByRise"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeBoundarySlope"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeAdjoining"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeLattice"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeApproximate"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeReentrantCorners"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeChecks"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeNotApplied"
+   },
+   {
+    "key": "fr-urban-rules.assumption.bandsApproximate"
+   },
+   {
+    "key": "fr-urban-rules.assumption.overhangsUnsupported"
+   },
+   {
+    "key": "fr-urban-rules.assumption.noOrnaments"
+   },
+   {
+    "key": "fr-urban-rules.assumption.pleineTerre"
+   },
+   {
+    "key": "fr-urban-rules.assumption.sdpPartitions"
+   },
+   {
+    "key": "fr-urban-rules.assumption.existingAsModelled",
+    "params": {
+     "date": "—"
+    }
+   }
+  ],
+  "overview": [
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.field.regime"
+      },
+      "value": {
+       "key": "fr-urban-rules.regime.rnu"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.field.commune"
+      },
+      "value": {
+       "text": "BROUENNES",
+       "lang": "fr"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "flags"
+   },
+   {
+    "kind": "sources"
+   }
+  ],
+  "views": [
+   "easements",
+   "risks",
+   "rules",
+   "surfaces",
+   "edges",
+   "checks",
+   "envelope"
+  ],
+  "assumptions": 21,
+  "flags": 10
+ },
+ "mouzay": {
+  "digests": {
+   "rules": "6dc4a6f17426aec6b9524a0cdbeb7014af1125ac9a3d1d2054d712bbce580eb9",
+   "checks": "45a17427ef9967060bf77f6ed400f296d2da21f760860ab3e321bf389856732e",
+   "features": "614f0e6f793a7aec7c9eed9623df587c536cdec4db394c7d4048000c244acbb4",
+   "edges": "64986e90530bb776dc027702f19f4f7207ba14706dc4098632b6564b66c3971b",
+   "flags": "85033174bbac37affe46e55ed0a6fdc999e074aee9d8a6dfffa7688ed91d32eb",
+   "zones": "0910107329012f638904b909b0c9de0149293be0c89c52073d5ecf464acb1ce2",
+   "document": "5aa14e291e3af496bf7e7f8fd3c4c49ed863978e82ddae63adbe0d3644cf26d2",
+   "sources": "435e9835ff2f06834f90b891fc7fb0407935887dc089a76da5d4e1d986b05a21"
+  },
+  "assumptionIds": [
+   "outline-too-detailed",
+   "edges-derived",
+   "street-74646878",
+   "street-48de82d8",
+   "alignment-parcels",
+   "site-boundary-parcel",
+   "balconies-not-modelled",
+   "datum-derived",
+   "envelope-boundary-slope",
+   "envelope-adjoining",
+   "envelope-lattice",
+   "envelope-approximate",
+   "envelope-reentrant-corners",
+   "envelope-checks",
+   "bands-approximate",
+   "overhangs-unsupported",
+   "no-ornaments",
+   "pleine-terre-unbuilt",
+   "sdp-partitions",
+   "existing-as-modelled"
+  ],
+  "assumptionTexts": [
+   {
+    "key": "fr-urban-rules.assumption.outlineTooDetailed"
+   },
+   {
+    "key": "fr-urban-rules.assumption.edgesDerived"
+   },
+   {
+    "key": "fr-urban-rules.assumption.streetEdge",
+    "params": {
+     "road": "Rue Chandenis"
+    }
+   },
+   {
+    "key": "fr-urban-rules.assumption.streetEdge",
+    "params": {
+     "road": "Place du Champ de Foire"
+    }
+   },
+   {
+    "key": "fr-urban-rules.assumption.alignment.parcels"
+   },
+   {
+    "key": "fr-urban-rules.assumption.siteBoundaryParcel"
+   },
+   {
+    "key": "fr-urban-rules.assumption.balconies"
+   },
+   {
+    "key": "fr-urban-rules.assumption.datumDerived"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeBoundarySlope"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeAdjoining"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeLattice"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeApproximate"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeReentrantCorners"
+   },
+   {
+    "key": "fr-urban-rules.assumption.envelopeChecks"
+   },
+   {
+    "key": "fr-urban-rules.assumption.bandsApproximate"
+   },
+   {
+    "key": "fr-urban-rules.assumption.overhangsUnsupported"
+   },
+   {
+    "key": "fr-urban-rules.assumption.noOrnaments"
+   },
+   {
+    "key": "fr-urban-rules.assumption.pleineTerre"
+   },
+   {
+    "key": "fr-urban-rules.assumption.sdpPartitions"
+   },
+   {
+    "key": "fr-urban-rules.assumption.existingAsModelled",
+    "params": {
+     "date": "2019-11-07"
+    }
+   }
+  ],
+  "overview": [
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.field.regime"
+      },
+      "value": {
+       "key": "fr-urban-rules.regime.cc"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.field.commune"
+      },
+      "value": {
+       "text": "MOUZAY",
+       "lang": "fr"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.field.document"
+      },
+      "value": {
+       "text": "CC MOUZAY",
+       "lang": "fr"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.field.version"
+      },
+      "value": {
+       "text": "55364_CC_20191107"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.field.approved"
+      },
+      "value": {
+       "text": "2019-11-07"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.field.sector"
+      },
+      "value": {
+       "text": "C / Ci",
+       "lang": "fr"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "link",
+    "label": {
+     "key": "fr-urban-rules.link.document"
+    },
+    "href": "https://www.geoportail-urbanisme.gouv.fr/api/document/2cda894cb050dabb5812381b7e4ea0c0/files/55364_rapport_20191107.pdf",
+    "detail": {
+     "key": "fr-urban-rules.link.detail"
+    }
+   },
+   {
+    "kind": "assumptions"
+   },
+   {
+    "kind": "flags"
+   },
+   {
+    "kind": "sources"
+   }
+  ],
+  "views": [
+   "sector",
+   "easements",
+   "risks",
+   "rules",
+   "surfaces",
+   "edges",
+   "checks",
+   "envelope"
+  ],
+  "assumptions": 20,
+  "flags": 12
+ },
+ "rochefort": {
+  "digests": {
+   "rules": "4332b5f9a40516cda379303ec5b706086e3e6c6166554435502050fad3be0561",
+   "checks": "a719ca38498882a7a91470a1d22d5bcc40b0af0781f9ec58b5138038c71746f0",
+   "features": "debb2eb356f7f1fe2d96e8e58dc7792e4ae9849be03d4123e711c45b133cabc7",
+   "edges": "cad4996743a3513ca17b737c1860f87ebd3c002cb246aa7c9b7a79cdd2232b7a",
+   "flags": "5272ed48ae606298e6178d03662a5d4594a1766a5086d290749ef3747de8f65d",
+   "zones": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "document": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+   "sources": "735f62cd3d34cb72b67d4d95e9eff7d5f41853a43d8ca21e8ec8c53a5193e764"
+  },
+  "assumptionIds": [
+   "edges-derived",
+   "street-1b31967f",
+   "street-road",
+   "height-lowest-ground",
+   "datum-derived",
+   "balconies-not-modelled",
+   "overhangs-unsupported",
+   "no-ornaments",
+   "pleine-terre-unbuilt",
+   "sdp-partitions",
+   "existing-as-modelled"
+  ],
+  "assumptionTexts": [
+   {
+    "key": "fr-urban-rules.assumption.edgesDerived"
+   },
+   {
+    "key": "fr-urban-rules.assumption.streetEdge",
+    "params": {
+     "road": "Place Saint Michel"
+    }
+   },
+   {
+    "key": "fr-urban-rules.assumption.streetEdgeUnnamed"
+   },
+   {
+    "key": "fr-urban-rules.assumption.heightLowestGround"
+   },
+   {
+    "key": "fr-urban-rules.assumption.datumDerived"
+   },
+   {
+    "key": "fr-urban-rules.assumption.balconies"
+   },
+   {
+    "key": "fr-urban-rules.assumption.overhangsUnsupported"
+   },
+   {
+    "key": "fr-urban-rules.assumption.noOrnaments"
+   },
+   {
+    "key": "fr-urban-rules.assumption.pleineTerre"
+   },
+   {
+    "key": "fr-urban-rules.assumption.sdpPartitions"
+   },
+   {
+    "key": "fr-urban-rules.assumption.existingAsModelled",
+    "params": {
+     "date": "—"
+    }
+   }
+  ],
+  "overview": [
+   {
+    "kind": "notice",
+    "tone": "warning",
+    "text": {
+     "key": "fr-urban-rules.notice.notPublished"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.field.regime"
+      },
+      "value": {
+       "key": "fr-urban-rules.regime.notPublished"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.field.commune"
+      },
+      "value": {
+       "text": "ROCHEFORT-EN-TERRE",
+       "lang": "fr"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "notice",
+    "tone": "info",
+    "text": {
+     "key": "fr-urban-rules.notice.askTownHall"
+    }
+   },
+   {
+    "kind": "flags"
+   },
+   {
+    "kind": "sources"
+   }
+  ],
+  "views": [
+   "easements",
+   "risks",
+   "rules",
+   "surfaces",
+   "edges",
+   "checks",
+   "envelope"
+  ],
+  "assumptions": 11,
+  "flags": 9
+ }
+}

@@ -12,7 +12,14 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 import { __testing, activate, createReader, deactivate } from '../src/index.js';
-import { FIXTURES, loadPlot, recordedFetch, recordedSiteService, requestFor } from './helpers.mjs';
+import {
+  docBlocks,
+  FIXTURES,
+  loadPlot,
+  recordedFetch,
+  recordedSiteService,
+  requestFor
+} from './helpers.mjs';
 
 globalThis.fetch = () => {
   throw new Error('no network in tests');
@@ -211,9 +218,9 @@ function readerFor(plot, { pluginService, service, overrides = {}, wait, now, se
 
 const read = (context, reason = 'site') =>
   context.reader.read(requestFor(context.site, reason), { signal: signal() });
-const links = (report) => report.overview.filter((b) => b.kind === 'link');
+const links = (report) => docBlocks(report).filter((b) => b.kind === 'link');
 const notices = (report) =>
-  report.overview.filter((b) => b.kind === 'notice').map((b) => b.text.key);
+  docBlocks(report).filter((b) => b.kind === 'notice').map((b) => b.text.key);
 const NOT_AVAILABLE = 'fr-urban-rules.notice.writtenRulesUnavailable';
 // Since 002.6b a signal is deferred past the read (S5): a timer turn, then the I/O turn.
 // A few timer turns: a deferred signal (S5) and the answers' promise chains both settle.
@@ -224,7 +231,9 @@ const settle = async () => {
 
 /** Everything a read answers but the overview and the document's link: phase 1's rules, checks, views. */
 const phaseOne = (report) => {
-  const { overview, document, ...rest } = report;
+  const { overview, document, views, ...others } = report;
+  // The Document view is the overview's old fields and link: left out with them (002.12).
+  const rest = { ...others, views: views.filter((v) => v.id !== 'document') };
   const { href, ...doc } = document ?? {};
   // Since 002.6b the served report also carries the written rules' state (DEC-2).
   const written = (b) =>
@@ -244,7 +253,7 @@ test('criterion 1: without the token (getOptional undefined) Lyon shows the noti
   const none = readerFor('lyon', { pluginService: undefined });
   const report = await read(none);
   assert.ok(notices(report).includes(NOT_AVAILABLE));
-  const notice = report.overview.find((b) => b.text?.key === NOT_AVAILABLE);
+  const notice = docBlocks(report).find((b) => b.text?.key === NOT_AVAILABLE);
   assert.equal(notice.tone, 'info');
   assert.equal(report.document.href, GPU_FILE);
   assert.equal(links(report).length, 1);
@@ -266,8 +275,8 @@ test('criterion 1: without the token (getOptional undefined) Lyon shows the noti
   assert.ok(served.document.href.endsWith('#page=121'));
   // The notice is the only block the overview gains; the link is the served one's minus its page.
   assert.deepEqual(
-    report.overview.filter((b) => b !== notice && b.kind !== 'link'),
-    served.overview.filter((b) => b.kind !== 'link')
+    docBlocks(report).filter((b) => b !== notice && b.kind !== 'link'),
+    docBlocks(served).filter((b) => b.kind !== 'link')
   );
 });
 

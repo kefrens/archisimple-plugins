@@ -1,6 +1,10 @@
 # Sprint 002.0 — PLU Reading
 
-> **Status:** **Implemented, uncommitted (2026-10-20)** — `fr-urban-rules` 0.1.0
+> **Status:** **Closed (2026-10-22)** — committed, deployed to the NAS and
+> closed by the owner with
+> [fr-urban-rules](../milestones/fr-urban-rules/fr-urban-rules.md) Phases
+> 0–3 and the platform's Site Regulations milestone ("you can close phase3. it works for the moment and has been deployed to the NAS").
+> As it read before the close: **Implemented, uncommitted (2026-10-20)** — `fr-urban-rules` 0.1.0
 > landed; 48 tests green on recorded fixtures; the editor walk (step 9,
 > criterion 13) is **not done**. See [Outcome](#outcome-2026-10-20).
 >
@@ -327,7 +331,7 @@ recorded reports still pass the platform's `checkedReport` with 0 dropped.
 - [x] Package `README.md` (hosts, the carte-gouv-fr field contract, fixtures).
 - [ ] Step 9 / criterion 13: the editor walk — moved to 096.6 / 002.4's joint
       walk (coordinator, 2026-10-20).
-- [ ] Commit (the owner's).
+- [x] Commit (the owner's). _(Done at the close, 2026-10-22: `1cedc63`, `5808887`, `05db2a6`.)_
 
 ---
 

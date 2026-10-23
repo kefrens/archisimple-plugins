@@ -228,12 +228,15 @@ test('criterion 12: never « conforme », « autorisé », "compliant", nor the 
       'fr-urban-rules.assumption.envelopeChecks',
       'fr-urban-rules.assumption.envelopeApproximate',
       'fr-urban-rules.assumption.envelopeReentrantCorners'
-    ])
+    ]) {
       assert.doesNotMatch(strings[key], /conforme|autoris|compliant|constructible|buildable|never above|jamais au-dessus/iu, key);
+      // Sprint 002.12: the title is short and the detail says the rest — the same words held.
+      assert.doesNotMatch(strings[`${key}.detail`], /conforme|autoris|compliant|constructible|buildable|never above|jamais au-dessus/iu, `${key}.detail`);
+    }
   }
   // DEC-4's corrected sentence, not the draft's « never above the confirmed rules ».
-  assert.match(en['fr-urban-rules.assumption.envelopeLattice'], /exact at each computed point/);
-  assert.match(fr['fr-urban-rules.assumption.envelopeLattice'], /exact en chaque point de calcul/);
+  assert.match(en['fr-urban-rules.assumption.envelopeLattice.detail'], /exact at each computed point/i);
+  assert.match(fr['fr-urban-rules.assumption.envelopeLattice.detail'], /exact en chaque point de calcul/i);
 });
 
 /** Every phrase's params in a value, recursively. */

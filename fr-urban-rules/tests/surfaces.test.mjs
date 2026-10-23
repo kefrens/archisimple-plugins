@@ -193,12 +193,27 @@ const act = (context, actionId, values, target) =>
     { actionId, ...(target === undefined ? {} : { target }), values, site: context.site },
     { signal: signal() }
   );
-const surfaces = (report) => report.views.find((v) => v.id === 'surfaces');
+/**
+ * 002.15: the Surfaces view is composed of folds, so its blocks are read **flattened** — a
+ * `section`'s blocks come in place of the section — and every assertion below about what the view
+ * says keeps asking the same question of the same blocks, wherever they now sit.
+ */
+const flatten = (blocks) => blocks.flatMap((b) => (b.kind === 'section' ? flatten(b.blocks) : [b]));
+const surfaces = (report) => {
+  const view = report.views.find((v) => v.id === 'surfaces');
+  return { ...view, blocks: flatten(view.blocks), top: view.blocks };
+};
 const rowsOf = (report) =>
   surfaces(report)
     .blocks.filter((b) => b.kind === 'fields')
     .flatMap((b) => b.rows);
 const row = (report, key) => rowsOf(report).find((r) => r.label.key === key);
+/** 002.15: the definition's cards (r420-1, lexicon, all-overhangs) and the headline figure. */
+const cardOf = (report, value) =>
+  surfaces(report)
+    .blocks.find((b) => b.kind === 'choice')
+    .options.find((o) => o.value === value);
+const headline = (report) => surfaces(report).blocks.find((b) => b.kind === 'stat');
 const sdpTable = (report) =>
   surfaces(report).blocks.find(
     (b) => b.kind === 'table' && b.rows.some((r) => r[0].key === 'fr-urban-rules.surfaces.sdp.base')
@@ -238,10 +253,8 @@ test('criterion 1: R.420-1 is 150 m² (balconies not modelled, overhangs unsuppo
     value: 150,
     unit: 'm2'
   });
-  assert.deepEqual(row(plain, 'fr-urban-rules.surfaces.emprise.allOverhangs').value, {
-    value: 159,
-    unit: 'm2'
-  });
+  assert.deepEqual(cardOf(plain, 'r420-1').figure, { value: 150, unit: 'm2' });
+  assert.deepEqual(cardOf(plain, 'all-overhangs').figure, { value: 159, unit: 'm2' });
   const said = surfaces(plain).blocks.find((b) => b.kind === 'assumptions').ids;
   assert.ok(said.includes('balconies-not-modelled'));
   assert.ok(said.includes('overhangs-unsupported'));
@@ -257,10 +270,8 @@ test('criterion 1: R.420-1 is 150 m² (balconies not modelled, overhangs unsuppo
     value: 156.4,
     unit: 'm2'
   });
-  assert.deepEqual(row(entered, 'fr-urban-rules.surfaces.emprise.allOverhangs').value, {
-    value: 165.4,
-    unit: 'm2'
-  });
+  assert.deepEqual(cardOf(entered, 'r420-1').figure, { value: 156.4, unit: 'm2' });
+  assert.deepEqual(cardOf(entered, 'all-overhangs').figure, { value: 165.4, unit: 'm2' });
   assert.ok(
     surfaces(entered)
       .blocks.find((b) => b.kind === 'assumptions')
@@ -339,9 +350,11 @@ test('criterion 3: Lyon’s figures — 152.0 + 21.0 m² listed, 6.4 m² of balc
     value: 179.4,
     unit: 'm2'
   });
-  assert.deepEqual(row(report, 'fr-urban-rules.surfaces.emprise.share').value, {
-    value: 15.2,
-    unit: 'percent'
+  // 002.15: the share of the plot is the headline figure, its detail the two areas.
+  assert.deepEqual(headline(report).value, { value: 15.2, unit: 'percent' });
+  assert.deepEqual(headline(report).detail, {
+    key: 'fr-urban-rules.surfaces.stat.of',
+    params: { area: 179.4, plot: 1178 }
   });
   assert.deepEqual(row(report, 'fr-urban-rules.surfaces.budget.plotArea').value, {
     value: 1178,
@@ -379,14 +392,8 @@ test('criterion 4 and 12: a confirmed CES of 40 % on 1 178 m² allows 471.2 m²,
     addTarget(first, 'add-ratio')
   );
   const report = await read(context);
-  assert.deepEqual(row(report, 'fr-urban-rules.surfaces.budget.allowed').value, {
-    value: 471.2,
-    unit: 'm2'
-  });
-  assert.deepEqual(row(report, 'fr-urban-rules.surfaces.budget.remaining').value, {
-    value: 291.8,
-    unit: 'm2'
-  });
+  // 002.15: the budget is the host's used / remaining / allowed bar; its figures are the meter's
+  // (the remaining is allowed − used), and the rows that said them are not repeated beside it.
   const meter = surfaces(report).blocks.find((b) => b.kind === 'meter');
   assert.deepEqual(
     [meter.used, meter.allowed],
@@ -395,6 +402,11 @@ test('criterion 4 and 12: a confirmed CES of 40 % on 1 178 m² allows 471.2 m²,
       { value: 471.2, unit: 'm2' }
     ]
   );
+  assert.equal(Math.round((meter.allowed.value - meter.used.value) * 10) / 10, 291.8);
+  assert.equal(row(report, 'fr-urban-rules.surfaces.budget.allowed'), undefined);
+  // The headline's limit is the same rule's: 40 % of the plot, the verdict « no issue ».
+  assert.deepEqual(headline(report).gauge.limit, { value: 40, unit: 'percent' });
+  assert.deepEqual(headline(report).verdict, { result: 'no_issue' });
   // Criterion 12: the boundary's 1 160 m² is information only.
   assert.deepEqual(row(report, 'fr-urban-rules.surfaces.budget.boundaryArea').value, {
     value: 1160,
@@ -415,7 +427,11 @@ test('criterion 13: a refused roof — « projection, all overhangs » is not co
     levels: { ...HOUSE.levels, withRoofOverhangs: { refused: 'roof-refused' } }
   };
   const report = await read(surfacesReader('lyon', { measured: measures({ coverage }) }));
-  assert.deepEqual(row(report, 'fr-urban-rules.surfaces.emprise.allOverhangs').value, {
+  // 002.15: the card says « not computed » and its detail says why.
+  assert.deepEqual(cardOf(report, 'all-overhangs').figure, {
+    key: 'fr-urban-rules.surfaces.card.notComputed'
+  });
+  assert.deepEqual(cardOf(report, 'all-overhangs').detail, {
     key: 'fr-urban-rules.surfaces.emprise.roofRefused'
   });
   assert.deepEqual(row(report, 'fr-urban-rules.surfaces.emprise.r420').value, {
@@ -887,9 +903,13 @@ test('DEC-5: the capacity is a range — the smaller of envelope and allowance t
     addTarget(first, 'add-distance')
   );
   const report = await read(context);
-  const range = row(report, 'fr-urban-rules.surfaces.capacity.range');
+  // 002.15: the range is a headline figure with a range gauge; « not a right to build » is its detail.
+  const range = surfaces(report).blocks.find(
+    (b) => b.kind === 'stat' && b.label.key === 'fr-urban-rules.surfaces.capacity.range'
+  );
   // 300 m² allowed × 2 to 3 storeys at the default 3 m.
   assert.deepEqual(range.value.params, { low: 600, high: 900 });
+  assert.deepEqual(range.gauge, { value: { value: 900, unit: 'm2' }, from: { value: 600, unit: 'm2' } });
   assert.equal(range.detail.key, 'fr-urban-rules.surfaces.capacity.notARight');
   assert.ok(report.assumptions.some((a) => a.id === 'floor-to-floor-default'));
 });

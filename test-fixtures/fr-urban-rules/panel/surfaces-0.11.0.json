@@ -1,0 +1,4960 @@
+{
+ "lyon": {
+  "blocks": [
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.emprise"
+    }
+   },
+   {
+    "kind": "quote",
+    "passage": {
+     "text": "L'emprise au sol au sens du présent livre est la projection verticale du volume de la construction, tous débords et surplombs inclus.\nToutefois, les ornements tels que les éléments de modénature et les marquises sont exclus, ainsi que les débords de toiture lorsqu'ils ne sont pas soutenus par des poteaux ou des encorbellements.",
+     "lang": "fr"
+    },
+    "citation": {
+     "document": {
+      "text": "Code de l’urbanisme, version en vigueur depuis le 1er avril 2014",
+      "lang": "fr"
+     },
+     "article": "R.420-1",
+     "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000028678466"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.emprise.r420"
+      },
+      "value": {
+       "value": 150,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.emprise.detailNoBalconies"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.emprise.share"
+      },
+      "value": {
+       "value": 12.7,
+       "unit": "percent"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.emprise.allOverhangs"
+      },
+      "value": {
+       "value": 150,
+       "unit": "m2"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "table",
+    "columns": [
+     {
+      "key": "fr-urban-rules.surfaces.column.building"
+     },
+     {
+      "key": "fr-urban-rules.surfaces.column.area"
+     }
+    ],
+    "rows": [
+     [
+      {
+       "key": "fr-urban-rules.check.subject.mainBuilding"
+      },
+      {
+       "value": 150,
+       "unit": "m2"
+      }
+     ]
+    ]
+   },
+   {
+    "kind": "notice",
+    "tone": "info",
+    "text": {
+     "key": "fr-urban-rules.surfaces.emprise.notSummed"
+    }
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.budget"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.rule"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.budget.notRegulated"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.plotArea"
+      },
+      "value": {
+       "value": 1183.32,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.budget.plotAreaDetail"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.contenance"
+      },
+      "value": {
+       "value": 1185,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.budget.contenanceDetail"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.boundaryArea"
+      },
+      "value": {
+       "value": 1183.32,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.budget.boundaryAreaDetail"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.used"
+      },
+      "value": {
+       "value": 150,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.emprise.r420"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.green.unbuilt"
+      },
+      "value": {
+       "value": 1033.32,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.assumption.pleineTerre"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.sdp"
+    }
+   },
+   {
+    "kind": "quote",
+    "passage": {
+     "text": "La surface de plancher de la construction est égale à la somme des surfaces de plancher de chaque niveau clos et couvert, calculée à partir du nu intérieur des façades après déduction :\n1° Des surfaces correspondant à l'épaisseur des murs entourant les embrasures des portes et fenêtres donnant sur l'extérieur ;\n2° Des vides et des trémies afférentes aux escaliers et ascenseurs ;\n3° Des surfaces de plancher d'une hauteur sous plafond inférieure ou égale à 1,80 mètre ;\n4° Des surfaces de plancher aménagées en vue du stationnement des véhicules motorisés ou non, y compris les rampes d'accès et les aires de manœuvres ;\n5° Des surfaces de plancher des combles non aménageables pour l'habitation ou pour des activités à caractère professionnel, artisanal, industriel ou commercial ;\n6° Des surfaces de plancher des locaux techniques nécessaires au fonctionnement d'un groupe de bâtiments ou d'un immeuble autre qu'une maison individuelle au sens de l'article L. 231-1 du code de la construction et de l'habitation, y compris les locaux de stockage des déchets ;\n7° Des surfaces de plancher des caves ou des celliers, annexes à des logements, dès lors que ces locaux sont desservis uniquement par une partie commune ;\n8° D'une surface égale à 10 % des surfaces de plancher affectées à l'habitation telles qu'elles résultent le cas échéant de l'application des alinéas précédents, dès lors que les logements sont desservis par des parties communes intérieures.",
+     "lang": "fr"
+    },
+    "citation": {
+     "document": {
+      "text": "Code de l’urbanisme, version en vigueur depuis le 1er janvier 2016",
+      "lang": "fr"
+     },
+     "article": "R.111-22",
+     "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031721274"
+    }
+   },
+   {
+    "kind": "table",
+    "columns": [
+     {
+      "key": "fr-urban-rules.surfaces.column.line"
+     },
+     {
+      "key": "fr-urban-rules.surfaces.column.article"
+     },
+     {
+      "key": "fr-urban-rules.surfaces.column.area"
+     }
+    ],
+    "rows": [
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.base"
+      },
+      {
+       "text": "R.111-22"
+      },
+      {
+       "value": 541.44,
+       "unit": "m2"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.uncovered"
+      },
+      {
+       "text": "R.111-22"
+      },
+      {
+       "value": -135.36,
+       "unit": "m2"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line1"
+      },
+      {
+       "text": "R.111-22, 1°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.notDeducted"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line2"
+      },
+      {
+       "text": "R.111-22, 2°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line3"
+      },
+      {
+       "text": "R.111-22, 3°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.unknownHeadroom",
+       "params": {
+        "area": 0
+       }
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line4"
+      },
+      {
+       "text": "R.111-22, 4°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line5"
+      },
+      {
+       "text": "R.111-22, 5°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line6"
+      },
+      {
+       "text": "R.111-22, 6°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line7"
+      },
+      {
+       "text": "R.111-22, 7°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line8"
+      },
+      {
+       "text": "R.111-22, 8°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.totalEstimate",
+       "params": {
+        "count": 6
+       }
+      },
+      {
+       "text": "R.111-22"
+      },
+      {
+       "value": 406.08,
+       "unit": "m2"
+      }
+     ]
+    ]
+   },
+   {
+    "kind": "notice",
+    "tone": "warning",
+    "text": {
+     "key": "fr-urban-rules.surfaces.sdp.estimateReason",
+     "params": {
+      "reason": "not-covered"
+     }
+    }
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.caps"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.caps.existing"
+      },
+      "value": {
+       "key": "fr-urban-rules.value.none"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.caps.existingDetailDate",
+       "params": {
+        "date": "2026-03-26"
+       }
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.caps.extended"
+      },
+      "value": {
+       "key": "fr-urban-rules.value.none"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.caps.extendedDetail"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.capacity"
+    },
+    "detail": {
+     "key": "fr-urban-rules.surfaces.capacity.estimate"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.capacity.range"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.capacity.rangeValue",
+       "params": {
+        "low": 7504.63,
+        "high": 7504.63
+       }
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.capacity.notARight"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.capacity.ground"
+      },
+      "value": {
+       "value": 1072.09,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.capacity.byEnvelope"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.capacity.storeys"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.capacity.storeysValue",
+       "params": {
+        "low": 7,
+        "high": 7
+       }
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.capacity.floorToFloor",
+       "params": {
+        "height": 3
+       }
+      }
+     }
+    ]
+   },
+   {
+    "kind": "notice",
+    "tone": "info",
+    "text": {
+     "key": "fr-urban-rules.surfaces.capacity.notApplied"
+    }
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.procedure"
+    },
+    "detail": {
+     "key": "fr-urban-rules.surfaces.procedure.indicative"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.figures"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.figuresNew",
+       "params": {
+        "emprise": 150,
+        "floorArea": 406.08
+       }
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.likely"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.permit"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.procedure.incomplete",
+       "params": {
+        "article": "R.421-1"
+       }
+      },
+      "tone": "info"
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.architect"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.toVerifyEstimate"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.procedure.cite",
+       "params": {
+        "article": "R.431-2",
+        "date": "2026-10-20"
+       }
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.protected"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.seeFlags"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.answers"
+    }
+   },
+   {
+    "kind": "actions",
+    "actions": [
+     {
+      "id": "emprise-definition",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.definition"
+      },
+      "fields": [
+       {
+        "key": "definition",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.definition"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "r420-1",
+        "options": [
+         {
+          "value": "r420-1",
+          "label": {
+           "key": "fr-urban-rules.surfaces.definition.r420-1"
+          }
+         },
+         {
+          "value": "lexicon",
+          "label": {
+           "key": "fr-urban-rules.surfaces.definition.lexicon"
+          }
+         },
+         {
+          "value": "all-overhangs",
+          "label": {
+           "key": "fr-urban-rules.surfaces.definition.all-overhangs"
+          }
+         }
+        ]
+       },
+       {
+        "key": "upperStoreys",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.upperStoreys"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "roofOverhangs",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.roofOverhangs"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "no",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "balconies",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.balconies"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "lightweight",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.lightweight"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "page",
+        "label": {
+         "key": "fr-urban-rules.field.page"
+        },
+        "kind": "number",
+        "min": 1
+       }
+      ]
+     },
+     {
+      "id": "emprise-balconies",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.balconies"
+      },
+      "fields": [
+       {
+        "key": "building",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.building"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "main",
+        "options": [
+         {
+          "value": "main",
+          "label": {
+           "key": "fr-urban-rules.check.subject.mainBuilding"
+          }
+         }
+        ]
+       },
+       {
+        "key": "area",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.area"
+        },
+        "kind": "number",
+        "unit": "m2",
+        "min": 0,
+        "required": true
+       }
+      ]
+     },
+     {
+      "id": "sdp-void",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.void"
+      },
+      "fields": [
+       {
+        "key": "storey",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.storey"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "level-ground",
+        "options": [
+         {
+          "value": "level-ground",
+          "label": {
+           "key": "fr-urban-rules.surfaces.storey",
+           "params": {
+            "index": 1
+           }
+          }
+         },
+         {
+          "value": "1c2349db-185b-497f-a3f8-d0de8c14175d",
+          "label": {
+           "key": "fr-urban-rules.surfaces.storey",
+           "params": {
+            "index": 2
+           }
+          }
+         },
+         {
+          "value": "17519b5f-b7b6-4791-b6e1-4078fb4918ad",
+          "label": {
+           "key": "fr-urban-rules.surfaces.storey",
+           "params": {
+            "index": 3
+           }
+          }
+         },
+         {
+          "value": "af22f067-3aa6-4653-beb2-7146a41acec3",
+          "label": {
+           "key": "fr-urban-rules.surfaces.storey",
+           "params": {
+            "index": 4
+           }
+          }
+         }
+        ]
+       },
+       {
+        "key": "area",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.area"
+        },
+        "kind": "number",
+        "unit": "m2",
+        "min": 0,
+        "required": true
+       }
+      ]
+     },
+     {
+      "id": "sdp-room",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.room"
+      },
+      "fields": [
+       {
+        "key": "deduction",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.deduction"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "parking",
+        "options": [
+         {
+          "value": "parking",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.parking"
+          }
+         },
+         {
+          "value": "attics",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.attics"
+          }
+         },
+         {
+          "value": "technical",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.technical"
+          }
+         },
+         {
+          "value": "cellars",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.cellars"
+          }
+         }
+        ]
+       },
+       {
+        "key": "room",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.room"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "22e8b10b-5d5e-46d3-98c8-ddd9f5fcb078",
+        "options": [
+         {
+          "value": "22e8b10b-5d5e-46d3-98c8-ddd9f5fcb078",
+          "label": {
+           "key": "fr-urban-rules.surfaces.room",
+           "params": {
+            "index": 1
+           }
+          }
+         },
+         {
+          "value": "0f37d8dc-af4b-480d-8e5c-b529b3ef157e",
+          "label": {
+           "key": "fr-urban-rules.surfaces.room",
+           "params": {
+            "index": 2
+           }
+          }
+         },
+         {
+          "value": "0725202d-b6e8-4454-bc59-57d06a36ea30",
+          "label": {
+           "key": "fr-urban-rules.surfaces.room",
+           "params": {
+            "index": 3
+           }
+          }
+         },
+         {
+          "value": "23f58919-0891-48fa-abb2-2d12533fee7d",
+          "label": {
+           "key": "fr-urban-rules.surfaces.room",
+           "params": {
+            "index": 4
+           }
+          }
+         }
+        ]
+       },
+       {
+        "key": "answer",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.answer"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "id": "sdp-none",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.none"
+      },
+      "fields": [
+       {
+        "key": "deduction",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.deduction"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "2",
+        "options": [
+         {
+          "value": "2",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line2"
+          }
+         },
+         {
+          "value": "4",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line4"
+          }
+         },
+         {
+          "value": "5",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line5"
+          }
+         },
+         {
+          "value": "6",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line6"
+          }
+         },
+         {
+          "value": "7",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line7"
+          }
+         },
+         {
+          "value": "8",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line8"
+          }
+         }
+        ]
+       },
+       {
+        "key": "answer",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.noneApplies"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "id": "sdp-building",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.building"
+      },
+      "fields": [
+       {
+        "key": "building",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.building"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "main",
+        "options": [
+         {
+          "value": "main",
+          "label": {
+           "key": "fr-urban-rules.check.subject.mainBuilding"
+          }
+         }
+        ]
+       },
+       {
+        "key": "question",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.question"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "collective",
+        "options": [
+         {
+          "value": "collective",
+          "label": {
+           "key": "fr-urban-rules.surfaces.question.collective"
+          }
+         },
+         {
+          "value": "served",
+          "label": {
+           "key": "fr-urban-rules.surfaces.question.served"
+          }
+         }
+        ]
+       },
+       {
+        "key": "answer",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.answer"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "assumptions",
+    "ids": [
+     "balconies-not-modelled",
+     "overhangs-unsupported",
+     "no-ornaments",
+     "sdp-partitions"
+    ]
+   }
+  ],
+  "checks": [],
+  "assumptions": [
+   "street-338f0c39",
+   "street-52a4a453",
+   "street-7cb576a6",
+   "edge-set-by-you",
+   "edges-derived",
+   "height-lowest-ground",
+   "applies-where-drawn",
+   "datum-derived",
+   "setback-storeys",
+   "envelope-height-ground",
+   "envelope-height-within",
+   "envelope-lattice",
+   "envelope-approximate",
+   "envelope-reentrant-corners",
+   "envelope-checks",
+   "balconies-not-modelled",
+   "overhangs-unsupported",
+   "no-ornaments",
+   "pleine-terre-unbuilt",
+   "sdp-partitions",
+   "existing-as-modelled"
+  ]
+ },
+ "gordes": {
+  "blocks": [
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.emprise"
+    }
+   },
+   {
+    "kind": "quote",
+    "passage": {
+     "text": "L'emprise au sol au sens du présent livre est la projection verticale du volume de la construction, tous débords et surplombs inclus.\nToutefois, les ornements tels que les éléments de modénature et les marquises sont exclus, ainsi que les débords de toiture lorsqu'ils ne sont pas soutenus par des poteaux ou des encorbellements.",
+     "lang": "fr"
+    },
+    "citation": {
+     "document": {
+      "text": "Code de l’urbanisme, version en vigueur depuis le 1er avril 2014",
+      "lang": "fr"
+     },
+     "article": "R.420-1",
+     "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000028678466"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.emprise.r420"
+      },
+      "value": {
+       "value": 174.04,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.emprise.detailNoBalconies"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.emprise.share"
+      },
+      "value": {
+       "value": 3.5,
+       "unit": "percent"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.emprise.allOverhangs"
+      },
+      "value": {
+       "value": 174.04,
+       "unit": "m2"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "table",
+    "columns": [
+     {
+      "key": "fr-urban-rules.surfaces.column.building"
+     },
+     {
+      "key": "fr-urban-rules.surfaces.column.area"
+     }
+    ],
+    "rows": [
+     [
+      {
+       "key": "fr-urban-rules.check.subject.mainBuilding"
+      },
+      {
+       "value": 174.04,
+       "unit": "m2"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.building.existing"
+      },
+      {
+       "value": 144.04,
+       "unit": "m2"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.building.existingLightweight"
+      },
+      {
+       "value": 0,
+       "unit": "m2"
+      }
+     ]
+    ]
+   },
+   {
+    "kind": "notice",
+    "tone": "info",
+    "text": {
+     "key": "fr-urban-rules.surfaces.emprise.notSummed"
+    }
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.budget"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.rule"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.budget.noRule"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.plotArea"
+      },
+      "value": {
+       "value": 4996.93,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.budget.plotAreaDetail"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.contenance"
+      },
+      "value": {
+       "value": 5010,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.budget.contenanceDetail"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.boundaryArea"
+      },
+      "value": {
+       "value": 4996.93,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.budget.boundaryAreaDetail"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.used"
+      },
+      "value": {
+       "value": 174.04,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.emprise.r420"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.green.unbuilt"
+      },
+      "value": {
+       "value": 4822.89,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.assumption.pleineTerre"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.sdp"
+    }
+   },
+   {
+    "kind": "quote",
+    "passage": {
+     "text": "La surface de plancher de la construction est égale à la somme des surfaces de plancher de chaque niveau clos et couvert, calculée à partir du nu intérieur des façades après déduction :\n1° Des surfaces correspondant à l'épaisseur des murs entourant les embrasures des portes et fenêtres donnant sur l'extérieur ;\n2° Des vides et des trémies afférentes aux escaliers et ascenseurs ;\n3° Des surfaces de plancher d'une hauteur sous plafond inférieure ou égale à 1,80 mètre ;\n4° Des surfaces de plancher aménagées en vue du stationnement des véhicules motorisés ou non, y compris les rampes d'accès et les aires de manœuvres ;\n5° Des surfaces de plancher des combles non aménageables pour l'habitation ou pour des activités à caractère professionnel, artisanal, industriel ou commercial ;\n6° Des surfaces de plancher des locaux techniques nécessaires au fonctionnement d'un groupe de bâtiments ou d'un immeuble autre qu'une maison individuelle au sens de l'article L. 231-1 du code de la construction et de l'habitation, y compris les locaux de stockage des déchets ;\n7° Des surfaces de plancher des caves ou des celliers, annexes à des logements, dès lors que ces locaux sont desservis uniquement par une partie commune ;\n8° D'une surface égale à 10 % des surfaces de plancher affectées à l'habitation telles qu'elles résultent le cas échéant de l'application des alinéas précédents, dès lors que les logements sont desservis par des parties communes intérieures.",
+     "lang": "fr"
+    },
+    "citation": {
+     "document": {
+      "text": "Code de l’urbanisme, version en vigueur depuis le 1er janvier 2016",
+      "lang": "fr"
+     },
+     "article": "R.111-22",
+     "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031721274"
+    }
+   },
+   {
+    "kind": "table",
+    "columns": [
+     {
+      "key": "fr-urban-rules.surfaces.column.line"
+     },
+     {
+      "key": "fr-urban-rules.surfaces.column.article"
+     },
+     {
+      "key": "fr-urban-rules.surfaces.column.area"
+     }
+    ],
+    "rows": [
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.base"
+      },
+      {
+       "text": "R.111-22"
+      },
+      {
+       "value": 154.98,
+       "unit": "m2"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.uncovered"
+      },
+      {
+       "text": "R.111-22"
+      },
+      {
+       "value": -154.98,
+       "unit": "m2"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line1"
+      },
+      {
+       "text": "R.111-22, 1°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.notDeducted"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line2"
+      },
+      {
+       "text": "R.111-22, 2°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line3"
+      },
+      {
+       "text": "R.111-22, 3°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.unknownHeadroom",
+       "params": {
+        "area": 0
+       }
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line4"
+      },
+      {
+       "text": "R.111-22, 4°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line5"
+      },
+      {
+       "text": "R.111-22, 5°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line6"
+      },
+      {
+       "text": "R.111-22, 6°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line7"
+      },
+      {
+       "text": "R.111-22, 7°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line8"
+      },
+      {
+       "text": "R.111-22, 8°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.totalEstimate",
+       "params": {
+        "count": 6
+       }
+      },
+      {
+       "text": "R.111-22"
+      },
+      {
+       "value": 0,
+       "unit": "m2"
+      }
+     ]
+    ]
+   },
+   {
+    "kind": "notice",
+    "tone": "warning",
+    "text": {
+     "key": "fr-urban-rules.surfaces.sdp.estimateReason",
+     "params": {
+      "reason": "not-covered"
+     }
+    }
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.caps"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.caps.existing"
+      },
+      "value": {
+       "value": 144.04,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.caps.existingDetailDate",
+       "params": {
+        "date": "2024-10-17"
+       }
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.caps.extended"
+      },
+      "value": {
+       "value": 30,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.caps.extendedDetail"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.caps.allowed"
+      },
+      "value": {
+       "value": 43.21,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.caps.governedBy",
+       "params": {
+        "rule": "fr-urban-rules.entered.kind.extension_ratio"
+       }
+      }
+     }
+    ]
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.capacity"
+    },
+    "detail": {
+     "key": "fr-urban-rules.surfaces.capacity.estimate"
+    }
+   },
+   {
+    "kind": "notice",
+    "tone": "info",
+    "text": {
+     "key": "fr-urban-rules.surfaces.capacity.missingBoth"
+    }
+   },
+   {
+    "kind": "notice",
+    "tone": "info",
+    "text": {
+     "key": "fr-urban-rules.surfaces.capacity.notApplied"
+    }
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.procedure"
+    },
+    "detail": {
+     "key": "fr-urban-rules.surfaces.procedure.indicative"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.figures"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.figuresWorks",
+       "params": {
+        "emprise": 30,
+        "floorArea": "—",
+        "totalEmprise": 174.04,
+        "totalFloorArea": 0
+       }
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.procedure.notUZone"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.extensionUnmarked"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.markExtension"
+      },
+      "tone": "warning"
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.likely"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.permit"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.procedure.incomplete",
+       "params": {
+        "article": "R.421-14"
+       }
+      },
+      "tone": "info"
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.architect"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.toVerify"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.procedure.architectEmpriseToVerify",
+       "params": {
+        "area": 150
+       }
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.protected"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.seeFlags"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.answers"
+    }
+   },
+   {
+    "kind": "actions",
+    "actions": [
+     {
+      "id": "emprise-definition",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.definition"
+      },
+      "fields": [
+       {
+        "key": "definition",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.definition"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "r420-1",
+        "options": [
+         {
+          "value": "r420-1",
+          "label": {
+           "key": "fr-urban-rules.surfaces.definition.r420-1"
+          }
+         },
+         {
+          "value": "lexicon",
+          "label": {
+           "key": "fr-urban-rules.surfaces.definition.lexicon"
+          }
+         },
+         {
+          "value": "all-overhangs",
+          "label": {
+           "key": "fr-urban-rules.surfaces.definition.all-overhangs"
+          }
+         }
+        ]
+       },
+       {
+        "key": "upperStoreys",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.upperStoreys"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "roofOverhangs",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.roofOverhangs"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "no",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "balconies",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.balconies"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "lightweight",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.lightweight"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "page",
+        "label": {
+         "key": "fr-urban-rules.field.page"
+        },
+        "kind": "number",
+        "min": 1
+       }
+      ]
+     },
+     {
+      "id": "emprise-balconies",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.balconies"
+      },
+      "fields": [
+       {
+        "key": "building",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.building"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "main",
+        "options": [
+         {
+          "value": "main",
+          "label": {
+           "key": "fr-urban-rules.check.subject.mainBuilding"
+          }
+         }
+        ]
+       },
+       {
+        "key": "area",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.area"
+        },
+        "kind": "number",
+        "unit": "m2",
+        "min": 0,
+        "required": true
+       }
+      ]
+     },
+     {
+      "id": "sdp-void",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.void"
+      },
+      "fields": [
+       {
+        "key": "storey",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.storey"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "level-ground",
+        "options": [
+         {
+          "value": "level-ground",
+          "label": {
+           "key": "fr-urban-rules.surfaces.storey",
+           "params": {
+            "index": 1
+           }
+          }
+         }
+        ]
+       },
+       {
+        "key": "area",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.area"
+        },
+        "kind": "number",
+        "unit": "m2",
+        "min": 0,
+        "required": true
+       }
+      ]
+     },
+     {
+      "id": "sdp-room",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.room"
+      },
+      "fields": [
+       {
+        "key": "deduction",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.deduction"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "parking",
+        "options": [
+         {
+          "value": "parking",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.parking"
+          }
+         },
+         {
+          "value": "attics",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.attics"
+          }
+         },
+         {
+          "value": "technical",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.technical"
+          }
+         },
+         {
+          "value": "cellars",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.cellars"
+          }
+         }
+        ]
+       },
+       {
+        "key": "room",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.room"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "79613046-21da-4ef2-9945-f8fead46379b",
+        "options": [
+         {
+          "value": "79613046-21da-4ef2-9945-f8fead46379b",
+          "label": {
+           "key": "fr-urban-rules.surfaces.room",
+           "params": {
+            "index": 1
+           }
+          }
+         },
+         {
+          "value": "ba7aeeda-0d8b-461a-8319-ecc39a2b44cf",
+          "label": {
+           "key": "fr-urban-rules.surfaces.room",
+           "params": {
+            "index": 2
+           }
+          }
+         }
+        ]
+       },
+       {
+        "key": "answer",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.answer"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "id": "sdp-none",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.none"
+      },
+      "fields": [
+       {
+        "key": "deduction",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.deduction"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "2",
+        "options": [
+         {
+          "value": "2",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line2"
+          }
+         },
+         {
+          "value": "4",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line4"
+          }
+         },
+         {
+          "value": "5",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line5"
+          }
+         },
+         {
+          "value": "6",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line6"
+          }
+         },
+         {
+          "value": "7",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line7"
+          }
+         },
+         {
+          "value": "8",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line8"
+          }
+         }
+        ]
+       },
+       {
+        "key": "answer",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.noneApplies"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "id": "sdp-building",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.building"
+      },
+      "fields": [
+       {
+        "key": "building",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.building"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "main",
+        "options": [
+         {
+          "value": "main",
+          "label": {
+           "key": "fr-urban-rules.check.subject.mainBuilding"
+          }
+         }
+        ]
+       },
+       {
+        "key": "question",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.question"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "collective",
+        "options": [
+         {
+          "value": "collective",
+          "label": {
+           "key": "fr-urban-rules.surfaces.question.collective"
+          }
+         },
+         {
+          "value": "served",
+          "label": {
+           "key": "fr-urban-rules.surfaces.question.served"
+          }
+         }
+        ]
+       },
+       {
+        "key": "answer",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.answer"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "assumptions",
+    "ids": [
+     "balconies-not-modelled",
+     "overhangs-unsupported",
+     "no-ornaments",
+     "sdp-partitions"
+    ]
+   }
+  ],
+  "checks": [
+   {
+    "id": "srf:entered:aaf3e8790eac",
+    "ruleId": "entered:aaf3e8790eac",
+    "subject": {
+     "kind": "plot",
+     "label": {
+      "key": "fr-urban-rules.check.subject.extension_max"
+     }
+    },
+    "measured": {
+     "value": 30,
+     "unit": "m2"
+    },
+    "limit": {
+     "value": 43.21,
+     "unit": "m2"
+    },
+    "result": "no_issue",
+    "assumptionIds": [
+     "existing-as-modelled"
+    ]
+   },
+   {
+    "id": "srf:entered:42fc95012002",
+    "ruleId": "entered:42fc95012002",
+    "subject": {
+     "kind": "plot",
+     "label": {
+      "key": "fr-urban-rules.check.subject.extension_max"
+     }
+    },
+    "measured": {
+     "value": 30,
+     "unit": "m2"
+    },
+    "limit": {
+     "value": 50,
+     "unit": "m2"
+    },
+    "result": "no_issue",
+    "assumptionIds": [
+     "existing-as-modelled"
+    ]
+   }
+  ],
+  "assumptions": [
+   "edges-derived",
+   "street-22ce63e2",
+   "street-28ad28fe",
+   "balconies-not-modelled",
+   "overhangs-unsupported",
+   "no-ornaments",
+   "pleine-terre-unbuilt",
+   "sdp-partitions",
+   "existing-as-modelled"
+  ]
+ },
+ "brouennes": {
+  "blocks": [
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.emprise"
+    }
+   },
+   {
+    "kind": "quote",
+    "passage": {
+     "text": "L'emprise au sol au sens du présent livre est la projection verticale du volume de la construction, tous débords et surplombs inclus.\nToutefois, les ornements tels que les éléments de modénature et les marquises sont exclus, ainsi que les débords de toiture lorsqu'ils ne sont pas soutenus par des poteaux ou des encorbellements.",
+     "lang": "fr"
+    },
+    "citation": {
+     "document": {
+      "text": "Code de l’urbanisme, version en vigueur depuis le 1er avril 2014",
+      "lang": "fr"
+     },
+     "article": "R.420-1",
+     "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000028678466"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.emprise.r420"
+      },
+      "value": {
+       "value": 80,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.emprise.detailNoBalconies"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.emprise.share"
+      },
+      "value": {
+       "value": 4.9,
+       "unit": "percent"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.emprise.allOverhangs"
+      },
+      "value": {
+       "value": 80,
+       "unit": "m2"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "table",
+    "columns": [
+     {
+      "key": "fr-urban-rules.surfaces.column.building"
+     },
+     {
+      "key": "fr-urban-rules.surfaces.column.area"
+     }
+    ],
+    "rows": [
+     [
+      {
+       "key": "fr-urban-rules.check.subject.mainBuilding"
+      },
+      {
+       "value": 80,
+       "unit": "m2"
+      }
+     ]
+    ]
+   },
+   {
+    "kind": "notice",
+    "tone": "info",
+    "text": {
+     "key": "fr-urban-rules.surfaces.emprise.notSummed"
+    }
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.budget"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.rule"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.budget.noRule"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.plotArea"
+      },
+      "value": {
+       "value": 1635.38,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.budget.plotAreaDetail"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.contenance"
+      },
+      "value": {
+       "value": 1642,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.budget.contenanceDetail"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.boundaryArea"
+      },
+      "value": {
+       "value": 1635.38,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.budget.boundaryAreaDetail"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.used"
+      },
+      "value": {
+       "value": 80,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.emprise.r420"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.green.unbuilt"
+      },
+      "value": {
+       "value": 1555.38,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.assumption.pleineTerre"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.sdp"
+    }
+   },
+   {
+    "kind": "quote",
+    "passage": {
+     "text": "La surface de plancher de la construction est égale à la somme des surfaces de plancher de chaque niveau clos et couvert, calculée à partir du nu intérieur des façades après déduction :\n1° Des surfaces correspondant à l'épaisseur des murs entourant les embrasures des portes et fenêtres donnant sur l'extérieur ;\n2° Des vides et des trémies afférentes aux escaliers et ascenseurs ;\n3° Des surfaces de plancher d'une hauteur sous plafond inférieure ou égale à 1,80 mètre ;\n4° Des surfaces de plancher aménagées en vue du stationnement des véhicules motorisés ou non, y compris les rampes d'accès et les aires de manœuvres ;\n5° Des surfaces de plancher des combles non aménageables pour l'habitation ou pour des activités à caractère professionnel, artisanal, industriel ou commercial ;\n6° Des surfaces de plancher des locaux techniques nécessaires au fonctionnement d'un groupe de bâtiments ou d'un immeuble autre qu'une maison individuelle au sens de l'article L. 231-1 du code de la construction et de l'habitation, y compris les locaux de stockage des déchets ;\n7° Des surfaces de plancher des caves ou des celliers, annexes à des logements, dès lors que ces locaux sont desservis uniquement par une partie commune ;\n8° D'une surface égale à 10 % des surfaces de plancher affectées à l'habitation telles qu'elles résultent le cas échéant de l'application des alinéas précédents, dès lors que les logements sont desservis par des parties communes intérieures.",
+     "lang": "fr"
+    },
+    "citation": {
+     "document": {
+      "text": "Code de l’urbanisme, version en vigueur depuis le 1er janvier 2016",
+      "lang": "fr"
+     },
+     "article": "R.111-22",
+     "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031721274"
+    }
+   },
+   {
+    "kind": "table",
+    "columns": [
+     {
+      "key": "fr-urban-rules.surfaces.column.line"
+     },
+     {
+      "key": "fr-urban-rules.surfaces.column.article"
+     },
+     {
+      "key": "fr-urban-rules.surfaces.column.area"
+     }
+    ],
+    "rows": [
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.base"
+      },
+      {
+       "text": "R.111-22"
+      },
+      {
+       "value": 69.56,
+       "unit": "m2"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.uncovered"
+      },
+      {
+       "text": "R.111-22"
+      },
+      {
+       "value": 0,
+       "unit": "m2"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line1"
+      },
+      {
+       "text": "R.111-22, 1°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.notDeducted"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line2"
+      },
+      {
+       "text": "R.111-22, 2°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line3"
+      },
+      {
+       "text": "R.111-22, 3°"
+      },
+      {
+       "value": 0,
+       "unit": "m2"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line4"
+      },
+      {
+       "text": "R.111-22, 4°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line5"
+      },
+      {
+       "text": "R.111-22, 5°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line6"
+      },
+      {
+       "text": "R.111-22, 6°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line7"
+      },
+      {
+       "text": "R.111-22, 7°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line8"
+      },
+      {
+       "text": "R.111-22, 8°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.totalEstimate",
+       "params": {
+        "count": 6
+       }
+      },
+      {
+       "text": "R.111-22"
+      },
+      {
+       "value": 69.56,
+       "unit": "m2"
+      }
+     ]
+    ]
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.caps"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.caps.existing"
+      },
+      "value": {
+       "key": "fr-urban-rules.value.none"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.caps.existingDetail"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.caps.extended"
+      },
+      "value": {
+       "key": "fr-urban-rules.value.none"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.caps.extendedDetail"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.capacity"
+    },
+    "detail": {
+     "key": "fr-urban-rules.surfaces.capacity.estimate"
+    }
+   },
+   {
+    "kind": "notice",
+    "tone": "info",
+    "text": {
+     "key": "fr-urban-rules.surfaces.capacity.missingHeight"
+    }
+   },
+   {
+    "kind": "notice",
+    "tone": "info",
+    "text": {
+     "key": "fr-urban-rules.surfaces.capacity.notAppliedNational"
+    }
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.procedure"
+    },
+    "detail": {
+     "key": "fr-urban-rules.surfaces.procedure.indicative"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.figures"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.figuresNew",
+       "params": {
+        "emprise": 80,
+        "floorArea": 69.56
+       }
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.likely"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.permit"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.procedure.incomplete",
+       "params": {
+        "article": "R.421-1"
+       }
+      },
+      "tone": "info"
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.architect"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.architectNotRequired"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.procedure.cite",
+       "params": {
+        "article": "R.431-2",
+        "date": "2026-10-20"
+       }
+      }
+     }
+    ]
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.answers"
+    }
+   },
+   {
+    "kind": "actions",
+    "actions": [
+     {
+      "id": "emprise-definition",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.definition"
+      },
+      "fields": [
+       {
+        "key": "definition",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.definition"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "r420-1",
+        "options": [
+         {
+          "value": "r420-1",
+          "label": {
+           "key": "fr-urban-rules.surfaces.definition.r420-1"
+          }
+         },
+         {
+          "value": "lexicon",
+          "label": {
+           "key": "fr-urban-rules.surfaces.definition.lexicon"
+          }
+         },
+         {
+          "value": "all-overhangs",
+          "label": {
+           "key": "fr-urban-rules.surfaces.definition.all-overhangs"
+          }
+         }
+        ]
+       },
+       {
+        "key": "upperStoreys",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.upperStoreys"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "roofOverhangs",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.roofOverhangs"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "no",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "balconies",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.balconies"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "lightweight",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.lightweight"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "page",
+        "label": {
+         "key": "fr-urban-rules.field.page"
+        },
+        "kind": "number",
+        "min": 1
+       }
+      ]
+     },
+     {
+      "id": "emprise-balconies",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.balconies"
+      },
+      "fields": [
+       {
+        "key": "building",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.building"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "main",
+        "options": [
+         {
+          "value": "main",
+          "label": {
+           "key": "fr-urban-rules.check.subject.mainBuilding"
+          }
+         }
+        ]
+       },
+       {
+        "key": "area",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.area"
+        },
+        "kind": "number",
+        "unit": "m2",
+        "min": 0,
+        "required": true
+       }
+      ]
+     },
+     {
+      "id": "sdp-void",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.void"
+      },
+      "fields": [
+       {
+        "key": "storey",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.storey"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "level-ground",
+        "options": [
+         {
+          "value": "level-ground",
+          "label": {
+           "key": "fr-urban-rules.surfaces.storey",
+           "params": {
+            "index": 1
+           }
+          }
+         }
+        ]
+       },
+       {
+        "key": "area",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.area"
+        },
+        "kind": "number",
+        "unit": "m2",
+        "min": 0,
+        "required": true
+       }
+      ]
+     },
+     {
+      "id": "sdp-room",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.room"
+      },
+      "fields": [
+       {
+        "key": "deduction",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.deduction"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "parking",
+        "options": [
+         {
+          "value": "parking",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.parking"
+          }
+         },
+         {
+          "value": "attics",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.attics"
+          }
+         },
+         {
+          "value": "technical",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.technical"
+          }
+         },
+         {
+          "value": "cellars",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.cellars"
+          }
+         }
+        ]
+       },
+       {
+        "key": "room",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.room"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "0cd05f63-c5d3-4b51-b588-ab37279461f2",
+        "options": [
+         {
+          "value": "0cd05f63-c5d3-4b51-b588-ab37279461f2",
+          "label": {
+           "key": "fr-urban-rules.surfaces.room",
+           "params": {
+            "index": 1
+           }
+          }
+         }
+        ]
+       },
+       {
+        "key": "answer",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.answer"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "id": "sdp-none",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.none"
+      },
+      "fields": [
+       {
+        "key": "deduction",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.deduction"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "2",
+        "options": [
+         {
+          "value": "2",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line2"
+          }
+         },
+         {
+          "value": "4",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line4"
+          }
+         },
+         {
+          "value": "5",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line5"
+          }
+         },
+         {
+          "value": "6",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line6"
+          }
+         },
+         {
+          "value": "7",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line7"
+          }
+         },
+         {
+          "value": "8",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line8"
+          }
+         }
+        ]
+       },
+       {
+        "key": "answer",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.noneApplies"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "id": "sdp-building",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.building"
+      },
+      "fields": [
+       {
+        "key": "building",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.building"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "main",
+        "options": [
+         {
+          "value": "main",
+          "label": {
+           "key": "fr-urban-rules.check.subject.mainBuilding"
+          }
+         }
+        ]
+       },
+       {
+        "key": "question",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.question"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "collective",
+        "options": [
+         {
+          "value": "collective",
+          "label": {
+           "key": "fr-urban-rules.surfaces.question.collective"
+          }
+         },
+         {
+          "value": "served",
+          "label": {
+           "key": "fr-urban-rules.surfaces.question.served"
+          }
+         }
+        ]
+       },
+       {
+        "key": "answer",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.answer"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "assumptions",
+    "ids": [
+     "balconies-not-modelled",
+     "overhangs-unsupported",
+     "no-ornaments",
+     "sdp-partitions"
+    ]
+   }
+  ],
+  "checks": [],
+  "assumptions": [
+   "edges-derived",
+   "street-214d6e78",
+   "alignment-parcels",
+   "site-boundary-parcel",
+   "balconies-not-modelled",
+   "datum-derived",
+   "not-checked-alignment-outside-terrain",
+   "governed-by-rise",
+   "envelope-boundary-slope",
+   "envelope-adjoining",
+   "envelope-lattice",
+   "envelope-approximate",
+   "envelope-reentrant-corners",
+   "envelope-checks",
+   "envelope-not-applied",
+   "bands-approximate",
+   "overhangs-unsupported",
+   "no-ornaments",
+   "pleine-terre-unbuilt",
+   "sdp-partitions",
+   "existing-as-modelled"
+  ]
+ },
+ "mouzay": {
+  "blocks": [
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.emprise"
+    }
+   },
+   {
+    "kind": "quote",
+    "passage": {
+     "text": "L'emprise au sol au sens du présent livre est la projection verticale du volume de la construction, tous débords et surplombs inclus.\nToutefois, les ornements tels que les éléments de modénature et les marquises sont exclus, ainsi que les débords de toiture lorsqu'ils ne sont pas soutenus par des poteaux ou des encorbellements.",
+     "lang": "fr"
+    },
+    "citation": {
+     "document": {
+      "text": "Code de l’urbanisme, version en vigueur depuis le 1er avril 2014",
+      "lang": "fr"
+     },
+     "article": "R.420-1",
+     "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000028678466"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.emprise.r420"
+      },
+      "value": {
+       "value": 80,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.emprise.detailNoBalconies"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.emprise.share"
+      },
+      "value": {
+       "value": 10.6,
+       "unit": "percent"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.emprise.allOverhangs"
+      },
+      "value": {
+       "value": 80,
+       "unit": "m2"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "table",
+    "columns": [
+     {
+      "key": "fr-urban-rules.surfaces.column.building"
+     },
+     {
+      "key": "fr-urban-rules.surfaces.column.area"
+     }
+    ],
+    "rows": [
+     [
+      {
+       "key": "fr-urban-rules.check.subject.mainBuilding"
+      },
+      {
+       "value": 80,
+       "unit": "m2"
+      }
+     ]
+    ]
+   },
+   {
+    "kind": "notice",
+    "tone": "info",
+    "text": {
+     "key": "fr-urban-rules.surfaces.emprise.notSummed"
+    }
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.budget"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.rule"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.budget.noRule"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.plotArea"
+      },
+      "value": {
+       "value": 752.05,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.budget.plotAreaDetail"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.contenance"
+      },
+      "value": {
+       "value": 755,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.budget.contenanceDetail"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.boundaryArea"
+      },
+      "value": {
+       "value": 752.05,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.budget.boundaryAreaDetail"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.used"
+      },
+      "value": {
+       "value": 80,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.emprise.r420"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.green.unbuilt"
+      },
+      "value": {
+       "value": 672.04,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.assumption.pleineTerre"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.sdp"
+    }
+   },
+   {
+    "kind": "quote",
+    "passage": {
+     "text": "La surface de plancher de la construction est égale à la somme des surfaces de plancher de chaque niveau clos et couvert, calculée à partir du nu intérieur des façades après déduction :\n1° Des surfaces correspondant à l'épaisseur des murs entourant les embrasures des portes et fenêtres donnant sur l'extérieur ;\n2° Des vides et des trémies afférentes aux escaliers et ascenseurs ;\n3° Des surfaces de plancher d'une hauteur sous plafond inférieure ou égale à 1,80 mètre ;\n4° Des surfaces de plancher aménagées en vue du stationnement des véhicules motorisés ou non, y compris les rampes d'accès et les aires de manœuvres ;\n5° Des surfaces de plancher des combles non aménageables pour l'habitation ou pour des activités à caractère professionnel, artisanal, industriel ou commercial ;\n6° Des surfaces de plancher des locaux techniques nécessaires au fonctionnement d'un groupe de bâtiments ou d'un immeuble autre qu'une maison individuelle au sens de l'article L. 231-1 du code de la construction et de l'habitation, y compris les locaux de stockage des déchets ;\n7° Des surfaces de plancher des caves ou des celliers, annexes à des logements, dès lors que ces locaux sont desservis uniquement par une partie commune ;\n8° D'une surface égale à 10 % des surfaces de plancher affectées à l'habitation telles qu'elles résultent le cas échéant de l'application des alinéas précédents, dès lors que les logements sont desservis par des parties communes intérieures.",
+     "lang": "fr"
+    },
+    "citation": {
+     "document": {
+      "text": "Code de l’urbanisme, version en vigueur depuis le 1er janvier 2016",
+      "lang": "fr"
+     },
+     "article": "R.111-22",
+     "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031721274"
+    }
+   },
+   {
+    "kind": "table",
+    "columns": [
+     {
+      "key": "fr-urban-rules.surfaces.column.line"
+     },
+     {
+      "key": "fr-urban-rules.surfaces.column.article"
+     },
+     {
+      "key": "fr-urban-rules.surfaces.column.area"
+     }
+    ],
+    "rows": [
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.base"
+      },
+      {
+       "text": "R.111-22"
+      },
+      {
+       "value": 69.56,
+       "unit": "m2"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.uncovered"
+      },
+      {
+       "text": "R.111-22"
+      },
+      {
+       "value": 0,
+       "unit": "m2"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line1"
+      },
+      {
+       "text": "R.111-22, 1°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.notDeducted"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line2"
+      },
+      {
+       "text": "R.111-22, 2°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line3"
+      },
+      {
+       "text": "R.111-22, 3°"
+      },
+      {
+       "value": 0,
+       "unit": "m2"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line4"
+      },
+      {
+       "text": "R.111-22, 4°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line5"
+      },
+      {
+       "text": "R.111-22, 5°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line6"
+      },
+      {
+       "text": "R.111-22, 6°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line7"
+      },
+      {
+       "text": "R.111-22, 7°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line8"
+      },
+      {
+       "text": "R.111-22, 8°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.totalEstimate",
+       "params": {
+        "count": 6
+       }
+      },
+      {
+       "text": "R.111-22"
+      },
+      {
+       "value": 69.56,
+       "unit": "m2"
+      }
+     ]
+    ]
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.caps"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.caps.existing"
+      },
+      "value": {
+       "key": "fr-urban-rules.value.none"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.caps.existingDetailDate",
+       "params": {
+        "date": "2019-11-07"
+       }
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.caps.extended"
+      },
+      "value": {
+       "key": "fr-urban-rules.value.none"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.caps.extendedDetail"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.capacity"
+    },
+    "detail": {
+     "key": "fr-urban-rules.surfaces.capacity.estimate"
+    }
+   },
+   {
+    "kind": "notice",
+    "tone": "info",
+    "text": {
+     "key": "fr-urban-rules.surfaces.capacity.missingHeight"
+    }
+   },
+   {
+    "kind": "notice",
+    "tone": "info",
+    "text": {
+     "key": "fr-urban-rules.surfaces.capacity.notAppliedNational"
+    }
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.procedure"
+    },
+    "detail": {
+     "key": "fr-urban-rules.surfaces.procedure.indicative"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.figures"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.figuresNew",
+       "params": {
+        "emprise": 80,
+        "floorArea": 69.56
+       }
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.likely"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.permit"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.procedure.incomplete",
+       "params": {
+        "article": "R.421-1"
+       }
+      },
+      "tone": "info"
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.architect"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.architectNotRequired"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.procedure.cite",
+       "params": {
+        "article": "R.431-2",
+        "date": "2026-10-20"
+       }
+      }
+     }
+    ]
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.answers"
+    }
+   },
+   {
+    "kind": "actions",
+    "actions": [
+     {
+      "id": "emprise-definition",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.definition"
+      },
+      "fields": [
+       {
+        "key": "definition",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.definition"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "r420-1",
+        "options": [
+         {
+          "value": "r420-1",
+          "label": {
+           "key": "fr-urban-rules.surfaces.definition.r420-1"
+          }
+         },
+         {
+          "value": "lexicon",
+          "label": {
+           "key": "fr-urban-rules.surfaces.definition.lexicon"
+          }
+         },
+         {
+          "value": "all-overhangs",
+          "label": {
+           "key": "fr-urban-rules.surfaces.definition.all-overhangs"
+          }
+         }
+        ]
+       },
+       {
+        "key": "upperStoreys",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.upperStoreys"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "roofOverhangs",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.roofOverhangs"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "no",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "balconies",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.balconies"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "lightweight",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.lightweight"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "page",
+        "label": {
+         "key": "fr-urban-rules.field.page"
+        },
+        "kind": "number",
+        "min": 1
+       }
+      ]
+     },
+     {
+      "id": "emprise-balconies",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.balconies"
+      },
+      "fields": [
+       {
+        "key": "building",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.building"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "main",
+        "options": [
+         {
+          "value": "main",
+          "label": {
+           "key": "fr-urban-rules.check.subject.mainBuilding"
+          }
+         }
+        ]
+       },
+       {
+        "key": "area",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.area"
+        },
+        "kind": "number",
+        "unit": "m2",
+        "min": 0,
+        "required": true
+       }
+      ]
+     },
+     {
+      "id": "sdp-void",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.void"
+      },
+      "fields": [
+       {
+        "key": "storey",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.storey"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "level-ground",
+        "options": [
+         {
+          "value": "level-ground",
+          "label": {
+           "key": "fr-urban-rules.surfaces.storey",
+           "params": {
+            "index": 1
+           }
+          }
+         }
+        ]
+       },
+       {
+        "key": "area",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.area"
+        },
+        "kind": "number",
+        "unit": "m2",
+        "min": 0,
+        "required": true
+       }
+      ]
+     },
+     {
+      "id": "sdp-room",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.room"
+      },
+      "fields": [
+       {
+        "key": "deduction",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.deduction"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "parking",
+        "options": [
+         {
+          "value": "parking",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.parking"
+          }
+         },
+         {
+          "value": "attics",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.attics"
+          }
+         },
+         {
+          "value": "technical",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.technical"
+          }
+         },
+         {
+          "value": "cellars",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.cellars"
+          }
+         }
+        ]
+       },
+       {
+        "key": "room",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.room"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "e7b46121-a8b8-4f5b-bb23-57b43077ce00",
+        "options": [
+         {
+          "value": "e7b46121-a8b8-4f5b-bb23-57b43077ce00",
+          "label": {
+           "key": "fr-urban-rules.surfaces.room",
+           "params": {
+            "index": 1
+           }
+          }
+         }
+        ]
+       },
+       {
+        "key": "answer",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.answer"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "id": "sdp-none",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.none"
+      },
+      "fields": [
+       {
+        "key": "deduction",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.deduction"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "2",
+        "options": [
+         {
+          "value": "2",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line2"
+          }
+         },
+         {
+          "value": "4",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line4"
+          }
+         },
+         {
+          "value": "5",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line5"
+          }
+         },
+         {
+          "value": "6",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line6"
+          }
+         },
+         {
+          "value": "7",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line7"
+          }
+         },
+         {
+          "value": "8",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line8"
+          }
+         }
+        ]
+       },
+       {
+        "key": "answer",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.noneApplies"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "id": "sdp-building",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.building"
+      },
+      "fields": [
+       {
+        "key": "building",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.building"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "main",
+        "options": [
+         {
+          "value": "main",
+          "label": {
+           "key": "fr-urban-rules.check.subject.mainBuilding"
+          }
+         }
+        ]
+       },
+       {
+        "key": "question",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.question"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "collective",
+        "options": [
+         {
+          "value": "collective",
+          "label": {
+           "key": "fr-urban-rules.surfaces.question.collective"
+          }
+         },
+         {
+          "value": "served",
+          "label": {
+           "key": "fr-urban-rules.surfaces.question.served"
+          }
+         }
+        ]
+       },
+       {
+        "key": "answer",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.answer"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "assumptions",
+    "ids": [
+     "balconies-not-modelled",
+     "overhangs-unsupported",
+     "no-ornaments",
+     "sdp-partitions"
+    ]
+   }
+  ],
+  "checks": [],
+  "assumptions": [
+   "outline-too-detailed",
+   "edges-derived",
+   "street-74646878",
+   "street-48de82d8",
+   "alignment-parcels",
+   "site-boundary-parcel",
+   "balconies-not-modelled",
+   "datum-derived",
+   "envelope-boundary-slope",
+   "envelope-adjoining",
+   "envelope-lattice",
+   "envelope-approximate",
+   "envelope-reentrant-corners",
+   "envelope-checks",
+   "bands-approximate",
+   "overhangs-unsupported",
+   "no-ornaments",
+   "pleine-terre-unbuilt",
+   "sdp-partitions",
+   "existing-as-modelled"
+  ]
+ },
+ "rochefort": {
+  "blocks": [
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.emprise"
+    }
+   },
+   {
+    "kind": "quote",
+    "passage": {
+     "text": "L'emprise au sol au sens du présent livre est la projection verticale du volume de la construction, tous débords et surplombs inclus.\nToutefois, les ornements tels que les éléments de modénature et les marquises sont exclus, ainsi que les débords de toiture lorsqu'ils ne sont pas soutenus par des poteaux ou des encorbellements.",
+     "lang": "fr"
+    },
+    "citation": {
+     "document": {
+      "text": "Code de l’urbanisme, version en vigueur depuis le 1er avril 2014",
+      "lang": "fr"
+     },
+     "article": "R.420-1",
+     "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000028678466"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.emprise.r420"
+      },
+      "value": {
+       "value": 63,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.emprise.detailNoBalconies"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.emprise.share"
+      },
+      "value": {
+       "value": 9.4,
+       "unit": "percent"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.emprise.allOverhangs"
+      },
+      "value": {
+       "value": 63,
+       "unit": "m2"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "table",
+    "columns": [
+     {
+      "key": "fr-urban-rules.surfaces.column.building"
+     },
+     {
+      "key": "fr-urban-rules.surfaces.column.area"
+     }
+    ],
+    "rows": [
+     [
+      {
+       "key": "fr-urban-rules.check.subject.mainBuilding"
+      },
+      {
+       "value": 63,
+       "unit": "m2"
+      }
+     ]
+    ]
+   },
+   {
+    "kind": "notice",
+    "tone": "info",
+    "text": {
+     "key": "fr-urban-rules.surfaces.emprise.notSummed"
+    }
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.budget"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.rule"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.budget.noRule"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.plotArea"
+      },
+      "value": {
+       "value": 672.68,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.budget.plotAreaDetail"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.contenance"
+      },
+      "value": {
+       "value": 659,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.budget.contenanceDetail"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.boundaryArea"
+      },
+      "value": {
+       "value": 672.68,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.budget.boundaryAreaDetail"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.budget.used"
+      },
+      "value": {
+       "value": 63,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.emprise.r420"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.green.unbuilt"
+      },
+      "value": {
+       "value": 609.68,
+       "unit": "m2"
+      },
+      "detail": {
+       "key": "fr-urban-rules.assumption.pleineTerre"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.sdp"
+    }
+   },
+   {
+    "kind": "quote",
+    "passage": {
+     "text": "La surface de plancher de la construction est égale à la somme des surfaces de plancher de chaque niveau clos et couvert, calculée à partir du nu intérieur des façades après déduction :\n1° Des surfaces correspondant à l'épaisseur des murs entourant les embrasures des portes et fenêtres donnant sur l'extérieur ;\n2° Des vides et des trémies afférentes aux escaliers et ascenseurs ;\n3° Des surfaces de plancher d'une hauteur sous plafond inférieure ou égale à 1,80 mètre ;\n4° Des surfaces de plancher aménagées en vue du stationnement des véhicules motorisés ou non, y compris les rampes d'accès et les aires de manœuvres ;\n5° Des surfaces de plancher des combles non aménageables pour l'habitation ou pour des activités à caractère professionnel, artisanal, industriel ou commercial ;\n6° Des surfaces de plancher des locaux techniques nécessaires au fonctionnement d'un groupe de bâtiments ou d'un immeuble autre qu'une maison individuelle au sens de l'article L. 231-1 du code de la construction et de l'habitation, y compris les locaux de stockage des déchets ;\n7° Des surfaces de plancher des caves ou des celliers, annexes à des logements, dès lors que ces locaux sont desservis uniquement par une partie commune ;\n8° D'une surface égale à 10 % des surfaces de plancher affectées à l'habitation telles qu'elles résultent le cas échéant de l'application des alinéas précédents, dès lors que les logements sont desservis par des parties communes intérieures.",
+     "lang": "fr"
+    },
+    "citation": {
+     "document": {
+      "text": "Code de l’urbanisme, version en vigueur depuis le 1er janvier 2016",
+      "lang": "fr"
+     },
+     "article": "R.111-22",
+     "href": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031721274"
+    }
+   },
+   {
+    "kind": "table",
+    "columns": [
+     {
+      "key": "fr-urban-rules.surfaces.column.line"
+     },
+     {
+      "key": "fr-urban-rules.surfaces.column.article"
+     },
+     {
+      "key": "fr-urban-rules.surfaces.column.area"
+     }
+    ],
+    "rows": [
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.base"
+      },
+      {
+       "text": "R.111-22"
+      },
+      {
+       "value": 107.52,
+       "unit": "m2"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.uncovered"
+      },
+      {
+       "text": "R.111-22"
+      },
+      {
+       "value": -53.76,
+       "unit": "m2"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line1"
+      },
+      {
+       "text": "R.111-22, 1°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.notDeducted"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line2"
+      },
+      {
+       "text": "R.111-22, 2°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line3"
+      },
+      {
+       "text": "R.111-22, 3°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.unknownHeadroom",
+       "params": {
+        "area": 0
+       }
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line4"
+      },
+      {
+       "text": "R.111-22, 4°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line5"
+      },
+      {
+       "text": "R.111-22, 5°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line6"
+      },
+      {
+       "text": "R.111-22, 6°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line7"
+      },
+      {
+       "text": "R.111-22, 7°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.line8"
+      },
+      {
+       "text": "R.111-22, 8°"
+      },
+      {
+       "key": "fr-urban-rules.surfaces.sdp.answerNeeded"
+      }
+     ],
+     [
+      {
+       "key": "fr-urban-rules.surfaces.sdp.totalEstimate",
+       "params": {
+        "count": 6
+       }
+      },
+      {
+       "text": "R.111-22"
+      },
+      {
+       "value": 53.76,
+       "unit": "m2"
+      }
+     ]
+    ]
+   },
+   {
+    "kind": "notice",
+    "tone": "warning",
+    "text": {
+     "key": "fr-urban-rules.surfaces.sdp.estimateReason",
+     "params": {
+      "reason": "not-covered"
+     }
+    }
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.caps"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.caps.existing"
+      },
+      "value": {
+       "key": "fr-urban-rules.value.none"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.caps.existingDetail"
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.caps.extended"
+      },
+      "value": {
+       "key": "fr-urban-rules.value.none"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.caps.extendedDetail"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.capacity"
+    },
+    "detail": {
+     "key": "fr-urban-rules.surfaces.capacity.estimate"
+    }
+   },
+   {
+    "kind": "notice",
+    "tone": "info",
+    "text": {
+     "key": "fr-urban-rules.surfaces.capacity.missingGround"
+    }
+   },
+   {
+    "kind": "notice",
+    "tone": "info",
+    "text": {
+     "key": "fr-urban-rules.surfaces.capacity.notApplied"
+    }
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.procedure"
+    },
+    "detail": {
+     "key": "fr-urban-rules.surfaces.procedure.indicative"
+    }
+   },
+   {
+    "kind": "fields",
+    "rows": [
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.figures"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.figuresNew",
+       "params": {
+        "emprise": 63,
+        "floorArea": 53.76
+       }
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.likely"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.permit"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.procedure.incomplete",
+       "params": {
+        "article": "R.421-1"
+       }
+      },
+      "tone": "info"
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.architect"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.architectNotRequired"
+      },
+      "detail": {
+       "key": "fr-urban-rules.surfaces.procedure.cite",
+       "params": {
+        "article": "R.431-2",
+        "date": "2026-10-20"
+       }
+      }
+     },
+     {
+      "label": {
+       "key": "fr-urban-rules.surfaces.procedure.protected"
+      },
+      "value": {
+       "key": "fr-urban-rules.surfaces.procedure.seeFlags"
+      }
+     }
+    ]
+   },
+   {
+    "kind": "heading",
+    "text": {
+     "key": "fr-urban-rules.surfaces.heading.answers"
+    }
+   },
+   {
+    "kind": "actions",
+    "actions": [
+     {
+      "id": "emprise-definition",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.definition"
+      },
+      "fields": [
+       {
+        "key": "definition",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.definition"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "r420-1",
+        "options": [
+         {
+          "value": "r420-1",
+          "label": {
+           "key": "fr-urban-rules.surfaces.definition.r420-1"
+          }
+         },
+         {
+          "value": "lexicon",
+          "label": {
+           "key": "fr-urban-rules.surfaces.definition.lexicon"
+          }
+         },
+         {
+          "value": "all-overhangs",
+          "label": {
+           "key": "fr-urban-rules.surfaces.definition.all-overhangs"
+          }
+         }
+        ]
+       },
+       {
+        "key": "upperStoreys",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.upperStoreys"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "roofOverhangs",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.roofOverhangs"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "no",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "balconies",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.balconies"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "lightweight",
+        "label": {
+         "key": "fr-urban-rules.surfaces.counts.lightweight"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       },
+       {
+        "key": "page",
+        "label": {
+         "key": "fr-urban-rules.field.page"
+        },
+        "kind": "number",
+        "min": 1
+       }
+      ]
+     },
+     {
+      "id": "emprise-balconies",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.balconies"
+      },
+      "fields": [
+       {
+        "key": "building",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.building"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "main",
+        "options": [
+         {
+          "value": "main",
+          "label": {
+           "key": "fr-urban-rules.check.subject.mainBuilding"
+          }
+         }
+        ]
+       },
+       {
+        "key": "area",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.area"
+        },
+        "kind": "number",
+        "unit": "m2",
+        "min": 0,
+        "required": true
+       }
+      ]
+     },
+     {
+      "id": "sdp-void",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.void"
+      },
+      "fields": [
+       {
+        "key": "storey",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.storey"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "level-ground",
+        "options": [
+         {
+          "value": "level-ground",
+          "label": {
+           "key": "fr-urban-rules.surfaces.storey",
+           "params": {
+            "index": 1
+           }
+          }
+         },
+         {
+          "value": "d258016d-ac3c-4209-8b86-a7c513dfc1ec",
+          "label": {
+           "key": "fr-urban-rules.surfaces.storey",
+           "params": {
+            "index": 2
+           }
+          }
+         }
+        ]
+       },
+       {
+        "key": "area",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.area"
+        },
+        "kind": "number",
+        "unit": "m2",
+        "min": 0,
+        "required": true
+       }
+      ]
+     },
+     {
+      "id": "sdp-room",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.room"
+      },
+      "fields": [
+       {
+        "key": "deduction",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.deduction"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "parking",
+        "options": [
+         {
+          "value": "parking",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.parking"
+          }
+         },
+         {
+          "value": "attics",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.attics"
+          }
+         },
+         {
+          "value": "technical",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.technical"
+          }
+         },
+         {
+          "value": "cellars",
+          "label": {
+           "key": "fr-urban-rules.surfaces.deduction.cellars"
+          }
+         }
+        ]
+       },
+       {
+        "key": "room",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.room"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "450cc501-82e0-4968-9119-be95d10ee39d",
+        "options": [
+         {
+          "value": "450cc501-82e0-4968-9119-be95d10ee39d",
+          "label": {
+           "key": "fr-urban-rules.surfaces.room",
+           "params": {
+            "index": 1
+           }
+          }
+         },
+         {
+          "value": "5c7d14cc-c301-4b78-8b19-4dddc03c0479",
+          "label": {
+           "key": "fr-urban-rules.surfaces.room",
+           "params": {
+            "index": 2
+           }
+          }
+         }
+        ]
+       },
+       {
+        "key": "answer",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.answer"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "id": "sdp-none",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.none"
+      },
+      "fields": [
+       {
+        "key": "deduction",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.deduction"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "2",
+        "options": [
+         {
+          "value": "2",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line2"
+          }
+         },
+         {
+          "value": "4",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line4"
+          }
+         },
+         {
+          "value": "5",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line5"
+          }
+         },
+         {
+          "value": "6",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line6"
+          }
+         },
+         {
+          "value": "7",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line7"
+          }
+         },
+         {
+          "value": "8",
+          "label": {
+           "key": "fr-urban-rules.surfaces.sdp.line8"
+          }
+         }
+        ]
+       },
+       {
+        "key": "answer",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.noneApplies"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "id": "sdp-building",
+      "label": {
+       "key": "fr-urban-rules.surfaces.action.building"
+      },
+      "fields": [
+       {
+        "key": "building",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.building"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "main",
+        "options": [
+         {
+          "value": "main",
+          "label": {
+           "key": "fr-urban-rules.check.subject.mainBuilding"
+          }
+         }
+        ]
+       },
+       {
+        "key": "question",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.question"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "collective",
+        "options": [
+         {
+          "value": "collective",
+          "label": {
+           "key": "fr-urban-rules.surfaces.question.collective"
+          }
+         },
+         {
+          "value": "served",
+          "label": {
+           "key": "fr-urban-rules.surfaces.question.served"
+          }
+         }
+        ]
+       },
+       {
+        "key": "answer",
+        "label": {
+         "key": "fr-urban-rules.surfaces.field.answer"
+        },
+        "kind": "choice",
+        "required": true,
+        "initial": "yes",
+        "options": [
+         {
+          "value": "yes",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.yes"
+          }
+         },
+         {
+          "value": "no",
+          "label": {
+           "key": "fr-urban-rules.surfaces.answer.no"
+          }
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "assumptions",
+    "ids": [
+     "balconies-not-modelled",
+     "overhangs-unsupported",
+     "no-ornaments",
+     "sdp-partitions"
+    ]
+   }
+  ],
+  "checks": [],
+  "assumptions": [
+   "edges-derived",
+   "street-1b31967f",
+   "street-road",
+   "height-lowest-ground",
+   "datum-derived",
+   "balconies-not-modelled",
+   "overhangs-unsupported",
+   "no-ornaments",
+   "pleine-terre-unbuilt",
+   "sdp-partitions",
+   "existing-as-modelled"
+  ]
+ }
+}
