@@ -10,7 +10,7 @@ editor. The deployment runs it in the `plugin-services` container, behind the
 gateway (`../gateway`), at `/plugins-api/com.archisimple.fr-urban-rules/`. The
 extension reaches it over HTTP only (002.6a is its first consumer).
 
-**Node ≥ 22.13** (`pdfjs-dist` 6's `engines`); the image is `node:22-alpine`.
+**Node ≥ 22.13** (`pdfjs-dist` 6's `engines`); the image is `node:24.22.1-alpine`.
 
 > **The parse child's memory watchdog** reads `/proc/<pid>/statm` on Linux
 > (the image) and falls back to `ps -o rss= -p <pid>` elsewhere (macOS while

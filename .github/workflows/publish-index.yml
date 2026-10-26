@@ -87,9 +87,10 @@ jobs:
 
       - uses: actions/setup-node@v5
         with:
-          # 22, not 20: the companion services need Node >= 22.13
-          # (pdfjs-dist 6's engines; Sprint 002.5a DEC-1).
-          node-version: 22
+          # The same Node as the services image and archisimple (24.22.1). The
+          # companion services need Node >= 22.13 (pdfjs-dist 6's engines;
+          # Sprint 002.5a DEC-1), which this satisfies.
+          node-version: 24.22.1
           cache: pnpm
           cache-dependency-path: .platform/pnpm-lock.yaml
 

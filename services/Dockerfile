@@ -21,9 +21,10 @@
 # this image is built from the same plugins commit as the web image's pins, and
 # is trusted the way any image is — by digest — so its base is not left to
 # whatever the tag points at today. A security update is a deliberate bump:
-# `docker buildx imagetools inspect node:22-alpine` prints the new index digest.
-# Read 2026-10-21 (the multi-architecture index).
-FROM node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
+# `docker buildx imagetools inspect node:24.22.1-alpine` prints the index digest.
+# Node 24.22.1, the version archisimple's `.nvmrc` and `engines` require. Read
+# 2026-10-26 (the multi-architecture index).
+FROM node:24.22.1-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53
 
 ENV NODE_ENV=production \
     PLUGIN_SERVICES_DATA_DIR=/data \
