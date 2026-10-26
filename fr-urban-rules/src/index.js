@@ -1875,13 +1875,20 @@ function shapedGeometry(geometry, { box, simplify, drop }) {
 /** One source's snapshot entry, its layers' geometry shaped by DEC-2's options. */
 function shapedSource(id, entry, options) {
   if (!Array.isArray(entry.parsed)) return entry;
-  const drop = options.drop.some((step) => SNAPSHOT_DROPPED_LAYERS[step].includes(id));
+  const layerDrop = options.drop.some((step) => SNAPSHOT_DROPPED_LAYERS[step].includes(id));
   return {
     ...entry,
-    parsed: entry.parsed.map((item) => ({
-      ...item,
-      geometry: shapedGeometry(item.geometry, { ...options, drop })
-    }))
+    parsed: entry.parsed.map((item) => {
+      // CNIG typepsc 01 is an Espace boisé classé (EBC). It is a spatial
+      // constraint, not merely descriptive detail: never discard its outline
+      // from an offline snapshot, even when other prescription outlines must
+      // be dropped to respect the project-file budget.
+      const drop = layerDrop && !(PRESCRIPTION_LAYERS.includes(id) && String(item.type) === '01');
+      return {
+        ...item,
+        geometry: shapedGeometry(item.geometry, { ...options, drop })
+      };
+    })
   };
 }
 
@@ -15527,6 +15534,7 @@ export const __testing = {
   endsKey,
   entrySubject,
   parsePrescriptionValue,
+  shapedSource,
   drawnKey,
   createProgrammeStage,
   CAPTURE_COMMAND_ID,

@@ -432,6 +432,29 @@ async function readSynthetic({ data, fetch, now = CAPTURED, logs = [], ...option
   }
 }
 
+test('DEC-2 keeps EBC (typepsc 01) geometry when prescription outlines are dropped', () => {
+  const ring = [
+    { easting: 100, northing: 100 },
+    { easting: 110, northing: 100 },
+    { easting: 110, northing: 110 },
+    { easting: 100, northing: 100 }
+  ];
+  const entry = {
+    parsed: [
+      { id: 'ebc', type: '01', geometry: { kind: 'surface', rings: [ring] } },
+      { id: 'height', type: '39', geometry: { kind: 'surface', rings: [ring] } }
+    ]
+  };
+  const shaped = __testing.shapedSource('prescription-surf', entry, {
+    box: undefined,
+    simplify: false,
+    drop: ['drop-prescription']
+  });
+  assert.equal(shaped.parsed[0].geometry.rings.length, 1, 'EBC outline remains available offline');
+  assert.deepEqual(shaped.parsed[0].geometry.rings[0], ring);
+  assert.equal(shaped.parsed[1].geometry.rings.length, 0, 'non-EBC prescription geometry can still be dropped');
+});
+
 test('criterion 4: a 2 MB polygon is reduced, says so, and is still under the limit; its key-bearing centroid is kept', async () => {
   const fetch = syntheticFetch();
   assert.ok(fetch.size > 2_000_000, `the answer's polygon is ${fetch.size} characters`);
