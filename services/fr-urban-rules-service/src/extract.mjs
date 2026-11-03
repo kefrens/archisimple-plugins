@@ -10,8 +10,8 @@
  * - `page` and `article` come from the chosen offset, never from the model;
  * - statement, limit and unit must agree (DEC-6), and a comparison against
  *   the package's floors lowers the confidence;
- * - conditions and exceptions must occur verbatim in a window before the
- *   passage.
+ * - conditions and exceptions must occur verbatim in a window around the
+ *   passage (before it, and — since Sprint 002.21 — a little after).
  *
  * Nothing here makes a candidate a rule: 002.6b shows every one `to_confirm`.
  */
@@ -23,10 +23,18 @@ import { allOccurrences, normalisePassage, normaliseText } from './normalise.mjs
 import { articleAt, pageAt } from './text.mjs';
 
 export const SCHEMA_VERSION = 1;
-export const PROMPT_VERSION = 2;
+export const PROMPT_VERSION = 3;
 export const MAX_CHUNK_CHARS = 40_000;
 export const MAX_ITEMS_PER_CHUNK = 120;
 export const CONDITION_WINDOW = 1_500;
+/**
+ * Sprint 002.21: a règlement writes its alternative rules and exceptions *after* the rule they
+ * qualify (« Règle alternative à l'article… », « les extensions … peuvent être implantées à une
+ * distance inférieure »). The window the quoted phrase is looked for in runs this far past the
+ * passage too; with the window before it only, every such exception was dropped and the rule read
+ * as wider than it is (the 2026-11-03 Marseille UD run lost 24 of them).
+ */
+export const CONDITION_WINDOW_AFTER = 600;
 /** What ends a job at its first chunk: no provider at all, one the account may not use, or none by that id. */
 const REFUSED = new Set(['no_provider_configured', 'provider_not_permitted', 'unknown_provider']);
 /** 096.7's codes worth one retry; any other ends the chunk at once. */
@@ -49,11 +57,19 @@ export const RULE_KINDS = [
 /** The package's floors (`fr-urban-rules/src/index.js`, `MINIMUM_KINDS`); the rest are caps. */
 export const MINIMUM_KINDS = new Set(['road_setback', 'boundary_setback', 'building_distance', 'green_ratio']);
 
-/** DEC-6, `schemaVersion: 1`. */
+/**
+ * Sprint 002.21: the limits a height-limited strip runs along, by the words the model returns
+ * (the extension's band choices, with `_` for `-`).
+ */
+export const STRIP_EDGES = ['all', 'street', 'side', 'rear', 'side_rear'];
+/** The kinds a strip may qualify: a height, in metres. */
+const STRIP_KINDS = new Set(['height_total', 'height_facade']);
+
+/** DEC-6, `schemaVersion: 1` (Sprint 002.21 adds the optional `strip`; a result without it reads as no strip). */
 export const ITEM_SCHEMA = Object.freeze({
   type: 'object',
   additionalProperties: false,
-  required: ['kind', 'sector', 'statement', 'limit', 'conditions', 'exceptions', 'confidence'],
+  required: ['kind', 'sector', 'statement', 'limit', 'strip', 'conditions', 'exceptions', 'confidence'],
   properties: {
     kind: { enum: RULE_KINDS },
     sector: { type: ['string', 'null'], maxLength: 40 },
@@ -97,6 +113,21 @@ export const ITEM_SCHEMA = Object.freeze({
         }
       ]
     },
+    strip: {
+      anyOf: [
+        { type: 'null' },
+        {
+          type: 'object',
+          additionalProperties: false,
+          required: ['depthMetres', 'edges', 'permits'],
+          properties: {
+            depthMetres: { type: 'number', minimum: 0.1, maximum: 50 },
+            edges: { enum: STRIP_EDGES },
+            permits: { type: 'boolean' }
+          }
+        }
+      ]
+    },
     conditions: { type: 'array', maxItems: 6, items: { type: 'string', maxLength: 400 } },
     exceptions: { type: 'array', maxItems: 6, items: { type: 'string', maxLength: 400 } },
     confidence: { enum: ['high', 'medium', 'low'] }
@@ -106,13 +137,14 @@ export const ITEM_SCHEMA = Object.freeze({
 /**
  * DEC-7. A change of wording raises PROMPT_VERSION: 2 since the 002.5b
  * review (JSON null for no sector, `other` for a rule that fits no kind, the
- * band of constructibility is not a setback).
+ * band of constructibility is not a setback), 3 since Sprint 002.21 (the strip of a height limit).
  */
 export const INSTRUCTIONS = [
   'The text is one zone chapter of a French local planning regulation (règlement de PLU). List every rule it sets on building, one item per rule and per sector.',
   'kind — road_setback: distance from the road or public space (voies et emprises publiques); boundary_setback: distance from the side or rear plot boundaries (limites séparatives); building_distance: distance between buildings on one plot; footprint_ratio: emprise au sol; floor_area_max: maximum floor area (surface de plancher); extension_max: limit on extending an existing building; annex_max: limit on annexes; height_total: maximum total height (hauteur maximale, au faîtage); height_facade: maximum façade height (hauteur de façade); green_ratio: minimum planted or open-ground share (pleine terre, espaces verts); parking: parking requirements; other: any other rule. If a rule fits no kind, use other. The depth of a band of constructibility (bande de constructibilité) is not a setback: it is other.',
   'statement — limit: the text sets a value (fill limit); not_regulated: the text says the matter is not regulated (« n\'est pas réglementé »), return these, never omit them; see_graphic: the value is given on the graphic documents (« figure aux documents graphiques »); described: a rule in words with no value. For not_regulated, see_graphic and described, limit is null.',
   'limit — value: a number with its unit as written (m, m2 or percent), never converted, never computed; comparison is min for « au moins », « minimum », and max for « au plus », « maximum », « ne peut excéder ». ratio: a percentage of a base. height_relative: a distance against a height, as « R ≥ Hf - 4 m, avec un minimum de 2 mètres » (reference facade_height, factor 1, offsetMetres -4, minimumMetres 2) or « D ≥ Hf/2 » (factor 0.5).',
+  'strip — null, except for a height limit (height_total or height_facade) that holds only within a strip along the plot limits, as « dans une bande de 0 à 4 mètres à compter de la limite séparative » or « sur une profondeur de 5 mètres ». Then { depthMetres: the strip\'s width from the limit as the text writes it (4 for « de 0 à 4 mètres »), edges: all, street (alignment, voies), side (limites latérales), rear (limite de fond de parcelle) or side_rear (limites séparatives), permits: true when the text lets a construction stand in the strip on condition of that height — a derogation from a setback — and false when it only limits the height there }. A sentence that sets a setback and lets lower constructions stand within it is two items: the setback, and the height limit with its strip (permits true). A height limit that holds only in a strip never comes without its strip.',
   'sector — the sector the rule applies to, spelled as the text spells it (« UCe1b »), or JSON null (not the word "null") when it applies to the whole zone. When the same sentence applies to several sectors, return one item per sector.',
   'passage — one contiguous quotation from the text, copied exactly, that states the rule: the sentence, not a paraphrase.',
   'conditions and exceptions — short phrases copied exactly from the text just before or in the passage (« Dans le secteur UCe1b »), never reworded; empty when there are none.',
@@ -258,6 +290,29 @@ function sectorHeadingBefore(prepared, offset) {
 const WEAKEST = ['prompt', 'json', 'schema'];
 
 /**
+ * Sprint 002.21: the strip a model claimed, if the item can carry one — a height in metres, said as
+ * a limit — and the text writes its depth (the same test as a limit's value). `null` otherwise.
+ */
+export function verifiedStrip(value, passage) {
+  const strip = value.strip;
+  if (
+    strip === null ||
+    typeof strip !== 'object' ||
+    !STRIP_KINDS.has(value.kind) ||
+    value.statement !== 'limit' ||
+    value.limit?.kind !== 'value' ||
+    value.limit.unit !== 'm' ||
+    !(typeof strip.depthMetres === 'number' && strip.depthMetres >= 0.1 && strip.depthMetres <= 50) ||
+    !STRIP_EDGES.includes(strip.edges) ||
+    typeof strip.permits !== 'boolean'
+  )
+    return null;
+  const written = numbersIn(passage);
+  if (!written.some((w) => Math.abs(w - strip.depthMetres) < 1e-9)) return null;
+  return { depthMetres: strip.depthMetres, edges: strip.edges, permits: strip.permits };
+}
+
+/**
  * One 096.7 item, checked and placed. `{ rule }` or `{ drop: <counter> }`.
  *
  * @param {{ prepared, chunk: { base, text }, normalisedChunk, item, sectors: Set<string>, dropped }} context
@@ -269,6 +324,19 @@ export function placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes,
     return undefined;
   }
   let confidence = ['high', 'medium', 'low'].includes(value.confidence) ? value.confidence : 'low';
+  // Sprint 002.21: a strip is a claim about the text, checked like a limit's value.
+  let strip = null;
+  if (value.strip !== undefined && value.strip !== null) {
+    strip = verifiedStrip(value, item.passage.text);
+    if (strip === null) {
+      // A height the text holds to a strip, read without it, would be a limit on the whole
+      // building: it stays a statement in words, never a number the plot is measured by.
+      dropped.stripNotInPassage = (dropped.stripNotInPassage ?? 0) + 1;
+      value.statement = 'described';
+      value.limit = null;
+      confidence = 'low';
+    }
+  }
 
   // DEC-5: the occurrence.
   let occurrences = [{ start: item.passage.start, end: item.passage.end }];
@@ -299,7 +367,7 @@ export function placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes,
   // DEC-6: conditions and exceptions, verbatim within the window.
   const heading = sectorHeadingBefore(prepared, start);
   const windowStart = Math.max(heading?.lineStart ?? 0, start - CONDITION_WINDOW, 0);
-  const window = normaliseText(prepared.text.slice(windowStart, end));
+  const window = normaliseText(prepared.text.slice(windowStart, Math.min(prepared.text.length, end + CONDITION_WINDOW_AFTER)));
   /** The phrase as the text writes it (a slice of the source), or `undefined`. */
   const verbatim = (phrase) => {
     const needle = normalisePassage(phrase);
@@ -333,6 +401,8 @@ export function placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes,
     sector: value.sector,
     statement: value.statement,
     limit: value.limit,
+    // Absent unless the text holds the height to a strip: a result of the earlier prompt reads the same.
+    ...(strip === null ? {} : { strip }),
     page: pageAt(prepared, start),
     article: article?.number ?? null,
     passage: prepared.text.slice(start, end),
@@ -346,7 +416,7 @@ export function placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes,
 }
 
 function ruleKey(rule) {
-  return JSON.stringify([rule.kind, rule.sector, rule.limit, normalisePassage(rule.passage)]);
+  return JSON.stringify([rule.kind, rule.sector, rule.limit, rule.strip, normalisePassage(rule.passage)]);
 }
 
 /**

@@ -1023,6 +1023,12 @@ test('002.19 criterion 5: a Site with no boundary says so and draws nothing; a b
   assert.ok(
     report.sheet.blocks.some((b) => b.kind === 'plot-plan' && b.categories.includes('envelope'))
   );
+  // Platform 103.6: the areas taken out reach paper by the same block — it asks for `prescription`,
+  // and the host draws a derived one in red — so the sheet needs no category of its own for them.
+  assert.ok(
+    report.sheet.blocks.some((b) => b.kind === 'plot-plan' && b.categories.includes('prescription'))
+  );
+  assert.ok(report.features.some((f) => f.category === 'prescription' && f.official === false));
   assert.ok(report.features.length <= 1900);
 });
 

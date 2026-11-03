@@ -970,6 +970,48 @@ const WRITTEN_NOT_OFFERED_KEYS = {
   rnu: 'fr-urban-rules.written.notOffered.rnu'
 };
 
+/**
+ * Sprint 002.21: the limits a strip along the plot runs along, by the service's word and by the
+ * band choice it is (`BAND_EDGES`' key).
+ */
+const STRIP_CHOICES = {
+  all: 'all',
+  street: 'street',
+  side: 'side',
+  rear: 'rear',
+  side_rear: 'side-rear'
+};
+/** The kinds whose limit a strip may qualify: a height in metres. */
+const STRIP_KINDS = new Set(['height_total', 'height_facade']);
+
+/**
+ * Sprint 002.21: a strip as the service sent it — `{ depthMetres, edges, permits }` — read as
+ * `{ depth, edges (a band choice), permits }`, for a height in metres only; `undefined` otherwise.
+ */
+function checkedStrip(raw, kind, limit) {
+  if (!isRecord(raw) || !STRIP_KINDS.has(kind)) return undefined;
+  if (limit?.kind !== 'value' || limit.unit !== 'm' || limit.comparison !== 'max') return undefined;
+  if (typeof raw.edges !== 'string' || !Object.hasOwn(STRIP_CHOICES, raw.edges)) return undefined;
+  if (!(finiteAtLeast(raw.depthMetres, 0.1) && raw.depthMetres <= BAND_MAX_DEPTH)) return undefined;
+  if (typeof raw.permits !== 'boolean') return undefined;
+  return { depth: raw.depthMetres, edges: STRIP_CHOICES[raw.edges], permits: raw.permits };
+}
+
+/**
+ * Sprint 002.21: the words that put a height in a strip along the limits (« dans une bande de 0 à
+ * 4 mètres », « sur une profondeur de 5 m », « dans les 3 premiers mètres », « à moins de 5 m des
+ * limites »). A height limit written so, read **without** a strip — a result of the earlier prompt,
+ * or a model that missed it — is a limit on part of the building; as a plain height it would be one
+ * on the whole of it, so it stays a statement in words until it is read again.
+ */
+const STRIP_WORDS = [
+  /\bbandes?\s+(?:de\s+|d['’]\s*)?(?:0\s*(?:à|a|et)\s*)?\d/iu,
+  /\bprofondeur\s+(?:maximale\s+|minimale\s+)?(?:de|d['’])\s*\d/iu,
+  /\b(?:dans|sur)\s+les\s+\d+(?:[.,]\d+)?\s*(?:premiers?\s+)?m[èe]tres?/iu,
+  /\bà\s+moins\s+de\s+\d+(?:[.,]\d+)?\s*(?:m\b|m[èe]tres?)\s+(?:de|des)\s+(?:la\s+|les\s+)?limites?/iu
+];
+const mentionsStrip = (text) => STRIP_WORDS.some((re) => re.test(String(text).normalize('NFKC')));
+
 /** One service rule, checked field by field; `undefined` when it is not 002.5b's shape. */
 function checkedServiceRule(item, documentPages) {
   if (item === null || typeof item !== 'object') return undefined;
@@ -1027,11 +1069,17 @@ function checkedServiceRule(item, documentPages) {
     Array.isArray(list)
       ? list.filter((x) => typeof x === 'string' && x.trim() !== '').slice(0, 6)
       : [];
+  // Sprint 002.21: a height held to a strip along the limits. A result read before it (prompt
+  // version 2) has none; a claim this cannot carry is kept as a claim, never read as a plain height.
+  const strip =
+    item.strip === undefined || item.strip === null ? undefined : checkedStrip(item.strip, item.kind, limit);
   return {
     kind: item.kind,
     sector: item.sector,
     statement: item.statement,
     limit,
+    ...(strip === undefined ? {} : { strip }),
+    ...(item.strip !== undefined && item.strip !== null && strip === undefined ? { stripRefused: true } : {}),
     page: item.page,
     article:
       typeof item.article === 'string' && item.article.trim() !== ''
@@ -2060,6 +2108,16 @@ function storedResultOf(result, zone) {
       sector: rule.sector,
       statement: rule.statement,
       limit: serviceLimit(rule.limit),
+      ...(rule.strip === undefined
+        ? {}
+        : {
+            strip: {
+              depthMetres: rule.strip.depth,
+              edges: Object.keys(STRIP_CHOICES).find((k) => STRIP_CHOICES[k] === rule.strip.edges),
+              permits: rule.strip.permits
+            }
+          }),
+      ...(rule.stripRefused === true ? { strip: { refused: true } } : {}),
       page: rule.page,
       ...(rule.article === undefined ? {} : { article: rule.article }),
       passage: rule.passage,
@@ -4518,6 +4576,8 @@ export function createReader({
         typezone: z.typezone,
         nomfic: z.nomfic
       })),
+      // Sprint 002.22: the commune's name, which rules stated for other communes are told apart by.
+      ...(state.municipality?.name ? { commune: state.municipality.name } : {}),
       // Sprint 002.6a: what a read from the cache needs to ask the zones' chapters.
       partition: state.document?.partition,
       documentName: state.document?.name,
@@ -5891,7 +5951,8 @@ function sectionOf(raw) {
     ['confirmations', isConfirmation],
     ['entered', isEntered],
     ['exclusionChoices', isExclusionChoice],
-    ['exclusionsHidden', isExclusionsHidden]
+    ['exclusionsHidden', isExclusionsHidden],
+    ['broughtBack', isBroughtBack]
   ]) {
     if (raw[member] !== undefined && (!Array.isArray(raw[member]) || !raw[member].every(valid))) {
       return { section: raw, readOnly: true };
@@ -6409,6 +6470,179 @@ function isBand(band) {
   );
 }
 
+// ── Sprint 002.21: a written height held to a strip along the limits ────────────
+
+const WRITTEN_SETBACK_KINDS = new Set(['road_setback', 'boundary_setback']);
+/** A strip's rule label, by the height it limits (the rule's kind is `other`, as an entered band's is). */
+const STRIP_LABEL_KEYS = {
+  height_total: 'fr-urban-rules.written.kind.heightStrip',
+  height_facade: 'fr-urban-rules.written.kind.facadeStrip'
+};
+/**
+ * The words a strip's rule says beside its limit: which limits and how deep (the entered band's
+ * sentence), and — when the text lets a construction stand in it — that it is a derogation.
+ */
+function stripConditions(strip) {
+  return [
+    { key: BAND_EDGES[strip.edges].condition, params: { depth: mm(strip.depth) } },
+    ...(strip.permits ? [{ key: 'fr-urban-rules.written.stripPermits' }] : [])
+  ];
+}
+/** A strip as a confirmation stores it, checked: `{ depth, edges, permits, of }` or `undefined`. */
+function storedStripOf(raw) {
+  if (!isRecord(raw)) return undefined;
+  if (!Object.hasOwn(BAND_EDGES, raw.edges) || !STRIP_KINDS.has(raw.of)) return undefined;
+  if (!(finiteAtLeast(raw.depth, 0.1) && raw.depth <= BAND_MAX_DEPTH) || typeof raw.permits !== 'boolean')
+    return undefined;
+  return { depth: raw.depth, edges: raw.edges, permits: raw.permits, of: raw.of };
+}
+
+// ── Sprint 002.22: candidate rules decided automatically ─────────────────────────
+
+/** A zone or sector code as the règlement writes one: two to four capitals, then a letter or digit or two. */
+const SECTOR_CODE = /^[A-Z]{2,4}[a-z]?\d?[a-z]?\d?$/u;
+/**
+ * Sprint 002.22 (a): a rule of a sector is **positively** another sector's when both are codes and
+ * neither is the beginning of the other (`UDa2` against a plot in `UDa1`; `UDa` and `UD` overlap
+ * with `UDa1` and are kept). Anything that is not a code (a word the model put there) decides nothing.
+ */
+const sectorsDiffer = (sector, zone) => {
+  if (typeof sector !== 'string' || typeof zone !== 'string') return false;
+  const a = sector.normalize('NFKC').replace(/\s+/gu, '');
+  const b = zone.normalize('NFKC').replace(/\s+/gu, '');
+  if (!SECTOR_CODE.test(a) || !SECTOR_CODE.test(b)) return false;
+  return !a.toLowerCase().startsWith(b.toLowerCase()) && !b.toLowerCase().startsWith(a.toLowerCase());
+};
+/** A place's name as a key: no accent, no case, no space, no hyphen, no apostrophe. */
+const nameKey = (name) =>
+  String(name)
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/gu, '');
+const COMMUNE_LIST =
+  /\b(?:pour|dans)\s+(?:les\s+communes?|la\s+commune)\s+(?:de\s+|d['’]\s*|du\s+|des\s+)?:?\s*([^]+)$/iu;
+/** The commune names a condition lists (« pour les communes de : A, B et C »), as keys; `undefined` when it lists none. */
+function communesIn(text) {
+  const match = COMMUNE_LIST.exec(String(text).normalize('NFKC'));
+  if (match === null) return undefined;
+  const names = match[1]
+    .split(/\s*(?:,|;|\bet\b)\s*/iu)
+    .map(nameKey)
+    .filter((name) => name !== '');
+  return names.length === 0 ? undefined : names;
+}
+const CROSS_REFERENCE = /\bse\s+reporter\b|\bse\s+r[ée]f[ée]rer\b|\bvoir\s+(?:l['’]\s*|les\s+)?articles?\b/iu;
+const A_NUMBER_WITH_UNIT = /\d[\d\s.,]*\s*(?:m\b|m2|m²|m[èe]tres?|%|pour\s*cent|places?)/iu;
+/**
+ * Sprint 002.22: what the system can decide about a candidate with certainty, from facts it holds —
+ * the plot's zone and its commune — and the candidate itself. `{ decision, reason }` with `decision`
+ * `ruled_out` (it is about something else: another sector, other communes) or `informational` (a
+ * reference to another article, or the règlement saying the matter is not regulated); `undefined`
+ * when there is doubt. It never decides that a rule applies: only a person confirms.
+ */
+function triageOf({ item, zone, commune }) {
+  if (item.statement === 'not_regulated')
+    return { decision: 'informational', reason: { key: 'fr-urban-rules.triage.reason.notRegulated' } };
+  if (
+    item.statement === 'described' &&
+    item.kind === 'other' &&
+    item.passage.length <= 600 &&
+    CROSS_REFERENCE.test(item.passage) &&
+    !A_NUMBER_WITH_UNIT.test(item.passage)
+  )
+    return { decision: 'informational', reason: { key: 'fr-urban-rules.triage.reason.crossReference' } };
+  if (item.sector !== null && sectorsDiffer(item.sector, zone))
+    return {
+      decision: 'ruled_out',
+      reason: { key: 'fr-urban-rules.triage.reason.sector', params: { sector: item.sector, zone } }
+    };
+  if (typeof commune === 'string' && commune !== '') {
+    const mine = nameKey(commune);
+    const lists = item.conditions.map(communesIn).filter((names) => names !== undefined);
+    const absent = (names) => !names.some((n) => n === mine || n.startsWith(mine) || mine.startsWith(n));
+    // « Positively absent »: every list this candidate states leaves the commune out, and the commune
+    // is named nowhere in its passage either (a list cut short by a length limit decides nothing).
+    if (
+      mine !== '' &&
+      lists.length > 0 &&
+      lists.every(absent) &&
+      !nameKey(item.passage).includes(mine)
+    )
+      return {
+        decision: 'ruled_out',
+        reason: { key: 'fr-urban-rules.triage.reason.commune', params: { commune } }
+      };
+  }
+  return undefined;
+}
+/**
+ * Sprint 002.22 (e): the same text read for several sectors is one card showing them. Per zone:
+ * which candidates fold into another (`drop`) and which sectors a kept one stands for (`also`). A
+ * candidate with a decision already stored stands for the others and is never folded away.
+ */
+function foldedSectors(rules, keys, zone, keep) {
+  const groups = new Map();
+  rules.forEach((item, index) => {
+    if (keys[index] === undefined) return;
+    const identity = JSON.stringify([
+      item.kind,
+      item.statement,
+      item.limit,
+      item.strip ?? null,
+      sectorsDiffer(item.sector, zone),
+      // One occurrence of the text: two of the same sentence on two pages are two rules (`~2`).
+      item.page,
+      normalisedPassage(item.passage),
+      item.conditions.map(normalisedPassage),
+      item.exceptions.map(normalisedPassage)
+    ]);
+    groups.set(identity, [...(groups.get(identity) ?? []), index]);
+  });
+  const folded = new Map();
+  for (const members of groups.values()) {
+    if (members.length < 2) continue;
+    const standing = members.find((index) => keep.has(keys[index])) ?? members[0];
+    const also = [
+      ...new Set(
+        members
+          .filter((index) => index !== standing)
+          .map((index) => rules[index].sector)
+          .filter((sector) => typeof sector === 'string' && sector !== rules[standing].sector)
+      )
+    ];
+    for (const index of members) if (index !== standing) folded.set(index, { drop: true });
+    folded.set(standing, { also });
+  }
+  return folded;
+}
+/** A written rule's rank in the list of what is left to decide: what shapes the area first. */
+const RULE_RANK = {
+  road_setback: 0,
+  boundary_setback: 0,
+  building_distance: 0,
+  height_total: 0,
+  footprint_ratio: 1,
+  floor_area_max: 1,
+  green_ratio: 1,
+  extension_max: 1,
+  annex_max: 1,
+  height_facade: 1
+};
+const ruleRank = (rule, info) =>
+  info?.provenance === 'entered'
+    ? -1
+    : info?.band !== undefined
+      ? 0
+      : (RULE_RANK[rule.kind] ?? (rule.statement === 'described' ? 3 : 2));
+const isBroughtBack = (entry) =>
+  entry !== null &&
+  typeof entry === 'object' &&
+  typeof entry.ruleKey === 'string' &&
+  typeof entry.idurba === 'string' &&
+  typeof entry.datvalid === 'string' &&
+  (entry.plot === undefined || Array.isArray(entry.plot));
+
 // ── Sprint 002.17: the exclusion areas of the buildable area ────────────────────
 
 /**
@@ -6607,7 +6841,8 @@ const UNDO_KEYS = {
   'set-exclusion': 'fr-urban-rules.undo.exclusion',
   'forget-exclusion': 'fr-urban-rules.undo.exclusion',
   'show-exclusions': 'fr-urban-rules.undo.exclusion',
-  'hide-exclusions': 'fr-urban-rules.undo.exclusion'
+  'hide-exclusions': 'fr-urban-rules.undo.exclusion',
+  'bring-back': 'fr-urban-rules.undo.bringBack'
 };
 
 /** A version as stored and compared (DEC-4): `idurba` upper-cased, `datvalid` as read. */
@@ -8738,7 +8973,55 @@ function createRnu({
    */
   function rulesView(planned, readOnly, writtenBlocks = []) {
     const blocks = [{ kind: 'meter', rules: true }];
-    if (planned.rules.length > 0) blocks.push({ kind: 'rules' });
+    // Sprint 002.22: the rules decided automatically are folded under their own heading, and what is
+    // left to decide is listed with what shapes the area first.
+    const auto = planned.autoDecided ?? new Map();
+    const stillOpen = planned.rules
+      .map((rule, index) => ({ rule, index, rank: ruleRank(rule, planned.meta.get(rule.id)) }))
+      .filter(({ rule }) => !auto.has(rule.id))
+      .sort((a, b) => a.rank - b.rank || a.index - b.index)
+      .map(({ rule }) => rule);
+    if (auto.size === 0) {
+      if (planned.rules.length > 0) blocks.push({ kind: 'rules' });
+    } else {
+      const decidedRules = planned.rules.filter((rule) => auto.has(rule.id));
+      const ruledOut = decidedRules.filter((rule) => auto.get(rule.id).decision === 'ruled_out').length;
+      blocks.push({
+        kind: 'notice',
+        tone: 'info',
+        text: {
+          key: 'fr-urban-rules.triage.notice',
+          params: { count: auto.size, left: stillOpen.length }
+        }
+      });
+      if (stillOpen.length > 0) blocks.push({ kind: 'rules', ids: stillOpen.map((rule) => rule.id) });
+      blocks.push({
+        kind: 'section',
+        id: 'decided-automatically',
+        title: { key: 'fr-urban-rules.triage.heading', params: { count: auto.size } },
+        icon: 'rules',
+        summary: {
+          value: {
+            key: 'fr-urban-rules.triage.summary',
+            params: { ruledOut, informational: auto.size - ruledOut }
+          }
+        },
+        blocks: [
+          { kind: 'notice', tone: 'info', text: { key: 'fr-urban-rules.triage.explain' } },
+          { kind: 'rules', ids: decidedRules.map((rule) => rule.id) },
+          ...(readOnly
+            ? []
+            : [
+                {
+                  kind: 'actions',
+                  actions: decidedRules
+                    .flatMap((rule) => planned.actionsFor(rule))
+                    .slice(0, MAX_ACTIONS)
+                }
+              ])
+        ]
+      });
+    }
     // 002.6b DEC-2: the written rules' state per zone, under the rules.
     blocks.push(...writtenBlocks);
     if (planned.writtenRead.capped > 0) {
@@ -8770,6 +9053,7 @@ function createRnu({
           : 2;
     const ordered = planned.rules
       .map((rule, index) => ({ rule, index }))
+      .filter(({ rule }) => !auto.has(rule.id))
       .sort((a, b) => rank(a.rule) - rank(b.rule) || a.index - b.index);
     const ruleActions = [];
     let withoutActions = 0;
@@ -9858,7 +10142,7 @@ const edgeLetter = (number) => {
    * readZones, perZone }`: the zones whose extraction reads the current
    * version, and per zone the counts the Rules view says.
    */
-  function writtenRulesOf(written, docBase, version, room = HOST_LIMITS.rules) {
+  function writtenRulesOf(written, docBase, version, room = HOST_LIMITS.rules, context = {}) {
     const items = [];
     const readZones = new Set();
     const perZone = new Map();
@@ -9883,6 +10167,8 @@ const edgeLetter = (number) => {
       let others = 0;
       // Sprint 002.11 DEC-5: one computation of the keys, which a restored rule's stored key joins.
       const keys = writtenKeysOf(result, zone);
+      // Sprint 002.22 (e): the same text read for several sectors is one card.
+      const folded = foldedSectors(result.rules, keys, zone, context.keep ?? new Set());
       for (const [index, item] of result.rules.entries()) {
         const id = keys[index];
         if (id === undefined) {
@@ -9892,25 +10178,47 @@ const edgeLetter = (number) => {
         // Two zones of one chapter read one extraction: its rule is listed once.
         if (seen.has(id)) continue;
         seen.add(id);
+        if (folded.get(index)?.drop === true) continue;
         // Review NIT: never past the host's 1,000 rules; the rest are counted and said.
         if (items.length >= room) {
           capped += 1;
           continue;
         }
         shown += 1;
-        const limit = writtenLimitOf(item);
+        // Sprint 002.21: a height held to a strip is a band; one that says so in words and was read
+        // without its strip is no height to measure the whole building by (it stays in words).
+        const strip = item.strip;
+        const unstructuredStrip =
+          strip === undefined &&
+          (item.stripRefused === true ||
+            (STRIP_KINDS.has(item.kind) &&
+              item.statement === 'limit' &&
+              [item.passage, ...item.conditions].some(mentionsStrip)));
+        const limit = unstructuredStrip
+          ? writtenLimitOf({ statement: 'described', passage: item.passage })
+          : writtenLimitOf(item);
         const low = item.confidence === 'low' || item.sectorUnplaced;
         const citation = {
           page: item.page,
           ...(item.article === undefined ? {} : { article: item.article }),
           passage: cut(item.passage, WRITTEN_PASSAGE_MAX)
         };
+        // A strip's height is `other` (as an entered band's is): the checks, the capacity and the
+        // headroom read `height_total` and would take the strip's height for the building's.
+        const ruleKind = strip === undefined ? item.kind : 'other';
         const rule = {
           id,
           zoneId: `zone:${cut(zone, 64)}`,
-          kind: item.kind,
-          label: { key: WRITTEN_KIND_KEYS[item.kind] },
-          ...(item.statement === 'limit' ? {} : { statement: item.statement }),
+          kind: ruleKind,
+          label: {
+            key:
+              strip === undefined
+                ? WRITTEN_KIND_KEYS[item.kind]
+                : STRIP_LABEL_KEYS[item.kind]
+          },
+          ...(item.statement === 'limit' && !unstructuredStrip
+            ? {}
+            : { statement: unstructuredStrip ? 'described' : item.statement }),
           ...(limit === undefined ? {} : { limit }),
           provenance: 'written',
           status: 'to_confirm',
@@ -9928,6 +10236,16 @@ const edgeLetter = (number) => {
                   ...(item.sector === null ? [] : [{ text: item.sector, lang: 'fr' }])
                 ]
               : []),
+            ...((folded.get(index)?.also ?? []).length === 0
+              ? []
+              : [
+                  {
+                    key: 'fr-urban-rules.written.alsoSectors',
+                    params: { sectors: folded.get(index).also.join(', ') }
+                  }
+                ]),
+            ...(strip === undefined ? [] : stripConditions(strip)),
+            ...(unstructuredStrip ? [{ key: 'fr-urban-rules.written.stripUnstructured' }] : []),
             ...item.conditions.map((text) => ({ text: cut(text, LONG), lang: 'fr' })),
             ...(low ? [{ key: 'fr-urban-rules.written.lowConfidence' }] : [])
           ],
@@ -9954,9 +10272,25 @@ const edgeLetter = (number) => {
                   : undefined,
             provenance: 'written',
             rings: [],
-            kind: item.kind,
+            kind: ruleKind,
             zone,
-            citation
+            citation,
+            ...(strip === undefined
+              ? {}
+              : {
+                  band: { depth: strip.depth, roles: BAND_EDGES[strip.edges].roles },
+                  permits: strip.permits,
+                  stripOf: item.kind,
+                  stripEntry: { depth: strip.depth, edges: strip.edges, permits: strip.permits, of: item.kind }
+                }),
+            ...(unstructuredStrip ? { unstructuredStrip: true } : {}),
+            // Sprint 002.22: what the system decides about it on its own, if anything.
+            ...(() => {
+              const auto = triageOf({ item, zone, commune: context.commune });
+              return auto === undefined ? {} : { auto };
+            })(),
+            // A setback read with an exception the plan cannot draw: said when it is confirmed.
+            ...(WRITTEN_SETBACK_KINDS.has(item.kind) && item.exceptions.length > 0 ? { setbackExceptions: true } : {})
           }
         });
       }
@@ -9968,6 +10302,8 @@ const edgeLetter = (number) => {
   /** DEC-6: a confirmed written rule, from the section alone (no current extraction). */
   function writtenFromSection(entry, docBase) {
     const kind = WRITTEN_KINDS.has(entry.kind) ? entry.kind : 'other';
+    // Sprint 002.21: a confirmed strip stands on the section as it was confirmed.
+    const strip = storedStripOf(entry.strip);
     const page =
       Number.isInteger(entry.citation?.page) && entry.citation.page >= 1
         ? entry.citation.page
@@ -9992,7 +10328,7 @@ const edgeLetter = (number) => {
     const rule = {
       id: entry.ruleKey,
       kind,
-      label: { key: WRITTEN_KIND_KEYS[kind] },
+      label: { key: strip === undefined ? WRITTEN_KIND_KEYS[kind] : STRIP_LABEL_KEYS[strip.of] },
       ...(statement === undefined ? {} : { statement }),
       ...(limit === undefined ? {} : { limit }),
       provenance: 'written',
@@ -10007,6 +10343,7 @@ const edgeLetter = (number) => {
           : { href: page === undefined ? docBase : `${docBase}#page=${page}` })
       },
       conditions: [
+        ...(strip === undefined ? [] : stripConditions(strip)),
         {
           key: 'fr-urban-rules.written.fromSection',
           params: { date: String(entry.at ?? '').slice(0, 10) }
@@ -10016,6 +10353,14 @@ const edgeLetter = (number) => {
     return {
       rule,
       info: {
+        ...(strip === undefined
+          ? {}
+          : {
+              band: { depth: strip.depth, roles: BAND_EDGES[strip.edges].roles },
+              permits: strip.permits,
+              stripOf: strip.of,
+              stripEntry: strip
+            }),
         value:
           limit?.kind === 'value'
             ? limit.quantity.value
@@ -10378,8 +10723,16 @@ const edgeLetter = (number) => {
       written,
       docHref?.split('#')[0],
       currentVersion,
-      Math.max(0, HOST_LIMITS.rules - coded.length - enteredOnPlot)
+      Math.max(0, HOST_LIMITS.rules - coded.length - enteredOnPlot),
+      {
+        commune: reportFacts?.commune,
+        // A card with a decision stored stands for the others of its text, whatever order they come in.
+        keep: new Set(confirmations.filter((c) => onPlot(c, plot)).map((c) => c.ruleKey))
+      }
     );
+    const broughtBack = Array.isArray(section?.broughtBack)
+      ? section.broughtBack.filter(isBroughtBack)
+      : [];
     const relabel =
       read.items.some(
         (r) => r.rule.kind === 'height_facade' && r.rule.statement === 'see_graphic'
@@ -10618,7 +10971,8 @@ const edgeLetter = (number) => {
         rule,
         version: info.version,
         zone: info.zone,
-        citation: info.citation
+        citation: info.citation,
+        ...(info.stripEntry === undefined ? {} : { strip: info.stripEntry })
       });
     }
     // DEC-6: a confirmed written rule with no current extraction stands on the section alone.
@@ -10647,11 +11001,28 @@ const edgeLetter = (number) => {
       else if (!known.has(entry.ruleKey))
         (entry.ruleKey.startsWith('written:') ? staleWritten : stale).push(entry);
     }
+    const autoDecided = new Map();
     const decided = rules.map((rule) => {
       const info = meta.get(rule.id);
       if (info.provenance === 'entered') return rule;
       const entry = confirmations.find((c) => c.ruleKey === rule.id && onPlot(c, plot));
-      if (entry === undefined) return rule;
+      if (entry === undefined) {
+        // Sprint 002.22: decided automatically unless the user brought it back, against this very
+        // version of the document (a new version asks the question again). Never `confirmed`.
+        if (
+          info.auto === undefined ||
+          rule.status !== 'to_confirm' ||
+          broughtBack.some((b) => b.ruleKey === rule.id && onPlot(b, plot) && sameVersion(b, info.version))
+        )
+          return rule;
+        info.autoDecided = true;
+        autoDecided.set(rule.id, info.auto);
+        return {
+          ...rule,
+          status: info.auto.decision === 'ruled_out' ? 'not_applicable' : 'information',
+          conditions: [...(rule.conditions ?? []), info.auto.reason]
+        };
+      }
       if (!sameVersion(entry, info.version)) {
         reopened += 1;
         const byDocument = otherDocument(entry);
@@ -10744,6 +11115,23 @@ const edgeLetter = (number) => {
         };
       }
       if (entry.decision === 'not_applicable') return { ...rule, status: 'not_applicable' };
+      // Sprint 002.21: a height confirmed as the building's whose text holds it to a strip along the
+      // limits (read before strips were read) is asked again once it is read as that — never kept as
+      // a limit on the whole building.
+      if (
+        (info.unstructuredStrip === true && entry.limit?.kind === 'value') ||
+        (info.stripEntry !== undefined &&
+          entry.strip !== undefined &&
+          !info.fromSection &&
+          stableJson(entry.strip) !== stableJson(info.stripEntry))
+      ) {
+        reopened += 1;
+        return {
+          ...rule,
+          status: 'to_confirm',
+          conditions: [...(rule.conditions ?? []), { key: 'fr-urban-rules.written.stripReopened' }]
+        };
+      }
       // 002.6b DEC-6: a written rule is measured by the limit it was confirmed with.
       if (info.provenance === 'written') {
         if (rule.status === 'information' || rule.status === 'not_evaluable') return rule;
@@ -10777,6 +11165,9 @@ const edgeLetter = (number) => {
               info.provenance === 'drawn' ? rule.kind : undefined
             );
       const target = { ruleId: rule.id, subjectId: subject };
+      // Sprint 002.22: a rule decided automatically offers one thing — to bring it back.
+      if (info.autoDecided === true)
+        return [{ id: 'bring-back', label: { key: 'fr-urban-rules.action.bringBack' }, target }];
       const decidedHere = confirmations.some(
         (c) => c.ruleKey === rule.id && onPlot(c, plot) && sameVersion(c, info.version)
       );
@@ -10868,6 +11259,7 @@ const edgeLetter = (number) => {
       stale,
       staleWritten,
       writtenSession: writtenSessionNext,
+      autoDecided,
       writtenRead: read,
       newer,
       foreign,
@@ -11530,6 +11922,9 @@ const edgeLetter = (number) => {
     const presentRoles = new Set(edges.map((e) => roleOf.get(e.edge)?.role));
     for (const rule of planned.rules) {
       const info = planned.meta.get(rule.id) ?? {};
+      // Sprint 002.22: a rule decided automatically is about something else (another sector, other
+      // communes) or a reference: it is in the Rules view, not in the list of what the area did not apply.
+      if (info.autoDecided === true) continue;
       if (rule.status !== 'confirmed') {
         skip(rule, NOT_APPLIED_STATUS[rule.status] ?? 'fr-urban-rules.envelope.reason.notEvaluable');
         continue;
@@ -11550,6 +11945,11 @@ const edgeLetter = (number) => {
         skip(rule, 'fr-urban-rules.envelope.reason.heightFacade');
         continue;
       }
+      // Sprint 002.21: a façade height held to a strip is no ceiling, as a façade height is none.
+      if (info.stripOf === 'height_facade') {
+        skip(rule, 'fr-urban-rules.envelope.reason.heightFacade');
+        continue;
+      }
       if (rule.kind === 'height_total' || info.band !== undefined) {
         const limit = rule.limit;
         if (limit.kind !== 'value' || limit.quantity.unit !== 'm') {
@@ -11563,8 +11963,9 @@ const edgeLetter = (number) => {
             info.provenance === 'drawn' && Array.isArray(info.rings) && info.rings.length > 0
               ? info.rings
               : undefined;
-          // Sprint 002.18 DEC-2: an entered height with a band stands within that band of the limits.
-          const band = info.provenance === 'entered' ? info.band : undefined;
+          // Sprint 002.18 DEC-2: an entered height with a band stands within that band of the limits;
+          // Sprint 002.21: so does a written one, read with its strip and confirmed.
+          const band = info.band;
           if (band !== undefined) {
             within = bandRingsOf(edges, roleOf, band);
             if (within === undefined) {
@@ -11708,6 +12109,34 @@ const edgeLetter = (number) => {
         });
       }
     }
+    // Sprint 002.21: a confirmed strip that lets constructions stand in it, under its height, lifts
+    // the confirmed setbacks it covers — the strip is a height-limited place, not a forbidden one.
+    // A setback deeper than the strip, or on edges the strip does not run along, stays as it is.
+    const permitting = ceilings.filter(
+      (c) => c.band !== undefined && planned.meta.get(c.rule.id)?.permits === true
+    );
+    for (let i = contributions.length - 1; i >= 0 && permitting.length > 0; i -= 1) {
+      const c = contributions[i];
+      const by = permitting.find(
+        (p) =>
+          c.roles.every((role) => p.band.roles.includes(role)) && c.distance <= p.band.depth + 1e-6
+      );
+      if (by === undefined) continue;
+      contributions.splice(i, 1);
+      notApplied.push({
+        rule: c.rule,
+        reason: {
+          key: 'fr-urban-rules.envelope.reason.liftedByStrip',
+          params: { metres: mm(by.ceiling.metres), depth: mm(by.band.depth) }
+        }
+      });
+      say('envelope-setback-lifted', { key: 'fr-urban-rules.assumption.envelopeSetbackLifted' });
+    }
+    // A setback with an exception no number states is drawn in full: stricter than the rule.
+    if (contributions.some((c) => planned.meta.get(c.rule.id)?.setbackExceptions === true))
+      say('envelope-setback-exceptions', {
+        key: 'fr-urban-rules.assumption.envelopeSetbackExceptions'
+      });
     return { contributions, ceilings, notApplied, assumptions, looser };
   }
 
@@ -14468,6 +14897,7 @@ const edgeLetter = (number) => {
       at: now().toISOString(),
       provenance: 'written',
       ...(typeof found.zone === 'string' ? { zone: found.zone } : {}),
+      ...(found.strip === undefined ? {} : { strip: found.strip }),
       citation: found.citation
     };
     return { next: { ...base, confirmations: [...withoutRule(ruleId), entry] } };
@@ -14491,6 +14921,18 @@ const edgeLetter = (number) => {
       isNewerRuleKey(ruleId)
     ) {
       return refuse('fr-urban-rules.edges.changed');
+    }
+    // Sprint 002.22: a rule decided automatically is brought back — one entry per rule and plot,
+    // against the document version read, which a new version lets expire.
+    if (request.actionId === 'bring-back') {
+      if (typeof ruleId !== 'string' || !ruleId.startsWith('written:'))
+        return refuse('fr-urban-rules.edges.changed');
+      const kept = (Array.isArray(section?.broughtBack) ? section.broughtBack : []).filter(
+        (entry) => isBroughtBack(entry) && !(entry.ruleKey === ruleId && onPlot(entry, plot))
+      );
+      return {
+        next: { ...base, broughtBack: [...kept, { ruleKey: ruleId, plot, ...version, at }] }
+      };
     }
     // Sprint 002.6b DEC-4 (B1): a written rule is looked up in the session.
     if (
@@ -16669,6 +17111,11 @@ export const __testing = {
   ADJOINING,
   boundaryEdges,
   insetByRole,
+  triageOf,
+  foldedSectors,
+  sectorsDiffer,
+  communesIn,
+  storedResultOf,
   sheetOf,
   VOLUME_LIMITS,
   PLOT_PLAN_CATEGORIES,

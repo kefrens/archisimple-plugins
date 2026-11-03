@@ -18,6 +18,9 @@ taking any area from the buildable area.
 
 - Reading a band from the règlement: the extraction schema has no such field, and adding one raises `PROMPT_VERSION` and
   `SCHEMA_VERSION`, which discards every cached extraction (milestone Q10). It waits for the AI revamp's model choice.
+  **Done by [Sprint 002.21](sprint-002.21-setback-height-exemption.md) (2026-11-03), at the owner's request:** a band is read from the
+  règlement as the `strip` of a height item and confirmed through the path below; `SCHEMA_VERSION` did not move (the field is optional),
+  so no cached extraction was lost.
 - A check of a building against a band. A band is not a verdict, and no check reads it.
 
 ## Decisions

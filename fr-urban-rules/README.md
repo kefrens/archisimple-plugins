@@ -41,7 +41,9 @@ After Phase 3: **0.9.0** is Sprint [002.11 Planning Snapshot](../docs/sprints/sp
 [002.19 Buildable Area View](../docs/sprints/sprint-002.19-buildable-area-view.md)
 (SDK 1.40 unchanged; platform milestone [Site Buildable Area](../../archisimple/docs/milestones/site-buildable-area/README.md));
 **0.17.0** is Sprint [002.20 Limits Are Proposed, Cut Areas Are Red](../docs/sprints/sprint-002.20-proposed-limits-red-cut-areas.md)
-(SDK 1.40 unchanged; platform 103.4).
+(SDK 1.40 unchanged; platform 103.4); **0.18.0** is Sprints [002.21 A Height Held To A Strip](../docs/sprints/sprint-002.21-setback-height-exemption.md)
+and [002.22 Candidate Rules Decided Automatically](../docs/sprints/sprint-002.22-decided-automatically.md) (SDK 1.40 unchanged; companion
+service 0.5.0).
 
 ## The theoretical buildable area (0.16.0)
 
@@ -64,8 +66,7 @@ confirmed rules and the plan take away, drawn on the plan in one piece or severa
 - **Height bands** (002.18). « N m high within M m of the limits »: a hand-entered height with a depth and the edges it runs
   along (all, street, side, rear, side and rear). It is an entered rule of kind `other` in the report (so no check, headroom
   or capacity reads it as the building's maximum), a `height` ceiling `within` the strip in the volume, and a strip drawn on
-  the plan. It takes no area. Reading a band from the règlement is not done: it would change the extraction's prompt and
-  schema, and discard every cached extraction.
+  the plan. It takes no area. Since 0.18.0 a band is also **read from the règlement** (see below), by the same path.
 - **The view** (002.19): the boundary's area, the area left and its share; **what narrows it** (each cut, its source, the area
   it takes alone; when the cuts overlap, said); **what is left to confirm**; the rules applied and not applied; the assumptions;
   and a caution: theoretical, from the confirmed rules, to be checked against the regulation and the cadastre.
@@ -73,6 +74,22 @@ confirmed rules and the plan take away, drawn on the plan in one piece or severa
   (close to « emprise au sol »); « buildable » only behind « theoretical »; no flag for a design outside the area.
 - **Not clipped to the plot.** The area is worked out inside the Site boundary as drawn; when that goes past the plot, an
   assumption says so.
+
+## A height held to a strip, and what is decided for you (0.18.0)
+
+- **A strip read from the règlement** (002.21). When the written rules say « les constructions de moins de 2 m peuvent s'implanter dans la
+  bande de 5 m » (or Marseille's « dans une bande de 0 à 4 mètres … hauteur totale 4 mètres, hauteur de façade 3,5 mètres »), the height
+  comes with its **strip** — a depth, the limits it runs along, and whether building there is allowed under that height. It is a rule
+  of kind `other` in words (« Hauteur totale dans une bande le long des limites »), confirmed with its value; confirmed, it is a ceiling
+  `within` the strip (the volume steps), and when it permits building there it **lifts the confirmed setbacks it covers**: the strip stays
+  in the area as a height-limited place. A façade height in a strip draws nothing. A height whose words put it in a strip but that was
+  read without one stays in words, and a setback with an exception the plan cannot draw is cut in full and said stricter. Needs the
+  companion service 0.5.0 (prompt version 3: a chapter is read again; « Extract again » is offered for a reading of the earlier prompt).
+- **Decided automatically** (002.22). A candidate of another sector, stated for other communes, a reference to another article or « not
+  regulated » is **ruled out or for information, never confirmed**, folded under « Décidées automatiquement (n) » in the Rules view with
+  its reason, and « Rétablir » puts it back (against the document's version: a new version asks again). When in doubt it stays to
+  confirm. The same text read for several sectors is one card. On Marseille's zone UD a plot in UDa1 goes from 98 candidates to 56 to
+  decide.
 
 ## The model that reads (0.15.0)
 

@@ -1,5 +1,26 @@
 # Changelog — `fr-urban-rules`
 
+## 0.18.0 — Sprints 002.21 and 002.22, A Height Held To A Strip, And Candidates Decided Automatically
+
+- **SDK 1.40** unchanged. Needs the companion service **0.5.0** (prompt version 3) to *read* a strip from the règlement; against an
+  older service everything else works as in 0.17.0, and a height whose words put it in a strip is kept in words.
+- **A height held to a strip (002.21).** « 2 m de haut dans la bande de 5 m » read from the règlement is an `other` rule in words
+  (« Hauteur totale dans une bande le long des limites », its sentence and, when the text lets a construction stand there, « le recul y
+  est levé »), confirmed with its value like any written rule, and a `height` ceiling `within` the strip once confirmed. A confirmed strip
+  that **permits** building in it lifts the confirmed setbacks it covers (the strip is a height-limited place, not a forbidden one): the
+  area keeps the strip, the volume steps, the setback is listed as replaced. A façade height in a strip draws nothing and says so.
+  A height whose words put it in a strip but that was read without one stays in words and is asked again if confirmed; a setback with
+  an exception the plan cannot draw is cut in full and said stricter. The confirmation stores the strip.
+- **Decided automatically (002.22).** A candidate of another sector (neither code begins the other), stated for other communes, a
+  reference to another article, or « not regulated » is decided for the user — ruled out or for information, never confirmed — shown
+  folded under « Décidées automatiquement (n) » with its reason and « Rétablir » on each card. `broughtBack` in the section (validated)
+  records a rétablir against the document's version; a new version asks again. The same text read for several sectors is one card. What
+  is left is listed with what shapes the area first.
+- Strings: `written.kind.heightStrip`, `written.kind.facadeStrip`, `written.stripPermits`, `written.stripUnstructured`,
+  `written.stripReopened`, `written.alsoSectors`, `envelope.reason.liftedByStrip`, `assumption.envelopeSetbackLifted`,
+  `assumption.envelopeSetbackExceptions` (with details), `triage.*`, `action.bringBack`, `undo.bringBack` (en, fr).
+- Tests: `written-strip.test.mjs` (9) and `triage.test.mjs` (11); the Lyon written test counts 14 rules (32 read, the parking text for 5, 4 and 10
+  sectors folded).
 ## 0.17.0 — Sprint 002.20, Limits Are Proposed, Cut Areas Are Red
 
 - **SDK 1.40** unchanged; no service change. Needs the platform's 103.4 to draw the red (an older host draws nothing of it and

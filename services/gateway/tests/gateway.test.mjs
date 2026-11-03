@@ -104,7 +104,7 @@ test('the real services folder mounts com.archisimple.fr-urban-rules, and its he
   assert.deepEqual([...mounted.keys()], ['com.archisimple.fr-urban-rules']);
   const port = await listen(createGateway({ mounted, env: {}, log: capture.log }));
   const health = await get(port, '/plugins-api/com.archisimple.fr-urban-rules/health');
-  assert.deepEqual(health.body, { status: 'ok', packageId: 'com.archisimple.fr-urban-rules', contract: 1, version: '0.4.0' });
+  assert.deepEqual(health.body, { status: 'ok', packageId: 'com.archisimple.fr-urban-rules', contract: 1, version: '0.5.0' });
   assert.equal((await get(port, '/plugins-api/org.example.other/health')).status, 404);
   assert.ok(capture.records.some((r) => r.event === 'log_key_random'), 'an unset log key is said');
 });

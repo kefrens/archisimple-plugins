@@ -108,7 +108,7 @@ test('POST answers 202 before any fetch; the job walks to done; polls show the r
   assert.equal(done.body.state, 'done');
   const { result } = done.body;
   assert.equal(result.schemaVersion, 1);
-  assert.equal(result.promptVersion, 2);
+  assert.equal(result.promptVersion, 3);
   assert.deepEqual(result.chapter.pages, [44, 51]);
   assert.equal(result.document.idurba, 'IDU_1');
   assert.equal(result.rules.length, 1);
@@ -149,7 +149,7 @@ test('cachedOnly never fetches: not_cached without the text, the result with cur
   const none = await cachedOnly(s, 1);
   assert.equal(none.status, 404);
   assert.equal(none.body.error, 'not_cached');
-  assert.deepEqual(none.body.current, { providerId: 'ollama', schemaVersion: 1, promptVersion: 2 });
+  assert.deepEqual(none.body.current, { providerId: 'ollama', schemaVersion: 1, promptVersion: 3 });
   assert.equal(fetcher.documents + fetcher.downloads, 0, 'nothing fetched');
 
   await post(s, 1);

@@ -101,7 +101,10 @@ default, schemaVersion, promptVersion }`, for 002.6b to offer "Extract again".
 - **A rule:** `kind`, `sector`, `statement` (`limit`, `not_regulated`,
   `see_graphic`, `described`), `limit`, `page` and `article` (from the passage's
   offset, never from the model), `passage`, `offset`, `occurrence { of,
-chosenBy }`, `conditions`, `exceptions`, `sectorUnplaced`, `confidence`.
+chosenBy }`, `conditions`, `exceptions`, `sectorUnplaced`, `confidence`, and
+(0.5.0, prompt version 3) `strip` — present only on a height held to a strip
+along the plot's limits: `{ depthMetres, edges: all | street | side | rear |
+side_rear, permits }`; a result without it reads as no strip.
 - **A result is shared by every user of the deployment.** `refresh=1`
   replaces it **for everyone**. A **partial** result (`chunks.failed > 0`) is
   answered to its job and never cached, so the next POST tries again.
@@ -113,10 +116,14 @@ chosenBy }`, `conditions`, `exceptions`, `sectorUnplaced`, `confidence`.
   « graphique », else the rule is dropped (`incoherent`); a rule that lost a
   condition or exception is `low` (`droppedConditions`); kept conditions are
   the source's own spelling; a sector written "null", "none", "aucun", "n/a"
-  is null. Also: a repeated passage takes the occurrence under its sector's
-  heading, else the first at `low` confidence; conditions and exceptions must be
-  verbatim between the sector heading (or 1 500 characters) before the passage
-  and its end; statement, limit and unit must agree, and a comparison against
+  is null. A `strip` is kept only on a `height_total` or `height_facade` that
+  is a `limit` in metres, with a depth of 0.1 to 50 m that the passage writes;
+  else the item is a statement in words (`described`, no limit, `low`), counted
+  under `stripNotInPassage`. Also: a repeated passage takes the occurrence under
+  its sector's heading, else the first at `low` confidence; conditions and
+  exceptions must be verbatim between the sector heading (or 1 500 characters)
+  before the passage and 600 characters after its end (a règlement writes its
+  alternative rules after the rule); statement, limit and unit must agree, and a comparison against
   the package's floors lowers the confidence. What fails is counted in
   `dropped`; a chunk that fails twice is counted in `chunks.failed`.
 - **Chunks** are cut at article headings, at most 40 000 characters (or

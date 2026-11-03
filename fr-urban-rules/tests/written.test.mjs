@@ -688,8 +688,9 @@ test('criterion 4: Lyon UCe1b — the 4 m boundary setback to confirm with page,
     key: 'fr-urban-rules.written.otherSectors',
     params: { count: 1 }
   });
-  assert.deepEqual(fields.rows[0].value.params, { count: 30, from: 121, to: 144 });
-  assert.equal(written.length, 30);
+  // Sprint 002.22 (e): the parking text read for 5, 4 and 10 sectors is one card each — 32 read, 14 shown.
+  assert.deepEqual(fields.rows[0].value.params, { count: 14, from: 121, to: 144 });
+  assert.equal(written.length, 14);
   // An unplaced sector (the parking sectors Aa…E) is kept, said, and low.
   const unplaced = written.find(
     (r) =>
