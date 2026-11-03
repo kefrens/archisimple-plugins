@@ -657,13 +657,17 @@ test('criterion 16: the entry forms declare their unit; the extension takes the 
   assert.equal(forms['add-distance'].fields.find((f) => f.key === 'value').unit, 'm');
   assert.equal(forms['add-ratio'].fields.find((f) => f.key === 'value').unit, 'percent');
   assert.equal(forms['add-area'].fields.find((f) => f.key === 'value').unit, 'm2');
-  for (const form of Object.values(forms)) {
-    assert.ok(form.fields.length <= 6);
+  for (const [id, form] of Object.entries(forms)) {
+    assert.ok(form.fields.length <= 7);
+    // Sprint 002.18: the height band's form has no kind and no statement, and a depth and its edges.
     assert.deepEqual(
       form.fields.map((f) => f.key),
-      ['kind', 'statement', 'value', 'source', 'page', 'note']
+      id === 'add-height-band'
+        ? ['value', 'depth', 'edges', 'source', 'page', 'note']
+        : ['kind', 'statement', 'value', 'source', 'page', 'note']
     );
   }
+  assert.equal(forms['add-height-band'].fields.find((f) => f.key === 'depth').unit, 'm');
   // A project in feet: the host converts 13.12 ft to 4 m before calling; stored as given.
   const section = store(undefined);
   const context = rulesReader('lyon', { section });

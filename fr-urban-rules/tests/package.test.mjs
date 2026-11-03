@@ -32,7 +32,7 @@ const SDK_CATEGORIES = [
 test('criterion 1: the manifest declares an SDK 1.40 extension (002.16: the model chosen in the AI panel, `ai.selectedModel()`; 002.15: the `stat`, `choice` and `section` blocks; 002.14: a flag’s icon, group, title, code and level; 002.13: the plot view, the edge list, the height section, an assumption’s figure) needing `regulations` and, since 002.1a, `document`', () => {
   assert.equal(manifest.id, 'com.archisimple.fr-urban-rules');
   assert.equal(manifest.type, 'extension');
-  assert.equal(manifest.version, '0.15.0');
+  assert.equal(manifest.version, '0.17.0');
   // 1.40 since 002.16: `ai.selectedModel()`, the provider and model chosen in the AI panel (platform
   // 102.11, ADR-0028 Rule 11). 1.39 is the base-map overlay flag (102.3), used by no rule here.
   // 1.38 since 002.15: the `stat`, `choice` and `section` blocks (platform 096.27).
@@ -138,7 +138,7 @@ test('002.12 criterion 5: every assumption has a short title and a detail, in en
   const titles = Object.keys(en).filter(
     (key) => key.startsWith('fr-urban-rules.assumption.') && !key.endsWith('.detail')
   );
-  assert.equal(titles.length, 57);
+  assert.equal(titles.length, 61);
   for (const [language, strings] of [
     ['en', en],
     ['fr', fr]

@@ -216,7 +216,9 @@ test('criterion 12: never « conforme », « autorisé », "compliant", nor the 
   for (const [locale, strings] of Object.entries({ en, fr })) {
     for (const [key, value] of Object.entries(strings)) {
       if (!key.startsWith('fr-urban-rules.sheet.') && !key.startsWith('fr-urban-rules.envelope.')) continue;
-      assert.doesNotMatch(value, /conforme|autoris|compliant|constructible|buildable|allowed/iu, `${locale} ${key}`);
+      // Sprint 002.17: the owner's name for the area is « Theoretical buildable area » (en) — « buildable »
+      // only ever behind « theoretical »; « constructible » stays out in both locales.
+      assert.doesNotMatch(value, /conforme|autoris|compliant|constructible|(?<!theoretical )buildable|allowed/iu, `${locale} ${key}`);
     }
   }
   // The envelope's own label and assumptions: theoretical, never a right.

@@ -35,7 +35,44 @@ After Phase 3: **0.9.0** is Sprint [002.11 Planning Snapshot](../docs/sprints/sp
 (SDK 1.36, platform 096.22); **0.12.0** is Sprint [002.14 PLU Flag Content](../docs/sprints/sprint-002.14-plu-flag-content.md)
 (SDK 1.37, platform 096.25); **0.13.0** is Sprint [002.15 PLU Surfaces Content](../docs/sprints/sprint-002.15-plu-surfaces-content.md)
 (SDK 1.38, platform 096.27); **0.14.0** is Sprint [002.10 Regulation Watch](../docs/sprints/sprint-002.10-regulation-watch.md)
-(SDK 1.38 unchanged; no platform change).
+(SDK 1.38 unchanged; no platform change); **0.15.0** is Sprint [002.16 The PLU Reads With The AI Panel's Model](../docs/sprints/sprint-002.16-plu-reads-with-the-ai-panels-model.md)
+(SDK 1.40, platform 102.11); **0.16.0** is Sprints [002.17 Exclusion Areas](../docs/sprints/sprint-002.17-exclusion-areas.md),
+[002.18 Height Bands](../docs/sprints/sprint-002.18-height-bands.md) and
+[002.19 Buildable Area View](../docs/sprints/sprint-002.19-buildable-area-view.md)
+(SDK 1.40 unchanged; platform milestone [Site Buildable Area](../../archisimple/docs/milestones/site-buildable-area/README.md));
+**0.17.0** is Sprint [002.20 Limits Are Proposed, Cut Areas Are Red](../docs/sprints/sprint-002.20-proposed-limits-red-cut-areas.md)
+(SDK 1.40 unchanged; platform 103.4).
+
+## The theoretical buildable area (0.16.0)
+
+The theoretical envelope's ground is now **the theoretical buildable area** (English « Theoretical buildable area »,
+French « Aire d'implantation théorique »; the 3D volume keeps « Enveloppe théorique »): the Site boundary less what the
+confirmed rules and the plan take away, drawn on the plan in one piece or several, with holes, never stored, never edited by hand.
+
+- **Setbacks** as before (002.7), one cut per edge role in the list, with the rule it comes from.
+- **Exclusion areas** (002.17). The CNIG prescriptions `01` espace boisé classé and `05` emplacement réservé are cut by
+  themselves — each listed with its source and the area it takes on its own. `02` constructibilité limitée and `07`
+  (patrimoine ou paysage) are **proposed** in the area's own view (_since 0.17.0 for `02`: it limits, it does not forbid, and one
+  over a whole plot would empty it_), and every other type with a surface in the Prescriptions view: they take nothing until you
+  say (« Retirer de l'aire »), and your choice is reopened when the document's version changes. Types that are a number or a
+  statement (15, 17, 18, 22, 23, 38, 39, 42, 44) are never offered. A line or a point of a cutting type removes no area and is
+  said; at most 24 areas are cut at once, the rest are said. The choices live in the section's `exclusionChoices` (one Request
+  each, one undo entry).
+- **The areas taken out are red** (002.20). Each one, as far as it lies on the Site boundary, is drawn translucent red on the plan
+  and in 3D (the host's role for a derived `prescription`); « Masquer les zones retirées » hides them (`exclusionsHidden` in the
+  section, per plot, shown by default) and changes no area. The paper sheet does not draw them.
+- **Height bands** (002.18). « N m high within M m of the limits »: a hand-entered height with a depth and the edges it runs
+  along (all, street, side, rear, side and rear). It is an entered rule of kind `other` in the report (so no check, headroom
+  or capacity reads it as the building's maximum), a `height` ceiling `within` the strip in the volume, and a strip drawn on
+  the plan. It takes no area. Reading a band from the règlement is not done: it would change the extraction's prompt and
+  schema, and discard every cached extraction.
+- **The view** (002.19): the boundary's area, the area left and its share; **what narrows it** (each cut, its source, the area
+  it takes alone; when the cuts overlap, said); **what is left to confirm**; the rules applied and not applied; the assumptions;
+  and a caution: theoretical, from the confirmed rules, to be checked against the regulation and the cadastre.
+- **Not a verdict.** Never « zone constructible » (the PLU's legal word for zones U and AU) or « emprise constructible »
+  (close to « emprise au sol »); « buildable » only behind « theoretical »; no flag for a design outside the area.
+- **Not clipped to the plot.** The area is worked out inside the Site boundary as drawn; when that goes past the plot, an
+  assumption says so.
 
 ## The model that reads (0.15.0)
 
@@ -201,8 +238,9 @@ to confirm offers « Confirmer 15 % ». Nothing read, measured or checked change
   a street edge's strip running on along its line past a convex corner (the
   half-plane cut, as 0.6.1 drew on a convex plot), a side or rear limit's ends
   and every re-entrant corner rounded, by tangents just inside the rounded
-  line; setbacks that leave no ground or split the plot, or a result that fails
-  its own check, are refused and said.
+  line; setbacks that leave no ground, or a result that fails its own check, are
+  refused and said. _Since 0.16.0 a setback that splits the plot gives its pieces
+  instead of a refusal._
 - **The volume** (SDK 1.29) hangs off the same `envelope` feature: slopes for
   the height-relative rules (R.111-17 from the side and rear chains, R.111-16
   from the opposite alignments, façade-relative setbacks with their start),
@@ -210,8 +248,10 @@ to confirm offers « Confirmer 15 % ». Nothing read, measured or checked change
   checked against the host's limits before it is sent. The host draws it in 3D.
 - **The « Enveloppe théorique » view** lists the ground area, the confirmed
   heights, the rules applied and not applied with their reasons, and the
-  assumptions. Never "buildable": the checks, not the volume, say whether a
-  design is within the rules.
+  assumptions. _Since 0.16.0 the view is « Aire d'implantation théorique » (see
+  above), still theoretical: « buildable » only behind « theoretical », never
+  « zone constructible », and the checks, not the volume, say whether a design
+  is within the rules._
 - **The regulation sheet** (SDK 1.30): the report declares its blocks — plot,
   flags, checks with the rules not checked, the rules meter, the plot plan,
   assumptions — and its scope sentence; the host prints them with its own header

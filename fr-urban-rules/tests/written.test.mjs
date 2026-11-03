@@ -921,7 +921,9 @@ test('002.7 DEC-2: a confirmed « R ≥ Hf − 4 m, min 2 m » insets the side a
   const extent = [Math.min(...ring.map((q) => q.easting)), Math.max(...ring.map((q) => q.easting)), Math.min(...ring.map((q) => q.northing)), Math.max(...ring.map((q) => q.northing))];
   [2, 18, 0, 28].forEach((expected, i) => assert.ok(Math.abs(extent[i] - expected) < 1e-3, `${extent[i]} vs ${expected}`));
   const view = report.views.find((v) => v.id === 'envelope');
-  const applied = view.blocks.find((b) => b.kind === 'table');
+  const applied = view.blocks.find(
+    (b) => b.kind === 'table' && b.columns[1]?.key === 'fr-urban-rules.envelope.column.effect'
+  );
   assert.ok(
     applied.rows.some(
       (row) =>

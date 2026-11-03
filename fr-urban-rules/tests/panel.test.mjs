@@ -303,7 +303,7 @@ test('criterion 6: what is read, measured and checked is byte-identical to 0.9.0
     assert.deepEqual(report.assumptions.map((a) => a.id), before090[plot].assumptionIds, plot);
     assert.deepEqual(report.assumptions.map((a) => a.text), before090[plot].assumptionTexts, plot);
     for (const assumption of report.assumptions) {
-      // The 57 assumptions of the package's own namespace have a title and a detail; the
+      // The 61 assumptions of the package's own namespace have a title and a detail; the
       // reasons a check was not made (`fr-urban-rules.reason.*`) are short already and stay as they were.
       if (!assumption.text.key?.startsWith(['fr-urban-rules', 'assumption', ''].join('.'))) {
         assert.equal(assumption.detail, undefined, `${plot} ${assumption.id}`);

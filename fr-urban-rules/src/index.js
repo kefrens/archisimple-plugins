@@ -5889,7 +5889,9 @@ function sectionOf(raw) {
   // 002.2's members, likewise: never overwritten in a shape not recognised.
   for (const [member, valid] of [
     ['confirmations', isConfirmation],
-    ['entered', isEntered]
+    ['entered', isEntered],
+    ['exclusionChoices', isExclusionChoice],
+    ['exclusionsHidden', isExclusionsHidden]
   ]) {
     if (raw[member] !== undefined && (!Array.isArray(raw[member]) || !raw[member].every(valid))) {
       return { section: raw, readOnly: true };
@@ -6350,8 +6352,230 @@ const ENTERED_KINDS = {
 const ENTRY_FORMS = {
   'add-distance': { unit: 'm', label: 'fr-urban-rules.entered.addDistance' },
   'add-ratio': { unit: 'percent', label: 'fr-urban-rules.entered.addRatio' },
-  'add-area': { unit: 'm2', label: 'fr-urban-rules.entered.addArea' }
+  'add-area': { unit: 'm2', label: 'fr-urban-rules.entered.addArea' },
+  // Sprint 002.18: « N m high within M m of the limits », an entered height with a band.
+  'add-height-band': { unit: 'm', label: 'fr-urban-rules.entered.addHeightBand', band: true }
 };
+
+/**
+ * Sprint 002.18 DEC-1: which edges a height band runs along, by the choice's value — the roles
+ * and the words (`condition` is the rule's own sentence, `cut` the buildable-area list's).
+ */
+const BAND_EDGES = {
+  all: {
+    roles: ['street', 'side', 'rear'],
+    label: 'fr-urban-rules.band.edges.all',
+    condition: 'fr-urban-rules.rule.bandCondition.all'
+  },
+  street: {
+    roles: ['street'],
+    label: 'fr-urban-rules.band.edges.street',
+    condition: 'fr-urban-rules.rule.bandCondition.street'
+  },
+  side: {
+    roles: ['side'],
+    label: 'fr-urban-rules.band.edges.side',
+    condition: 'fr-urban-rules.rule.bandCondition.side'
+  },
+  rear: {
+    roles: ['rear'],
+    label: 'fr-urban-rules.band.edges.rear',
+    condition: 'fr-urban-rules.rule.bandCondition.rear'
+  },
+  'side-rear': {
+    roles: ['side', 'rear'],
+    label: 'fr-urban-rules.band.edges.sideRear',
+    condition: 'fr-urban-rules.rule.bandCondition.sideRear'
+  }
+};
+/** A band is at most 50 m deep: past that it is the plot, which a height over the plot says. */
+const BAND_MAX_DEPTH = 50;
+const bandEdgesChoice = (band) =>
+  Object.entries(BAND_EDGES).find(
+    ([, edges]) =>
+      edges.roles.length === band.roles.length && edges.roles.every((role) => band.roles.includes(role))
+  )?.[0];
+function isBand(band) {
+  return (
+    band !== null &&
+    typeof band === 'object' &&
+    Number.isFinite(band.depth) &&
+    band.depth > 0 &&
+    band.depth <= BAND_MAX_DEPTH &&
+    Array.isArray(band.roles) &&
+    band.roles.length > 0 &&
+    band.roles.every((role) => EDGE_ROLES.includes(role)) &&
+    bandEdgesChoice(band) !== undefined
+  );
+}
+
+// ── Sprint 002.17: the exclusion areas of the buildable area ────────────────────
+
+/**
+ * DEC-1: the CNIG prescription types whose polygon is cut from the buildable area without being
+ * asked: `01` espace boisé classé and `05` emplacement réservé (owner decision, 2026-11-03).
+ * `overridable` is the way to keep a cut type in the area; no type uses it now. `02`
+ * constructibilité limitée was cut with it until Sprint 002.20 (owner, 2026-11-03): it limits and
+ * does not forbid, and one polygon over a whole plot (a fire-risk zone) took all the ground — it
+ * is **proposed** now, like `07`.
+ */
+const EXCLUSION_APPLIED = { '01': { overridable: false }, '05': { overridable: false } };
+/**
+ * DEC-1: types that are a number or a statement, never a place to keep clear: they are not offered
+ * as exclusions. Any other type with a surface (`07` patrimoine ou paysage, a code this package
+ * does not name) is **proposed**: shown, cutting nothing until the user says so.
+ */
+const EXCLUSION_NEVER = new Set(['15', '17', '18', '22', '23', '38', '39', '42', '44']);
+/** DEC-1: at most this many areas are cut at once (each is one more overlay); the rest are said. */
+const EXCLUSION_MAX = 24;
+/** DEC-4: the area's rings carry at most this many points; past it the area is not drawn, said as its shape. */
+const AREA_POINT_LIMIT = 20_000;
+const EXCLUSION_CHOICES = ['subtract', 'keep'];
+
+/** DEC-2: one user choice on an exclusion area, as stored in `exclusionChoices`. */
+const isExclusionChoice = (entry) =>
+  entry !== null &&
+  typeof entry === 'object' &&
+  typeof entry.key === 'string' &&
+  entry.key !== '' &&
+  entry.key.length <= 200 &&
+  EXCLUSION_CHOICES.includes(entry.choice) &&
+  typeof entry.idurba === 'string' &&
+  typeof entry.datvalid === 'string' &&
+  (entry.plot === undefined || Array.isArray(entry.plot));
+const exclusionChoicesOf = (section) =>
+  Array.isArray(section?.exclusionChoices) ? section.exclusionChoices.filter(isExclusionChoice) : [];
+
+/**
+ * DEC-1 and DEC-2: the exclusion areas of a plot — the drawn prescriptions that cut, or could cut,
+ * the buildable area — each with its state: `applied` (cut), `proposed` (shown, cutting nothing),
+ * `kept` (a `02` the user keeps in the area), `notSurface` (a line or a point: nothing to cut) or
+ * `tooMany` (past {@link EXCLUSION_MAX}). A choice made against another document version is
+ * `reopened`: it decides nothing and the default stands. Pure.
+ */
+function exclusionItemsOf(prescriptions, choices, plot, current) {
+  const items = [];
+  const seen = new Set();
+  for (const prescription of prescriptions ?? []) {
+    const type = String(prescription.type ?? '');
+    if (EXCLUSION_NEVER.has(type)) continue;
+    const applied = Object.hasOwn(EXCLUSION_APPLIED, type);
+    const geometry = prescription.geometry;
+    const rings = (geometry?.kind === 'surface' ? geometry.rings : undefined)?.filter(
+      (ring) => Array.isArray(ring) && ring.length >= 3
+    );
+    const surface = Array.isArray(rings) && rings.length > 0;
+    // A proposed type matters as a surface only; the others are in the prescriptions view already.
+    if (!surface && !applied) continue;
+    const key = drawnKey(prescription);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const entry = choices.find((c) => c.key === key && onPlot(c, plot));
+    const active = entry !== undefined && sameVersion(entry, current) ? entry : undefined;
+    let state;
+    if (!surface) state = 'notSurface';
+    else if (applied) state = EXCLUSION_APPLIED[type].overridable && active?.choice === 'keep' ? 'kept' : 'applied';
+    else state = active?.choice === 'subtract' ? 'applied' : 'proposed';
+    items.push({
+      key,
+      type,
+      state,
+      reopened: entry !== undefined && active === undefined,
+      chosen: active?.choice,
+      overridable: applied && EXCLUSION_APPLIED[type].overridable,
+      unconverted: geometry?.unconverted === true,
+      label: String(prescription.libelle || prescription.txt || type),
+      rings: surface ? rings : undefined
+    });
+  }
+  // The sure ones first, then the user's own, so the cap leaves the proposals out.
+  const order = { applied: 0, kept: 1, proposed: 2, notSurface: 3, tooMany: 4 };
+  items.sort((a, b) => order[a.state] - order[b.state]);
+  let cut = 0;
+  for (const item of items) {
+    if (item.state !== 'applied') continue;
+    cut += 1;
+    if (cut > EXCLUSION_MAX) item.state = 'tooMany';
+  }
+  return items;
+}
+
+/** DEC-2: the next section with a choice on one exclusion area; one entry per area and plot. */
+function withExclusionChoice(section, plot, key, choice, version, at) {
+  const kept = exclusionChoicesOf(section).filter((e) => !(e.key === key && samePlot(e.plot, plot)));
+  return {
+    ...(section ?? {}),
+    schema: SECTION_SCHEMA,
+    exclusionChoices: [...kept, { key, plot, choice, ...version, at }]
+  };
+}
+function withoutExclusionChoice(section, plot, key) {
+  const list = exclusionChoicesOf(section);
+  const kept = list.filter((e) => !(e.key === key && samePlot(e.plot, plot)));
+  if (kept.length === list.length) return undefined;
+  return { ...(section ?? {}), schema: SECTION_SCHEMA, exclusionChoices: kept };
+}
+
+/**
+ * Sprint 002.20: the plots whose cut areas the user has hidden — one entry per plot, kept in the
+ * section with the other per-plot choices. Shown is the default, so only a hidden plot is stored.
+ */
+const isExclusionsHidden = (entry) =>
+  entry !== null &&
+  typeof entry === 'object' &&
+  Array.isArray(entry.plot) &&
+  entry.plot.every((id) => typeof id === 'string');
+const exclusionsHiddenOf = (section) =>
+  Array.isArray(section?.exclusionsHidden)
+    ? section.exclusionsHidden.filter(isExclusionsHidden)
+    : [];
+/** Whether the plot's cut areas are drawn: yes unless the user hid them. */
+const exclusionsShownOn = (section, plot) =>
+  !exclusionsHiddenOf(section).some((entry) => samePlot(entry.plot, plot));
+function withExclusionsShown(section, plot, shown, at) {
+  const kept = exclusionsHiddenOf(section).filter((entry) => !samePlot(entry.plot, plot));
+  return {
+    ...(section ?? {}),
+    schema: SECTION_SCHEMA,
+    exclusionsHidden: shown ? kept : [...kept, { plot, at }]
+  };
+}
+
+/** DEC-2: an exclusion action's subject — the area's key, the choice and the document version read. */
+const exclusionSubject = (item, choice, current) =>
+  `k=${subjectPart(item.key)}|c=${choice}|i=${subjectPart(current.idurba)}|d=${subjectPart(current.datvalid)}`;
+
+/**
+ * DEC-2: the types the buildable-area view itself puts to the user (`07`, the one the owner named,
+ * and, since Sprint 002.20, `02`: it is the view that explains what each takes of the plot);
+ * every other proposed type is put in the Prescriptions view, one action each, and cuts nothing
+ * until it is taken.
+ */
+const EXCLUSION_PUT_IN_AREA_VIEW = new Set(['07', '02']);
+
+/**
+ * DEC-2: the Prescriptions view's blocks for the areas that could be taken out of the buildable
+ * area and are not asked for in its own view — a heading, a line saying they cut nothing yet, and
+ * one action each. Empty when there is none.
+ */
+function prescriptionChoiceBlocks(exclusions, current) {
+  const proposed = exclusions.filter(
+    (item) => item.state === 'proposed' && !EXCLUSION_PUT_IN_AREA_VIEW.has(item.type)
+  );
+  if (proposed.length === 0) return [];
+  return [
+    { kind: 'heading', text: { key: 'fr-urban-rules.area.heading.prescriptions' } },
+    { kind: 'notice', tone: 'info', text: { key: 'fr-urban-rules.area.notice.proposed' } },
+    {
+      kind: 'actions',
+      actions: proposed.slice(0, MAX_ACTIONS).map((item) => ({
+        id: 'set-exclusion',
+        label: { key: 'fr-urban-rules.area.action.subtract', params: { name: cut(item.label, 80) } },
+        target: { subjectId: exclusionSubject(item, 'subtract', current) }
+      }))
+    }
+  ];
+}
 
 /** Sprint 002.10 DEC-3: the overview's line for confirmations made against an earlier document. */
 const NEW_DOCUMENT_VERSION_KEY = 'fr-urban-rules.notice.newDocumentVersion';
@@ -6378,7 +6602,12 @@ const UNDO_KEYS = {
   'sdp-none': 'fr-urban-rules.undo.surfaces',
   'sdp-building': 'fr-urban-rules.undo.surfaces',
   'set-edge-role': 'fr-urban-rules.undo.edgeRole',
-  'forget-edge-role': 'fr-urban-rules.undo.edgeRole'
+  'forget-edge-role': 'fr-urban-rules.undo.edgeRole',
+  'add-height-band': 'fr-urban-rules.undo.addRule',
+  'set-exclusion': 'fr-urban-rules.undo.exclusion',
+  'forget-exclusion': 'fr-urban-rules.undo.exclusion',
+  'show-exclusions': 'fr-urban-rules.undo.exclusion',
+  'hide-exclusions': 'fr-urban-rules.undo.exclusion'
 };
 
 /** A version as stored and compared (DEC-4): `idurba` upper-cased, `datvalid` as read. */
@@ -6448,7 +6677,8 @@ const isEntered = (entry) =>
   typeof entry === 'object' &&
   typeof entry.key === 'string' &&
   Object.hasOwn(ENTERED_KINDS, entry.kind) &&
-  (entry.statement === 'limit' || entry.statement === 'not_regulated');
+  (entry.statement === 'limit' || entry.statement === 'not_regulated') &&
+  (entry.band === undefined || (entry.kind === 'height_total' && isBand(entry.band)));
 /** An entry made on this plot — or on no recorded plot, which reads as this one (DEC-3). */
 const onPlot = (entry, plot) => !Array.isArray(entry.plot) || samePlot(entry.plot, plot);
 
@@ -6533,13 +6763,25 @@ function convexHull(points) {
 }
 
 /**
- * The region `P` less the convex shapes `cuts`, by overlay: every outline cut
- * where it crosses another, each piece kept where the region lies on one side
- * of it and not the other, the pieces chained into loops (region on the left).
- * `{ loops }` (counter-clockwise outers, clockwise holes, `{ x, y }` points) or
+ * The region `P` less the shapes `cuts`, by overlay: every outline cut where it
+ * crosses another, each piece kept where the region lies on one side of it and
+ * not the other, the pieces chained into loops (region on the left). A cut is
+ * one polygon (`{ x, y }` points) or, since Sprint 002.17, a **group of rings**
+ * read even–odd — a ring inside another is a hole in it — so an exclusion area
+ * need not be convex (the setbacks' strips still are). `{ loops }`
+ * (counter-clockwise outers, clockwise holes, `{ x, y }` points) or
  * `{ degenerate: true }` when two outlines overlap along a line.
  */
-function regionLess(P, cuts) {
+function regionLess(P, cutShapes) {
+  // A cut is a group of rings; a bare polygon is a group of one.
+  const cuts = cutShapes.map((cut) => (Array.isArray(cut[0]) ? cut : [cut]));
+  for (const group of cuts) {
+    const all = group.flat();
+    group.minX = Math.min(...all.map((q) => q.x));
+    group.maxX = Math.max(...all.map((q) => q.x));
+    group.minY = Math.min(...all.map((q) => q.y));
+    group.maxY = Math.max(...all.map((q) => q.y));
+  }
   const xs = [];
   const ys = [];
   const vertex = (p) => {
@@ -6566,7 +6808,7 @@ function regionLess(P, cuts) {
     });
   };
   outline(P);
-  for (const K of cuts) outline(K);
+  for (const group of cuts) for (const ring of group) outline(ring);
   for (const s of segments) {
     s.minX = Math.min(xs[s.a], xs[s.b]);
     s.maxX = Math.max(xs[s.a], xs[s.b]);
@@ -6631,14 +6873,18 @@ function regionLess(P, cuts) {
       if (a.y > y !== b.y > y && x < ((b.x - a.x) * (y - a.y)) / (b.y - a.y) + a.x) within = !within;
     }
     if (!within) return false;
-    return !cuts.some((K) => {
-      if (x < K.minX || x > K.maxX || y < K.minY || y > K.maxY) return false;
-      for (let i = 0; i < K.length; i += 1) {
-        const a = K[i];
-        const b = K[(i + 1) % K.length];
-        if (cross2(b.x - a.x, b.y - a.y, x - a.x, y - a.y) <= 0) return false;
+    return !cuts.some((group) => {
+      if (x < group.minX || x > group.maxX || y < group.minY || y > group.maxY) return false;
+      let within = false;
+      for (const K of group) {
+        for (let i = 0, j = K.length - 1; i < K.length; j = i, i += 1) {
+          const a = K[i];
+          const b = K[j];
+          if (a.y > y !== b.y > y && x < ((b.x - a.x) * (y - a.y)) / (b.y - a.y) + a.x)
+            within = !within;
+        }
       }
-      return true;
+      return within;
     });
   };
   // The pieces on the region's outline, oriented with the region on their left.
@@ -6725,13 +6971,21 @@ function regionLess(P, cuts) {
  *   at a convex corner the strip runs on along its line as far as the plot
  *   reaches — the half-plane cut of 002.2, exact on a convex boundary. A side
  *   or rear limit ends at its corner, so its strip ends rounded there.
- * - **Validated**: one simple ring inside the boundary, more than 1 m², no
+ * - **Validated**: simple rings inside the boundary, more than 1 m², no
  *   point closer to an edge than its distance (half a centimetre's
- *   tolerance). `collapsed` when the setbacks leave no ground (nothing over
- *   1 m²); `shape` when they split the plot into pieces, or the check fails —
- *   never a silent absence (the caller says which).
+ *   tolerance). `collapsed` when nothing over 1 m² is left; `shape` when the
+ *   check fails — never a silent absence (the caller says which).
+ *
+ * Sprint 002.17: `exclusions` — areas cut out too, each one a list of rings
+ * (`{ easting, northing }` points, a ring inside another a hole in it, any
+ * winding, any shape). The answer is `{ rings, reentrant }`: every piece's
+ * outline counter-clockwise and every hole clockwise, so **several pieces and
+ * holes are answered, not refused** (a setback that splits the plot gives two
+ * pieces); `ring` is also present when the answer is one piece with no hole,
+ * as before. An exclusion that lies along a boundary edge is shifted a tenth
+ * of a millimetre when the overlay meets the overlap.
  */
-function insetByRole(ring, distances, lines = []) {
+function insetByRole(ring, distances, lines = [], exclusions = []) {
   let points = ring.map((p) => ({ easting: p.easting, northing: p.northing }));
   let ds = points.map((p, i) => {
     const d = Number(distances[i]);
@@ -6772,6 +7026,14 @@ function insetByRole(ring, distances, lines = []) {
     Math.max(...P.map((p) => p.x)) - Math.min(...P.map((p) => p.x)),
     Math.max(...P.map((p) => p.y)) - Math.min(...P.map((p) => p.y))
   );
+  // Sprint 002.17: the exclusions, in the local frame (an open ring each, never fewer than three points).
+  const excluded = exclusions
+    .map((group) =>
+      group
+        .map((r) => openRing(r).map((q) => ({ x: q.easting - origin.easting, y: q.northing - origin.northing })))
+        .filter((r) => r.length >= 3)
+    )
+    .filter((group) => group.length > 0);
   /** The turn at the corner from `from` to `to`, in (−π, π]: positive where it is convex. */
   const turnAt = (from, to) => Math.atan2(cross2(from.u.x, from.u.y, to.u.x, to.u.y), from.u.x * to.u.x + from.u.y * to.u.y);
 
@@ -6789,8 +7051,14 @@ function insetByRole(ring, distances, lines = []) {
       reentrant = true;
   }
 
-  const attempt = (growth) => {
+  const attempt = (growth, shift = 0, sx = 1, sy = 0.7) => {
     const cuts = [];
+    // An exclusion along an edge is moved by `shift` metres — each by its own multiple, so two that
+    // lie along one another part too — so no two outlines lie on one line.
+    excluded.forEach((group, k) => {
+      const m = shift * (1 + ((k * 0.6180339887) % 1));
+      cuts.push(group.map((r) => r.map((q) => ({ x: q.x + m * sx, y: q.y + m * sy }))));
+    });
     edges.forEach((edge, i) => {
       if (!(edge.d > 0)) return;
       const r = edge.d + growth * (1 + ((i * 0.6180339887) % 1));
@@ -6829,34 +7097,74 @@ function insetByRole(ring, distances, lines = []) {
     return regionLess(P, cuts);
   };
   let region = attempt(INSET_GROWTH);
-  for (let k = 2; region.degenerate && k <= 4; k += 1) region = attempt(INSET_GROWTH * k * 1.37);
+  if (region.degenerate) {
+    // Two outlines lie on one line: grow the strips a little more and, with exclusions, move them
+    // by a tenth of a millimetre — in each of four directions, keeping the answer with the fewest
+    // loops (an exclusion along the boundary comes out as a notch, not as a hole a hair inside it).
+    const shifts = excluded.length > 0 ? [[1, 0.7], [-1, -0.7], [1, -0.7], [-1, 0.7]] : [[0, 0]];
+    let best;
+    for (let k = 2; k <= 4 && best === undefined; k += 1) {
+      for (const [sx, sy] of shifts) {
+        const answer = attempt(INSET_GROWTH * k * 1.37, excluded.length > 0 ? INSET_GROWTH * k * 0.83 : 0, sx, sy);
+        if (answer.degenerate) continue;
+        if (best === undefined || answer.loops.length < best.loops.length) best = answer;
+      }
+    }
+    region = best ?? { degenerate: true };
+  }
   if (region.degenerate) return { failed: 'shape' };
   const areaOf = (loop) =>
     loop.reduce((sum, a, i) => {
       const b = loop[(i + 1) % loop.length];
       return sum + cross2(a.x, a.y, b.x, b.y);
     }, 0) / 2;
-  // No hole can form (every strip touches the boundary); one found is a shape this cannot draw.
-  if (region.loops.some((loop) => areaOf(loop) < -1e-6)) return { failed: 'shape' };
-  const ground = region.loops.filter((loop) => loop.length >= 3 && areaOf(loop) > INSET_MIN_AREA);
-  if (ground.length === 0) return { failed: 'collapsed' };
-  if (ground.length > 1) return { failed: 'shape' }; // the setbacks split the plot
-  const result = ground[0].map((p) => ({ easting: p.x + origin.easting, northing: p.y + origin.northing }));
+  // With no exclusion no hole can form (every strip touches the boundary); one found is a shape
+  // this cannot draw. An exclusion makes holes: those under 1 m² are dropped with the slivers.
+  if (excluded.length === 0 && region.loops.some((loop) => areaOf(loop) < -1e-6))
+    return { failed: 'shape' };
+  const outers = region.loops.filter((loop) => loop.length >= 3 && areaOf(loop) > INSET_MIN_AREA);
+  if (outers.length === 0) return { failed: 'collapsed' };
+  const holes = region.loops.filter((loop) => loop.length >= 3 && areaOf(loop) < -1e-6);
+  const toSite = (loop) => loop.map((q) => ({ easting: q.x + origin.easting, northing: q.y + origin.northing }));
+  const rings = [...outers, ...holes].map(toSite);
 
   // Validated against the boundary itself, whatever the overlay did.
-  const m = result.length;
-  for (let i = 0; i < m; i += 1) {
-    const p = result[i];
-    const q = result[(i + 1) % m];
-    const onBoundary = edges.some((e) => pointSegmentDistance(p, e.a, e.b) <= INSET_TOLERANCE);
-    if (!onBoundary && !insideRing(p, points)) return { failed: 'shape' };
-    for (const e of edges) {
-      if (segmentsCross(p, q, e.a, e.b, INSET_TOLERANCE)) return { failed: 'shape' };
-      // …never closer to an edge than its distance.
-      if (e.d > 0 && segmentDistance(p, q, e.a, e.b) < e.d - INSET_TOLERANCE) return { failed: 'shape' };
+  for (const result of rings) {
+    const m = result.length;
+    for (let i = 0; i < m; i += 1) {
+      const p = result[i];
+      const q = result[(i + 1) % m];
+      const onBoundary = edges.some((e) => pointSegmentDistance(p, e.a, e.b) <= INSET_TOLERANCE);
+      if (!onBoundary && !insideRing(p, points)) return { failed: 'shape' };
+      for (const e of edges) {
+        if (segmentsCross(p, q, e.a, e.b, INSET_TOLERANCE)) return { failed: 'shape' };
+        // …never closer to an edge than its distance.
+        if (e.d > 0 && segmentDistance(p, q, e.a, e.b) < e.d - INSET_TOLERANCE) return { failed: 'shape' };
+      }
     }
   }
-  return { ring: result, reentrant };
+  return {
+    rings,
+    ...(rings.length === 1 ? { ring: rings[0] } : {}),
+    reentrant
+  };
+}
+
+/**
+ * Sprint 002.20: the part of an exclusion area that lies on the plot, as rings (`{ easting,
+ * northing }`, pieces counter-clockwise, holes clockwise), or `undefined` when none does (or the
+ * overlay cannot tell). Two overlays and no new geometry: the boundary less the area, then the
+ * boundary less that — the area's own part of it. An area is often a forest or a zone far larger
+ * than the plot; drawn whole it would fill the 3D view's vertex budget and say nothing of the plot.
+ */
+function clippedToBoundary(boundary, rings) {
+  const none = boundary.map(() => 0);
+  const outside = insetByRole(boundary, none, [], [rings]);
+  // Nothing of the plot is left outside the area: all of the plot is the area.
+  if (outside.failed === 'collapsed')
+    return [boundary.map((p) => ({ easting: p.easting, northing: p.northing }))];
+  if (outside.rings === undefined) return undefined;
+  return insetByRole(boundary, none, [], [outside.rings]).rings;
 }
 
 /**
@@ -7651,6 +7959,15 @@ function createRnu({
       written
     );
     ruleList = planned.rules;
+    // Sprint 002.17: the exclusion areas of the buildable area, with the section's choices.
+    const exclusions = exclusionItemsOf(
+      reportFacts?.prescriptions,
+      readOnly ? [] : exclusionChoicesOf(section),
+      plot,
+      planned.current
+    );
+    // Sprint 002.20: whether the areas taken out are drawn (on unless the user hid them on this plot).
+    const exclusionsShown = readOnly || exclusionsShownOn(section, plot);
     // 002.6b DEC-4 (B1): the written rules an action may decide on, as this read
     // showed them. Review S7: only from a read's answer that knows the written
     // state — never a progress report, which knows it not yet.
@@ -7877,9 +8194,14 @@ function createRnu({
               regime,
               reportFacts,
               national,
-              assume
+              assume,
+              exclusions,
+              exclusionsShown,
+              plotArea: site?.plotArea
             });
             if (envelope.feature !== undefined) derivedFeatures.push(envelope.feature);
+            if (envelope.bandFeatures?.length > 0) derivedFeatures.push(...envelope.bandFeatures);
+            if (envelope.excludedFeatures?.length > 0) derivedFeatures.push(...envelope.excludedFeatures);
           } catch (cause) {
             log(`${SOURCE_ID}: the envelope could not be drawn: ${String(cause)}`);
             envelope = {};
@@ -8007,8 +8329,13 @@ function createRnu({
       notOffered === undefined || writtenState.blocks.length > 0
         ? writtenState.blocks
         : [{ kind: 'notice', tone: 'info', text: { key: notOffered } }];
+    const prescriptionChoices = prescriptionChoiceBlocks(exclusions, planned.current);
     const views = [
-      ...report.views,
+      ...report.views.map((view) =>
+        view.id === 'prescriptions' && prescriptionChoices.length > 0 && !readOnly
+          ? { ...view, blocks: [...view.blocks, ...prescriptionChoices] }
+          : view
+      ),
       rulesView(planned, readOnly, writtenBlocks),
       ...(surfaces === undefined ? [] : [surfaces.view]),
       edgesView(edges, reportEdges, corrections, plot, readOnly),
@@ -8491,7 +8818,7 @@ function createRnu({
         id,
         label: { key: form.label },
         target: { subjectId: addSubject },
-        fields: entryFields(form.unit)
+        fields: entryFields(form.unit, undefined, { band: form.band === true })
       }))
     });
     const list = (entries, headingKey) => {
@@ -8828,6 +9155,34 @@ const edgeLetter = (number) => {
       next = withoutEdgeRole(section, request.target?.subjectId);
       if (next === undefined)
         return { status: 'refused', message: { key: 'fr-urban-rules.edges.changed' } };
+    } else if (request.actionId === 'show-exclusions' || request.actionId === 'hide-exclusions') {
+      // Sprint 002.20: whether the areas taken out are drawn on this plot (red, on the plan and in 3D).
+      next = withExclusionsShown(
+        section,
+        plotIdsOf(request.site),
+        request.actionId === 'show-exclusions',
+        now().toISOString()
+      );
+    } else if (request.actionId === 'set-exclusion' || request.actionId === 'forget-exclusion') {
+      // Sprint 002.17 DEC-2: one choice on an exclusion area, stamped with the document it was read in.
+      const fields = subjectFields(request.target?.subjectId);
+      const changed = { status: 'refused', message: { key: 'fr-urban-rules.edges.changed' } };
+      if (typeof fields.k !== 'string' || fields.k === '') return changed;
+      if (request.actionId === 'set-exclusion') {
+        if (!EXCLUSION_CHOICES.includes(fields.c) || fields.i === undefined || fields.d === undefined)
+          return changed;
+        next = withExclusionChoice(
+          section,
+          plotIdsOf(request.site),
+          fields.k,
+          fields.c,
+          versionOf(fields.i, fields.d),
+          now().toISOString()
+        );
+      } else {
+        next = withoutExclusionChoice(section, plotIdsOf(request.site), fields.k);
+        if (next === undefined) return changed;
+      }
     } else {
       // Sprint 002.3: the Surfaces answers, keyed by the open variation.
       const site = siteOf();
@@ -8843,7 +9198,12 @@ const edgeLetter = (number) => {
       next = built.next;
     }
     const edgeAction =
-      request.actionId === 'set-edge-role' || request.actionId === 'forget-edge-role';
+      request.actionId === 'set-edge-role' ||
+      request.actionId === 'forget-edge-role' ||
+      request.actionId === 'set-exclusion' ||
+      request.actionId === 'forget-exclusion' ||
+      request.actionId === 'show-exclusions' ||
+      request.actionId === 'hide-exclusions';
     const label = cut(
       translate(
         Object.hasOwn(UNDO_KEYS, request.actionId)
@@ -10157,7 +10517,9 @@ const edgeLetter = (number) => {
         provenance: 'entered',
         roles: shape.roles,
         kind: shape.kind,
-        reopened
+        reopened,
+        // Sprint 002.18: « N m high within M m of the limits ».
+        band: entry.band
       });
       if (reopened) {
         reopenedEntered += 1;
@@ -10165,7 +10527,9 @@ const edgeLetter = (number) => {
       }
       rules.push({
         id: entry.key,
-        kind: shape.kind,
+        // Sprint 002.18 DEC-1: a height held to a band is not the building's maximum height: the
+        // checks, the capacity and the headroom read `height_total`, so this one is `other`.
+        kind: entry.band === undefined ? shape.kind : 'other',
         label: { key: shape.label },
         ...(entry.statement === 'not_regulated'
           ? { statement: 'not_regulated' }
@@ -10187,16 +10551,28 @@ const edgeLetter = (number) => {
             ? {}
             : { href: page === undefined ? docHref : `${docHref}#page=${page}` })
         },
-        ...(reopened
+        ...(reopened || entry.band !== undefined
           ? {
               conditions: [
-                {
-                  key: 'fr-urban-rules.rule.enteredReopened',
-                  params: {
-                    date: String(entry.at ?? '').slice(0, 10),
-                    version: String(entry.datvalid ?? '')
-                  }
-                }
+                ...(entry.band === undefined
+                  ? []
+                  : [
+                      {
+                        key: BAND_EDGES[bandEdgesChoice(entry.band)].condition,
+                        params: { depth: mm(entry.band.depth) }
+                      }
+                    ]),
+                ...(reopened
+                  ? [
+                      {
+                        key: 'fr-urban-rules.rule.enteredReopened',
+                        params: {
+                          date: String(entry.at ?? '').slice(0, 10),
+                          version: String(entry.datvalid ?? '')
+                        }
+                      }
+                    ]
+                  : [])
               ]
             }
           : {})
@@ -10509,10 +10885,37 @@ const edgeLetter = (number) => {
    * note); editing an entered rule shows four — its kind is fixed and its note
    * kept as entered (002.2 deviation 9, corrected by the review).
    */
-  function entryFields(unit, entry) {
+  function entryFields(unit, entry, { band = false } = {}) {
     const kinds = Object.entries(ENTERED_KINDS).filter(([, k]) => k.unit === unit);
+    // Sprint 002.18 DEC-1: « N m high within M m of the limits » — a depth and the edges it runs along.
+    const bandFields =
+      band || entry?.band !== undefined
+        ? [
+            {
+              key: 'depth',
+              label: { key: 'fr-urban-rules.band.field.depth' },
+              kind: 'number',
+              unit: 'm',
+              min: 0.1,
+              max: BAND_MAX_DEPTH,
+              required: true,
+              ...(Number.isFinite(entry?.band?.depth) ? { initial: entry.band.depth } : {})
+            },
+            {
+              key: 'edges',
+              label: { key: 'fr-urban-rules.band.field.edges' },
+              kind: 'choice',
+              required: true,
+              initial: entry?.band === undefined ? 'all' : bandEdgesChoice(entry.band),
+              options: Object.entries(BAND_EDGES).map(([value, edges]) => ({
+                value,
+                label: { key: edges.label }
+              }))
+            }
+          ]
+        : [];
     return [
-      ...(entry === undefined
+      ...(entry === undefined && !band
         ? [
             {
               key: 'kind',
@@ -10523,27 +10926,33 @@ const edgeLetter = (number) => {
             }
           ]
         : []),
-      {
-        key: 'statement',
-        label: { key: 'fr-urban-rules.field.statement' },
-        kind: 'choice',
-        required: true,
-        initial: entry?.statement ?? 'limit',
-        options: [
-          { value: 'limit', label: { key: 'fr-urban-rules.statement.limit' } },
-          { value: 'not_regulated', label: { key: 'fr-urban-rules.statement.notRegulated' } }
-        ]
-      },
+      ...(band || entry?.band !== undefined
+        ? []
+        : [
+            {
+              key: 'statement',
+              label: { key: 'fr-urban-rules.field.statement' },
+              kind: 'choice',
+              required: true,
+              initial: entry?.statement ?? 'limit',
+              options: [
+                { value: 'limit', label: { key: 'fr-urban-rules.statement.limit' } },
+                { value: 'not_regulated', label: { key: 'fr-urban-rules.statement.notRegulated' } }
+              ]
+            }
+          ]),
       {
         key: 'value',
-        label: { key: 'fr-urban-rules.field.value' },
+        label: { key: band || entry?.band !== undefined ? 'fr-urban-rules.band.field.height' : 'fr-urban-rules.field.value' },
         kind: 'number',
         unit,
         min: 0,
         // Review fix S7: a percentage is at most 100.
         ...(unit === 'percent' ? { max: 100 } : {}),
+        ...(band || entry?.band !== undefined ? { required: true } : {}),
         ...(Number.isFinite(entry?.limit?.value) ? { initial: entry.limit.value } : {})
       },
+      ...bandFields,
       {
         key: 'source',
         label: { key: 'fr-urban-rules.field.source' },
@@ -10990,6 +11399,12 @@ const edgeLetter = (number) => {
   }
 
   const SETBACK_KINDS = new Set(['road_setback', 'boundary_setback']);
+  /** Sprint 002.17: the buildable-area list's row for the setback along each edge role. */
+  const SETBACK_CUT_KEYS = {
+    street: 'fr-urban-rules.area.cut.setbackStreet',
+    side: 'fr-urban-rules.area.cut.setbackSide',
+    rear: 'fr-urban-rules.area.cut.setbackRear'
+  };
   const BUDGET_KINDS = new Set([
     'building_distance',
     'footprint_ratio',
@@ -11070,6 +11485,25 @@ const edgeLetter = (number) => {
   const shortNumber = (value) => String(Math.round(value * 100) / 100);
 
   /**
+   * Sprint 002.18 DEC-2: a band's ring set — the boundary and, as its holes, the boundary inset by the
+   * band's depth on the edges it runs along — which a ceiling's `within` reads even–odd as the strip
+   * between them. `undefined` when no edge has one of its roles; the whole boundary when the depth
+   * leaves no ground (the band is the plot); `undefined` when the strip cannot be drawn.
+   */
+  function bandRingsOf(edges, roleOf, band) {
+    const boundary = edges.map((e) => e.a);
+    const distances = edges.map((e) => (band.roles.includes(roleOf.get(e.edge)?.role) ? band.depth : 0));
+    if (!distances.some((d) => d > 0)) return undefined;
+    const inner = insetByRole(
+      boundary,
+      distances,
+      edges.map((e) => roleOf.get(e.edge)?.role === 'street')
+    );
+    if (inner.rings !== undefined) return [boundary, ...inner.rings];
+    return inner.failed === 'collapsed' ? [boundary] : undefined;
+  }
+
+  /**
    * DEC-1 and DEC-2: what each rule does to the envelope — an inset per edge
    * role (the largest confirmed minimum), a ceiling, or a reason it shapes
    * nothing. Confirmed rules only (US-04); every other one is listed with its
@@ -11116,7 +11550,7 @@ const edgeLetter = (number) => {
         skip(rule, 'fr-urban-rules.envelope.reason.heightFacade');
         continue;
       }
-      if (rule.kind === 'height_total') {
+      if (rule.kind === 'height_total' || info.band !== undefined) {
         const limit = rule.limit;
         if (limit.kind !== 'value' || limit.quantity.unit !== 'm') {
           skip(rule, 'fr-urban-rules.envelope.reason.other');
@@ -11125,12 +11559,22 @@ const edgeLetter = (number) => {
         } else if (!(limit.quantity.value > 0 && limit.quantity.value <= VOLUME_LIMITS.metres)) {
           skip(rule, 'fr-urban-rules.envelope.reason.pastLimits');
         } else {
-          const within =
+          let within =
             info.provenance === 'drawn' && Array.isArray(info.rings) && info.rings.length > 0
               ? info.rings
               : undefined;
+          // Sprint 002.18 DEC-2: an entered height with a band stands within that band of the limits.
+          const band = info.provenance === 'entered' ? info.band : undefined;
+          if (band !== undefined) {
+            within = bandRingsOf(edges, roleOf, band);
+            if (within === undefined) {
+              skip(rule, 'fr-urban-rules.envelope.reason.bandNoEdge');
+              continue;
+            }
+            say('envelope-band', { key: 'fr-urban-rules.assumption.envelopeBand' });
+          }
           say('envelope-height-ground', { key: 'fr-urban-rules.assumption.envelopeHeightGround' });
-          if (within !== undefined)
+          if (within !== undefined && band === undefined)
             say('envelope-height-within', {
               key: 'fr-urban-rules.assumption.envelopeHeightWithin'
             });
@@ -11141,13 +11585,20 @@ const edgeLetter = (number) => {
               metres: limit.quantity.value,
               ...(within === undefined ? {} : { within })
             },
-            effect: {
-              key:
-                within === undefined
-                  ? 'fr-urban-rules.envelope.effect.height'
-                  : 'fr-urban-rules.envelope.effect.heightWithin'
-            },
-            value: { value: limit.quantity.value, unit: 'm' }
+            effect:
+              band !== undefined
+                ? {
+                    key: 'fr-urban-rules.envelope.effect.heightBand',
+                    params: { depth: mm(band.depth) }
+                  }
+                : {
+                    key:
+                      within === undefined
+                        ? 'fr-urban-rules.envelope.effect.height'
+                        : 'fr-urban-rules.envelope.effect.heightWithin'
+                  },
+            value: { value: limit.quantity.value, unit: 'm' },
+            ...(band === undefined ? {} : { band })
           });
         }
         continue;
@@ -11339,12 +11790,27 @@ const edgeLetter = (number) => {
   }
 
   /**
-   * DEC-1 to DEC-4: the envelope — `{ feature, groundArea, inset, view }`. The
-   * feature (`envelope`, derived) carries the outline and, when a confirmed
-   * rule shapes a ceiling the editor can draw, the volume; the view lists what
-   * shaped it, what did not and why, and the assumptions it rests on.
+   * DEC-1 to DEC-4 (002.7), Sprint 002.17 to 002.19: the envelope —
+   * `{ feature, bandFeatures, groundArea, inset, view }`. The feature (`envelope`, derived) carries
+   * the **theoretical buildable area**: the Site boundary less the confirmed setbacks and the
+   * exclusion areas, in one piece or several, with holes — and, when a confirmed rule shapes a
+   * ceiling the editor can draw, the volume. The view lists what narrowed it (each cut with its
+   * source and the area it removes alone), what is left to confirm, what shaped it, what did not
+   * and why, and the assumptions it rests on. Never a verdict (ADR-0111 Rule 4).
    */
-  function envelopeOf({ planned, edges, roleOf, alignments, regime, reportFacts, national, assume }) {
+  function envelopeOf({
+    planned,
+    edges,
+    roleOf,
+    alignments,
+    regime,
+    reportFacts,
+    national,
+    assume,
+    exclusions = [],
+    exclusionsShown = true,
+    plotArea
+  }) {
     const gate = envelopeRegime(regime, reportFacts);
     const notices = [];
     const view = (blocks) => ({
@@ -11367,33 +11833,48 @@ const edgeLetter = (number) => {
       const id = roleOf.get(e.edge)?.assumptionId;
       if (id !== undefined) assumptionIds.add(id);
     }
-    let ring;
+    const boundary = edges.map((e) => e.a);
+    // A street setback runs from the alignment, which continues past the plot.
+    const streets = edges.map((e) => roleOf.get(e.edge)?.role === 'street');
+    const cutting = exclusions.filter((item) => item.state === 'applied');
+    let rings;
     let reentrant = false;
-    if (inset || ceilings.length > 0) {
+    if (inset || ceilings.length > 0 || cutting.length > 0) {
       const outline = insetByRole(
-        edges.map((e) => e.a),
+        boundary,
         distances,
-        // A street setback runs from the alignment, which continues past the plot.
-        edges.map((e) => roleOf.get(e.edge)?.role === 'street')
+        streets,
+        cutting.map((item) => item.rings)
       );
-      if (outline.ring !== undefined) {
-        ring = outline.ring;
+      // The host refuses a whole report past 100,000 points (`too-large`); the area stays far under it
+      // or is not drawn, said as its shape — never a report lost for one detailed exclusion.
+      if (
+        outline.rings !== undefined &&
+        outline.rings.reduce((sum, ring) => sum + ring.length, 0) <= AREA_POINT_LIMIT
+      ) {
+        rings = outline.rings;
         reentrant = outline.reentrant && inset;
+      } else if (outline.rings !== undefined) {
+        notices.push(notice('fr-urban-rules.envelope.notice.shape', 'warning'));
       } else {
-        notices.push(
-          notice(
-            outline.failed === 'collapsed'
-              ? 'fr-urban-rules.envelope.notice.collapsed'
-              : 'fr-urban-rules.envelope.notice.shape',
-            'warning'
-          )
-        );
+        let key =
+          outline.failed === 'collapsed'
+            ? 'fr-urban-rules.envelope.notice.collapsed'
+            : 'fr-urban-rules.envelope.notice.shape';
+        // Said apart: the setbacks alone leave ground and an exclusion area takes all of it.
+        if (
+          outline.failed === 'collapsed' &&
+          cutting.length > 0 &&
+          insetByRole(boundary, distances, streets).rings !== undefined
+        )
+          key = 'fr-urban-rules.envelope.notice.collapsedByExclusions';
+        notices.push(notice(key, 'warning'));
       }
     } else {
       notices.push(notice('fr-urban-rules.envelope.notice.noRule'));
     }
     let volume;
-    if (ring !== undefined) {
+    if (rings !== undefined) {
       if (ceilings.length === 0) {
         notices.push(notice('fr-urban-rules.envelope.notice.noCeiling'));
       } else if (!volumeExpressible(ceilings)) {
@@ -11416,6 +11897,26 @@ const edgeLetter = (number) => {
       assumptionIds.add(
         assume('envelope-checks', { key: 'fr-urban-rules.assumption.envelopeChecks' })
       );
+      // Sprint 002.17 Q9: the area is not clipped to the plot; said when the boundary goes past it.
+      if (
+        typeof plotArea === 'number' &&
+        plotArea > 0 &&
+        Math.abs(signedRingArea(boundary)) > plotArea + Math.max(1, plotArea * 0.01)
+      )
+        assumptionIds.add(
+          assume('envelope-boundary-line', { key: 'fr-urban-rules.assumption.envelopeBoundaryLine' })
+        );
+      if (cutting.length > 0)
+        assumptionIds.add(
+          assume('envelope-exclusions', { key: 'fr-urban-rules.assumption.envelopeExclusions' })
+        );
+      // An exclusion the area could not cut (a line, a point, past the cap) leaves it looser: said.
+      if (exclusions.some((item) => item.state === 'notSurface' || item.state === 'tooMany'))
+        assumptionIds.add(
+          assume('envelope-exclusions-missing', {
+            key: 'fr-urban-rules.assumption.envelopeExclusionsMissing'
+          })
+        );
       // Review 2026-10-21: what makes the drawn envelope looser than the rules is
       // an assumption, which the sheet prints — a view notice it does not.
       if (shaped.looser)
@@ -11427,7 +11928,88 @@ const edgeLetter = (number) => {
           assume('envelope-cc-partly', { key: 'fr-urban-rules.envelope.notice.ccPartly' })
         );
     }
-    const groundArea = ring === undefined ? undefined : Math.abs(signedRingArea(ring));
+    // The net area of a ring set: pieces count, holes take away (the overlay winds them so).
+    const netArea = (list) =>
+      Math.max(0, list.reduce((sum, ring) => sum + signedRingArea(ring), 0));
+    const areaOf = (answer) => (answer?.rings === undefined ? undefined : netArea(answer.rings));
+    const round2 = (value) => Math.round(value * 100) / 100;
+    const groundArea = rings === undefined ? undefined : netArea(rings);
+    const boundaryArea = Math.abs(signedRingArea(boundary));
+
+    // ── What narrowed it: each cut, its source, and the area it removes on its own ──
+    const cuts = [];
+    const proposals = [];
+    if (rings !== undefined) {
+      const afterSetbacks = cutting.length > 0 ? areaOf(insetByRole(boundary, distances, streets)) : groundArea;
+      for (const role of EDGE_ROLES) {
+        if (!edges.some((e) => roleOf.get(e.edge)?.role === role)) continue;
+        const governing = shaped.contributions
+          .filter((c) => c.roles.includes(role))
+          .sort((a, b) => b.distance - a.distance)[0];
+        if (governing === undefined) continue;
+        const alone = areaOf(
+          insetByRole(
+            boundary,
+            edges.map((e) => (roleOf.get(e.edge)?.role === role ? governing.distance : 0)),
+            streets
+          )
+        );
+        cuts.push({
+          label: { key: SETBACK_CUT_KEYS[role], params: { distance: mm(governing.distance) } },
+          source: governing.rule.label,
+          area: alone === undefined ? undefined : Math.max(0, boundaryArea - alone)
+        });
+      }
+      for (const item of cutting) {
+        const alone = areaOf(insetByRole(boundary, distances, streets, [item.rings]));
+        cuts.push({
+          label: verbatim(cut(item.label, 200)),
+          source: { key: 'fr-urban-rules.area.source.prescription', params: { code: item.type } },
+          area:
+            afterSetbacks === undefined || alone === undefined
+              ? undefined
+              : Math.max(0, afterSetbacks - alone)
+        });
+      }
+      if (volume !== undefined) {
+        const seenBand = new Set();
+        for (const entry of shaped.ceilings) {
+          if (entry.band === undefined || seenBand.has(entry.rule.id)) continue;
+          seenBand.add(entry.rule.id);
+          cuts.push({
+            label: {
+              key: 'fr-urban-rules.area.cut.band',
+              params: { metres: mm(entry.ceiling.metres), depth: mm(entry.band.depth) }
+            },
+            source: entry.rule.label,
+            area: undefined
+          });
+        }
+      }
+      // What each proposal would take, if you said yes — computed on what stands now.
+      for (const item of exclusions
+        .filter((i) => i.state === 'proposed' && EXCLUSION_PUT_IN_AREA_VIEW.has(i.type))
+        .slice(0, EXCLUSION_MAX)) {
+        const answer = insetByRole(boundary, distances, streets, [
+          ...cutting.map((c) => c.rings),
+          item.rings
+        ]);
+        proposals.push({
+          item,
+          area:
+            answer.failed === 'collapsed'
+              ? groundArea
+              : areaOf(answer) === undefined
+                ? undefined
+                : Math.max(0, groundArea - areaOf(answer))
+        });
+      }
+    }
+    const measuredCuts = cuts.filter((c) => c.area !== undefined);
+    const overlapping =
+      groundArea !== undefined &&
+      measuredCuts.reduce((sum, c) => sum + c.area, 0) > boundaryArea - groundArea + 0.5;
+
     const appliedIds = new Set();
     const applied = [];
     for (const c of shaped.contributions) {
@@ -11451,7 +12033,7 @@ const edgeLetter = (number) => {
     if (groundArea !== undefined)
       rows.push({
         label: { key: 'fr-urban-rules.envelope.field.groundArea' },
-        value: { value: Math.round(groundArea * 100) / 100, unit: 'm2' }
+        value: { value: round2(groundArea), unit: 'm2' }
       });
     for (const c of ceilings) {
       if (c.kind !== 'height') continue;
@@ -11468,7 +12050,119 @@ const edgeLetter = (number) => {
       });
     }
     const blocks = [...notices];
+    if (groundArea !== undefined && boundaryArea > 0) {
+      // The headline: the Site boundary's area, the area left, and its share (never a verdict).
+      blocks.push({
+        kind: 'stat',
+        label: { key: 'fr-urban-rules.area.stat.boundary' },
+        value: { value: round2(boundaryArea), unit: 'm2' }
+      });
+      blocks.push({
+        kind: 'stat',
+        label: { key: 'fr-urban-rules.area.stat.area' },
+        value: { value: round2(groundArea), unit: 'm2' },
+        detail: { key: 'fr-urban-rules.area.stat.areaDetail' }
+      });
+      blocks.push({
+        kind: 'stat',
+        label: { key: 'fr-urban-rules.area.stat.share' },
+        value: { value: Math.round((groundArea / boundaryArea) * 100), unit: 'percent' }
+      });
+    }
     if (rows.length > 0) blocks.push({ kind: 'fields', rows });
+    if (cuts.length > 0) {
+      blocks.push({ kind: 'heading', text: { key: 'fr-urban-rules.area.heading.narrows' } });
+      blocks.push({
+        kind: 'table',
+        columns: [
+          { key: 'fr-urban-rules.area.column.cut' },
+          { key: 'fr-urban-rules.area.column.source' },
+          { key: 'fr-urban-rules.area.column.removed' }
+        ],
+        rows: cuts.slice(0, TABLE_ROWS).map((c) => [
+          c.label,
+          c.source,
+          c.area === undefined
+            ? { key: 'fr-urban-rules.area.value.ceiling' }
+            : { value: round2(c.area), unit: 'm2' }
+        ])
+      });
+      if (overlapping)
+        blocks.push({ kind: 'notice', tone: 'info', text: { key: 'fr-urban-rules.area.notice.overlap' } });
+    }
+    // Sprint 002.20: the areas taken out are drawn red; one button hides or shows them.
+    if (cutting.length > 0) {
+      if (exclusionsShown)
+        blocks.push({ kind: 'notice', tone: 'info', text: { key: 'fr-urban-rules.area.notice.drawnRed' } });
+      blocks.push({
+        kind: 'actions',
+        actions: [
+          {
+            id: exclusionsShown ? 'hide-exclusions' : 'show-exclusions',
+            label: {
+              key: exclusionsShown
+                ? 'fr-urban-rules.area.action.hideCut'
+                : 'fr-urban-rules.area.action.showCut'
+            }
+          }
+        ]
+      });
+    }
+    // The choices on exclusion areas: what could be kept in the area, and what is not yet cut.
+    const current = planned.current;
+    const choiceSubject = (item, choice) => exclusionSubject(item, choice, current);
+    const name = (item) => cut(item.label, 80);
+    const choiceActions = [];
+    for (const item of exclusions) {
+      if (item.state === 'applied' && item.overridable)
+        choiceActions.push({
+          id: 'set-exclusion',
+          label: { key: 'fr-urban-rules.area.action.keep', params: { name: name(item) } },
+          target: { subjectId: choiceSubject(item, 'keep') }
+        });
+      else if (item.state === 'kept' || (item.state === 'applied' && item.chosen === 'subtract'))
+        choiceActions.push({
+          id: 'forget-exclusion',
+          label: {
+            key:
+              item.state === 'kept'
+                ? 'fr-urban-rules.area.action.subtractAgain'
+                : 'fr-urban-rules.area.action.leave',
+            params: { name: name(item) }
+          },
+          target: { subjectId: `k=${subjectPart(item.key)}` }
+        });
+    }
+    if (proposals.length > 0) {
+      blocks.push({ kind: 'heading', text: { key: 'fr-urban-rules.area.heading.toConfirm' } });
+      blocks.push({ kind: 'notice', tone: 'info', text: { key: 'fr-urban-rules.area.notice.proposed' } });
+      blocks.push({
+        kind: 'table',
+        columns: [
+          { key: 'fr-urban-rules.area.column.cut' },
+          { key: 'fr-urban-rules.area.column.source' },
+          { key: 'fr-urban-rules.area.column.concerned' }
+        ],
+        rows: proposals.slice(0, TABLE_ROWS).map(({ item, area }) => [
+          verbatim(cut(item.label, 200)),
+          { key: 'fr-urban-rules.area.source.prescription', params: { code: item.type } },
+          area === undefined ? { key: 'fr-urban-rules.value.unavailable' } : { value: round2(area), unit: 'm2' }
+        ])
+      });
+      blocks.push({
+        kind: 'actions',
+        actions: proposals.slice(0, MAX_ACTIONS).map(({ item }) => ({
+          id: 'set-exclusion',
+          label: { key: 'fr-urban-rules.area.action.subtract', params: { name: name(item) } },
+          emphasis: 'primary',
+          target: { subjectId: choiceSubject(item, 'subtract') }
+        }))
+      });
+    }
+    if (choiceActions.length > 0)
+      blocks.push({ kind: 'actions', actions: choiceActions.slice(0, MAX_ACTIONS) });
+    if (exclusions.some((item) => item.reopened))
+      blocks.push({ kind: 'notice', tone: 'info', text: { key: 'fr-urban-rules.area.notice.reopened' } });
     if (applied.length > 0) {
       blocks.push({ kind: 'heading', text: { key: 'fr-urban-rules.envelope.heading.applied' } });
       blocks.push({
@@ -11491,44 +12185,112 @@ const edgeLetter = (number) => {
               rule: entry.rule,
               reason: {
                 key:
-                  ring === undefined
+                  rings === undefined
                     ? 'fr-urban-rules.envelope.reason.noOutline'
                     : 'fr-urban-rules.envelope.reason.pastLimits'
               }
             }))
         : [])
     ].filter((entry, i, all) => all.findIndex((other) => other.rule.id === entry.rule.id) === i);
-    if (notApplied.length > 0) {
+    // Sprint 002.17: the exclusion areas that cut nothing, each with its reason.
+    const notCut = exclusions
+      .filter((item) => ['kept', 'notSurface', 'tooMany'].includes(item.state))
+      .map((item) => ({
+        label: verbatim(cut(item.label, 200)),
+        reason: {
+          key:
+            item.state === 'kept'
+              ? 'fr-urban-rules.area.reason.kept'
+              : item.state === 'tooMany'
+                ? 'fr-urban-rules.area.reason.tooMany'
+                : item.unconverted
+                  ? 'fr-urban-rules.area.reason.unconverted'
+                  : 'fr-urban-rules.area.reason.notSurface'
+        }
+      }));
+    const notAppliedRows = [
+      ...notApplied.map((entry) => [entry.rule.label, entry.reason]),
+      ...notCut.map((entry) => [entry.label, entry.reason])
+    ];
+    if (notAppliedRows.length > 0) {
       blocks.push({ kind: 'heading', text: { key: 'fr-urban-rules.envelope.heading.notApplied' } });
       blocks.push({
         kind: 'table',
         columns: [{ key: 'fr-urban-rules.column.rule' }, { key: 'fr-urban-rules.envelope.column.reason' }],
-        rows: notApplied.slice(0, TABLE_ROWS).map((entry) => [entry.rule.label, entry.reason])
+        rows: notAppliedRows.slice(0, TABLE_ROWS)
       });
-      if (notApplied.length > TABLE_ROWS)
+      if (notAppliedRows.length > TABLE_ROWS)
         blocks.push({
           kind: 'notice',
           tone: 'info',
           text: {
             key: 'fr-urban-rules.envelope.notice.moreNotApplied',
-            params: { count: notApplied.length - TABLE_ROWS }
+            params: { count: notAppliedRows.length - TABLE_ROWS }
           }
         });
     }
     if (assumptionIds.size > 0) blocks.push({ kind: 'assumptions', ids: [...assumptionIds] });
+    if (rings !== undefined)
+      blocks.push({ kind: 'notice', tone: 'warning', text: { key: 'fr-urban-rules.area.caution' } });
+    // Sprint 002.20: each area taken out, as far as it lies on the plot, drawn translucent red on the
+    // plan and in 3D — a derived prescription, which the host has a red role for. Not drawn when the
+    // user hid them, and never for an area only proposed or kept.
+    const excludedFeatures = [];
+    if (exclusionsShown) {
+      for (const item of cutting) {
+        const drawn = clippedToBoundary(boundary, item.rings);
+        if (drawn === undefined) continue;
+        excludedFeatures.push({
+          id: `excluded:${excludedFeatures.length + 1}`,
+          category: 'prescription',
+          official: false,
+          rings: drawn,
+          label: verbatim(cut(item.label, 200))
+        });
+      }
+    }
     const feature =
-      ring === undefined
+      rings === undefined
         ? undefined
         : {
             id: 'envelope',
             category: 'envelope',
             official: false,
-            rings: [ring],
+            rings,
             label: { key: 'fr-urban-rules.envelope.label' },
             ...(appliedIds.size > 0 ? { ruleIds: [...appliedIds] } : {}),
             ...(volume === undefined ? {} : { volume })
           };
-    return { feature, groundArea, inset: inset && ring !== undefined, view: view(blocks) };
+    // Sprint 002.18 DEC-3: each height band is drawn as a strip on the plan (a `setback-band`); no area is lost to it.
+    const bandFeatures = [];
+    if (rings !== undefined && volume !== undefined) {
+      const seenBand = new Set();
+      for (const entry of shaped.ceilings) {
+        if (entry.band === undefined || seenBand.has(entry.rule.id)) continue;
+        seenBand.add(entry.rule.id);
+        bandFeatures.push({
+          id: `envelope-band:${bandFeatures.length + 1}`,
+          // A strip along the limits: the band role's style, never the area's (which the sheet and
+          // the plan draw as the buildable area itself).
+          category: 'setback-band',
+          official: false,
+          rings: entry.ceiling.within,
+          label: {
+            key: 'fr-urban-rules.area.cut.band',
+            params: { metres: mm(entry.ceiling.metres), depth: mm(entry.band.depth) }
+          },
+          ruleIds: [entry.rule.id]
+        });
+      }
+    }
+    return {
+      feature,
+      bandFeatures,
+      excludedFeatures,
+      groundArea,
+      inset: (inset || cutting.length > 0) && rings !== undefined,
+      view: view(blocks)
+    };
   }
 
   // ── Sprint 002.3: surfaces, budgets, caps, capacity, procedure ────────────────
@@ -12513,7 +13275,9 @@ const edgeLetter = (number) => {
       });
     const storeys = storeysOf(limits.heights, floor.value);
     const envelopeArea =
-      envelope?.rings?.[0] === undefined ? undefined : Math.abs(signedRingArea(envelope.rings[0]));
+      envelope?.rings?.[0] === undefined
+        ? undefined
+        : Math.max(0, envelope.rings.reduce((sum, ring) => sum + signedRingArea(ring), 0));
     const groundLimits = [envelopeArea, allowed].filter((v) => v !== undefined);
     const groundArea = groundLimits.length === 0 ? undefined : Math.min(...groundLimits);
     const capacity =
@@ -13600,13 +14364,22 @@ const edgeLetter = (number) => {
         assume: (id) => id
       }).contributions;
       const distances = insetDistances(edges, roleOf, contributions);
-      if (distances.some((d) => d > 0)) {
+      // Sprint 002.17: the exclusion areas that cut are part of what is left to build on.
+      const cutting = exclusionItemsOf(
+        reportFacts?.prescriptions,
+        readOnly ? [] : exclusionChoicesOf(section),
+        plot,
+        planned.current
+      ).filter((item) => item.state === 'applied');
+      if (distances.some((d) => d > 0) || cutting.length > 0) {
         const outline = insetByRole(
           edges.map((e) => e.a),
           distances,
-          edges.map((e) => roleOf.get(e.edge)?.role === 'street')
+          edges.map((e) => roleOf.get(e.edge)?.role === 'street'),
+          cutting.map((item) => item.rings)
         );
-        if (outline.ring !== undefined) envelopeArea = Math.abs(signedRingArea(outline.ring));
+        if (outline.rings !== undefined)
+          envelopeArea = Math.max(0, outline.rings.reduce((sum, ring) => sum + signedRingArea(ring), 0));
       }
     }
     const floor = floorToFloor();
@@ -13773,18 +14546,31 @@ const edgeLetter = (number) => {
       case 'add-distance':
       case 'add-ratio':
       case 'add-area':
+      case 'add-height-band':
       case 'edit-entered': {
         const editing = request.actionId === 'edit-entered';
         const old = editing ? entered.find((e) => e?.key === ruleId) : undefined;
         if (editing && old === undefined) return refuse('fr-urban-rules.edges.changed');
         const form = editing ? undefined : ENTRY_FORMS[request.actionId];
-        const kindKey = editing ? old.kind : request.values?.kind;
+        const kindKey = editing ? old.kind : form?.band ? 'height_total' : request.values?.kind;
         const shape = Object.hasOwn(ENTERED_KINDS, kindKey ?? '')
           ? ENTERED_KINDS[kindKey]
           : undefined;
         if (shape === undefined || (form !== undefined && shape.unit !== form.unit))
           return refuse('fr-urban-rules.entered.kindRequired');
-        const statement = request.values?.statement === 'not_regulated' ? 'not_regulated' : 'limit';
+        // Sprint 002.18: an entered height held to a band — a depth and the edges it runs along.
+        let band;
+        if (form?.band === true || (editing && old.band !== undefined)) {
+          const depth = request.values?.depth;
+          const edgesChoice = request.values?.edges;
+          if (!(typeof depth === 'number' && Number.isFinite(depth) && depth > 0 && depth <= BAND_MAX_DEPTH))
+            return refuse('fr-urban-rules.band.depthRequired');
+          if (!Object.hasOwn(BAND_EDGES, edgesChoice ?? ''))
+            return refuse('fr-urban-rules.band.edgesRequired');
+          band = { depth, roles: [...BAND_EDGES[edgesChoice].roles] };
+        }
+        const statement =
+          band === undefined && request.values?.statement === 'not_regulated' ? 'not_regulated' : 'limit';
         const typed = request.values?.value;
         if (
           statement === 'limit' &&
@@ -13814,6 +14600,7 @@ const edgeLetter = (number) => {
             ? { limit: { kind: 'value', value: typed, unit: shape.unit } }
             : {}),
           ...(shape.roles === undefined ? {} : { edgeRoles: shape.roles }),
+          ...(band === undefined ? {} : { band }),
           source: {
             document,
             ...(Number.isInteger(page) && page >= 1 ? { page } : {}),

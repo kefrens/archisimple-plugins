@@ -1,5 +1,50 @@
 # Changelog — `fr-urban-rules`
 
+## 0.17.0 — Sprint 002.20, Limits Are Proposed, Cut Areas Are Red
+
+- **SDK 1.40** unchanged; no service change. Needs the platform's 103.4 to draw the red (an older host draws nothing of it and
+  reads everything else as 0.16.0).
+- **`02` is proposed, not cut.** Only `01` espace boisé classé and `05` emplacement réservé are cut without being asked. A `02`
+  constructibilité limitée limits building; it does not forbid it, and one covering a whole plot (Peynier's « Risque feux en RZ et UF »)
+  emptied it. It is shown in the area's view with the area it would take and « Retirer de l'aire ». « Garder dans l'aire » is gone;
+  a `keep` stored by 0.16.0 is read without harm and decides nothing.
+- **The cut areas are red.** Each area taken out is a derived `prescription` feature (`excluded:n`) clipped to the Site boundary, drawn
+  translucent red on the plan and in 3D by the host. One button, « Masquer / Afficher les zones retirées », hides or shows them; it is
+  kept in the section as `exclusionsHidden` (per plot, shown by default) and changes no area.
+- Strings: `area.notice.drawnRed`, `area.action.hideCut`, `area.action.showCut` (en, fr).
+- Tests: `buildable-area.test.mjs` 30 (five new); the 0.16.0 tests that assumed `02` is cut now say it is proposed.
+## 0.16.0 — Sprints 002.17, 002.18 and 002.19, The Theoretical Buildable Area
+
+- **SDK 1.40** unchanged; no platform change, no service change. The area is the ground of the existing `envelope` feature
+  (several rings and holes, ADR-0111 Rules 16 and 23), so the host draws it as it always drew the envelope.
+- **Exclusion areas (002.17).** The `01`, `05` and `02` prescriptions' polygons are cut from the area by themselves, each listed
+  with its source and the area it takes on its own; `02` can be kept (« Garder dans l'aire »). `07` and every other type with a
+  surface are proposed and take nothing until chosen — `07` in the area's own view, the others in the Prescriptions view — and
+  the choice is reopened when the document's version changes (`PLUi` against `PLUI` reopens nothing). The section gains
+  `exclusionChoices` (validated: a malformed one makes the section read-only, as the others do). At most 24 areas are cut at once.
+- **Pieces and holes.** `insetByRole` answers `rings` (pieces counter-clockwise, holes clockwise): a setback that splits the plot,
+  or an exclusion inside it, gives pieces and holes instead of a refusal; `ring` stays when there is one piece and no hole. An
+  exclusion lying along a boundary edge is moved a tenth of a millimetre, in the direction that gives the fewest loops. The
+  overlay takes any polygon as a cut, not only the setbacks' convex strips.
+- **Height bands (002.18).** « Ajouter une hauteur limitée à une bande »: a height, a width and the edges it runs along. It is an
+  entered rule of kind `other` (no check, headroom or capacity reads it as the building's maximum), a `height` ceiling `within`
+  the strip, and a strip drawn on the plan (`envelope-band:n`, a derived `setback-band`, never the area's own category). It takes no area.
+- **The view (002.19).** « Aire d'implantation théorique » / « Theoretical buildable area »: the boundary's area, the area and its
+  share, what narrows it (each cut with its source and the area it takes alone; an overlap is said), what is left to confirm, the
+  rules applied and not applied, the assumptions, and a caution. The 3D volume keeps « Enveloppe théorique ». No string says
+  « zone constructible » or « emprise constructible »; « buildable » only behind « theoretical ».
+- **Lyon's flood overlay.** The `02` « Risque d'inondation par ruissellement » covers the whole of the reference plot, so its
+  area is empty until the overlay is kept; the notice says it is the exclusion (`collapsedByExclusions`). The reference captures are
+  read with that one choice added (`tests/helpers.mjs`).
+- **Assumptions** `envelope-exclusions`, `envelope-exclusions-missing`, `envelope-band` and (only when the Site boundary goes
+  past the plot) `envelope-boundary-line`. The `noBoundary` notice names the way out (choose a plot or draw the boundary).
+- Strings: 57 new keys (`area.*`, `band.*`, `assumption.envelope*`, `rule.bandCondition.*`, `entered.addHeightBand`,
+  `undo.exclusion`), en and fr; `view.envelope`, `envelope.notice.noBoundary` and `envelope.notice.shape` reworded.
+- Tests: `buildable-area.test.mjs` (25) and the pins of the earlier sprints updated where behaviour changed on purpose — a split plot
+  gives pieces, the Envelope view's first table is no longer the applied rules, the band form's fields, the count of assumptions (61).
+- Live: one read against the real GPU and API Carto on a plot of the Bois de Boulogne's espace boisé classé (type `01`): the area is
+  within 0.3 m² of an independent grid sample (957.3 against 957.6 m² of a 1,936 m² boundary).
+
 ## 0.15.0 — Sprint 002.16, The PLU Reads With The AI Panel's Model
 
 - **SDK 1.40** (from 1.38): `ai.selectedModel()` (platform 102.11, ADR-0028 Rule 11). Lockstep: ship this version only with a

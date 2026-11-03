@@ -266,7 +266,7 @@ test('criterion 3: a U-shaped boundary keeps both arms and the bay between them'
   assert.ok(held >= truth * 0.97);
 });
 
-test('criterion 3 / DEC-1: setbacks that consume the plot collapse; an inset that splits it is refused as its shape', () => {
+test('criterion 3 / DEC-1 (002.17): setbacks that consume the plot collapse; an inset that splits it gives two pieces', () => {
   const square = [p(0, 0), p(10, 0), p(10, 10), p(0, 10)];
   assert.deepEqual(insetByRole(square, [6, 6, 6, 6]), { failed: 'collapsed' });
   assert.deepEqual(insetByRole(square, [4.9, 0, 5.2, 0]), { failed: 'collapsed' });
@@ -275,7 +275,13 @@ test('criterion 3 / DEC-1: setbacks that consume the plot collapse; an inset tha
     p(0, 0), p(20, 0), p(20, 8), p(30, 8), p(30, 0), p(50, 0),
     p(50, 20), p(30, 20), p(30, 12), p(20, 12), p(20, 20), p(0, 20)
   ];
-  assert.deepEqual(insetByRole(dumbbell, dumbbell.map(() => 3)), { failed: 'shape' });
+  // Sprint 002.17: the pieces are answered (it was a refusal until then): two outers, no hole, no `ring`.
+  const pieces = insetByRole(dumbbell, dumbbell.map(() => 3));
+  assert.equal(pieces.rings.length, 2);
+  assert.equal(pieces.ring, undefined);
+  assert.ok(pieces.rings.every((ring) => area(ring) > 0), 'each piece counter-clockwise');
+  // Two 14 m squares, 3 m inside each 20 m one.
+  assert.ok(Math.abs(pieces.rings.reduce((sum, ring) => sum + area(ring), 0) - 2 * 14 * 14) < 4, 'the two pieces');
   // 1 m leaves the corridor 2 m wide: one ring.
   assertValid(dumbbell, dumbbell.map(() => 1), insetByRole(dumbbell, dumbbell.map(() => 1)), 'corridor');
 });
@@ -639,6 +645,8 @@ test('criterion 4: a rule to confirm shapes nothing and is listed « à confirme
   const without = await readAcceptance('lyon', { section: null });
   const height = without.rules.find((r) => r.label.text === 'Hauteur Max-22');
   assert.equal(height.status, 'to_confirm');
+  // Sprint 002.20: Lyon's `02` flood overlay covers the plot but is only proposed, so it takes nothing;
+  // no confirmed rule: no outline, no volume, and a notice that says there is no rule.
   assert.equal(envelopeOf(without), undefined, 'no confirmed rule: no outline, no volume');
   assert.ok(noticeKeys(without).includes('fr-urban-rules.envelope.notice.noRule'));
   assert.equal(reasonOf(without, 'Hauteur Max-22'), 'fr-urban-rules.envelope.reason.toConfirm');
@@ -812,8 +820,11 @@ test('criterion 6: setbacks that consume the plot, and an inset that splits it, 
   await enter(split, 'add-distance', 'rear_setback', 3);
   await enter(split, 'add-distance', 'street_setback', 3);
   report = await read(split);
-  assert.equal(envelopeOf(report), undefined);
-  assert.ok(noticeKeys(report).includes('fr-urban-rules.envelope.notice.shape'));
+  // Sprint 002.17: a split plot gives its two pieces, not a refusal.
+  const pieces = envelopeOf(report);
+  assert.equal(pieces.rings.length, 2);
+  assert.ok(pieces.rings.every((ring) => area(ring) > 0));
+  assert.ok(!noticeKeys(report).includes('fr-urban-rules.envelope.notice.shape'));
 });
 
 test('criterion 8: two heights over the whole plot merge into the lower, naming both; every volume sent is within 096.9’s limits', async () => {
