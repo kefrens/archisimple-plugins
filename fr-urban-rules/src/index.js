@@ -794,6 +794,9 @@ const WRITTEN_CODES = {
   busy: { retry: true },
   extraction_unavailable: { retry: true },
   extraction_failed: { retry: true },
+  // 002.16: ai-service refused the model chosen in the AI panel; another choice there, then try again
+  provider_not_permitted: { retry: true },
+  unknown_provider: { retry: true },
   internal_error: { retry: true },
   // the client's own: an answer that is not the route's, no answer
   unavailable: { retry: true },
@@ -840,6 +843,8 @@ const WRITTEN_CODE_KEYS = {
   busy: 'fr-urban-rules.written.code.busy',
   extraction_unavailable: 'fr-urban-rules.written.code.extraction_unavailable',
   extraction_failed: 'fr-urban-rules.written.code.extraction_failed',
+  provider_not_permitted: 'fr-urban-rules.written.code.provider_not_permitted',
+  unknown_provider: 'fr-urban-rules.written.code.unknown_provider',
   internal_error: 'fr-urban-rules.written.code.internal_error',
   unavailable: 'fr-urban-rules.written.code.unavailable',
   malformed: 'fr-urban-rules.written.code.malformed',
@@ -1121,6 +1126,26 @@ function checkedCurrent(json) {
     schemaVersion: json.schemaVersion,
     promptVersion: json.promptVersion
   };
+}
+
+/**
+ * Sprint 002.16: the model the user chose in the host's AI panel (`ai.selectedModel()`, SDK 1.40),
+ * as `{ providerId, model? }`, or `undefined` — no choice, a host older than 1.40 that has no such
+ * member, or an answer that is not an id and a name. Never an address; the service refuses one too.
+ * `undefined` means the service's own default (before 002.16, always), never a provider of ours.
+ */
+const CHOSEN_PROVIDER_ID = /^[a-z0-9][a-z0-9_-]{0,39}$/;
+function chosenModelOf(aiService) {
+  let chosen;
+  try {
+    chosen = aiService?.selectedModel?.();
+  } catch {
+    return undefined;
+  }
+  if (typeof chosen?.providerId !== 'string' || !CHOSEN_PROVIDER_ID.test(chosen.providerId)) return undefined;
+  const model = typeof chosen.model === 'string' ? chosen.model.trim() : '';
+  const usable = model !== '' && model.length <= 120 && !model.includes('://') && !/\p{Cc}/u.test(model);
+  return { providerId: chosen.providerId, ...(usable ? { model } : {}) };
 }
 
 /** DEC-1 (B2): Extract again is offered for a partial result, another provider, an older version. */
@@ -3783,6 +3808,12 @@ export function createReader({
     const url = new URL('v1/extractions', record.baseUrl);
     for (const [name, value] of Object.entries(record.query)) url.searchParams.set(name, value);
     url.searchParams.set('cachedOnly', '1');
+    // 002.16: who is asked about — `current` names the model the user chose, so another's result offers "again".
+    const chosen = chosenModelOf(ai());
+    if (chosen !== undefined) {
+      url.searchParams.set('provider', chosen.providerId);
+      if (chosen.model !== undefined) url.searchParams.set('model', chosen.model);
+    }
     const answer = await serviceCall(url);
     if (answer.failed === 'aborted') return;
     const current = checkedCurrent(answer.json?.current);
@@ -3813,10 +3844,13 @@ export function createReader({
   /** DEC-1: Extract (or Extract again, `refresh=1`): one `POST`; the job is polled. */
   async function startExtraction(record, refresh) {
     const url = new URL(`v1/extractions${refresh ? '?refresh=1' : ''}`, record.baseUrl);
+    const chosen = chosenModelOf(ai());
     const answer = await serviceCall(url, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(record.query)
+      // 002.16: the model chosen in the AI panel, read now (a change applies to this very call);
+      // omitted when there is none, and the service reads with its own default as before.
+      body: JSON.stringify({ ...record.query, ...(chosen === undefined ? {} : { ai: chosen }) })
     });
     if (answer.failed === 'aborted') return { code: 'unavailable' };
     if (answer.status === 200 && answer.json?.state === 'done') {
@@ -9721,6 +9755,15 @@ const edgeLetter = (number) => {
     return list;
   }
 
+  /** 002.16: « Lecture avec (panneau IA) » — the chosen model, or the deployment's default. */
+  const willReadRow = (chosen) => ({
+    label: { key: 'fr-urban-rules.written.field.willRead' },
+    value:
+      chosen === undefined
+        ? { key: 'fr-urban-rules.written.defaultModel' }
+        : { text: cut([chosen.providerId, chosen.model].filter(Boolean).join(' · '), 200) }
+  });
+
   /**
    * DEC-2: per zone, its state — a `sources[]` line and the Rules view's
    * heading, notice, fields and actions. Every state is named; an empty list
@@ -9767,6 +9810,8 @@ const edgeLetter = (number) => {
         zoneBlocks.push(
           notice('info', 'fr-urban-rules.written.state.notStarted', { zone: cut(zone, 64) })
         );
+        // 002.16: which model will read — the one chosen in the AI panel, else the deployment's own.
+        zoneBlocks.push({ kind: 'fields', rows: [willReadRow(chosenModelOf(aiOf()))] });
         zoneBlocks.push({
           kind: 'actions',
           actions: [action('written-extract', 'fr-urban-rules.written.extract', true)]
@@ -9873,7 +9918,15 @@ const edgeLetter = (number) => {
             );
         }
         // Without the companion, Extract again is not offered: the notice says why (002.11).
-        if (written.available && !waiting && extractAgainOffered(result, record.current)) {
+        // 002.16: the model chosen in the AI panel now is what "again" would read with, so the
+        // offer follows it at once, not only the provider the service last named.
+        const chosenNow = chosenModelOf(aiOf());
+        const currentNow =
+          chosenNow === undefined
+            ? record.current
+            : { schemaVersion: 0, promptVersion: 0, ...record.current, providerId: chosenNow.providerId };
+        if (written.available && !waiting && extractAgainOffered(result, currentNow)) {
+          if (chosenNow !== undefined) zoneBlocks.push({ kind: 'fields', rows: [willReadRow(chosenNow)] });
           zoneBlocks.push({
             kind: 'actions',
             actions: [action('written-extract-again', 'fr-urban-rules.written.extractAgain')]

@@ -4,6 +4,12 @@
  * items `{ value, passage: { text, start, end, occurrences } }` with offsets
  * into the text sent, `rejected`, `providerId`, `model`, `constraint`.
  *
+ * Sprint 002.16: it records the second argument of `extract` (`routes`: who is asking and
+ * what they chose) and behaves as ai-service does with it. `granted` lists the providers that
+ * need the feature `ai-<id>` (`openai` on the NUC); `known` lists every provider id there is.
+ * A named provider that is not known is `unknown_provider`, and a granted one without its feature
+ * is `provider_not_permitted` — ai-service's own codes. With no `granted`/`known` it accepts all.
+ *
  * `plan(text, call)` says what the "model" answers for one chunk:
  * `[{ value, passage }]`, or a thrown `AiError`. The fake does what 096.7
  * does with it: an absent passage is `passage-not-found`, a present one gets
@@ -19,14 +25,30 @@ export function fakeAi({
   providerId = 'lmstudio',
   model = 'fake-model',
   constraint = 'schema',
-  hold
+  hold,
+  granted = [],
+  known
 } = {}) {
   const calls = [];
+  const routes = [];
+  const healths = [];
   return {
     calls,
-    health: async () => (typeof health === 'function' ? health() : health),
-    async extract(request) {
+    routes,
+    healths,
+    health: async (route) => {
+      healths.push(route);
+      return typeof health === 'function' ? health() : health;
+    },
+    async extract(request, route = {}) {
       calls.push(request);
+      routes.push(route);
+      if (route.providerId !== undefined) {
+        if (known !== undefined && !known.includes(route.providerId)) throw new AiError('unknown_provider', 422);
+        if (granted.includes(route.providerId) && !(route.features ?? []).includes(`ai-${route.providerId}`)) {
+          throw new AiError('provider_not_permitted', 403);
+        }
+      }
       if (hold !== undefined) await hold;
       const planned = await plan(request.text, calls.length, request);
       const normalised = normaliseText(request.text);
@@ -48,8 +70,8 @@ export function fakeAi({
         });
       });
       return {
-        providerId,
-        model,
+        providerId: route.providerId ?? providerId,
+        model: route.model ?? model,
         items,
         rejected,
         finishReason: 'stop',

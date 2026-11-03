@@ -27,6 +27,8 @@ export const PROMPT_VERSION = 2;
 export const MAX_CHUNK_CHARS = 40_000;
 export const MAX_ITEMS_PER_CHUNK = 120;
 export const CONDITION_WINDOW = 1_500;
+/** What ends a job at its first chunk: no provider at all, one the account may not use, or none by that id. */
+const REFUSED = new Set(['no_provider_configured', 'provider_not_permitted', 'unknown_provider']);
 /** 096.7's codes worth one retry; any other ends the chunk at once. */
 const RETRIED = new Set(['output_truncated', 'output_invalid', 'provider_error', 'unreachable', 'malformed']);
 
@@ -413,7 +415,9 @@ export async function extractChapter({ prepared, ai, maxTextLength, maxItems, ch
         onCall?.({ ...sent, attempt, error: code });
         codes.push(code);
         if (!RETRIED.has(code)) {
-          if (code === 'no_provider_configured') throw error;
+          // 002.16: a refusal of the chosen provider is the whole job's, not a chunk's: the next
+          // chunk would be refused the same way, so the first one ends it.
+          if (REFUSED.has(code)) throw error;
           break;
         }
       }

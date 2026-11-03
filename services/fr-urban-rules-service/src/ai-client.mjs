@@ -5,11 +5,32 @@
  * Rule 7).
  *
  * The request carries only the fields 096.7 allows — `instructions`, `text`,
- * `itemSchema`, `maxItems` (and `providerId`, `model`, `maxTokens`, unused
- * here); its review refuses any other.
+ * `itemSchema`, `maxItems`, and `providerId` and `model` when the user chose
+ * them in the editor's AI panel (Sprint 002.16; `maxTokens` is unused here);
+ * its review refuses any other.
+ *
+ * **Who is asking travels with the call** (002.16; ADR-0114 Rule 14): the
+ * account's features, as the gateway took them from the deployment's proxy, go
+ * to ai-service in `X-Authenticated-Features` — the one header it believes from
+ * a trusted proxy — so a provider the account was not granted is refused there
+ * with ai-service's own code, `provider_not_permitted`. Nothing else about the
+ * user is sent, and never an `Authorization`.
  */
 
 export const STRUCTURED_OUTPUT = 'structured-output';
+
+/** The header ai-service reads, behind a proxy that overwrites it (ADR-0026 revision 4). */
+export const FEATURES_HEADER = 'x-authenticated-features';
+/** A feature id as `account-service` defines them (`ai-openai`, `plu`, …); anything else is dropped. */
+const FEATURE_TOKEN = /^[a-z0-9][a-z0-9-]{0,39}$/u;
+const MAX_FEATURES = 32;
+
+/** The entitlement header for a call: the features as given, cleaned; none when there are none. */
+export function entitlementHeaders(features) {
+  if (!Array.isArray(features)) return {};
+  const clean = [...new Set(features.filter((f) => typeof f === 'string' && FEATURE_TOKEN.test(f)))].slice(0, MAX_FEATURES);
+  return clean.length === 0 ? {} : { [FEATURES_HEADER]: clean.join(',') };
+}
 const HEALTH_TIMEOUT_MS = 5_000;
 /**
  * How long one extract call may take, from here (`FR_URBAN_RULES_EXTRACT_TIMEOUT_MS`).
@@ -119,10 +140,13 @@ export function createAiClient({
   }
 
   return {
-    /** `{ available, defaultProviderId, maxTextLength, maxItems }`; never throws. */
-    async health() {
+    /**
+     * `{ available, defaultProviderId, maxTextLength, maxItems }`; never throws.
+     * `features` makes the default the caller's own (ai-service names the first provider they may use).
+     */
+    async health({ features } = {}) {
       try {
-        const h = await call('/api/ai/health', { method: 'GET' }, HEALTH_TIMEOUT_MS);
+        const h = await call('/api/ai/health', { method: 'GET', headers: entitlementHeaders(features) }, HEALTH_TIMEOUT_MS);
         // A limit that is not a whole number of at least 1 000 characters
         // could not be chunked to; such a service is read as unavailable.
         const available =
@@ -142,14 +166,26 @@ export function createAiClient({
       }
     },
 
-    /** One `POST /api/ai/extract`; the response DTO, or an {@link AiError}. */
-    async extract({ instructions, text, itemSchema, maxItems }) {
+    /**
+     * One `POST /api/ai/extract`; the response DTO, or an {@link AiError}.
+     * `route` is who is asking and what they chose: `{ providerId?, model?, features? }`. No
+     * `providerId` means ai-service's default for that caller (before 002.16, always).
+     */
+    async extract({ instructions, text, itemSchema, maxItems }, route = {}) {
+      const named = typeof route.providerId === 'string' && route.providerId !== '';
       const answer = await call(
         '/api/ai/extract',
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ instructions, text, itemSchema, maxItems })
+          headers: { 'Content-Type': 'application/json', ...entitlementHeaders(route.features) },
+          body: JSON.stringify({
+            ...(named ? { providerId: route.providerId } : {}),
+            ...(named && typeof route.model === 'string' && route.model !== '' ? { model: route.model } : {}),
+            instructions,
+            text,
+            itemSchema,
+            maxItems
+          })
         },
         extractTimeoutMs,
         true

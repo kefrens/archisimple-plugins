@@ -22,6 +22,10 @@ export const ERROR_STATUS = Object.freeze({
   busy: 503,
   extraction_unavailable: 503,
   extraction_failed: 502,
+  // Sprint 002.16: ai-service's own refusals of the chosen provider, named as it names them.
+  // The account was not granted it (`ai-<provider>`), or the id is not a provider there.
+  provider_not_permitted: 403,
+  unknown_provider: 422,
   // Sprint 002.10 DEC-5: the Géorisques proxy has no token on this deployment.
   not_configured: 503,
   // An unexpected exception: its message is never answered or logged.

@@ -1,6 +1,6 @@
 {
   "name": "fr-urban-rules-service",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Companion service of com.archisimple.fr-urban-rules: reads a plot's règlement from the Géoportail de l'Urbanisme and finds its zone's chapter (Sprint 002.5a), reads it with a model on request (002.5b), watches the documents it holds for a new version (002.10) and proxies Géorisques v2 with the deployment's token (002.10).",
   "type": "module",

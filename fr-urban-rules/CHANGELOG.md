@@ -1,5 +1,22 @@
 # Changelog — `fr-urban-rules`
 
+## 0.15.0 — Sprint 002.16, The PLU Reads With The AI Panel's Model
+
+- **SDK 1.40** (from 1.38): `ai.selectedModel()` (platform 102.11, ADR-0028 Rule 11). Lockstep: ship this version only with a
+  web image carrying 102.11; an older host refuses the manifest. Needs the companion service 0.4.0 for what follows; without it
+  or against an older one, a read is exactly 0.14.0's.
+- **The model you chose reads.** « Lire le règlement » asks the service to read with the provider and model chosen in the AI
+  panel, read at the moment of the click: `POST v1/extractions` carries `ai: { providerId, model? }`, and the cached read names it
+  (`provider`, `model`). Nothing chosen, or a host without the member: nothing is sent, and the deployment's default reads.
+- **Per account.** The signed-in account's features travel with the call (service 0.4.0, ADR-0114 Rule 14). A provider the account
+  was not granted is refused by the AI service, and the zone says so: « Votre compte n’inclut pas le modèle choisi dans le panneau
+  IA… » with Try again once another is chosen; an unknown provider reads « Le service d’IA ne connaît pas le modèle choisi… ».
+- **« Lecture avec (panneau IA) »** in the zone before it is read, and beside « Extract again », which now follows the live choice:
+  offered when the chosen provider is not the one that read the zone.
+- Strings: `written.field.willRead`, `written.defaultModel`, `written.code.provider_not_permitted`,
+  `written.code.unknown_provider` (en, fr).
+- Tests: seven in `written.test.mjs` (sent, not sent, malformed, read at use, the row, the offer, the refusals).
+
 ## 0.14.0 — Sprint 002.10, Regulation Watch
 
 - **SDK 1.38** unchanged; no platform change. Capabilities and `network.hosts` unchanged: the question
@@ -17,7 +34,7 @@
 - **« Inchangée dans la nouvelle version — confirmer à nouveau »** for a written rule that the new
   version's reading finds with the same normalised passage and the limit that was confirmed: a
   condition and a « Confirmer à nouveau » button (the value in it when the rule has one). It stays
-  *to confirm* until clicked. Owner decision Q1, 2026-11-03.
+  _to confirm_ until clicked. Owner decision Q1, 2026-11-03.
 - **No automatic re-extraction** (owner decision Q2): a new version's written rules are read when the
   user asks, as before.
 - The Géorisques sources are named « Géorisques v1 — … ». The service's v2 proxy exists but this
@@ -94,8 +111,8 @@
   rules, checks, features, edges, flags, zones, document and sources of the five reference reads
   are byte-identical to 0.9.0's.
 - **The views in the boards' order, with an icon and a group**: Document, Zone (Secteur under a
-  carte communale), Prescriptions, Informations, Servitudes, Risques — *le terrain et ses règles* —
-  then Vérifications, Règles, Limites, Enveloppe, Surfaces — *le projet face aux règles*. A view
+  carte communale), Prescriptions, Informations, Servitudes, Risques — _le terrain et ses règles_ —
+  then Vérifications, Règles, Limites, Enveloppe, Surfaces — _le projet face aux règles_. A view
   the regime lacks is absent; the order of the rest holds.
 - **A Document view**: the overview's fields (regime, commune, document, version, approval date,
   zone), the link to the regulation and the notices about it. The overview keeps its **notices
@@ -208,14 +225,14 @@ capabilities unchanged):
   capture now holds a second variation (the house moved 3.5 m from its side
   boundary): 1 potential issue open, 0 parked.
 - **Review fixes (2026-10-21)**: `max_height`'s first line states the tightest
-  *confirmed* limit (a summary carries no rule, so the host cannot mark one to
+  _confirmed_ limit (a summary carries no rule, so the host cannot mark one to
   confirm there) and says when a rule to confirm gives a lower one; a façade
   limit counts the storeys under the eaves, not the roof, when no storey is
   measured; a limit is read at the rule's current value against its check's
   measure; R.111-17's 3 m floor is said as an issue that stays whatever the
   height; « Confirm {value} » formats its number in the reader's locale.
 - **To be reviewed by the owner (RD-1, 2026-10-20; shipped as drafted)** — the
-  three *Interpretation* sentences, each droppable by deleting its key and its
+  three _Interpretation_ sentences, each droppable by deleting its key and its
   condition:
   - `fr-urban-rules.question.interp.attic` (a façade height rule in play):
     « Un étage en attique, en retrait de la façade, échappe souvent à une limite
@@ -307,7 +324,7 @@ capabilities unchanged):
   and minimum, or a statement), page, article, quoted passage, conditions,
   exceptions and confidence (a low one said in words). Rules of other sectors
   are counted, not shown. Keys: `written:<sector|*>:<cyrb53(normalised
-  passage)>`, `~2` on a collision — a new model or chunking that quotes another
+passage)>`, `~2` on a collision — a new model or chunking that quotes another
   span gives a new key, and the old confirmation shows as no longer read.
 - **Merging:** a written « voir le document graphique » defers to a drawn rule
   of its kind (shown as information) or is not evaluable without one; a written

@@ -13,7 +13,7 @@ import http from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { after, test } from 'node:test';
-import { createGateway, createUserHasher, mountServices, parseTarget } from '../src/gateway.mjs';
+import { createGateway, createUserHasher, mountServices, parseFeatures, parseTarget } from '../src/gateway.mjs';
 import { createParser } from '../../fr-urban-rules-service/src/document.mjs';
 import { createService } from '../../fr-urban-rules-service/src/service.mjs';
 import { buildPdf, capturingLog } from '../../fr-urban-rules-service/tests/helpers.mjs';
@@ -104,7 +104,7 @@ test('the real services folder mounts com.archisimple.fr-urban-rules, and its he
   assert.deepEqual([...mounted.keys()], ['com.archisimple.fr-urban-rules']);
   const port = await listen(createGateway({ mounted, env: {}, log: capture.log }));
   const health = await get(port, '/plugins-api/com.archisimple.fr-urban-rules/health');
-  assert.deepEqual(health.body, { status: 'ok', packageId: 'com.archisimple.fr-urban-rules', contract: 1, version: '0.3.0' });
+  assert.deepEqual(health.body, { status: 'ok', packageId: 'com.archisimple.fr-urban-rules', contract: 1, version: '0.4.0' });
   assert.equal((await get(port, '/plugins-api/org.example.other/health')).status, 404);
   assert.ok(capture.records.some((r) => r.event === 'log_key_random'), 'an unset log key is said');
 });
@@ -159,6 +159,36 @@ test('a POST body up to 4 KiB reaches the service as text (002.5b); a larger one
   const big = 'x'.repeat(5000);
   assert.equal((await get(port, '/plugins-api/org.example.ok/v1/extractions', { 'Transfer-Encoding': 'chunked' }, 'POST', big)).status, 400);
   assert.equal(calls.length, 1);
+});
+
+test('Sprint 002.16: X-Authenticated-Features reaches the service as a clean list, and as nothing when it is absent or unusable', async () => {
+  const { port, calls } = await stubGateway();
+  const ask = async (headers) => {
+    const before = calls.length;
+    await get(port, '/plugins-api/org.example.ok/v1/x', headers);
+    return calls[before];
+  };
+  const stamped = await ask({ 'X-Authenticated-Features': 'plu, ai-openai,ai-openai, Bad Id,,x'.concat(',', 'y'.repeat(41)) });
+  assert.deepEqual(stamped.features, ['ai-openai', 'plu', 'x'], 'sorted, unique, malformed ids dropped alone');
+  assert.equal('features' in (await ask({})), false, 'no header: no claim of any kind');
+  assert.equal('features' in (await ask({ 'X-Authenticated-Features': '' })), false, 'an account with none says none');
+  assert.equal('features' in (await ask({ 'X-Authenticated-Features': 'Not A List!!' })), false);
+  assert.equal(
+    'features' in (await ask({ 'X-Authenticated-Features': `plu,${'a'.repeat(1030)}` })),
+    false,
+    'an over-long header is ignored whole, not truncated into a different claim'
+  );
+  // Never the user: the features are not the name, and the name still arrives only hashed.
+  assert.equal(JSON.stringify(stamped).includes('alice'), false);
+});
+
+test('parseFeatures: least privilege', () => {
+  assert.equal(parseFeatures(undefined), undefined);
+  assert.equal(parseFeatures(''), undefined);
+  assert.equal(parseFeatures(['ai-openai', 'plu']).join(), 'ai-openai,plu', 'a repeated header is one list');
+  assert.equal(parseFeatures(`${Array.from({ length: 40 }, (_, i) => `f${String(i).padStart(2, '0')}`).join(',')}`).length, 32);
+  assert.equal(parseFeatures(' ai-openai ').join(), 'ai-openai');
+  assert.equal(parseFeatures('ai-openai;plu'), undefined, 'a semicolon list is not the proxy\'s format');
 });
 
 test('S8: an X-Authenticated-User over 128 characters is refused', async () => {

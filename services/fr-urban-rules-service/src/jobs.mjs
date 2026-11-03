@@ -15,6 +15,12 @@
  * chapter) and not by provider or model (health names no model, so such a
  * key could not be formed for `cachedOnly`; both are stored in the result).
  *
+ * Sprint 002.16: the user's chosen provider and the account's features ride with
+ * the job and with every model call it makes. A result already cached, or a job
+ * already running for the same chapter, is served to whoever asks — it costs no
+ * model call, which is all the entitlement guards; "Extract again" is a new call,
+ * and is refused like any other when the account may not use the chosen provider.
+ *
  * A model call starts only from a POST. A POST answered from the cache, or
  * joining a job already queued or running for the same thing, costs nothing;
  * a job that ends without calling a model gives its charge back.
@@ -43,12 +49,20 @@ function chapterPages(document, [from, to]) {
   return pages;
 }
 
+/** `{ providerId?, model?, features? }`: what one model call is told (ai-client's `route`). */
+function routeOf(selection, features) {
+  return {
+    ...(selection === undefined ? {} : { providerId: selection.providerId, ...(selection.model === undefined ? {} : { model: selection.model }) }),
+    ...(features === undefined ? {} : { features })
+  };
+}
+
 /**
  * @param {{
  *   store: { get: Function },            002.5a's document store (fetch on a miss, joins)
  *   documents: { has, read },            002.5a's document cache
  *   results: { has, read, write },       this sprint's result cache
- *   ai: { health, extract },
+ *   ai: { health({ features }), extract(request, { providerId, model, features }) },
  *   limiters: { extractHour, extractDay, refreshDay, fetchHour },
  *   logger: (level, record) => void,
  *   clock?: () => number, now?: () => Date, onCall?: Function
@@ -67,9 +81,16 @@ export function createExtractions({ store, documents, results, ai, limiters, log
     for (const [id, job] of jobs) if (job.endedAt !== undefined && job.endedAt < cutoff) jobs.delete(id);
   }
 
-  async function current() {
-    const health = await ai.health();
-    return { providerId: health.defaultProviderId, schemaVersion: SCHEMA_VERSION, promptVersion: PROMPT_VERSION };
+  /**
+   * What a result is compared with to offer "Extract again" (DEC-1 B2): the provider the user
+   * asked for (002.16), else ai-service's default for this caller; the versions are this build's.
+   */
+  async function current(route = {}) {
+    const providerId =
+      typeof route.providerId === 'string' && route.providerId !== ''
+        ? route.providerId
+        : (await ai.health({ features: route.features })).defaultProviderId;
+    return { providerId, schemaVersion: SCHEMA_VERSION, promptVersion: PROMPT_VERSION };
   }
 
   /** The chapter and its result key from cached text; `undefined` when the text is not cached. Throws chapter codes. */
@@ -124,6 +145,7 @@ export function createExtractions({ store, documents, results, ai, limiters, log
       cache: job.fromCache ? 'hit' : 'miss',
       user: job.userHash,
       userSource: job.userSource,
+      ...(job.route.providerId === undefined ? {} : { requestedProvider: job.route.providerId }),
       ...(job.summary ?? {})
     });
   }
@@ -142,7 +164,7 @@ export function createExtractions({ store, documents, results, ai, limiters, log
     try {
       job.state = 'fetching';
       job.progress = { step: 'fetching' };
-      const health = await ai.health();
+      const health = await ai.health({ features: job.route.features });
       if (!health.available) throw new ServiceError('extraction_unavailable', { reason: 'no_structured_output' });
 
       const got = await store.get(job.inputs, {
@@ -172,7 +194,8 @@ export function createExtractions({ store, documents, results, ai, limiters, log
       try {
         extracted = await extractChapter({
           prepared,
-          ai,
+          // Every model call carries the provider the user chose and the account's entitlement.
+          ai: { ...ai, extract: (request) => ai.extract(request, job.route) },
           maxTextLength: health.maxTextLength,
           maxItems: Math.min(maxItems ?? Infinity, health.maxItems ?? Infinity),
           chunkChars,
@@ -185,6 +208,11 @@ export function createExtractions({ store, documents, results, ai, limiters, log
       } catch (error) {
         if (error instanceof AiError && error.code === 'no_provider_configured') {
           throw new ServiceError('extraction_unavailable', { reason: 'no_provider_configured' });
+        }
+        // 002.16: ai-service's refusal of the chosen provider, by its own code; the provider's id
+        // is public (the user named it), nothing else about the refusal is.
+        if (error instanceof AiError && (error.code === 'provider_not_permitted' || error.code === 'unknown_provider')) {
+          throw new ServiceError(error.code, { providerId: job.route.providerId });
         }
         throw error;
       }
@@ -242,7 +270,10 @@ export function createExtractions({ store, documents, results, ai, limiters, log
   return {
     /**
      * @param {{ partition, idurba, nomfic, zone }} inputs checked by the caller
-     * @param {{ refresh: boolean, limitKey: string, userHash: string, userSource: string }} who
+     * @param {{ refresh: boolean, limitKey: string, userHash: string, userSource: string,
+     *   selection?: { providerId: string, model?: string }, features?: string[] }} who
+     *   `selection` is what the user chose in the editor's AI panel (checked by the caller);
+     *   `features` the account's, as the gateway took them from the proxy (never the browser).
      */
     async post(inputs, who) {
       sweep();
@@ -277,6 +308,8 @@ export function createExtractions({ store, documents, results, ai, limiters, log
         limitKey: who.limitKey,
         userHash: who.userHash,
         userSource: who.userSource,
+        // Kept with the job: it runs later, and it runs as the user who started it (ADR-0114 Rule 14).
+        route: routeOf(who.selection, who.features),
         tags: [tag],
         refund,
         calledModel: false,
@@ -297,10 +330,10 @@ export function createExtractions({ store, documents, results, ai, limiters, log
       return { status: 200, body: view(job) };
     },
 
-    /** `cachedOnly=1`: reads, never starts work, never fetches. */
-    async cached(inputs) {
+    /** `cachedOnly=1`: reads, never starts work, never fetches. `route`: `{ selection?, features? }`. */
+    async cached(inputs, route = {}) {
       const located = await fromCachedText(inputs);
-      const currentVersions = await current();
+      const currentVersions = await current(routeOf(route.selection, route.features));
       const result = located === undefined ? undefined : await results.read(located.key);
       if (result === undefined) {
         return { status: 404, body: { current: currentVersions, error: 'not_cached' } };

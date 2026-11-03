@@ -252,7 +252,9 @@ const phaseOne = (report) => {
   // Since 002.6b the served report also carries the written rules' state (DEC-2).
   const written = (b) =>
     b.text?.key?.startsWith('fr-urban-rules.written.') ||
-    (b.kind === 'actions' && b.actions.every((a) => a.id.startsWith('written-')));
+    (b.kind === 'actions' && b.actions.every((a) => a.id.startsWith('written-'))) ||
+    // 002.16: « Lecture avec (panneau IA) », a fields block of the written state's own labels.
+    (b.kind === 'fields' && b.rows.every((r) => r.label?.key?.startsWith('fr-urban-rules.written.')));
   return {
     ...rest,
     sources: rest.sources.filter((s) => !s.id.startsWith('written-rules')),

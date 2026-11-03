@@ -18,8 +18,9 @@
  * run.
  *
  * **Only the deployment's proxy may reach the gateway.** It trusts
- * `X-Authenticated-User` (capped at 128 characters) because Caddy sets it and
- * `web` forwards it, and nothing else can connect: the compose service
+ * `X-Authenticated-User` (capped at 128 characters) and, since Sprint 002.16,
+ * `X-Authenticated-Features` (ADR-0114 Rule 14) because the account gateway
+ * overwrites both and `web` forwards them, and nothing else can connect: the compose service
  * publishes no port, and the gateway binds where the deployment says
  * (`PLUGIN_SERVICES_HOST`, `0.0.0.0` inside the container's own network). Run
  * outside that arrangement, anyone could claim any name. No shared secret
@@ -39,6 +40,11 @@ export const HEALTH_CONTRACT = 1;
 export const MAX_TARGET_BYTES = 4096;
 export const MAX_BODY_BYTES = 4096;
 export const MAX_USER_LENGTH = 128;
+export const FEATURES_HEADER = 'x-authenticated-features';
+export const MAX_FEATURES_HEADER_LENGTH = 1024;
+export const MAX_FEATURES = 32;
+/** A feature id as the account service defines them (`ai-openai`, `plu`); anything else is dropped. */
+const FEATURE_TOKEN = /^[a-z0-9][a-z0-9-]{0,39}$/u;
 export const DEFAULT_PORT = 4500;
 export const GATEWAY_VERSION = JSON.parse(
   readFileSync(new URL('../package.json', import.meta.url), 'utf8')
@@ -62,6 +68,33 @@ export function createUserHasher(env) {
   const key = configured ? env.PLUGIN_SERVICES_LOG_KEY : randomBytes(32);
   const hash = (name) => createHmac('sha256', key).update(String(name)).digest('hex').slice(0, 12);
   return { hash, keyed: configured };
+}
+
+/**
+ * The account's features, as the deployment's proxy stamped them (Sprint 002.16, ADR-0114 Rule 14).
+ *
+ * Believed for the reason `X-Authenticated-User` is: the account gateway overwrites it on every
+ * request and `web` passes it on, and nothing else reaches this port. A client of this process that
+ * is not the proxy could name any features, which is why the compose service publishes no port.
+ * Read as least privilege: a header that is missing, too long, or not a list of feature ids yields
+ * `undefined` — no features — and a malformed entry is dropped alone, never repaired.
+ *
+ * @returns {string[] | undefined} sorted, unique, at most {@link MAX_FEATURES}; `undefined` when none
+ */
+export function parseFeatures(header) {
+  const value = Array.isArray(header) ? header.join(',') : header;
+  if (typeof value !== 'string' || value === '' || value.length > MAX_FEATURES_HEADER_LENGTH) return undefined;
+  const features = [
+    ...new Set(
+      value
+        .split(',')
+        .map((feature) => feature.trim())
+        .filter((feature) => FEATURE_TOKEN.test(feature))
+    )
+  ]
+    .sort()
+    .slice(0, MAX_FEATURES);
+  return features.length === 0 ? undefined : features;
 }
 
 /** `undefined` when a raw segment must be refused; else its decoded text. */
@@ -207,6 +240,7 @@ export function createGateway({ mounted, env, log }) {
       // The proxy sets it from an account name; anything longer is not one (S8).
       if (user !== undefined && user.length > MAX_USER_LENGTH) return answer(response, 400, { error: 'invalid_request' });
       const fromHeader = user !== undefined && user !== '';
+      const features = parseFeatures(request.headers[FEATURES_HEADER]);
       const address = request.socket.remoteAddress ?? 'unknown';
       const limitKey = fromHeader ? `user:${user}` : `address:${address}`;
       const result = await entry.service.handle({
@@ -214,6 +248,8 @@ export function createGateway({ mounted, env, log }) {
         segments: rest,
         query: parsed.query,
         body: body === '' ? undefined : body,
+        // Only what the proxy stamped; never the browser's own claim (the proxy overwrites it).
+        ...(features === undefined ? {} : { features }),
         limitKey,
         // The name itself is what ADR-0114 Rule 10 hashes (the address when there is none).
         userHash: users.hash(fromHeader ? user : address),

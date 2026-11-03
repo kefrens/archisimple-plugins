@@ -7,10 +7,10 @@
  *
  *     GET v1/chapter?partition=&idurba=&nomfic=&zone=
  *       → { pages: [from, to], found, match, title, documentPages }
- *     POST v1/extractions { partition, idurba, nomfic, zone } [?refresh=1]   (002.5b)
+ *     POST v1/extractions { partition, idurba, nomfic, zone, ai?: { providerId, model? } } [?refresh=1]   (002.5b, 002.16)
  *       → 200 { state: 'done', result } | 202 { jobId, state }
  *     GET v1/extractions/{jobId} → { jobId, state, progress, result?, error? }
- *     GET v1/extractions?partition&idurba&nomfic&zone&cachedOnly=1
+ *     GET v1/extractions?partition&idurba&nomfic&zone[&provider[&model]]&cachedOnly=1
  *       → { result, current } | 404 { error: 'not_cached', current }
  *
  *     GET v1/documents/{partition}                                              (002.10)
@@ -46,6 +46,16 @@ import { prepareChapter } from './text.mjs';
 import { createWatcher } from './watch.mjs';
 
 export const PACKAGE_ID = 'com.archisimple.fr-urban-rules';
+
+/**
+ * Sprint 002.16: what the editor may name of the AI panel's choice. An id as ai-service's providers
+ * have them (`lmstudio`, `openai`), and a model name — which may hold `/` and `:` (`qwen/qwen3-vl-8b`,
+ * `llama3:8b`) but never an address (`://`) or a control character. No endpoint field exists.
+ */
+const SELECTION_PATTERNS = Object.freeze({
+  providerId: /^[a-z0-9][a-z0-9_-]{0,39}$/u,
+  model: /^(?!.*:\/\/)[^\p{Cc}\p{Cf}\p{Zl}\p{Zp}]{1,120}$/u
+});
 export const VERSION = JSON.parse(
   readFileSync(new URL('../package.json', import.meta.url), 'utf8')
 ).version;
@@ -223,7 +233,40 @@ export async function createService({
     if (!read.ok) throw new ServiceError('rate_limited', { retryAfterSeconds: read.retryAfterSeconds });
   }
 
-  /** A POST body, `{ partition, idurba, nomfic, zone }` strings and nothing else, as query parameters. */
+  /**
+   * The model the user chose in the editor's AI panel (Sprint 002.16): `{ providerId, model? }` or
+   * `undefined`. An id and a name, never an address: anything else is refused, not trimmed.
+   */
+  function readSelection(value) {
+    if (value === undefined) return undefined;
+    if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+      throw new ServiceError('invalid_request', { field: 'ai' });
+    }
+    for (const name of Object.keys(value)) {
+      if (name !== 'providerId' && name !== 'model') throw new ServiceError('invalid_request', { field: 'ai' });
+    }
+    if (typeof value.providerId !== 'string' || !SELECTION_PATTERNS.providerId.test(value.providerId)) {
+      throw new ServiceError('invalid_request', { field: 'ai' });
+    }
+    if (value.model !== undefined && (typeof value.model !== 'string' || !SELECTION_PATTERNS.model.test(value.model))) {
+      throw new ServiceError('invalid_request', { field: 'ai' });
+    }
+    return { providerId: value.providerId, ...(value.model === undefined || value.model === '' ? {} : { model: value.model }) };
+  }
+
+  /** `GET …&cachedOnly=1`'s `provider` and `model` parameters, the same selection. */
+  function querySelection(query) {
+    const providers = query.getAll('provider');
+    const models = query.getAll('model');
+    if (providers.length === 0 && models.length === 0) return undefined;
+    if (providers.length !== 1 || models.length > 1) throw new ServiceError('invalid_request', { field: 'provider' });
+    return readSelection({ providerId: providers[0], ...(models.length === 1 ? { model: models[0] } : {}) });
+  }
+
+  /**
+   * A POST body, `{ partition, idurba, nomfic, zone }` strings and an optional `ai` selection and
+   * nothing else: `{ inputs, selection }`.
+   */
   function bodyInputs(body) {
     let parsed;
     try {
@@ -234,14 +277,15 @@ export async function createService({
     if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
       throw new ServiceError('invalid_request', { field: 'body' });
     }
+    const { ai: aiField, ...fields } = parsed;
     const query = new URLSearchParams();
-    for (const [name, value] of Object.entries(parsed)) {
+    for (const [name, value] of Object.entries(fields)) {
       if (!(name in INPUT_PATTERNS) || typeof value !== 'string') {
         throw new ServiceError('invalid_request', { field: 'body' });
       }
       query.append(name, value);
     }
-    return readInputs(query);
+    return { inputs: readInputs(query), selection: readSelection(aiField) };
   }
 
   /** The extraction routes (002.5b DEC-1): `{ status, headers?, body, record }`. */
@@ -253,13 +297,15 @@ export async function createService({
     }
     if (rest.length !== 0) throw new ServiceError('not_found');
     if (request.method === 'POST') {
-      const inputs = bodyInputs(request.body);
+      const { inputs, selection } = bodyInputs(request.body);
       const refresh = request.query.get('refresh') === '1';
       const answer = await extractions.post(inputs, {
         refresh,
         limitKey: request.limitKey,
         userHash: request.userHash,
-        userSource: request.userSource
+        userSource: request.userSource,
+        selection,
+        features: request.features
       });
       return {
         status: answer.status,
@@ -272,7 +318,7 @@ export async function createService({
       const query = new URLSearchParams(request.query);
       query.delete('cachedOnly');
       const inputs = readInputs(query);
-      const answer = await extractions.cached(inputs);
+      const answer = await extractions.cached(inputs, { selection: querySelection(request.query), features: request.features });
       return {
         ...answer,
         record: { event: 'extraction_cached', idurba: inputs.idurba, nomfic: inputs.nomfic, zone: inputs.zone, cache: answer.status === 200 ? 'hit' : 'miss' }
@@ -343,7 +389,8 @@ export async function createService({
     /**
      * @param {{
      *   method: string, segments: string[], query: URLSearchParams, body?: string,
-     *   limitKey: string, userHash: string, userSource: 'header' | 'address'
+     *   limitKey: string, userHash: string, userSource: 'header' | 'address',
+     *   features?: string[]   the account's, from the proxy's header; absent when it sent none
      * }} request `segments` decoded, after the package id; `body` at most 4 KiB
      * @returns {Promise<{ status: number, headers?: Record<string, string>, body: object }>}
      */

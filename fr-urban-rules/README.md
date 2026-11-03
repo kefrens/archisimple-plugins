@@ -37,6 +37,14 @@ After Phase 3: **0.9.0** is Sprint [002.11 Planning Snapshot](../docs/sprints/sp
 (SDK 1.38, platform 096.27); **0.14.0** is Sprint [002.10 Regulation Watch](../docs/sprints/sprint-002.10-regulation-watch.md)
 (SDK 1.38 unchanged; no platform change).
 
+## The model that reads (0.15.0)
+
+The written rules are read by **the model chosen in the AI panel** (`ai.selectedModel()`, SDK 1.40), at the moment of the click.
+The choice is sent as `ai: { providerId, model? }`; the zone says « Lecture avec … » before it is read. The signed-in account's
+features travel with the call to the AI service (companion service 0.4.0, platform ADR-0114 Rule 14): an account that was not
+granted the chosen provider is refused there, and the zone says so. Nothing chosen, or a host older than 1.40, and the
+deployment's default model reads, as in 0.14.0. An address, a key or an endpoint is never part of the choice.
+
 ## The document watch (0.14.0)
 
 When the deployment runs the companion service, a read that finds a PLU(i) also asks the service
@@ -50,7 +58,7 @@ the extension.
   host reads again (`reason: 'source'`) and the user hears of the new version within the session, not
   at the next open. An unchanged answer, an error, a missing service or an answer that is not the
   route's signals nothing.
-- **The overview says it** for the confirmations made against an earlier *document*: « Une nouvelle
+- **The overview says it** for the confirmations made against an earlier _document_: « Une nouvelle
   version du document a été publiée le {date}. {n} confirmations sont à revoir. » The date is the
   watch's publication date when the service gave it for this document, else the day the version
   applies from. A date moved inside the same document is the existing « rules reopened » line; casing
@@ -59,14 +67,14 @@ the extension.
 - **« Unchanged in the new version — confirm again »** (owner decision, 2026-11-03). A written rule
   that a reading of the new version finds again — its key is the hash of its normalised passage —
   with exactly the limit that was confirmed shows that, and its button reads « Confirmer à nouveau »
-  (« Confirmer à nouveau 15 % »). It stays *to confirm* until clicked: nothing is carried over
+  (« Confirmer à nouveau 15 % »). It stays _to confirm_ until clicked: nothing is carried over
   silently. A rule whose limit differs, or whose passage is gone, is a cold review as before.
 - **Reading the new version's written rules is the user's to start** (owner decision Q2): neither
   the watch nor a read starts an extraction.
 - **Géorisques** is still read from the browser through API v1, now said so in the sources list
   (« Géorisques v1 — … »). The service can proxy v2 with the deployment's token
   (`FR_URBAN_RULES_GEORISQUES_TOKEN`, held by the service only), but v2 is a different shape — its
-  `gaspar/risques` lists GASPAR *procedures*, not the commune's risks — so this package does not read
+  `gaspar/risques` lists GASPAR _procedures_, not the commune's risks — so this package does not read
   it yet; see the sprint's Outcome.
 
 ## The Surfaces view (0.13.0)
@@ -158,7 +166,7 @@ to confirm offers « Confirmer 15 % ». Nothing read, measured or checked change
 - **Claims, never text.** A limit is a claim on its rule (`basis: 'rule'`), which
   the host cites from the report; a figure is the editor's measure
   (`basis: 'measured'`); nothing is read out of a passage. Rule labels are the
-  report's own words. Beyond the text, at most three *Interpretation* phrases
+  report's own words. Beyond the text, at most three _Interpretation_ phrases
   from a closed list (the attic note, the relative-limit estimate, « these
   figures do not prejudge the decision »). No answer says « compliant ».
 - **One headroom.** `heightHeadroom` gives the height a building may still gain
@@ -178,7 +186,7 @@ to confirm offers « Confirmer 15 % ». Nothing read, measured or checked change
   checks over the parked design (`site.measures` with its `variationId`, the
   host's list of its buildings) and the last read's rules, roads, alignments
   and section; no network, no read. Without a read of the Site matching the
-  report it throws, and the host says *Could not be measured*.
+  report it throws, and the host says _Could not be measured_.
 - **The network list.** The manifest's `network.hosts` names the three hosts the
   browser code fetches (`FETCHED_HOSTS`; `fetchJson` refuses any other), for the
   package card once the platform renders it (096.13). Links the user opens
@@ -485,7 +493,7 @@ node fr-urban-rules/scripts/capture-features.mjs --platform ../archisimple
 
 `test-fixtures/fr-urban-rules/acceptance/<plot>/` holds what
 `tests/acceptance.test.mjs` replays. They come from the developer command
-*Capture test fixtures (developer)*, which is registered only when the
+_Capture test fixtures (developer)_, which is registered only when the
 preference `fr-urban-rules.devCapture` is `true` — set
 `localStorage['archisimple.ext.shared.fr-urban-rules.devCapture'] = 'true'` in
 the editor's console, then disable and enable the package (or reload). It is

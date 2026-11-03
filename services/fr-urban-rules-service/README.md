@@ -42,35 +42,35 @@ GET v1/chapter?partition=DU_200046977&idurba=200046977_PLUi_20260326
 - **One zone per request.** A plot that straddles zones asks once per zone.
 - Inputs are identifiers, checked by pattern; **never a URL**:
 
-  | Input | Pattern |
-  | --- | --- |
-  | `partition` | `^DU_[0-9A-Z]{5,9}$` |
-  | `idurba` | `^[0-9A-Za-z_-]{1,64}$` |
-  | `nomfic` | `^[0-9A-Za-z_.-]{1,160}\.pdf$` |
-  | `zone` | 1–40 printable characters (never sent upstream) |
+  | Input       | Pattern                                         |
+  | ----------- | ----------------------------------------------- |
+  | `partition` | `^DU_[0-9A-Z]{5,9}$`                            |
+  | `idurba`    | `^[0-9A-Za-z_-]{1,64}$`                         |
+  | `nomfic`    | `^[0-9A-Za-z_.-]{1,160}\.pdf$`                  |
+  | `zone`      | 1–40 printable characters (never sent upstream) |
 
 Errors answer `{ "error": "<code>", …details }`:
 
-| Code | Status | Meaning |
-| --- | --- | --- |
-| `invalid_request` | 400 | an input fails its pattern (`field` names it), or a path segment is unsafe (gateway) |
-| `not_found` | 404 | no document in production for the partition, or `nomfic` is not among its files |
-| `version_changed` | 409 | the document in force is another `idurba` (`inForce` lists it) |
-| `rate_limited` | 429 | over a limit; `Retry-After` says when |
-| `source_unavailable` | 502 | the GPU answered 5xx, timed out or sent something unreadable |
-| `source_refused` | 502 | a 4xx, a refused address, or a redirect off the allow-list |
-| `document_too_large` | 422 | over 32 MiB, over 2 000 pages, or over 64 Mi characters of text |
-| `not_a_pdf` | 422 | the body does not start `%PDF-` |
-| `document_unreadable` | 422 | the parse child failed, died, or ran out of time or memory |
-| `no_text_layer` | 422 | under 200 characters per page: a scan (no OCR) |
-| `zone_chapter_not_found` | 422 | `outlineCodes` and `contentsCodes` list what was seen. A parent code counts only when the zone adds a lower-case sector letter (`UCe1` for `UCe1b`, never `A` for `AU`) |
-| `chapter_too_large` | 422 | the chapter found spans over 80 pages |
-| `not_cached` | 404 | `cachedOnly`: no result (or no cached text) for this chapter |
-| `busy` | 503 | the extraction queue is full; `Retry-After` |
-| `extraction_unavailable` | 503 | ai-service lacks `structured-output`, or has no provider |
-| `extraction_failed` | 502 | every chunk failed; `codes` lists 096.7's |
-| `not_configured` | 503 | `v1/georisques` with no `FR_URBAN_RULES_GEORISQUES_TOKEN` (002.10) |
-| `internal_error` | 500 | an unexpected exception; only its name is logged |
+| Code                     | Status | Meaning                                                                                                                                                                 |
+| ------------------------ | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `invalid_request`        | 400    | an input fails its pattern (`field` names it), or a path segment is unsafe (gateway)                                                                                    |
+| `not_found`              | 404    | no document in production for the partition, or `nomfic` is not among its files                                                                                         |
+| `version_changed`        | 409    | the document in force is another `idurba` (`inForce` lists it)                                                                                                          |
+| `rate_limited`           | 429    | over a limit; `Retry-After` says when                                                                                                                                   |
+| `source_unavailable`     | 502    | the GPU answered 5xx, timed out or sent something unreadable                                                                                                            |
+| `source_refused`         | 502    | a 4xx, a refused address, or a redirect off the allow-list                                                                                                              |
+| `document_too_large`     | 422    | over 32 MiB, over 2 000 pages, or over 64 Mi characters of text                                                                                                         |
+| `not_a_pdf`              | 422    | the body does not start `%PDF-`                                                                                                                                         |
+| `document_unreadable`    | 422    | the parse child failed, died, or ran out of time or memory                                                                                                              |
+| `no_text_layer`          | 422    | under 200 characters per page: a scan (no OCR)                                                                                                                          |
+| `zone_chapter_not_found` | 422    | `outlineCodes` and `contentsCodes` list what was seen. A parent code counts only when the zone adds a lower-case sector letter (`UCe1` for `UCe1b`, never `A` for `AU`) |
+| `chapter_too_large`      | 422    | the chapter found spans over 80 pages                                                                                                                                   |
+| `not_cached`             | 404    | `cachedOnly`: no result (or no cached text) for this chapter                                                                                                            |
+| `busy`                   | 503    | the extraction queue is full; `Retry-After`                                                                                                                             |
+| `extraction_unavailable` | 503    | ai-service lacks `structured-output`, or has no provider                                                                                                                |
+| `extraction_failed`      | 502    | every chunk failed; `codes` lists 096.7's                                                                                                                               |
+| `not_configured`         | 503    | `v1/georisques` with no `FR_URBAN_RULES_GEORISQUES_TOKEN` (002.10)                                                                                                      |
+| `internal_error`         | 500    | an unexpected exception; only its name is logged                                                                                                                        |
 
 ## Extractions (Sprint 002.5b)
 
@@ -97,11 +97,11 @@ GET  v1/extractions?partition&idurba&nomfic&zone&cachedOnly=1
   `sha1(documentKey, from, to, schemaVersion, promptVersion)` in
   `…/extractions/`, sharing the documents' 2 GiB budget. Provider and model are
   stored **in** the result (`model`); `current` is `{ providerId: health's
-  default, schemaVersion, promptVersion }`, for 002.6b to offer "Extract again".
+default, schemaVersion, promptVersion }`, for 002.6b to offer "Extract again".
 - **A rule:** `kind`, `sector`, `statement` (`limit`, `not_regulated`,
   `see_graphic`, `described`), `limit`, `page` and `article` (from the passage's
   offset, never from the model), `passage`, `offset`, `occurrence { of,
-  chosenBy }`, `conditions`, `exceptions`, `sectorUnplaced`, `confidence`.
+chosenBy }`, `conditions`, `exceptions`, `sectorUnplaced`, `confidence`.
 - **A result is shared by every user of the deployment.** `refresh=1`
   replaces it **for everyone**. A **partial** result (`chunks.failed > 0`) is
   answered to its job and never cached, so the next POST tries again.
@@ -198,23 +198,51 @@ GET v1/georisques/radon?codesInsee=69123
   in the header, so the raw token is sent;
   `FR_URBAN_RULES_GEORISQUES_AUTH_SCHEME=Bearer` sends `Bearer <token>` — and the
   shape of a real answer. **v2 is not v1 with another prefix:** `gaspar/risques`
-  lists GASPAR *procedures* (with their communes and aleas), not a commune's
+  lists GASPAR _procedures_ (with their communes and aleas), not a commune's
   `risques_detail`; `zonage_sismique` answers `{ typeZone, zoneSismicite }` with no
   commune or zone code; `gaspar/pprn`, `rga` and `radon` are close to v1's. The
   extension therefore still reads v1; mapping v2 needs real payloads.
+
+## The model and the entitlement (Sprint 002.16)
+
+The extraction is read by **the provider the user chose in the editor's AI panel**, and the call to ai-service is made **as
+that user** (platform ADR-0114 Rule 14; ADR-0028 Rule 11).
+
+```text
+POST v1/extractions { partition, idurba, nomfic, zone, ai?: { providerId, model? } }   [?refresh=1]
+GET  v1/extractions?partition&idurba&nomfic&zone[&provider[&model]]&cachedOnly=1
+```
+
+- **`ai`** is optional and strict: `providerId` `^[a-z0-9][a-z0-9_-]{0,39}$`, `model` 1–120 printable characters holding no
+  `://`, nothing else (**no endpoint, no key**). Anything else is `400 invalid_request`, `field: "ai"`. Without it, ai-service's
+  default provider for that caller reads, as before. It is forwarded as `providerId` and `model` in `POST /api/ai/extract`.
+- **`current`** in a cached read is `{ providerId, schemaVersion, promptVersion }` with the requested provider (else ai-service's
+  default for the caller), so a result read by another provider offers « Extract again ».
+- **Who is asking.** The gateway hands the service `features`, from `X-Authenticated-Features` — the account's features, which
+  the deployment's account gateway overwrites on every request and `web` passes on to `/plugins-api/`. Only well-formed ids are
+  kept (`^[a-z0-9][a-z0-9-]{0,39}$`, at most 32, header at most 1 024 characters, else none). The service stores them with the
+  job and sends `X-Authenticated-Features` on `extract` and `health` to ai-service — nothing else about the user, never an
+  `Authorization`. **ai-service decides**: a granted provider needs `ai-<id>`.
+- **Refusals** are the job's `error`, with ai-service's own code, at the first chunk and free of charge (the charge is given
+  back): `provider_not_permitted` (the account was not granted it), `unknown_provider`. `{ code, providerId }`.
+- **A cached result, or a job already running for the chapter, is served to whoever asks**: it costs no model call.
+  « Extract again » is a new call and is refused like any other.
+- **Without the header** (`pnpm dev`, a deployment without accounts) no features are sent and ai-service, which believes the
+  header only when `AI_SERVICE_TRUST_ACCOUNT_FEATURES` is on, treats the call as anonymous.
+- Logs name `requestedProvider`; never the features.
 
 ## Hosts contacted
 
 Three, over `https:` only, from URL templates — no URL comes from a
 client (the third only when the deployment sets a Géorisques token):
 
-| Host | Path | Why |
-| --- | --- | --- |
-| `www.geoportail-urbanisme.gouv.fr` | `/api/document?partition=<p>&status=document.production` | the document in force |
-| | `/api/document/<id>/files` | its file list |
-| | `/api/document/<id>/files/<nomfic>` | the règlement (answers `302`) |
-| `data.geopf.fr` | `/annexes/gpu/documents/<partition>/<id>/…` | the PDF, after that redirect |
-| `www.georisques.gouv.fr` | `/api/v2/<allow-listed path>?<allow-listed parameters>` | the Géorisques v2 proxy, with the token; a redirect is refused |
+| Host                               | Path                                                     | Why                                                            |
+| ---------------------------------- | -------------------------------------------------------- | -------------------------------------------------------------- |
+| `www.geoportail-urbanisme.gouv.fr` | `/api/document?partition=<p>&status=document.production` | the document in force                                          |
+|                                    | `/api/document/<id>/files`                               | its file list                                                  |
+|                                    | `/api/document/<id>/files/<nomfic>`                      | the règlement (answers `302`)                                  |
+| `data.geopf.fr`                    | `/annexes/gpu/documents/<partition>/<id>/…`              | the PDF, after that redirect                                   |
+| `www.georisques.gouv.fr`           | `/api/v2/<allow-listed path>?<allow-listed parameters>`  | the Géorisques v2 proxy, with the token; a redirect is refused |
 
 - Every address a name resolves to is checked, in both forms Node asks for
   (`{ all: true }` and single): loopback, private, link-local, CGNAT,
@@ -229,24 +257,24 @@ client (the third only when the deployment sets a Géorisques token):
 
 ## Limits
 
-| What | Limit | Variable |
-| --- | --- | --- |
-| Document fetches (download + parse, a cache miss) | 30 per hour per user | `FR_URBAN_RULES_LIMIT_FETCH_HOUR` |
-| Every request — `GET chapter`, every extraction POST, poll and cached read (a flood guard) | 60 per minute per user | `FR_URBAN_RULES_LIMIT_READ_MINUTE` |
-| Starting an extraction (a job that calls a model; a cache hit, a join, or a job that ends without a model call is free) | 6 per hour, 20 per day, per user | `FR_URBAN_RULES_LIMIT_EXTRACT_HOUR`, `FR_URBAN_RULES_LIMIT_EXTRACT_DAY` |
-| `refresh=1` | 2 per day per user | `FR_URBAN_RULES_LIMIT_REFRESH_DAY` |
-| A first look at a partition not yet watched (one GPU call) | 60 per hour per user | `FR_URBAN_RULES_LIMIT_WATCH_SEED_HOUR` |
-| Géorisques v2 calls the cache did not answer | 240 per hour per user | `FR_URBAN_RULES_LIMIT_GEORISQUES_HOUR` |
-| The watch's own GPU requests (daily checks and first looks together) | 1 per second | — |
-| Extractions running / waiting | 1 / 10 | — |
-| Download size, counted while streaming | 32 MiB | — |
-| Document pages / chapter pages | 2 000 / 80 | — |
-| A document's whole text | 64 Mi characters | — |
-| Downloads / parse children at once | 2 / 2 | — |
-| API call / PDF timeout | 10 s / 120 s | — |
-| Parse child | 60 s, `--max-old-space-size=512`, 1 GiB resident (Linux watchdog) | — |
-| Cache | 2 GiB, least recently read evicted | `FR_URBAN_RULES_CACHE_MAX_BYTES` |
-| Query string, request body | 4 KiB each (gateway) | — |
+| What                                                                                                                    | Limit                                                             | Variable                                                                |
+| ----------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Document fetches (download + parse, a cache miss)                                                                       | 30 per hour per user                                              | `FR_URBAN_RULES_LIMIT_FETCH_HOUR`                                       |
+| Every request — `GET chapter`, every extraction POST, poll and cached read (a flood guard)                              | 60 per minute per user                                            | `FR_URBAN_RULES_LIMIT_READ_MINUTE`                                      |
+| Starting an extraction (a job that calls a model; a cache hit, a join, or a job that ends without a model call is free) | 6 per hour, 20 per day, per user                                  | `FR_URBAN_RULES_LIMIT_EXTRACT_HOUR`, `FR_URBAN_RULES_LIMIT_EXTRACT_DAY` |
+| `refresh=1`                                                                                                             | 2 per day per user                                                | `FR_URBAN_RULES_LIMIT_REFRESH_DAY`                                      |
+| A first look at a partition not yet watched (one GPU call)                                                              | 60 per hour per user                                              | `FR_URBAN_RULES_LIMIT_WATCH_SEED_HOUR`                                  |
+| Géorisques v2 calls the cache did not answer                                                                            | 240 per hour per user                                             | `FR_URBAN_RULES_LIMIT_GEORISQUES_HOUR`                                  |
+| The watch's own GPU requests (daily checks and first looks together)                                                    | 1 per second                                                      | —                                                                       |
+| Extractions running / waiting                                                                                           | 1 / 10                                                            | —                                                                       |
+| Download size, counted while streaming                                                                                  | 32 MiB                                                            | —                                                                       |
+| Document pages / chapter pages                                                                                          | 2 000 / 80                                                        | —                                                                       |
+| A document's whole text                                                                                                 | 64 Mi characters                                                  | —                                                                       |
+| Downloads / parse children at once                                                                                      | 2 / 2                                                             | —                                                                       |
+| API call / PDF timeout                                                                                                  | 10 s / 120 s                                                      | —                                                                       |
+| Parse child                                                                                                             | 60 s, `--max-old-space-size=512`, 1 GiB resident (Linux watchdog) | —                                                                       |
+| Cache                                                                                                                   | 2 GiB, least recently read evicted                                | `FR_URBAN_RULES_CACHE_MAX_BYTES`                                        |
+| Query string, request body                                                                                              | 4 KiB each (gateway)                                              | —                                                                       |
 
 "Per user" is `X-Authenticated-User`, which Caddy sets from the signed-in
 account. Without it (`pnpm dev`, no Caddy) the client address is the key —
@@ -300,26 +328,26 @@ raw name. Level: `FR_URBAN_RULES_LOG_LEVEL` (`debug`, `info` (default),
 
 ## Variables
 
-| Variable | Default | Set by |
-| --- | --- | --- |
-| `PLUGIN_SERVICES_DATA_DIR` | `./.data` (`/data` in the image) | compose |
-| `PLUGIN_SERVICES_LOG_KEY` | random per start | `.env` |
-| `ARCHISIMPLE_AI_SERVICE_URL` | `http://127.0.0.1:4321` | compose; the extract route's ai-service |
-| `FR_URBAN_RULES_LIMIT_FETCH_HOUR` | `30` | optional |
-| `FR_URBAN_RULES_LIMIT_READ_MINUTE` | `60` | optional |
-| `FR_URBAN_RULES_CACHE_MAX_BYTES` | `2147483648` | optional |
-| `FR_URBAN_RULES_LOG_LEVEL` | `info` | optional |
-| `FR_URBAN_RULES_LIMIT_EXTRACT_HOUR` | `6` | optional |
-| `FR_URBAN_RULES_LIMIT_EXTRACT_DAY` | `20` | optional |
-| `FR_URBAN_RULES_LIMIT_REFRESH_DAY` | `2` | optional |
-| `FR_URBAN_RULES_EXTRACT_CHUNK_CHARS` | `40000` (the ceiling) | optional: smaller chunks for a slow local model |
-| `FR_URBAN_RULES_EXTRACT_MAX_ITEMS` | `120` (ceiling 200) | optional: items asked per chunk |
-| `FR_URBAN_RULES_EXTRACT_TIMEOUT_MS` | `1800000` (30 min; floor 120 000) | optional: one extract call's limit here; keep it ≥ ai-service's `AI_SERVICE_REQUEST_TIMEOUT_MS` |
-| `FR_URBAN_RULES_GEORISQUES_TOKEN` | unset (proxy off) | `.env`: the deployment's free Géorisques v2 token; this service only |
-| `FR_URBAN_RULES_GEORISQUES_AUTH_SCHEME` | unset (raw token) | optional: `Bearer` sends `Bearer <token>` |
-| `FR_URBAN_RULES_WATCH` | on | `off` stops the daily schedule |
-| `FR_URBAN_RULES_LIMIT_WATCH_SEED_HOUR` | `60` | optional |
-| `FR_URBAN_RULES_LIMIT_GEORISQUES_HOUR` | `240` | optional |
+| Variable                                | Default                           | Set by                                                                                          |
+| --------------------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `PLUGIN_SERVICES_DATA_DIR`              | `./.data` (`/data` in the image)  | compose                                                                                         |
+| `PLUGIN_SERVICES_LOG_KEY`               | random per start                  | `.env`                                                                                          |
+| `ARCHISIMPLE_AI_SERVICE_URL`            | `http://127.0.0.1:4321`           | compose; the extract route's ai-service                                                         |
+| `FR_URBAN_RULES_LIMIT_FETCH_HOUR`       | `30`                              | optional                                                                                        |
+| `FR_URBAN_RULES_LIMIT_READ_MINUTE`      | `60`                              | optional                                                                                        |
+| `FR_URBAN_RULES_CACHE_MAX_BYTES`        | `2147483648`                      | optional                                                                                        |
+| `FR_URBAN_RULES_LOG_LEVEL`              | `info`                            | optional                                                                                        |
+| `FR_URBAN_RULES_LIMIT_EXTRACT_HOUR`     | `6`                               | optional                                                                                        |
+| `FR_URBAN_RULES_LIMIT_EXTRACT_DAY`      | `20`                              | optional                                                                                        |
+| `FR_URBAN_RULES_LIMIT_REFRESH_DAY`      | `2`                               | optional                                                                                        |
+| `FR_URBAN_RULES_EXTRACT_CHUNK_CHARS`    | `40000` (the ceiling)             | optional: smaller chunks for a slow local model                                                 |
+| `FR_URBAN_RULES_EXTRACT_MAX_ITEMS`      | `120` (ceiling 200)               | optional: items asked per chunk                                                                 |
+| `FR_URBAN_RULES_EXTRACT_TIMEOUT_MS`     | `1800000` (30 min; floor 120 000) | optional: one extract call's limit here; keep it ≥ ai-service's `AI_SERVICE_REQUEST_TIMEOUT_MS` |
+| `FR_URBAN_RULES_GEORISQUES_TOKEN`       | unset (proxy off)                 | `.env`: the deployment's free Géorisques v2 token; this service only                            |
+| `FR_URBAN_RULES_GEORISQUES_AUTH_SCHEME` | unset (raw token)                 | optional: `Bearer` sends `Bearer <token>`                                                       |
+| `FR_URBAN_RULES_WATCH`                  | on                                | `off` stops the daily schedule                                                                  |
+| `FR_URBAN_RULES_LIMIT_WATCH_SEED_HOUR`  | `60`                              | optional                                                                                        |
+| `FR_URBAN_RULES_LIMIT_GEORISQUES_HOUR`  | `240`                             | optional                                                                                        |
 
 No model key, and none is ever read here (ADR-0114 Rule 7). The Géorisques token is another kind of credential — a public service's free registration, not a model's — and is this service's alone.
 

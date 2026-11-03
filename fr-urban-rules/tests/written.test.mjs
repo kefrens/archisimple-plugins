@@ -290,7 +290,8 @@ function readerFor({
   module,
   now,
   siteExtra = {},
-  snapshotMinimumStep
+  snapshotMinimumStep,
+  ai
 } = {}) {
   const site = {
     ...(boundary === undefined ? lyon.site : { ...lyon.site, boundary: { ring: boundary } }),
@@ -318,7 +319,8 @@ function readerFor({
     ...(section === undefined ? {} : { packageData: () => section.service }),
     document: () => ({ find: () => [] }),
     translate: (key) => `label:${key}`,
-    ...(snapshotMinimumStep === undefined ? {} : { snapshotMinimumStep })
+    ...(snapshotMinimumStep === undefined ? {} : { snapshotMinimumStep }),
+    ...(ai === undefined ? {} : { ai: () => ai })
   });
   return { reader, site, service, section, schedule, watchSchedule, wait, planning };
 }
@@ -569,6 +571,8 @@ test('criterion 3: every code of 002.5a and 002.5b has its state and its phrase 
     'busy',
     'extraction_unavailable',
     'extraction_failed',
+    'provider_not_permitted',
+    'unknown_provider',
     'internal_error'
   ];
   for (const code of codes) {
@@ -1230,6 +1234,120 @@ test('criterion 13: Extract again is offered for another provider, an older prom
   );
   assert.deepEqual(notice.text.params, { failed: 2, of: 9, dropped: 46 });
   assert.equal(source(partial).detail.key, 'fr-urban-rules.written.status.partial');
+});
+
+// ── Sprint 002.16: the model chosen in the AI panel ───────────────────────────────────────────
+
+/** The host's `ai` service as SDK 1.40 gives it; `choice` is read at each call, as the host reads it. */
+const aiChoosing = (choice) => ({ selectedModel: () => (typeof choice === 'function' ? choice() : choice) });
+const QUERY_4 = {
+  partition: 'DU_200046977',
+  idurba: '200046977_PLUI_20260326',
+  nomfic: '200046977_reglement_20260326.pdf',
+  zone: 'UCe1b'
+};
+
+test('002.16: the chosen model is sent with the POST and named on the cachedOnly read', async () => {
+  const service = fakeService();
+  const context = readerFor({ service, ai: aiChoosing({ providerId: 'openai', model: 'gpt-5' }) });
+  const report = await read(context);
+  assert.deepEqual(service.calls.cachedOnly[0].query, { ...QUERY_4, provider: 'openai', model: 'gpt-5', cachedOnly: '1' });
+  await act(context, 'written-extract', actions(report).find((a) => a.id === 'written-extract').target);
+  assert.deepEqual(service.calls.post[0].body, { ...QUERY_4, ai: { providerId: 'openai', model: 'gpt-5' } });
+  // A provider with no model named is sent without one.
+  const bare = fakeService();
+  const bareContext = readerFor({ service: bare, ai: aiChoosing({ providerId: 'lmstudio' }) });
+  await act(bareContext, 'written-extract', actions(await read(bareContext)).find((a) => a.id === 'written-extract').target);
+  assert.deepEqual(bare.calls.post[0].body.ai, { providerId: 'lmstudio' });
+});
+
+test('002.16: no choice, an older host or a malformed choice sends exactly what 0.14.0 sent', async () => {
+  const cases = [
+    ['no ai service', undefined],
+    ['a host before SDK 1.40', {}],
+    ['nothing selected', aiChoosing(undefined)],
+    ['a selection that throws', { selectedModel: () => { throw new Error('boom'); } }],
+    ['an id that is not one', aiChoosing({ providerId: 'Open AI!', model: 'gpt-5' })],
+    ['an address for an id', aiChoosing({ providerId: 'http://evil.example' })],
+    ['not an object', aiChoosing('openai')]
+  ];
+  for (const [name, ai] of cases) {
+    const service = fakeService();
+    const context = readerFor({ service, ai });
+    const report = await read(context);
+    assert.deepEqual(service.calls.cachedOnly[0].query, { ...QUERY_4, cachedOnly: '1' }, name);
+    await act(context, 'written-extract', actions(report).find((a) => a.id === 'written-extract').target);
+    assert.deepEqual(service.calls.post[0].body, QUERY_4, name);
+  }
+});
+
+test('002.16: a model name that is an address or has a control character is dropped, the provider kept', async () => {
+  for (const model of ['https://evil.example/v1', 'a\u0000b', 'm'.repeat(121)]) {
+    const service = fakeService();
+    const context = readerFor({ service, ai: aiChoosing({ providerId: 'openai', model }) });
+    const report = await read(context);
+    await act(context, 'written-extract', actions(report).find((a) => a.id === 'written-extract').target);
+    assert.deepEqual(service.calls.post[0].body.ai, { providerId: 'openai' }, model);
+  }
+});
+
+test('002.16: the choice is read when Extract is pressed, so a change in the panel applies to it', async () => {
+  let choice = { providerId: 'lmstudio' };
+  const service = fakeService();
+  const context = readerFor({ service, ai: aiChoosing(() => choice) });
+  const report = await read(context);
+  choice = { providerId: 'openai', model: 'gpt-5' };
+  await act(context, 'written-extract', actions(report).find((a) => a.id === 'written-extract').target);
+  assert.deepEqual(service.calls.post[0].body.ai, { providerId: 'openai', model: 'gpt-5' });
+});
+
+test('002.16: the zone says which model will read — the panel\'s, else the deployment\'s own', async () => {
+  const rows = (report) => rulesView(report).blocks.filter((b) => b.kind === 'fields').flatMap((b) => b.rows);
+  const chosen = rows(await read(readerFor({ ai: aiChoosing({ providerId: 'openai', model: 'gpt-5' }) })));
+  const row = chosen.find((r) => r.label.key === 'fr-urban-rules.written.field.willRead');
+  assert.deepEqual(row.value, { text: 'openai · gpt-5' });
+  const none = rows(await read(readerFor()));
+  assert.deepEqual(none.find((r) => r.label.key === 'fr-urban-rules.written.field.willRead').value, {
+    key: 'fr-urban-rules.written.defaultModel'
+  });
+  for (const lang of [en, fr]) {
+    assert.ok('fr-urban-rules.written.field.willRead' in lang && 'fr-urban-rules.written.defaultModel' in lang);
+  }
+});
+
+test('002.16: Extract again follows the panel — offered when the chosen provider is not the one that read, not when it is', async () => {
+  const offered = async (ai, current = CURRENT) =>
+    actions(await read(readerFor({ service: fakeService({ cached: recorded, current }), ai }))).some(
+      (a) => a.id === 'written-extract-again'
+    );
+  assert.equal(recorded.model.providerId, CURRENT.providerId, 'the recording was read by the service\'s default');
+  assert.equal(await offered(aiChoosing({ providerId: CURRENT.providerId })), false);
+  assert.equal(await offered(aiChoosing({ providerId: 'openai' })), true, 'even when the service names the old default');
+  assert.equal(await offered(undefined), false, 'no choice: as before');
+  // The row says what it would read with.
+  const context = readerFor({
+    service: fakeService({ cached: recorded }),
+    ai: aiChoosing({ providerId: 'openai', model: 'gpt-5' })
+  });
+  const labels = rulesView(await read(context)).blocks.filter((b) => b.kind === 'fields').flatMap((b) => b.rows.map((r) => r.label.key));
+  assert.ok(labels.includes('fr-urban-rules.written.field.willRead'));
+});
+
+test('002.16: a refusal of the chosen model reads as the account\'s, with a way to try again after choosing another', async () => {
+  for (const code of ['provider_not_permitted', 'unknown_provider']) {
+    const service = fakeService({ steps: [{ jobId: 'j', state: 'failed', error: { code, providerId: 'openai' } }] });
+    const schedule = manualTimers();
+    const context = readerFor({ service, schedule, ai: aiChoosing({ providerId: 'openai' }) });
+    let report = await read(context);
+    await act(context, 'written-extract', actions(report).find((a) => a.id === 'written-extract').target);
+    await schedule.tick();
+    report = await read(context, 'source');
+    assert.equal(source(report).state, 'unavailable', code);
+    assert.equal(source(report).detail.key, `fr-urban-rules.written.code.${code}`, code);
+    assert.ok(noticeKeys(report).includes(`fr-urban-rules.written.code.${code}`), code);
+    assert.ok(actions(report).some((a) => a.id === 'written-try-again'), `${code}: Try again`);
+    for (const lang of [en, fr]) assert.ok(`fr-urban-rules.written.code.${code}` in lang, code);
+  }
 });
 
 // ── Criterion 14: containment ──────────────────────────────────────────────────
