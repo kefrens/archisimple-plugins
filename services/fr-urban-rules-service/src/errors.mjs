@@ -22,6 +22,8 @@ export const ERROR_STATUS = Object.freeze({
   busy: 503,
   extraction_unavailable: 503,
   extraction_failed: 502,
+  // Sprint 002.10 DEC-5: the Géorisques proxy has no token on this deployment.
+  not_configured: 503,
   // An unexpected exception: its message is never answered or logged.
   internal_error: 500
 });

@@ -509,11 +509,11 @@
   "fr-urban-rules.source.document": "Document d’urbanisme",
   "fr-urban-rules.source.el7": "Servitudes d’alignement (EL7) de l’autre côté de la voie",
   "fr-urban-rules.source.facingParcels": "Parcelles de l’autre côté de la voie",
-  "fr-urban-rules.source.georisquesPprn": "Géorisques — plans de prévention",
-  "fr-urban-rules.source.georisquesRadon": "Géorisques — radon",
-  "fr-urban-rules.source.georisquesRga": "Géorisques — argiles",
-  "fr-urban-rules.source.georisquesRisques": "Géorisques — risques recensés",
-  "fr-urban-rules.source.georisquesSismique": "Géorisques — zone sismique",
+  "fr-urban-rules.source.georisquesPprn": "Géorisques v1 — plans de prévention",
+  "fr-urban-rules.source.georisquesRadon": "Géorisques v1 — radon",
+  "fr-urban-rules.source.georisquesRga": "Géorisques v1 — argiles",
+  "fr-urban-rules.source.georisquesRisques": "Géorisques v1 — risques recensés",
+  "fr-urban-rules.source.georisquesSismique": "Géorisques v1 — zone sismique",
   "fr-urban-rules.source.gpuFiles": "Fichier du règlement",
   "fr-urban-rules.source.infoLin": "Informations (lignes)",
   "fr-urban-rules.source.infoPct": "Informations (points)",
@@ -871,5 +871,10 @@
   "fr-urban-rules.surfaces.green.free": "{area} m² libres",
   "fr-urban-rules.surfaces.caps.summary": "Extension jusqu’à {area} m²",
   "fr-urban-rules.risk.readings": "Relevés des services",
-  "fr-urban-rules.risk.readingsWaiting": "Un service charge ou n’a pas répondu"
+  "fr-urban-rules.risk.readingsWaiting": "Un service charge ou n’a pas répondu",
+  "fr-urban-rules.notice.newDocumentVersion": "Une nouvelle version du document a été publiée le {date}. {count, plural, one {# confirmation est à revoir.} other {# confirmations sont à revoir.}}",
+  "fr-urban-rules.notice.newDocumentVersionUndated": "Une nouvelle version du document est en vigueur. {count, plural, one {# confirmation est à revoir.} other {# confirmations sont à revoir.}}",
+  "fr-urban-rules.rule.unchangedInNewVersion": "Inchangée dans la nouvelle version : le passage et la limite sont ceux que vous avez confirmés le {date} (version {version}). Confirmez à nouveau pour la conserver.",
+  "fr-urban-rules.action.confirmAgain": "Confirmer à nouveau",
+  "fr-urban-rules.action.confirmAgainValue": "Confirmer à nouveau {value} {unit}"
 }

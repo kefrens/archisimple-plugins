@@ -116,8 +116,21 @@ function fakeService(plot, { onRequest } = {}) {
   const replaced = new Map();
   // Sprint 002.6b: the extraction routes are counted apart; by default nothing is cached.
   const extractionRequests = [];
+  // Sprint 002.10: the document watch's question is counted apart too; the service answers it
+  // as 002.10's route does, the document in force being the recorded one (so it signals nothing).
+  const documentRequests = [];
   const handle = async (url, init) => {
     const parsed = new URL(url);
+    if (parsed.pathname.includes('/v1/documents/')) {
+      documentRequests.push({ url, method: init.method ?? 'GET' });
+      return json(200, {
+        partition: meta.partition,
+        current: { gpuDocId: 'recorded', originalName: meta.idurba },
+        withdrawn: false,
+        checkedAt: '2026-10-20T08:00:00.000Z',
+        previous: []
+      });
+    }
     if (parsed.pathname.includes('/v1/extractions')) {
       extractionRequests.push({ url, method: init.method ?? 'GET' });
       return json(404, {
@@ -152,6 +165,7 @@ function fakeService(plot, { onRequest } = {}) {
   return {
     requests,
     extractionRequests,
+    documentRequests,
     handle,
     hold: (zone) => {
       let release;

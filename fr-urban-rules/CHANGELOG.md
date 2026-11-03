@@ -1,5 +1,32 @@
 # Changelog — `fr-urban-rules`
 
+## 0.14.0 — Sprint 002.10, Regulation Watch
+
+- **SDK 1.38** unchanged; no platform change. Capabilities and `network.hosts` unchanged: the question
+  goes to the deployment's own service, never to a new host. Needs the companion service 0.3.0 for
+  what follows; without it, or on any other answer, a read is exactly 0.13.0's.
+- **The document watch.** A located PLU(i) read asks the service `GET v1/documents/<partition>` —
+  not awaited by the read — and again every hour while the plot is on view. An answer naming another
+  document than the report was read against (or none in production) forgets that report and fires
+  `onDidChange` once per document named; the host's re-read finds the new version. The timer stops
+  with the plot and on dispose.
+- **« Une nouvelle version du document a été publiée le {date} »** in the overview, with the number of
+  confirmations made against an earlier document, the date from the watch or the version's own.
+  Not said twice when « what changed » already says it; a date moved inside the same document is
+  still « rules reopened »; `PLUi` against `PLUI` reopens nothing.
+- **« Inchangée dans la nouvelle version — confirmer à nouveau »** for a written rule that the new
+  version's reading finds with the same normalised passage and the limit that was confirmed: a
+  condition and a « Confirmer à nouveau » button (the value in it when the rule has one). It stays
+  *to confirm* until clicked. Owner decision Q1, 2026-11-03.
+- **No automatic re-extraction** (owner decision Q2): a new version's written rules are read when the
+  user asks, as before.
+- The Géorisques sources are named « Géorisques v1 — … ». The service's v2 proxy exists but this
+  package does not read v2 (the shapes differ; no token to verify against).
+- Strings: `notice.newDocumentVersion`, `notice.newDocumentVersionUndated`,
+  `rule.unchangedInNewVersion`, `action.confirmAgain`, `action.confirmAgainValue` (en, fr).
+- Tests: the watch and the re-read after the signal (criteria 6, 6a, 7), the refinement (Q1), the
+  route's answer checked field by field.
+
 ## 0.13.0 — Sprint 002.15, PLU Surfaces Content
 
 - **SDK 1.38** (from 1.37): the `stat`, `choice` and `section` blocks (platform 096.27). Lockstep:

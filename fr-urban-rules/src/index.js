@@ -581,6 +581,82 @@ async function fetchChapter(fetchImpl, baseUrl, query, signal, timeoutMs) {
   }
 }
 
+// ── The document watch (Sprint 002.10) ──────────────────────────────────────────
+
+/**
+ * DEC-3: while the row is wanted, the service is asked about the plot's
+ * document once an hour — a cheap read of its store, never the GPU from here.
+ */
+const WATCH_POLL_MS = 60 * 60_000;
+/** A document name or GPU id as the service answers it (002.5a's `idurba` pattern). */
+const WATCH_NAME = /^[0-9A-Za-z_-]{1,64}$/;
+/** Superseded versions the service lists, at most. */
+const WATCH_PREVIOUS_MAX = 20;
+
+/** A name as the service answers it: a string that matches, never a coerced value. */
+const isWatchName = (value) => typeof value === 'string' && WATCH_NAME.test(value);
+
+const isoDay = (value) => {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return undefined;
+  const date = new Date(`${value}T00:00:00Z`);
+  return Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value ? undefined : value;
+};
+const isoInstant = (value) =>
+  typeof value === 'string' && value.length <= 40 && !Number.isNaN(Date.parse(value)) ? value : undefined;
+
+/**
+ * A `200` answer of `GET v1/documents/<partition>`, checked field by field
+ * (002.10 DEC-3): the document in force (`current`, or `null` where the GPU has
+ * none in production), when the service last confirmed it, and what it
+ * replaced. `undefined` for anything else — an answer that is not the route's
+ * is no answer, never « unchanged ».
+ */
+function checkedDocumentStatus(json, partition) {
+  if (json === null || typeof json !== 'object' || Array.isArray(json)) return undefined;
+  if (json.partition !== partition) return undefined;
+  let current = null;
+  if (json.current !== null) {
+    const c = json.current;
+    if (c === undefined || typeof c !== 'object' || Array.isArray(c)) return undefined;
+    if (!isWatchName(c.originalName) || !isWatchName(c.gpuDocId)) return undefined;
+    const publicationDate = isoDay(c.publicationDate);
+    current = {
+      gpuDocId: c.gpuDocId,
+      originalName: c.originalName,
+      ...(publicationDate === undefined ? {} : { publicationDate })
+    };
+  }
+  if (json.withdrawn !== (current === null)) return undefined;
+  const checkedAt = json.checkedAt === null ? null : isoInstant(json.checkedAt);
+  if (checkedAt === undefined) return undefined;
+  const previous = [];
+  if (!Array.isArray(json.previous)) return undefined;
+  for (const entry of json.previous.slice(0, WATCH_PREVIOUS_MAX)) {
+    if (
+      entry === null ||
+      typeof entry !== 'object' ||
+      !isWatchName(entry.originalName) ||
+      !isWatchName(entry.gpuDocId) ||
+      isoInstant(entry.supersededAt) === undefined
+    )
+      return undefined;
+    previous.push({
+      gpuDocId: entry.gpuDocId,
+      originalName: entry.originalName,
+      supersededAt: entry.supersededAt
+    });
+  }
+  const failing =
+    json.failing !== null &&
+    typeof json.failing === 'object' &&
+    Number.isSafeInteger(json.failing.days) &&
+    typeof json.failing.code === 'string' &&
+    /^[a-z_]{1,40}$/.test(json.failing.code)
+      ? { code: json.failing.code, days: json.failing.days }
+      : undefined;
+  return { current, checkedAt, previous, ...(failing === undefined ? {} : { failing }) };
+}
+
 /**
  * DEC-2: the lookups a read asks, one per zone with a `nomfic` — `{ zone, key,
  * query }`, the key `upper(idurba)/nomfic/zone`. A zone whose inputs fail
@@ -2300,6 +2376,15 @@ export function createReader({
     const timer = setTimeout(fn, ms);
     return () => clearTimeout(timer);
   },
+  // Sprint 002.10 DEC-3: the document watch's hourly timer, apart from the extractions' polling
+  // so each is driven on its own in tests. Never keeps a process alive (Node; the editor's timers have no `unref`).
+  watchSchedule = (fn, ms) => {
+    const timer = setTimeout(fn, ms);
+    timer?.unref?.();
+    return () => clearTimeout(timer);
+  },
+  // Its own clock too: the reader's `now` stamps the sources, and a question to the service is not one.
+  watchClock = () => Date.now(),
   defer = (fn) => setTimeout(fn, 0),
   // Sprint 002.11 DEC-2: the snapshot's budget and the first step taken (tests force them).
   snapshotBudget = SNAPSHOT_BUDGET,
@@ -2427,7 +2512,8 @@ export function createReader({
             withZonePages(
               rnu.augment(report, request, rnu.roadsKnown(request.site), facts.get(report), {
                 checks: false,
-                written: writtenInput(pages, facts.get(report))
+                written: writtenInput(pages, facts.get(report)),
+                documentWatch: documentWatchOf(facts.get(report)?.partition)
               }),
               pages
             )
@@ -2449,7 +2535,10 @@ export function createReader({
       if (signal.aborted) throw new ReadAborted();
       const written = writtenInput(pages, facts.get(base));
       const answer = withZonePages(
-        rnu.augment(base, request, answeredRoads, facts.get(base), { written }),
+        rnu.augment(base, request, answeredRoads, facts.get(base), {
+          written,
+          documentWatch: documentWatchOf(facts.get(base)?.partition)
+        }),
         pages
       );
       // Sprint 002.11: the snapshot written when the reading changed, and said.
@@ -2897,7 +2986,20 @@ export function createReader({
   /** A report with the snapshot's blocks first in its overview. */
   function withSnapshotNotices(report, blocks) {
     if (blocks.length === 0 || !Array.isArray(report?.overview)) return report;
-    const next = { ...report, overview: [...blocks, ...report.overview] };
+    // Sprint 002.10: « what changed » already says the version changed (002.11 DEC-6);
+    // the overview's own line for it is not said twice.
+    const saysVersion = blocks.some(
+      (b) =>
+        b.text?.key === 'fr-urban-rules.snapshot.change.version' ||
+        b.text?.key === 'fr-urban-rules.snapshot.change.versionNothingToReview'
+    );
+    const rest = saysVersion
+      ? report.overview.filter(
+          (b) =>
+            b.text?.key !== NEW_DOCUMENT_VERSION_KEY && b.text?.key !== NEW_DOCUMENT_VERSION_UNDATED_KEY
+        )
+      : report.overview;
+    const next = { ...report, overview: [...blocks, ...rest] };
     // What the report was assembled from stays with it (002.1a's facts).
     if (facts.has(report)) facts.set(next, facts.get(report));
     return next;
@@ -3157,6 +3259,11 @@ export function createReader({
     listeners.clear();
     for (const record of extractions.values()) record.cancel?.();
     extractions.clear();
+    for (const w of watches.values()) {
+      w.wanted = false;
+      w.cancel?.();
+    }
+    watches.clear();
   }
 
   // ── The zone's page (Sprint 002.6a) ───────────────────────────────────────────
@@ -3174,6 +3281,9 @@ export function createReader({
   function beginPages(regime, partition, zones, documentName, signal, reason) {
     if (regime !== 'plu' && regime !== 'plui') {
       pauseOthers(new Set()); // review S2: a plot without written rules polls nothing
+      // 002.10: a plot without written rules reaches no service (002.6a, 002.9: a carte communale
+      // asks nothing of the companion), so it has no watch; the next read finds its document itself.
+      pauseWatches();
       return { view: { applies: false }, settled: async () => {}, stop: () => {} };
     }
     const view = {
@@ -3202,8 +3312,11 @@ export function createReader({
       view.located = true;
       if (view.location === undefined) {
         pauseOthers(new Set()); // review S2
+        pauseWatches();
         return;
       }
+      // 002.10 DEC-3: asked beside the zones' chapters, never awaited by this read.
+      if (partition !== undefined) watchPartition(view.location, partition);
       view.zones = view.lookups.map((lookup) => ({
         zone: lookup.zone,
         query: lookup.query,
@@ -3352,6 +3465,125 @@ export function createReader({
         }
       }
     });
+  }
+
+  // ── The document watch (Sprint 002.10) ─────────────────────────────────────────
+
+  /**
+   * DEC-3: partition → `{ baseUrl, answer?, askedAt?, pending?, cancel?, wanted,
+   * signalledFor? }`. Session memory, never the project's: the service keeps
+   * the watch; this keeps its last answer for the plot on view.
+   */
+  const watches = new Map();
+
+  /**
+   * Called by a read that found the service under a plot with a document
+   * (DEC-3): the partition's status is asked of the service — **not awaited by
+   * the read**, whose budget stays the GPU's — and again once an hour while the
+   * plot is the one on view. Another plot's timer is stopped (review S2 as the
+   * extractions': a plot not on view polls nothing).
+   */
+  function watchPartition(location, partition) {
+    let w = watches.get(partition);
+    if (w !== undefined && w.baseUrl !== location.baseUrl) {
+      w.cancel?.();
+      w = undefined;
+    }
+    if (w === undefined) {
+      w = { baseUrl: location.baseUrl, wanted: true };
+      watches.set(partition, w);
+    }
+    w.wanted = true;
+    pauseWatches(partition);
+    const due =
+      w.pending === undefined &&
+      (w.askedAt === undefined || watchClock() - w.askedAt >= WATCH_POLL_MS);
+    if (due) askWatch(w, partition);
+    else armWatch(w, partition);
+  }
+
+  /** A plot with no document, or no service: nothing is polled (all, or all but `keep`). */
+  function pauseWatches(keep) {
+    for (const [partition, w] of watches) {
+      if (partition === keep) continue;
+      w.wanted = false;
+      w.cancel?.();
+      w.cancel = undefined;
+    }
+  }
+
+  function armWatch(w, partition) {
+    if (!w.wanted || w.cancel !== undefined) return;
+    w.cancel = watchSchedule(() => {
+      w.cancel = undefined;
+      if (w.wanted && watches.get(partition) === w) askWatch(w, partition);
+    }, WATCH_POLL_MS);
+  }
+
+  function askWatch(w, partition) {
+    w.askedAt = watchClock();
+    w.pending = (async () => {
+      let url;
+      try {
+        url = new URL(`v1/documents/${encodeURIComponent(partition)}`, w.baseUrl);
+      } catch {
+        return;
+      }
+      const answer = await serviceCall(url);
+      if (watches.get(partition) !== w || answer.failed === 'aborted') return;
+      // Without the service, or on any other answer, the last one stands and the
+      // read's own GPU reads are the fallback (DEC-3): nothing is said of it here.
+      if (answer.status !== 200) return;
+      const checked = checkedDocumentStatus(answer.json, partition);
+      if (checked === undefined) {
+        log(`${SOURCE_ID}: the document watch answered something that is not its route's`);
+        return;
+      }
+      w.answer = checked;
+      noteWatchAnswer(w, partition);
+    })()
+      .catch((cause) => log(`${SOURCE_ID}: the document watch: ${String(cause)}`))
+      .finally(() => {
+        w.pending = undefined;
+        armWatch(w, partition);
+      });
+  }
+
+  /**
+   * DEC-3: an answer naming another document than the one a plot's report was
+   * read against means the GPU has moved. The report is forgotten (its last good
+   * answers stay) and the host is asked to read again (`onDidChange`, reason
+   * `source`): that read finds the new version and compares the stored
+   * confirmations with it, as §8 says. Once per document named; an unchanged
+   * answer signals nothing.
+   */
+  function noteWatchAnswer(w, partition) {
+    const named = w.answer.current?.originalName.toUpperCase() ?? null;
+    const stale = [];
+    for (const entry of cache.values()) {
+      const held = entry.summary?.document;
+      if (entry.report === undefined || held?.partition !== partition) continue;
+      const have = String(held.name ?? held.idurba ?? '').toUpperCase();
+      if (have === '' || have === named) continue;
+      stale.push(entry);
+    }
+    if (stale.length === 0) return;
+    const signature = named ?? 'withdrawn';
+    if (w.signalledFor === signature) return;
+    w.signalledFor = signature;
+    for (const entry of stale) {
+      entry.report = undefined;
+      entry.expiresAt = undefined;
+    }
+    requestSignal();
+  }
+
+  /** What `augment` is told of the watch for a plot: the document in force and when it was published. */
+  function documentWatchOf(partition) {
+    const current = partition === undefined ? undefined : watches.get(partition)?.answer?.current;
+    return current === null || current === undefined
+      ? undefined
+      : { originalName: current.originalName, publicationDate: current.publicationDate };
   }
 
   // ── Written rules: extraction records (Sprint 002.6b) ──────────────────────────
@@ -6087,6 +6319,10 @@ const ENTRY_FORMS = {
   'add-area': { unit: 'm2', label: 'fr-urban-rules.entered.addArea' }
 };
 
+/** Sprint 002.10 DEC-3: the overview's line for confirmations made against an earlier document. */
+const NEW_DOCUMENT_VERSION_KEY = 'fr-urban-rules.notice.newDocumentVersion';
+const NEW_DOCUMENT_VERSION_UNDATED_KEY = 'fr-urban-rules.notice.newDocumentVersionUndated';
+
 /** The undo labels, one per decision (translated by the host's `i18n`; at most 80 characters). */
 const UNDO_KEYS = {
   confirm: 'fr-urban-rules.undo.confirm',
@@ -7313,7 +7549,13 @@ function createRnu({
   }
 
   /** The report with 002.1a's rules, edges, checks and views, for `rnu` and `cc`. */
-  function augment(report, request, roads, reportFacts, { checks: measure = true, written } = {}) {
+  function augment(
+    report,
+    request,
+    roads,
+    reportFacts,
+    { checks: measure = true, written, documentWatch } = {}
+  ) {
     const regime = report?.regime?.code;
     // 002.1a–b: the national rules under the RNU and a carte communale; 002.2:
     // drawn and entered rules wherever a regime is known.
@@ -7768,7 +8010,7 @@ function createRnu({
       .join(' · ');
     const augmented = fitted({
       ...report,
-      overview: overviewWith(report.overview, planned, regime, retiredStageRunning()),
+      overview: overviewWith(report.overview, planned, regime, retiredStageRunning(), documentWatch),
       features: [...report.features, ...derivedFeatures],
       edges: reportEdges,
       rules: ruleList,
@@ -8333,13 +8575,41 @@ function createRnu({
   }
 
   /** 002.2 DEC-4 / DEC-6: the overview says a new version reopened rules, and where to find a règlement. */
-  function overviewWith(overview, planned, regime, replaced = false) {
+  function overviewWith(overview, planned, regime, replaced = false, watch = undefined) {
     const notices = [];
     if (replaced) {
       notices.push({
         kind: 'notice',
         tone: 'warning',
         text: { key: 'fr-urban-rules.notice.replacesUrbanRules' }
+      });
+    }
+    // Sprint 002.10 DEC-3: confirmations that name an earlier *document* than the one in
+    // force — a new version, not only a newer date — are said as such, with the day it was
+    // published when the service's watch gave it for this document, else the day it applies from.
+    if (planned.reopenedByDocument > 0) {
+      const published =
+        watch?.publicationDate !== undefined &&
+        String(watch.originalName).toUpperCase() === String(planned.documentVersion).toUpperCase()
+          ? watch.publicationDate
+          : undefined;
+      const date = published ?? planned.documentValidFrom;
+      notices.push({
+        kind: 'notice',
+        tone: 'warning',
+        text:
+          date === undefined
+            ? {
+                key: NEW_DOCUMENT_VERSION_UNDATED_KEY,
+                params: { count: planned.reopenedByDocument }
+              }
+            : {
+                key: NEW_DOCUMENT_VERSION_KEY,
+                params: { date, count: planned.reopenedByDocument }
+              },
+        actions: [
+          { id: 'review', label: { key: 'fr-urban-rules.action.review' }, opensView: 'rules' }
+        ]
       });
     }
     if (planned.reopened > 0) {
@@ -9396,12 +9666,19 @@ const edgeLetter = (number) => {
             : stated?.kind === 'ratio' && Number.isFinite(stated.percent)
               ? { value: stated.percent, unit: '%' }
               : undefined;
+        // Sprint 002.10 DEC-4: a rule unchanged in the new version says so on its button.
+        const again = info.unchanged === true;
         list.push({
           id: 'confirm',
           label:
             shown === undefined
-              ? { key: 'fr-urban-rules.action.confirm' }
-              : { key: 'fr-urban-rules.action.confirmValue', params: shown },
+              ? { key: again ? 'fr-urban-rules.action.confirmAgain' : 'fr-urban-rules.action.confirm' }
+              : {
+                  key: again
+                    ? 'fr-urban-rules.action.confirmAgainValue'
+                    : 'fr-urban-rules.action.confirmValue',
+                  params: shown
+                },
           emphasis: 'primary',
           target
         });
@@ -9803,6 +10080,9 @@ const edgeLetter = (number) => {
     const current = versionOf(documentVersion, zoneDatvalid);
     const foreign = [];
     let reopenedEntered = 0;
+    // Sprint 002.10 DEC-3: how many of the reopened were made against another *document*.
+    let reopenedByDocument = 0;
+    const otherDocument = (entry) => String(entry.idurba ?? '').toUpperCase() !== current.idurba;
     for (const entry of entered) {
       if (!onPlot(entry, plot)) {
         foreign.push({ entry, kind: 'entered' });
@@ -9826,7 +10106,10 @@ const edgeLetter = (number) => {
         kind: shape.kind,
         reopened
       });
-      if (reopened) reopenedEntered += 1;
+      if (reopened) {
+        reopenedEntered += 1;
+        if (otherDocument(entry)) reopenedByDocument += 1;
+      }
       rules.push({
         id: entry.key,
         kind: shape.kind,
@@ -9942,7 +10225,21 @@ const edgeLetter = (number) => {
       if (entry === undefined) return rule;
       if (!sameVersion(entry, info.version)) {
         reopened += 1;
+        const byDocument = otherDocument(entry);
+        if (byDocument) reopenedByDocument += 1;
         const previous = entry.value?.value;
+        // Sprint 002.10 DEC-4 (owner decision Q1, 2026-11-03): a written rule that the
+        // new version's reading finds again — its key is the hash of its normalised
+        // passage — with the very limit the user confirmed, is offered « confirm again »
+        // as one click. It stays to confirm: nothing is carried over silently.
+        const unchanged =
+          byDocument &&
+          info.provenance === 'written' &&
+          !info.fromSection &&
+          rule.status === 'to_confirm' &&
+          storedLimitOf(entry.limit) !== undefined &&
+          stableJson(storedLimitOf(entry.limit)) === stableJson(rule.limit);
+        if (unchanged) info.unchanged = true;
         return {
           ...rule,
           ...(rule.status === 'not_evaluable' || rule.status === 'information'
@@ -9950,6 +10247,17 @@ const edgeLetter = (number) => {
             : { status: 'to_confirm' }),
           conditions: [
             ...(rule.conditions ?? []),
+            ...(unchanged
+              ? [
+                  {
+                    key: 'fr-urban-rules.rule.unchangedInNewVersion',
+                    params: {
+                      date: String(entry.at ?? '').slice(0, 10),
+                      version: String(entry.datvalid ?? '')
+                    }
+                  }
+                ]
+              : []),
             {
               key: 'fr-urban-rules.rule.reopened',
               params: {
@@ -10125,6 +10433,9 @@ const edgeLetter = (number) => {
       meta,
       actionsFor,
       reopened,
+      reopenedByDocument,
+      documentVersion,
+      documentValidFrom: report.document?.validFrom,
       stale,
       staleWritten,
       writtenSession: writtenSessionNext,
@@ -15486,6 +15797,7 @@ export function deactivate() {
 
 export const __testing = {
   SOURCE_ID,
+  checkedDocumentStatus,
   FETCHED_HOSTS,
   LINK_HOSTS,
   variationView,

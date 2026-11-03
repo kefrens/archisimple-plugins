@@ -1,0 +1,554 @@
+{
+ "recordedAt": "2026-11-03T08:44:30.574Z",
+ "note": "Trimmed answers (no geometry, no document content) of a live smoke run; see tools/measure-coverage.mjs.",
+ "communes": [
+  {
+   "code": "69123",
+   "name": "Lyon",
+   "population": 519127,
+   "department": "69",
+   "centre": [
+    4.8351,
+    45.758
+   ],
+   "band": "gte10000",
+   "stratum": "69|gte10000",
+   "weight": 0,
+   "reference": true
+  },
+  {
+   "code": "84050",
+   "name": "Gordes",
+   "population": 1661,
+   "department": "84",
+   "centre": [
+    5.204,
+    43.9074
+   ],
+   "band": "500-2000",
+   "stratum": "84|500-2000",
+   "weight": 0,
+   "reference": true
+  },
+  {
+   "code": "56196",
+   "name": "Rochefort-en-Terre",
+   "population": 647,
+   "department": "56",
+   "centre": [
+    -2.3415,
+    47.698
+   ],
+   "band": "500-2000",
+   "stratum": "56|500-2000",
+   "weight": 0,
+   "reference": true
+  },
+  {
+   "code": "55083",
+   "name": "Brouennes",
+   "population": 149,
+   "department": "55",
+   "centre": [
+    5.2508,
+    49.5223
+   ],
+   "band": "lt500",
+   "stratum": "55|lt500",
+   "weight": 0,
+   "reference": true
+  },
+  {
+   "code": "55364",
+   "name": "Mouzay",
+   "population": 651,
+   "department": "55",
+   "centre": [
+    5.2435,
+    49.4531
+   ],
+   "band": "500-2000",
+   "stratum": "55|500-2000",
+   "weight": 0,
+   "reference": true
+  },
+  {
+   "code": "02155",
+   "name": "Chaillevois",
+   "population": 201,
+   "department": "02",
+   "centre": [
+    3.5233,
+    49.5087
+   ],
+   "band": "lt500",
+   "stratum": "02|lt500",
+   "weight": 580,
+   "reference": false
+  },
+  {
+   "code": "08417",
+   "name": "Sévigny-la-Forêt",
+   "population": 270,
+   "department": "08",
+   "centre": [
+    4.4724,
+    49.8792
+   ],
+   "band": "lt500",
+   "stratum": "08|lt500",
+   "weight": 344,
+   "reference": false
+  },
+  {
+   "code": "10112",
+   "name": "Coussegrey",
+   "population": 180,
+   "department": "10",
+   "centre": [
+    4.0326,
+    47.9511
+   ],
+   "band": "lt500",
+   "stratum": "10|lt500",
+   "weight": 331,
+   "reference": false
+  },
+  {
+   "code": "11302",
+   "name": "Puilaurens",
+   "population": 277,
+   "department": "11",
+   "centre": [
+    2.2941,
+    42.8119
+   ],
+   "band": "lt500",
+   "stratum": "11|lt500",
+   "weight": 288,
+   "reference": false
+  },
+  {
+   "code": "21232",
+   "name": "Dompierre-en-Morvan",
+   "population": 201,
+   "department": "21",
+   "centre": [
+    4.2348,
+    47.3999
+   ],
+   "band": "lt500",
+   "stratum": "21|lt500",
+   "weight": 552,
+   "reference": false
+  }
+ ],
+ "answers": {
+  "https://apicarto.ign.fr/api/gpu/municipality?insee=69123": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": [
+     {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+       "name": "LYON",
+       "is_rnu": false
+      }
+     }
+    ]
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/document?geom=%7B%22type%22%3A%22Point%22%2C%22coordinates%22%3A%5B4.8351%2C45.758%5D%7D": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": [
+     {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+       "name": "200046977_PLUi_20260326",
+       "gpu_status": "production",
+       "partition": "DU_200046977",
+       "du_type": "PLUi"
+      }
+     }
+    ]
+   }
+  },
+  "https://www.geoportail-urbanisme.gouv.fr/api/document?partition=DU_200046977&status=document.production": {
+   "status": 200,
+   "body": [
+    {
+     "id": "4f3ddc27a9611b4bc94fa161443b8e86",
+     "status": "document.production",
+     "name": "DU_200046977",
+     "originalName": "200046977_PLUi_20260326",
+     "publicationDate": "23/04/2026 13:44:58",
+     "type": "PLUi"
+    }
+   ]
+  },
+  "https://georisques.gouv.fr/api/v1/gaspar/risques?code_insee=69123": {
+   "status": 200,
+   "body": {
+    "results": 1,
+    "total_pages": 1,
+    "data": []
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/municipality?insee=84050": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": [
+     {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+       "name": "GORDES",
+       "is_rnu": false
+      }
+     }
+    ]
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/document?geom=%7B%22type%22%3A%22Point%22%2C%22coordinates%22%3A%5B5.204%2C43.9074%5D%7D": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": [
+     {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+       "name": "84050_PLU_20241017",
+       "gpu_status": "production",
+       "partition": "DU_84050",
+       "du_type": "PLU"
+      }
+     }
+    ]
+   }
+  },
+  "https://www.geoportail-urbanisme.gouv.fr/api/document?partition=DU_84050&status=document.production": {
+   "status": 200,
+   "body": [
+    {
+     "id": "703e6c2a3130ed9396d8100fde318c2e",
+     "status": "document.production",
+     "name": "DU_84050",
+     "originalName": "84050_PLU_20241017",
+     "publicationDate": "27/03/2025 15:25:59",
+     "type": "PLU"
+    }
+   ]
+  },
+  "https://georisques.gouv.fr/api/v1/gaspar/risques?code_insee=84050": {
+   "status": 200,
+   "body": {
+    "results": 1,
+    "total_pages": 1,
+    "data": []
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/municipality?insee=56196": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": [
+     {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+       "name": "ROCHEFORT-EN-TERRE",
+       "is_rnu": false
+      }
+     }
+    ]
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/document?geom=%7B%22type%22%3A%22Point%22%2C%22coordinates%22%3A%5B-2.3415%2C47.698%5D%7D": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": []
+   }
+  },
+  "https://georisques.gouv.fr/api/v1/gaspar/risques?code_insee=56196": {
+   "status": 200,
+   "body": {
+    "results": 1,
+    "total_pages": 1,
+    "data": []
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/municipality?insee=55083": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": [
+     {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+       "name": "BROUENNES",
+       "is_rnu": true
+      }
+     }
+    ]
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/document?geom=%7B%22type%22%3A%22Point%22%2C%22coordinates%22%3A%5B5.2508%2C49.5223%5D%7D": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": []
+   }
+  },
+  "https://georisques.gouv.fr/api/v1/gaspar/risques?code_insee=55083": {
+   "status": 200,
+   "body": {
+    "results": 1,
+    "total_pages": 1,
+    "data": []
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/municipality?insee=55364": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": [
+     {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+       "name": "MOUZAY",
+       "is_rnu": false
+      }
+     }
+    ]
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/document?geom=%7B%22type%22%3A%22Point%22%2C%22coordinates%22%3A%5B5.2435%2C49.4531%5D%7D": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": [
+     {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+       "name": "55364_CC_20191107",
+       "gpu_status": "production",
+       "partition": "DU_55364",
+       "du_type": "CC"
+      }
+     }
+    ]
+   }
+  },
+  "https://www.geoportail-urbanisme.gouv.fr/api/document?partition=DU_55364&status=document.production": {
+   "status": 200,
+   "body": [
+    {
+     "id": "2cda894cb050dabb5812381b7e4ea0c0",
+     "status": "document.production",
+     "name": "DU_55364",
+     "originalName": "55364_CC_20191107",
+     "publicationDate": "12/01/2021 17:14:22",
+     "type": "CC"
+    }
+   ]
+  },
+  "https://georisques.gouv.fr/api/v1/gaspar/risques?code_insee=55364": {
+   "status": 200,
+   "body": {
+    "results": 1,
+    "total_pages": 1,
+    "data": []
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/municipality?insee=02155": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": [
+     {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+       "name": "CHAILLEVOIS",
+       "is_rnu": true
+      }
+     }
+    ]
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/document?geom=%7B%22type%22%3A%22Point%22%2C%22coordinates%22%3A%5B3.5233%2C49.5087%5D%7D": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": []
+   }
+  },
+  "https://georisques.gouv.fr/api/v1/gaspar/risques?code_insee=02155": {
+   "status": 200,
+   "body": {
+    "results": 0,
+    "total_pages": 0,
+    "data": []
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/municipality?insee=08417": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": [
+     {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+       "name": "SEVIGNY-LA-FORET",
+       "is_rnu": false
+      }
+     }
+    ]
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/document?geom=%7B%22type%22%3A%22Point%22%2C%22coordinates%22%3A%5B4.4724%2C49.8792%5D%7D": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": []
+   }
+  },
+  "https://georisques.gouv.fr/api/v1/gaspar/risques?code_insee=08417": {
+   "status": 200,
+   "body": {
+    "results": 1,
+    "total_pages": 1,
+    "data": []
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/municipality?insee=10112": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": [
+     {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+       "name": "COUSSEGREY",
+       "is_rnu": true
+      }
+     }
+    ]
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/document?geom=%7B%22type%22%3A%22Point%22%2C%22coordinates%22%3A%5B4.0326%2C47.9511%5D%7D": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": []
+   }
+  },
+  "https://georisques.gouv.fr/api/v1/gaspar/risques?code_insee=10112": {
+   "status": 200,
+   "body": {
+    "results": 1,
+    "total_pages": 1,
+    "data": []
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/municipality?insee=11302": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": [
+     {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+       "name": "PUILAURENS",
+       "is_rnu": false
+      }
+     }
+    ]
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/document?geom=%7B%22type%22%3A%22Point%22%2C%22coordinates%22%3A%5B2.2941%2C42.8119%5D%7D": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": [
+     {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+       "name": "200043776_PLUi_20241224",
+       "gpu_status": "production",
+       "partition": "DU_200043776",
+       "du_type": "PLUi"
+      }
+     }
+    ]
+   }
+  },
+  "https://www.geoportail-urbanisme.gouv.fr/api/document?partition=DU_200043776&status=document.production": {
+   "status": 200,
+   "body": [
+    {
+     "id": "3e5878557877062541fb9bf65550afe1",
+     "status": "document.production",
+     "name": "DU_200043776",
+     "originalName": "200043776_PLUi_20241224",
+     "publicationDate": "15/12/2025 17:56:43",
+     "type": "PLUi"
+    }
+   ]
+  },
+  "https://georisques.gouv.fr/api/v1/gaspar/risques?code_insee=11302": {
+   "status": 200,
+   "body": {
+    "results": 1,
+    "total_pages": 1,
+    "data": []
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/municipality?insee=21232": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": [
+     {
+      "type": "Feature",
+      "geometry": null,
+      "properties": {
+       "name": "DOMPIERRE-EN-MORVAN",
+       "is_rnu": true
+      }
+     }
+    ]
+   }
+  },
+  "https://apicarto.ign.fr/api/gpu/document?geom=%7B%22type%22%3A%22Point%22%2C%22coordinates%22%3A%5B4.2348%2C47.3999%5D%7D": {
+   "status": 200,
+   "body": {
+    "type": "FeatureCollection",
+    "features": []
+   }
+  },
+  "https://georisques.gouv.fr/api/v1/gaspar/risques?code_insee=21232": {
+   "status": 200,
+   "body": {
+    "results": 1,
+    "total_pages": 1,
+    "data": []
+   }
+  }
+ }
+}

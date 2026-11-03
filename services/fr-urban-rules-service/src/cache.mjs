@@ -88,7 +88,7 @@ export async function openCaches({ dirs, maxBytes = DEFAULT_CACHE_MAX_BYTES, now
     return {
       has: (key) => index.has(id(key)),
       /** `{ <file>: text }` for an entry, `undefined` on a miss; a damaged entry is a miss and goes. */
-      async readFiles(key, files) {
+      async readFiles(key, files, { touch: touching = true } = {}) {
         if (!index.has(id(key))) return undefined;
         // Twice: a read that meets a write's swap (below) finds the folder
         // missing for an instant; only a second failure is damage.
@@ -96,7 +96,8 @@ export async function openCaches({ dirs, maxBytes = DEFAULT_CACHE_MAX_BYTES, now
           try {
             const out = {};
             for (const file of files) out[file] = await readFile(join(dir, key, file), 'utf8');
-            await touch(key);
+            // A sweep (002.10) reads without touching: scanning must not make every entry the most recent.
+            if (touching) await touch(key);
             return out;
           } catch {
             if (attempt === 1) await new Promise((resolve) => setTimeout(resolve, 20));
@@ -122,7 +123,13 @@ export async function openCaches({ dirs, maxBytes = DEFAULT_CACHE_MAX_BYTES, now
         index.set(id(key), { dir, key, bytes, lastAccess: now().getTime() });
         await evict();
       },
-      keys: () => [...index.values()].filter((r) => r.dir === dir).map((r) => r.key)
+      keys: () => [...index.values()].filter((r) => r.dir === dir).map((r) => r.key),
+      /** Sprint 002.10 DEC-2: drops an entry (a superseded version's, once its 90 days have run). */
+      async remove(key) {
+        if (!index.delete(id(key))) return false;
+        await rm(join(dir, key), { recursive: true, force: true });
+        return true;
+      }
     };
   }
 

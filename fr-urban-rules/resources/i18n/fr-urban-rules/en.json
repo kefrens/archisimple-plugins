@@ -509,11 +509,11 @@
   "fr-urban-rules.source.document": "Planning document",
   "fr-urban-rules.source.el7": "Alignment easements (EL7) across the road",
   "fr-urban-rules.source.facingParcels": "Parcels across the road",
-  "fr-urban-rules.source.georisquesPprn": "Géorisques — risk prevention plans",
-  "fr-urban-rules.source.georisquesRadon": "Géorisques — radon",
-  "fr-urban-rules.source.georisquesRga": "Géorisques — clay",
-  "fr-urban-rules.source.georisquesRisques": "Géorisques — listed risks",
-  "fr-urban-rules.source.georisquesSismique": "Géorisques — seismic zone",
+  "fr-urban-rules.source.georisquesPprn": "Géorisques v1 — risk prevention plans",
+  "fr-urban-rules.source.georisquesRadon": "Géorisques v1 — radon",
+  "fr-urban-rules.source.georisquesRga": "Géorisques v1 — clay",
+  "fr-urban-rules.source.georisquesRisques": "Géorisques v1 — listed risks",
+  "fr-urban-rules.source.georisquesSismique": "Géorisques v1 — seismic zone",
   "fr-urban-rules.source.gpuFiles": "Regulation file",
   "fr-urban-rules.source.infoLin": "Information (lines)",
   "fr-urban-rules.source.infoPct": "Information (points)",
@@ -871,5 +871,10 @@
   "fr-urban-rules.surfaces.green.free": "{area} m² open",
   "fr-urban-rules.surfaces.caps.summary": "Extension up to {area} m²",
   "fr-urban-rules.risk.readings": "Readings of the services",
-  "fr-urban-rules.risk.readingsWaiting": "A service is loading or did not answer"
+  "fr-urban-rules.risk.readingsWaiting": "A service is loading or did not answer",
+  "fr-urban-rules.notice.newDocumentVersion": "A new version of the document was published on {date}. {count, plural, one {# confirmation is} other {# confirmations are}} to review.",
+  "fr-urban-rules.notice.newDocumentVersionUndated": "A new version of the document is in force. {count, plural, one {# confirmation is} other {# confirmations are}} to review.",
+  "fr-urban-rules.rule.unchangedInNewVersion": "Unchanged in the new version: the passage and the limit are the ones you confirmed on {date} (version {version}). Confirm again to keep it.",
+  "fr-urban-rules.action.confirmAgain": "Confirm again",
+  "fr-urban-rules.action.confirmAgainValue": "Confirm {value} {unit} again"
 }

@@ -103,9 +103,10 @@ const serviceRule = (fields) => ({
  * answer until `release(name)`.
  */
 function fakeService({ cached, current = CURRENT, steps = [], post } = {}) {
-  const calls = { chapter: [], cachedOnly: [], post: [], poll: [] };
+  const calls = { chapter: [], cachedOnly: [], post: [], poll: [], documents: [] };
   const held = new Map();
-  const state = { cached, current, steps: [...steps] };
+  // `documents`: 002.10's route; a function from the URL to a response, else the route is not there (404).
+  const state = { cached, current, steps: [...steps], documents: undefined };
   const wait = async (name) => {
     if (held.has(name)) await held.get(name).promise;
   };
@@ -122,6 +123,11 @@ function fakeService({ cached, current = CURRENT, steps = [], post } = {}) {
         title: 'Zone UCe1',
         documentPages: 803
       });
+    }
+    if (path.startsWith('v1/documents/')) {
+      calls.documents.push(url);
+      await wait('documents');
+      return state.documents === undefined ? json(404, { error: 'not_found' }) : state.documents(parsed);
     }
     if (path === 'v1/extractions' && init.method === 'POST') {
       calls.post.push({ url, body: JSON.parse(init.body) });
@@ -278,6 +284,8 @@ function readerFor({
   boundary,
   wait = manualWait(),
   schedule = manualTimers(),
+  watchSchedule = manualTimers(),
+  watchClock,
   overrides = {},
   module,
   now,
@@ -304,13 +312,15 @@ function readerFor({
     pluginService: () => pluginService,
     wait,
     schedule,
+    watchSchedule,
+    ...(watchClock === undefined ? {} : { watchClock }),
     ...(now === undefined ? {} : { now }),
     ...(section === undefined ? {} : { packageData: () => section.service }),
     document: () => ({ find: () => [] }),
     translate: (key) => `label:${key}`,
     ...(snapshotMinimumStep === undefined ? {} : { snapshotMinimumStep })
   });
-  return { reader, site, service, section, schedule, wait, planning };
+  return { reader, site, service, section, schedule, watchSchedule, wait, planning };
 }
 
 const read = (context, reason = 'site') =>
@@ -2052,4 +2062,386 @@ test('002.11 criterion 8: a newer reading is offered, never applied; « Use it �
     section.cache().written[0].result.rules.length,
     __testing.checkedResult(recorded).rules.length + 1
   );
+});
+
+// ── Sprint 002.10: the document watch ──────────────────────────────────────────
+
+const NEW_NAME = '200046977_PLUi_20261002';
+const NEW_IDURBA = '200046977_PLUI_20261002';
+
+/** What API Carto answers once the GPU has moved to the next version of Lyon's PLUi. */
+function movedTo(name = NEW_NAME, idurba = NEW_IDURBA) {
+  const document = structuredClone(lyon.answers.get('apicarto-document').body);
+  document.features[0].properties.name = name;
+  const zones = structuredClone(lyon.answers.get('apicarto-zone-urba').body);
+  for (const f of zones.features) f.properties.idurba = idurba;
+  return {
+    'apicarto-document': answering(200, document),
+    'apicarto-zone-urba': answering(200, zones)
+  };
+}
+
+/** The service's `documents/<partition>` answer: the document in force (`null`: none in production). */
+const documentStatus =
+  (originalName, publicationDate = '2026-10-02', extra = {}) =>
+  () =>
+    json(200, {
+      partition: 'DU_200046977',
+      current: originalName === null ? null : { gpuDocId: 'gpu-1', originalName, publicationDate },
+      withdrawn: originalName === null,
+      checkedAt: '2026-11-03T08:00:00.000Z',
+      previous: [],
+      ...extra
+    });
+
+const OLD_NAME = '200046977_PLUi_20260326';
+
+test('002.10 DEC-3: a located PLU(i) read asks the service about its document once, and never waits for the answer', async () => {
+  const service = fakeService();
+  service.state.documents = documentStatus(OLD_NAME);
+  service.hold('documents');
+  const context = readerFor({ service });
+  const report = await read(context); // resolves while the answer is still held
+  assert.ok(report.document);
+  assert.equal(service.calls.documents.length, 1);
+  assert.match(service.calls.documents[0], /\/v1\/documents\/DU_200046977$/u);
+  // A second read inside the hour asks nothing more.
+  await read(context, 'design');
+  assert.equal(service.calls.documents.length, 1);
+  service.release('documents');
+  await settle();
+  context.reader.dispose();
+});
+
+test('002.10 criterion 6a: an unchanged answer fires nothing; an hourly answer naming a newer document fires once, and the host’s re-read is of the new version', async () => {
+  const service = fakeService();
+  service.state.documents = documentStatus(OLD_NAME);
+  const context = readerFor({ service });
+  let fired = 0;
+  context.reader.onDidChange(() => (fired += 1));
+  const first = await read(context);
+  await settle();
+  assert.equal(fired, 0, 'the document in force is the one the read used');
+  assert.equal(first.document.version, '200046977_PLUI_20260326');
+  // The hour passes with nothing new.
+  assert.deepEqual(await context.watchSchedule.tick(), [3_600_000]);
+  assert.equal(service.calls.documents.length, 2);
+  assert.equal(fired, 0);
+  // The next hour, the GPU has moved.
+  service.state.documents = documentStatus(NEW_NAME);
+  await context.watchSchedule.tick();
+  assert.equal(service.calls.documents.length, 3);
+  assert.equal(fired, 1, 'the signal fires once');
+  // …and not again for the same document.
+  await context.watchSchedule.tick();
+  await settle();
+  assert.equal(service.calls.documents.length, 4);
+  assert.equal(fired, 1);
+  // The host reads again (`source`): the old report is not served from memory.
+  const planning = context.planning.requests.length;
+  const again = await context.reader.read(
+    requestFor(context.site, 'source'),
+    { signal: signal() }
+  );
+  assert.ok(context.planning.requests.length > planning, 'the plot is read again, not answered from the session cache');
+  context.reader.dispose();
+  void again;
+});
+
+test('002.10: the re-read after the signal finds the new version, and the stored confirmations reopen with « a new version, published on … »', async () => {
+  const { section, rule } = await facadeCheck([{ facade: 'north', height: 9, distance: 6 }]);
+  const service = fakeService({ cached: resultWith({ rules: [facadeRule] }) });
+  service.state.documents = documentStatus(OLD_NAME);
+  const context = readerFor({
+    service,
+    section: store(structuredClone(section.held())),
+    measures: facadeMeasures([{ facade: 'north', height: 9, distance: 6 }]),
+    boundary: BOX
+  });
+  let fired = 0;
+  context.reader.onDidChange(() => (fired += 1));
+  const before = await read(context);
+  await settle();
+  assert.equal(before.rules.find((r) => r.id === rule.id).status, 'confirmed');
+  assert.ok(!before.overview.some((b) => b.text?.key === 'fr-urban-rules.notice.newDocumentVersion'));
+  // The GPU moves; the service says so; API Carto has caught up.
+  service.state.documents = documentStatus(NEW_NAME, '2026-10-02');
+  await context.watchSchedule.tick();
+  assert.equal(fired, 1);
+  const moved = readerFor({
+    service,
+    section: context.section,
+    measures: facadeMeasures([{ facade: 'north', height: 9, distance: 6 }]),
+    boundary: BOX,
+    overrides: movedTo()
+  });
+  // A reader on the new API Carto answers (the same state the signalled re-read meets).
+  const report = await read(moved);
+  const notice = report.overview.find((b) => b.text?.key === 'fr-urban-rules.notice.newDocumentVersion');
+  assert.ok(notice, 'the overview says a new document version');
+  assert.equal(notice.tone, 'warning');
+  assert.equal(notice.text.params.count >= 1, true);
+  assert.equal(notice.actions[0].opensView, 'rules');
+  // The existing line stays, for the rules the new version reopened.
+  assert.ok(report.overview.some((b) => b.text?.key === 'fr-urban-rules.notice.rulesReopened'));
+  context.reader.dispose();
+  moved.reader.dispose();
+});
+
+test('002.10 DEC-3: the line carries the day the service’s watch gives as the publication, else the day the version applies from; casing alone says nothing', async () => {
+  const { section } = await facadeCheck([{ facade: 'north', height: 9, distance: 6 }]);
+  const old = structuredClone(section.held());
+  old.confirmations[0].idurba = '200046977_PLUI_20250101';
+  const withWatch = fakeService({ cached: resultWith({ rules: [facadeRule] }) });
+  withWatch.state.documents = documentStatus('200046977_PLUi_20260326', '2026-04-23');
+  const a = readerFor({ service: withWatch, section: store(structuredClone(old)), measures: facadeMeasures([{ facade: 'north', height: 9, distance: 6 }]), boundary: BOX });
+  await read(a);
+  await settle();
+  const published = await read(a, 'design');
+  const noticeA = published.overview.find((b) => b.text?.key === 'fr-urban-rules.notice.newDocumentVersion');
+  assert.deepEqual(noticeA.text.params, { date: '2026-04-23', count: 1 });
+
+  // No watch (no `documents` route): the day the version applies from — the idurba's own date.
+  const without = readerFor({ service: fakeService({ cached: resultWith({ rules: [facadeRule] }) }), section: store(structuredClone(old)), measures: facadeMeasures([{ facade: 'north', height: 9, distance: 6 }]), boundary: BOX });
+  const bare = await read(without);
+  const noticeB = bare.overview.find((b) => b.text?.key === 'fr-urban-rules.notice.newDocumentVersion');
+  assert.deepEqual(noticeB.text.params, { date: '2026-03-26', count: 1 });
+
+  // PLUi against PLUI: the same document. Nothing reopens, nothing is said.
+  const same = structuredClone(section.held());
+  same.confirmations[0].idurba = '200046977_PLUi_20260326';
+  const quiet = readerFor({ service: fakeService({ cached: resultWith({ rules: [facadeRule] }) }), section: store(same), measures: facadeMeasures([{ facade: 'north', height: 9, distance: 6 }]), boundary: BOX });
+  const calm = await read(quiet);
+  assert.ok(!calm.overview.some((b) => b.text?.key?.startsWith('fr-urban-rules.notice.newDocumentVersion')));
+  assert.ok(!calm.overview.some((b) => b.text?.key === 'fr-urban-rules.notice.rulesReopened'));
+  for (const c of [a, without, quiet]) c.reader.dispose();
+});
+
+test('002.10: a datvalid change inside the same document is not “a new document version”', async () => {
+  const { section } = await facadeCheck([{ facade: 'north', height: 9, distance: 6 }]);
+  const old = structuredClone(section.held());
+  old.confirmations[0].datvalid = '20250101';
+  const context = readerFor({ service: fakeService({ cached: resultWith({ rules: [facadeRule] }) }), section: store(old), measures: facadeMeasures([{ facade: 'north', height: 9, distance: 6 }]), boundary: BOX });
+  const report = await read(context);
+  assert.ok(report.overview.some((b) => b.text?.key === 'fr-urban-rules.notice.rulesReopened'));
+  assert.ok(!report.overview.some((b) => b.text?.key === 'fr-urban-rules.notice.newDocumentVersion'));
+  context.reader.dispose();
+});
+
+test('002.10 DEC-3: with no stored reading to compare, the overview’s line for a new document stands alone, once', async () => {
+  const { section } = await facadeCheck([{ facade: 'north', height: 9, distance: 6 }]);
+  const old = structuredClone(section.held());
+  old.confirmations[0].idurba = '200046977_PLUI_20250101';
+  const context = readerFor({ service: fakeService({ cached: resultWith({ rules: [facadeRule] }) }), section: store(old), measures: facadeMeasures([{ facade: 'north', height: 9, distance: 6 }]), boundary: BOX });
+  const report = await read(context);
+  const keys = report.overview.map((b) => b.text?.key);
+  // No stored snapshot, so no « what changed »: the line is said once. (When « what changed » says the
+  // version changed, `withSnapshotNotices` drops this line; snapshot.test.mjs holds that path's wording.)
+  assert.equal(keys.filter((k) => k === 'fr-urban-rules.notice.newDocumentVersion').length, 1);
+  context.reader.dispose();
+});
+
+test('002.10 DEC-3: a document withdrawn from production fires the signal too — the re-read says what is now true', async () => {
+  const service = fakeService();
+  service.state.documents = documentStatus(OLD_NAME);
+  const context = readerFor({ service });
+  let fired = 0;
+  context.reader.onDidChange(() => (fired += 1));
+  await read(context);
+  await settle();
+  service.state.documents = documentStatus(null);
+  await context.watchSchedule.tick();
+  assert.equal(fired, 1);
+  context.reader.dispose();
+});
+
+test('002.10: without the service, a failing route or an answer that is not the route’s, nothing is signalled and the read is untouched', async () => {
+  for (const documents of [
+    undefined, // 404 not_found
+    () => json(500, { error: 'internal_error' }),
+    () => json(200, { partition: 'DU_200046977', current: { originalName: '../../x', gpuDocId: 'g' }, withdrawn: false, checkedAt: null, previous: [] }),
+    () => json(200, 'not json at all'),
+    () => json(200, { partition: 'DU_999999999', current: null, withdrawn: true, checkedAt: null, previous: [] }),
+    () => json(200, { partition: 'DU_200046977', current: null, withdrawn: false, checkedAt: null, previous: [] })
+  ]) {
+    const service = fakeService();
+    service.state.documents = documents;
+    const context = readerFor({ service });
+    let fired = 0;
+    context.reader.onDidChange(() => (fired += 1));
+    const report = await read(context);
+    await settle();
+    await context.watchSchedule.tick();
+    assert.equal(fired, 0, String(documents));
+    assert.ok(report.document);
+    context.reader.dispose();
+  }
+  // No plugin-service at all: no question is asked.
+  const service = fakeService();
+  service.state.documents = documentStatus(NEW_NAME);
+  // (`null`: an explicit `undefined` would take the harness's default.)
+  const none = readerFor({ service, pluginService: null });
+  await read(none);
+  await settle();
+  assert.equal(service.calls.documents.length, 0);
+  assert.equal(none.watchSchedule.pending.filter((e) => !e.cancelled).length, 0);
+});
+
+test('002.10: the hourly timer is stopped when another plot is read and on dispose; dispose forgets the watch', async () => {
+  const service = fakeService();
+  service.state.documents = documentStatus(OLD_NAME);
+  const context = readerFor({ service });
+  await read(context);
+  await settle();
+  const live = () => context.watchSchedule.pending.filter((e) => !e.cancelled).length;
+  assert.equal(live(), 1);
+  // A plot with no document under the PLU(i) service route: nothing is polled.
+  context.reader.dispose();
+  assert.equal(live(), 0);
+  await context.watchSchedule.tick();
+  assert.equal(service.calls.documents.length, 1, 'a stopped timer asks nothing');
+});
+
+test('002.10 DEC-3: the question is asked again after an hour when a read finds the last one old', async () => {
+  const service = fakeService();
+  service.state.documents = documentStatus(OLD_NAME);
+  let at = Date.UTC(2026, 10, 3, 8, 0);
+  const context = readerFor({ service, watchClock: () => at });
+  await read(context);
+  await settle();
+  at += 3_599_000;
+  await read(context, 'design');
+  assert.equal(service.calls.documents.length, 1);
+  at += 2_000;
+  await read(context, 'design');
+  await settle();
+  assert.equal(service.calls.documents.length, 2);
+  context.reader.dispose();
+});
+
+test('002.10: the service’s answer, checked field by field', () => {
+  const ok = {
+    partition: 'DU_200046977',
+    current: { gpuDocId: 'abc123', originalName: '200046977_PLUi_20261002', publicationDate: '2026-10-02' },
+    withdrawn: false,
+    checkedAt: '2026-11-03T08:00:00.000Z',
+    previous: [{ gpuDocId: 'old1', originalName: '200046977_PLUi_20260326', supersededAt: '2026-10-02T00:00:00.000Z' }],
+    failing: { code: 'source_unavailable', days: 3 }
+  };
+  const check = __testing.checkedDocumentStatus;
+  assert.deepEqual(check(ok, 'DU_200046977'), {
+    current: ok.current,
+    checkedAt: ok.checkedAt,
+    previous: ok.previous,
+    failing: { code: 'source_unavailable', days: 3 }
+  });
+  assert.equal(check(ok, 'DU_84050'), undefined, 'another partition’s answer');
+  assert.deepEqual(check({ ...ok, current: null, withdrawn: true, failing: undefined }, 'DU_200046977').current, null);
+  for (const broken of [
+    null,
+    [],
+    { ...ok, withdrawn: true },
+    { ...ok, current: null },
+    { ...ok, current: { ...ok.current, originalName: 'has space' } },
+    { ...ok, current: { ...ok.current, gpuDocId: undefined } },
+    { ...ok, checkedAt: 'yesterday' },
+    { ...ok, previous: 'none' },
+    { ...ok, previous: [{ gpuDocId: 'x', originalName: 'y', supersededAt: 'never' }] }
+  ]) {
+    assert.equal(check(broken, 'DU_200046977'), undefined, JSON.stringify(broken)?.slice(0, 60));
+  }
+  // A malformed publication date is dropped, not trusted.
+  assert.equal(check({ ...ok, current: { ...ok.current, publicationDate: '02/10/2026' } }, 'DU_200046977').current.publicationDate, undefined);
+});
+
+// ── Sprint 002.10 DEC-4 (owner decision Q1): « unchanged in the new version — confirm again » ──
+
+async function reopenedFacade(change = () => {}) {
+  const { section, rule } = await facadeCheck([{ facade: 'north', height: 9, distance: 6 }]);
+  const old = structuredClone(section.held());
+  old.confirmations[0].idurba = '200046977_PLUI_20250101';
+  change(old.confirmations[0]);
+  const held = store(old);
+  const context = readerFor({
+    service: fakeService({ cached: resultWith({ rules: [facadeRule] }) }),
+    section: held,
+    measures: facadeMeasures([{ facade: 'north', height: 9, distance: 6 }]),
+    boundary: BOX
+  });
+  const report = await read(context);
+  return { context, report, rule: report.rules.find((r) => r.id === rule.id), held };
+}
+
+test('Q1: a written rule the new version reads again with the same passage and limit says “unchanged”, offers “Confirm again”, and stays to confirm until clicked', async () => {
+  const { context, report, rule, held } = await reopenedFacade();
+  assert.equal(rule.status, 'to_confirm', 'nothing is carried over silently');
+  const keys = rule.conditions.map((c) => c.key);
+  assert.ok(keys.includes('fr-urban-rules.rule.reopened'), 'the existing line stays');
+  assert.ok(keys.includes('fr-urban-rules.rule.unchangedInNewVersion'));
+  const again = rule.conditions.find((c) => c.key === 'fr-urban-rules.rule.unchangedInNewVersion');
+  assert.deepEqual(Object.keys(again.params).sort(), ['date', 'version']);
+  const confirm = actions(report).find((a) => a.id === 'confirm' && a.target.ruleId === rule.id);
+  assert.equal(confirm.label.key, 'fr-urban-rules.action.confirmAgain');
+  assert.equal(confirm.emphasis, 'primary');
+  assert.equal(held.writes.length, 0, 'a read writes nothing');
+  // One click confirms it against the version read now.
+  assert.deepEqual(await act(context, 'confirm', confirm.target), { status: 'done' });
+  const after = await read(context, 'action');
+  const confirmed = after.rules.find((r) => r.id === rule.id);
+  assert.equal(confirmed.status, 'confirmed');
+  assert.ok(!confirmed.conditions.some((c) => c.key === 'fr-urban-rules.rule.reopened'));
+  assert.equal(held.held().confirmations[0].idurba, '200046977_PLUI_20260326');
+  context.reader.dispose();
+});
+
+test('Q1: a limit that is not the one confirmed is a cold review — no “unchanged”, the plain Confirm', async () => {
+  const { context, report, rule } = await reopenedFacade((entry) => {
+    entry.limit = { ...entry.limit, offset: { value: -3, unit: 'm' } };
+  });
+  assert.equal(rule.status, 'to_confirm');
+  assert.ok(rule.conditions.some((c) => c.key === 'fr-urban-rules.rule.reopened'));
+  assert.ok(!rule.conditions.some((c) => c.key === 'fr-urban-rules.rule.unchangedInNewVersion'));
+  const confirm = actions(report).find((a) => a.id === 'confirm' && a.target.ruleId === rule.id);
+  assert.equal(confirm.label.key, 'fr-urban-rules.action.confirm');
+  context.reader.dispose();
+});
+
+test('Q1: a confirmation with no stored limit cannot be called unchanged', async () => {
+  const { context, rule } = await reopenedFacade((entry) => {
+    delete entry.limit;
+  });
+  assert.ok(!rule.conditions.some((c) => c.key === 'fr-urban-rules.rule.unchangedInNewVersion'));
+  context.reader.dispose();
+});
+
+test('Q1: the same document with only the date moved is the existing reopen — not “unchanged in the new version”', async () => {
+  const { context, rule } = await reopenedFacade((entry) => {
+    entry.idurba = '200046977_PLUi_20260326';
+    entry.datvalid = '20250101';
+  });
+  assert.equal(rule.status, 'to_confirm');
+  assert.ok(rule.conditions.some((c) => c.key === 'fr-urban-rules.rule.reopened'));
+  assert.ok(!rule.conditions.some((c) => c.key === 'fr-urban-rules.rule.unchangedInNewVersion'));
+  context.reader.dispose();
+});
+
+test('Q1/Q2: a new version’s written rules are never read on their own — the extraction is the user’s to start', async () => {
+  const { context } = await reopenedFacade();
+  assert.equal(context.service.calls.post.length, 0, 'no model call from a read or a watch');
+  context.reader.dispose();
+});
+
+test('002.10: the new strings exist in English and French', () => {
+  for (const key of [
+    'fr-urban-rules.notice.newDocumentVersion',
+    'fr-urban-rules.notice.newDocumentVersionUndated',
+    'fr-urban-rules.rule.unchangedInNewVersion',
+    'fr-urban-rules.action.confirmAgain',
+    'fr-urban-rules.action.confirmAgainValue'
+  ]) {
+    assert.ok(typeof en[key] === 'string' && en[key] !== '', `en ${key}`);
+    assert.ok(typeof fr[key] === 'string' && fr[key] !== '', `fr ${key}`);
+  }
+  assert.match(en['fr-urban-rules.notice.newDocumentVersion'], /\{date\}/u);
+  assert.match(fr['fr-urban-rules.notice.newDocumentVersion'], /\{date\}/u);
 });

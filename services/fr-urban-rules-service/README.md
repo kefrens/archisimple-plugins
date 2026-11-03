@@ -5,6 +5,11 @@ The companion service of the package `com.archisimple.fr-urban-rules`
 the written rules of a PLU or PLUi — from the Géoportail de l'Urbanisme, keeps
 its text by document version, and finds the zone's chapter in it.
 
+Since 0.3.0 (Sprint 002.10) it also **watches** the documents it holds — which
+document is in force on the GPU, and whether that changed — and **proxies
+Géorisques v2** with the deployment's token, so the token never reaches a
+browser.
+
 It is **not a package**: it is never zipped, installed or loaded into the
 editor. The deployment runs it in the `plugin-services` container, behind the
 gateway (`../gateway`), at `/plugins-api/com.archisimple.fr-urban-rules/`. The
@@ -64,6 +69,7 @@ Errors answer `{ "error": "<code>", …details }`:
 | `busy` | 503 | the extraction queue is full; `Retry-After` |
 | `extraction_unavailable` | 503 | ai-service lacks `structured-output`, or has no provider |
 | `extraction_failed` | 502 | every chunk failed; `codes` lists 096.7's |
+| `not_configured` | 503 | `v1/georisques` with no `FR_URBAN_RULES_GEORISQUES_TOKEN` (002.10) |
 | `internal_error` | 500 | an unexpected exception; only its name is logged |
 
 ## Extractions (Sprint 002.5b)
@@ -118,10 +124,89 @@ GET  v1/extractions?partition&idurba&nomfic&zone&cachedOnly=1
   whichever is smaller); each is one call, retried once on
   `output_truncated`, `output_invalid` or `provider_error`.
 
+## The document watch (Sprint 002.10)
+
+```text
+GET v1/documents/DU_200046977
+→ 200 { "partition": "DU_200046977",
+        "current": { "gpuDocId": "4f3d…", "originalName": "200046977_PLUi_20260326",
+                     "publicationDate": "2026-04-23" },
+        "withdrawn": false, "checkedAt": "2026-11-03T08:00:00.000Z",
+        "previous": [ { "gpuDocId": "…", "originalName": "…", "supersededAt": "…" } ],
+        "failing": { "code": "source_unavailable", "days": 3 } }      ← only when it is
+```
+
+- **The GPU is the authority** for « a new version exists »: the document API
+  asked for the partition **with `status=document.production`**. Without the
+  filter the default page is 20 archived items, oldest first, and a document in
+  force can fall outside it (probe 2026-10-19). A new version is a different
+  `id`; `originalName` is compared case-insensitively (`PLUi` / `PLUI`).
+- **Zero in production** is `withdrawn: true`, `current: null` — a commune back
+  under the national rules or not on the GPU — never « no rules ». More than one
+  is logged as an anomaly and the newest taken.
+- **What is watched:** every partition the service holds a document for (seeded
+  from the document cache at start and from every chapter or extraction read,
+  with no GPU call), and any partition a client asks about (**one** GPU call, the
+  asking user's `FR_URBAN_RULES_LIMIT_WATCH_SEED_HOUR`, default 60 an hour). A
+  partition with nothing in production that was never known is answered, not
+  recorded.
+- **Schedule:** about daily — 24 h plus a per-partition offset under 4 h, so a
+  deployment does not ask every partition at once — through one gate: **at most
+  one GPU request a second**, whoever asked. A failure backs off (5 minutes,
+  doubling, to 6 hours); three days of failures are logged as `watch_failing` and
+  said in the answer (`failing`), and the record is kept. `FR_URBAN_RULES_WATCH=off`
+  stops the schedule (the route still answers).
+- **A record** is one JSON file per partition under `<data>/<package id>/watch/`
+  — identifiers and dates, no parcel, address, geometry or user — outside the
+  cache's byte budget. One no client has read for 180 days is forgotten.
+- **Eviction (DEC-2).** The PDF is deleted once read, so there is nothing to
+  evict at once; a superseded version's **text and extractions** go 90 days after
+  it was superseded (a project confirmed on the old version can still show what it
+  confirmed), and an extraction under another `schemaVersion` goes at the next
+  sweep. Re-extraction is the user's to ask (owner decision, 2026-11-03).
+- **Never the project.** The watch writes nothing but its records and reopens
+  nothing: confirmations reopen at read time from the stored `idurba`.
+
+## Géorisques v2, through the service (Sprint 002.10)
+
+```text
+GET v1/georisques                         → { "configured": true, "api": "v2" }
+GET v1/georisques/rga?longitude=4.83&latitude=45.76
+GET v1/georisques/radon?codesInsee=69123
+→ the v2 answer as JSON — and nothing of its headers
+```
+
+- **The token** is `FR_URBAN_RULES_GEORISQUES_TOKEN`, read from this service's
+  environment only. It is added to `Authorization` on the way out and appears in
+  no response, log line, error detail or file (the tests grep for a fake one); a
+  value that is not a plain header value turns the proxy off, said without it.
+  Géorisques' registration is free; there is no token in this repository.
+- **An allow-list**, from Géorisques' public OpenAPI description
+  (`/api/v3/api-docs/georisques-api-v2`, read 2026-11-03): `gaspar/risques`,
+  `gaspar/pprn`, `zonage_sismique`, `rga` and `radon`, with `codesInsee`,
+  `longitude`, `latitude`, `rayon`, `pageSize` and `pageNumber` — each value
+  checked by pattern, none repeated. No `geometry`, no `codesParcelle`. Anything
+  else is `404`/`400` before a request is made.
+- **Cached 24 hours** in memory per path and parameters (500 entries); a hit
+  costs the user nothing, a miss counts against `FR_URBAN_RULES_LIMIT_GEORISQUES_HOUR`
+  (240 an hour per user). A failed call is not cached.
+- **No token → `503 not_configured`**, and the extension keeps v1 from the browser.
+  A rejected token (`401`/`403`) is `source_refused` with `reason: token_rejected`
+  and a log line once in ten minutes; the upstream's words are never passed on.
+- **Unverified (no token yet):** the exact `Authorization` value Géorisques
+  expects — the OpenAPI names the scheme « Bearer token » but types it as an API key
+  in the header, so the raw token is sent;
+  `FR_URBAN_RULES_GEORISQUES_AUTH_SCHEME=Bearer` sends `Bearer <token>` — and the
+  shape of a real answer. **v2 is not v1 with another prefix:** `gaspar/risques`
+  lists GASPAR *procedures* (with their communes and aleas), not a commune's
+  `risques_detail`; `zonage_sismique` answers `{ typeZone, zoneSismicite }` with no
+  commune or zone code; `gaspar/pprn`, `rga` and `radon` are close to v1's. The
+  extension therefore still reads v1; mapping v2 needs real payloads.
+
 ## Hosts contacted
 
-Exactly two, over `https:` only, from URL templates — no URL comes from a
-client:
+Three, over `https:` only, from URL templates — no URL comes from a
+client (the third only when the deployment sets a Géorisques token):
 
 | Host | Path | Why |
 | --- | --- | --- |
@@ -129,6 +214,7 @@ client:
 | | `/api/document/<id>/files` | its file list |
 | | `/api/document/<id>/files/<nomfic>` | the règlement (answers `302`) |
 | `data.geopf.fr` | `/annexes/gpu/documents/<partition>/<id>/…` | the PDF, after that redirect |
+| `www.georisques.gouv.fr` | `/api/v2/<allow-listed path>?<allow-listed parameters>` | the Géorisques v2 proxy, with the token; a redirect is refused |
 
 - Every address a name resolves to is checked, in both forms Node asks for
   (`{ all: true }` and single): loopback, private, link-local, CGNAT,
@@ -149,6 +235,9 @@ client:
 | Every request — `GET chapter`, every extraction POST, poll and cached read (a flood guard) | 60 per minute per user | `FR_URBAN_RULES_LIMIT_READ_MINUTE` |
 | Starting an extraction (a job that calls a model; a cache hit, a join, or a job that ends without a model call is free) | 6 per hour, 20 per day, per user | `FR_URBAN_RULES_LIMIT_EXTRACT_HOUR`, `FR_URBAN_RULES_LIMIT_EXTRACT_DAY` |
 | `refresh=1` | 2 per day per user | `FR_URBAN_RULES_LIMIT_REFRESH_DAY` |
+| A first look at a partition not yet watched (one GPU call) | 60 per hour per user | `FR_URBAN_RULES_LIMIT_WATCH_SEED_HOUR` |
+| Géorisques v2 calls the cache did not answer | 240 per hour per user | `FR_URBAN_RULES_LIMIT_GEORISQUES_HOUR` |
+| The watch's own GPU requests (daily checks and first looks together) | 1 per second | — |
 | Extractions running / waiting | 1 / 10 | — |
 | Download size, counted while streaming | 32 MiB | — |
 | Document pages / chapter pages | 2 000 / 80 | — |
@@ -226,8 +315,13 @@ raw name. Level: `FR_URBAN_RULES_LOG_LEVEL` (`debug`, `info` (default),
 | `FR_URBAN_RULES_EXTRACT_CHUNK_CHARS` | `40000` (the ceiling) | optional: smaller chunks for a slow local model |
 | `FR_URBAN_RULES_EXTRACT_MAX_ITEMS` | `120` (ceiling 200) | optional: items asked per chunk |
 | `FR_URBAN_RULES_EXTRACT_TIMEOUT_MS` | `1800000` (30 min; floor 120 000) | optional: one extract call's limit here; keep it ≥ ai-service's `AI_SERVICE_REQUEST_TIMEOUT_MS` |
+| `FR_URBAN_RULES_GEORISQUES_TOKEN` | unset (proxy off) | `.env`: the deployment's free Géorisques v2 token; this service only |
+| `FR_URBAN_RULES_GEORISQUES_AUTH_SCHEME` | unset (raw token) | optional: `Bearer` sends `Bearer <token>` |
+| `FR_URBAN_RULES_WATCH` | on | `off` stops the daily schedule |
+| `FR_URBAN_RULES_LIMIT_WATCH_SEED_HOUR` | `60` | optional |
+| `FR_URBAN_RULES_LIMIT_GEORISQUES_HOUR` | `240` | optional |
 
-No model key, and none is ever read here (ADR-0114 Rule 7).
+No model key, and none is ever read here (ADR-0114 Rule 7). The Géorisques token is another kind of credential — a public service's free registration, not a model's — and is this service's alone.
 
 ## The dependency: `pdfjs-dist`, pinned
 

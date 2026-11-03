@@ -1,10 +1,14 @@
 # Sprint 002.10 — Regulation Watch
 
-> **Status:** **Draft (2026-10-19)** — nothing implemented. Written from the
+> **Status:** **Implemented (2026-11-03, uncommitted).** `fr-urban-rules`
+> **0.14.0** (`sdkVersion` **1.38**, unchanged), `fr-urban-rules-service`
+> **0.3.0**. Owner steps remain (see the Outcome): the Géorisques token, the
+> look in the editor, the national coverage pass, and a read of the Géoportail's
+> terms. _(Read "Draft (2026-10-19) — nothing implemented" until 2026-11-03: written from the
 > proposal v2.2 (§4 probe, §4.3 pitfalls, §8, §10, §12 Phase 4) and a
 > read-only live probe made while drafting (§"Probe, 2026-10-19"). Phase 4
-> of the proposal; the platform's milestone closes without it (096.14
-> question 3).
+> of the proposal; the platform's milestone closed without it (096.14
+> question 3).)_
 >
 > **Repository:** `archisimple-plugins` — `fr-urban-rules-service` (002.5a–b)
 > and `fr-urban-rules`.
@@ -41,24 +45,29 @@
 
 # Sprint Design Contract
 
-- [ ] **The GPU is the authority for "a new version exists".** Never a
+- [x] **The GPU is the authority for "a new version exists".** Never a
       heuristic on dates in a file name.
-- [ ] **No confirmation is rewritten by the watch.** Reopening is derived at
+- [x] **No confirmation is rewritten by the watch.** Reopening is derived at
       read time from the stored `idurba` / `datvalid` (proposal §8); the watch
       never writes the project, and the extension writes it only through a
       user's Request (ADR-0112).
-- [ ] **The Géorisques token lives in the service's environment only.** It
+- [x] **The Géorisques token lives in the service's environment only.** It
       never reaches the browser, an `.aspkg`, `index.json`, a log line or a
       response body. A test greps the built archive and the service's
-      responses for it.
-- [ ] **The service stores no project data.** It watches documents
+      responses for it. _(Proved with a fake token — there is no real one:
+      `georisques.test.mjs` greps every response, log line and volume file;
+      `package.test.mjs` the extension's source, manifest and strings; and the
+      built `0.14.0` archive and index were grepped by hand.)_
+- [x] **The service stores no project data.** It watches documents
       (partitions), never parcels, addresses or geometry.
-- [ ] **Polite to public services.** Every outbound call is rate-limited
+- [x] **Polite to public services.** Every outbound call is rate-limited
       and identified (`User-Agent` naming the deployment's contact, if the
       owner gives one).
-- [ ] **No live call in any test.** The watcher, the proxy and the
-      measurement script are tested on recorded answers.
-- [ ] **A measurement is a report with its method**, reproducible from a
+- [x] **No live call in any test.** The watcher, the proxy and the
+      measurement script are tested on recorded answers. _(Every service suite
+      imports the no-network guard first; the coverage test replays a recorded
+      ten-commune sample.)_
+- [x] **A measurement is a report with its method**, reproducible from a
       seed and a date, not a number in a sentence.
 
 ---
@@ -370,6 +379,12 @@ often a user meets Rochefort's state. No prior value is assumed here.
 
 # Questions for the owner
 
+_Answered 2026-11-03: **1** — offer « unchanged — confirm again »; **2** — only when
+asked; **3** — _"I think you can add coverage then"_, after asking whether it meant
+copying the PLU data to ArchiSimple's servers (it does not: see the script's header and
+the Outcome), so the script is built and a **smoke run only** was made; **4** — name only,
+no contact address._
+
 1. **Reopening.** Keep §8 as written (any new `idurba` reopens every
    confirmation), or offer "unchanged in the new version — confirm again" for
    written rules whose passage and limit did not change (DEC-4)?
@@ -389,6 +404,12 @@ The watch runs daily in the owner's deployment; eviction and the extension's
 "new version" line are tested; the token lives in the service only and the
 grep proves it; the coverage report is committed with its method; the walk
 recorded.
+
+_At 2026-11-03: **met except the three that need the owner** — the watch has not run
+in the owner's deployment (it ran against the live GPU locally, below); the
+coverage report committed is a **smoke run** of 30 communes, not the national
+figure; and the editor-side walk is covered by stub-host tests, not walked in a
+browser._
 
 ---
 
@@ -469,3 +490,162 @@ recorded.
   share SDK 1.26. Mentions now name the half they mean, or 096.3a–b. Old
   DEC numbers are mapped: 1–7 stay as 096.3a DEC-1–7; 8 is 096.3b DEC-1;
   9–12 are 096.3a DEC-8–11; 13 is 096.3b DEC-3.
+
+---
+
+# Outcome
+
+_Implemented 2026-11-03, uncommitted, in `archisimple-plugins` and (a deployment edit) `archisimple`.
+`fr-urban-rules` 0.14.0, `sdkVersion` 1.38 unchanged; `fr-urban-rules-service` 0.3.0._
+
+**The owner's answers (2026-11-03).** Q1: offer « unchanged in the new version — confirm again »,
+still one click. Q2: re-extract only when asked. Q3: coverage — first « not too sure I understand this…
+is the goal to get all the data in ArchiSimple's servers instead of the PLU website? Not sure this works on
+their terms and conditions », then « I think you can add coverage then » once it was explained as a
+count of answers, not a copy of data. Q4: the service names itself and gives no contact address.
+
+**What landed — the service** (`services/fr-urban-rules-service`):
+
+- `src/watch.mjs` (new): the watcher (DEC-1). One JSON record per partition under `<data>/…/watch/`
+  (`current`, `previous[]`, `checkedAt`, `nextCheckAt`, `failure`, `lastReadAt`); a gate of **one GPU request a
+  second** shared by the daily checks and the first looks; back-off 5 min doubling to 6 h; three days of failures
+  logged as `watch_failing`; seeding from the document cache at start and from every chapter or extraction
+  read (no GPU call); `start()` runs a tick every 15 minutes and the first 60 s after start, with unref'd timers
+  (`FR_URBAN_RULES_WATCH=off` stops it).
+- `GET v1/documents/<partition>` (DEC-3) in `service.mjs`: the record, with a first look (one gated GPU call,
+  the user's `FR_URBAN_RULES_LIMIT_WATCH_SEED_HOUR`, 60 an hour) when the partition is not watched.
+- Eviction (DEC-2): a superseded version's cached text and extractions go 90 days after; an extraction of
+  another `schemaVersion` goes at the next sweep; a record unread for 180 days goes. `cache.mjs` gains
+  `remove(key)` and a read that does not touch the LRU (`readFiles(…, { touch: false })`), so a sweep does not
+  make every entry the most recent.
+- `src/georisques.mjs` (new), `GET v1/georisques[/<path>]` (DEC-5): the token from
+  `FR_URBAN_RULES_GEORISQUES_TOKEN`, an allow-list of the five v2 paths and six parameters read from Géorisques'
+  public OpenAPI description, one host, no redirect, 2 MiB, 10 s, a 24 h in-memory cache, a per-user budget
+  (240 an hour for misses), the upstream's words never passed on, `503 not_configured` without a token.
+- `ownDocuments` shared with `resolveDocument` (`document.mjs`); `not_configured` in `errors.mjs`; two limits in
+  `limits.mjs`; README, `package.json`/lock 0.3.0; the gateway test's pinned version.
+
+**What landed — the extension** (`fr-urban-rules/src/index.js`):
+
+- The document watch (DEC-3): `watchPartition`/`askWatch`/`armWatch`/`noteWatchAnswer` in the reader. A located
+  PLU(i) read asks `GET v1/documents/<partition>` **without waiting**, then hourly while the plot is on view
+  (`watchSchedule`, apart from the extractions' `schedule`, and `watchClock`, apart from `now`, so neither
+  disturbs the existing tests). A different document than the report was read against, or none in production,
+  forgets that report (its last good answers stay) and calls `requestSignal()` — once per document named; the host
+  re-reads with `reason: 'source'`. `checkedDocumentStatus` checks the answer field by field; anything that is not
+  the route's is no answer.
+- The overview line (DEC-3, criterion 6): « Une nouvelle version du document a été publiée le {date}. {n}
+  confirmations sont à revoir. » for confirmations that name an earlier **document** (idurba, case-insensitively),
+  the date from the watch's `publicationDate` when it names this document, else the day the version applies
+  from. A date moved inside one document stays the existing « rules reopened » line. Not said twice when
+  002.11's « what changed » already says the version changed.
+- The refinement (DEC-4, Q1): a written rule whose key — the hash of its normalised passage — the new version's
+  reading finds again, with the very limit that was confirmed, gains the condition `rule.unchangedInNewVersion`
+  (beside the existing `rule.reopened`) and a « Confirmer à nouveau » button. It stays `to_confirm`; nothing is
+  carried over silently. A different limit, no stored limit, a rule standing on the section alone (the new
+  version not read yet) or a date-only move is a cold review as before.
+- Géorisques sources are named « Géorisques v1 — … » in both languages (DEC-5's labelling).
+- Five new strings in each locale; `package.json` 0.14.0 (description extended); README and CHANGELOG.
+
+**What landed — the platform** (`archisimple`, a deployment edit, no version): the token must reach the container,
+and the deployment-files test forbids a deployment file naming a package (ADR-0114 Rule 12, criterion 9), so the
+mechanism is generic: `docker-compose.yml`'s `plugin-services` gets an optional `env_file`
+(`PLUGIN_SERVICES_ENV_FILE`, default `plugin-services.env`, `required: false`, git-ignored); the Helm chart's
+`pluginServices.existingSecret` already carried "companion credentials". ADR-0114 gains **Rule 13** (a service may
+hold a credential of its own for a public API, and only it), `docs/guides/deployment.md`, both current-state
+documents, `.env.example`, `.gitignore` and `deploymentFiles.test.ts` say so.
+
+**What landed — the measurement** (`tools/measure-coverage.mjs`, DEC-6): a seeded, stratified sample (département × four
+population bands, one per stratum when the size allows, the rest by largest remainder, the five reference
+communes first and left out of the estimates), classified into the five states, with weighted shares and Wilson
+intervals, per-endpoint latency percentiles and error rates, the age of the documents in force and the share
+published in the last 90 days, a CSV and a Markdown report that repeats the method, the seed and the list's
+SHA-256. It keeps only statuses, latencies and a classification, paces itself to **two requests a second**,
+names itself and nobody else, and refuses a sample over 100 communes unless `--confirm-terms-read` is given.
+A **smoke run of 30 communes** (25 drawn + the 5 references) was made on 2026-11-03 and is committed as
+`docs/measurements/coverage-smoke-2026-11-03.{md,csv}`, labelled as a smoke run: it is not the national figure
+and no rate in it should be quoted. The five reference communes classify as the project fixtures say (Lyon PLUi,
+Gordes PLU, Mouzay carte communale, Brouennes RNU, Rochefort not on the GPU). The run's first ten communes' trimmed
+answers (no geometry, no content) are `test-fixtures/fr-urban-rules/coverage/sample-10.json`, the tests' recording.
+
+**Gates.** `node --test 'services/*/tests/*.test.mjs'` (what CI runs): 191 tests, 189 passed, 2 skipped
+(was 146: +28 `watch`, +17 `georisques`). The extension: 473 tests, 471 passed, 2 skipped (was 438: +17 in
+`written.test.mjs`, +1 in `package.test.mjs`, +17 `coverage.test.mjs`; `zone-page.test.mjs`'s fake service answers the
+new route). `tools/build-index.mjs` builds `com.archisimple.fr-urban-rules-0.14.0.aspkg` with the platform's CLI and
+`tools/check-index.mjs` accepts it. Platform: `deploymentFiles.test.ts` 40 passed, 2 skipped (was 39).
+
+**Acceptance walked.**
+
+1. `watch.test.mjs`, « criterion 1 »: a stub GPU serving the 20-archived-items trap; the real fetcher asks
+   `status=document.production` and finds the 25th. Live: Lyon's current id (`4f3ddc27…`) found on the real GPU.
+2. « criterion 2 » and « DEC-2 through the caches » (the PDF is deleted once read, so there is nothing to evict at once;
+   the text and extractions go at 90 days, another version's stay).
+3. « criterion 3 »; live: `DU_56196` (Rochefort) answers `withdrawn: true`, `current: null`.
+4. « criterion 4 » ×2: the gate on a fake clock, the back-off and the three-day report.
+5. « criterion 5 »: a request carrying an `idu`, an address, a user name and a point leaves none of them in the volume or
+   the log. (The service never receives a parcel; the test is of what a client could try to send.)
+6. `written.test.mjs`, « DEC-3 … a new version » (criterion 6) with and without the watch's date; the answer checked
+   field by field.
+6a. « criterion 6a »: unchanged → nothing, a newer name → once, again → not again, withdrawn → fires; the read does not
+   wait for the held answer; timers stop on dispose; a stopped timer asks nothing.
+7. « Q1 » ×5 and the `PLUi`/`PLUI` test (reopens nothing, says nothing).
+8. `georisques.test.mjs`, « criterion 8 »; `package.test.mjs`; the built archive and index grepped by hand: no token value,
+   no credential header (the README names the variable, which is not a secret).
+9. Service side (« criterion 9 »): no token → `503 not_configured`; extension side: v1 is read as before and now
+   labelled; v1 failing was already « unavailable », named. **v2 is not read by the extension** (Deviations 1).
+10. `coverage.test.mjs` (the method, the arithmetic, the recorded sample, the seed) and the smoke report; **the
+    national pass was not run**.
+11. Both suites pass with the no-network guard / throwing `fetch`.
+12. **Half walked.** The service half, live, from a copy of the real watch in a temp data dir: the first look called the
+    GPU once; the record was edited to an older id with `nextCheckAt` in the past; the gateway restarted; sixty
+    seconds later the log said `watch_changed` (« 200046977_PLUi_20260101 » → « 200046977_PLUi_20260326 »),
+    `GET v1/documents` listed it under `previous`, and one record was on disk. The editor half — the line, the badge,
+    the reopened rules in a browser — was **not** walked: the e2e harness loads the package from a remote index, needs
+    the gateway, ai-service, an editor with `ARCHISIMPLE_PLUGIN_SERVICES_ORIGIN` and a Lyon project whose
+    confirmations name an older document, with API Carto and the GPU made to move; it is stated as unverified below.
+
+**Deviations.**
+
+1. **The extension does not read Géorisques v2** (Goal 3, DEC-5, criterion 9's « labelled »). The sprint assumed v2 was
+   v1 behind a token. Its public OpenAPI description (`/api/v3/api-docs/georisques-api-v2`, read without a token on
+   2026-11-03) says otherwise: `gaspar/risques` lists GASPAR **procedures** (`ProcedureDto`: communes and aleas), not a
+   commune's `risques_detail`; `zonage_sismique` answers `{ typeZone, zoneSismicite }` with no commune or zone code;
+   the pagination is `content`/`totalElements`, not `data`/`total_pages`; the parameters are `codesInsee`, `pageSize`,
+   `pageNumber`. Mapping v2 onto the Risks view is a design decision that needs real payloads, and there is no token.
+   So the proxy is built and tested, the extension reads v1 as before, and the sources are named « Géorisques v1 ».
+2. **No watch under a carte communale.** A CC read reaches no service by contract (002.6a; `designtime.test.mjs`
+   asserts « no request reaches the companion »); the next read finds its document itself.
+3. **« More than one is treated as changed »** is implemented as « logged as an anomaly, the newest taken, changed if it
+   is not the one known ».
+4. **PDF bytes « evicted at once »** has nothing to do: the PDF is deleted once read (002.5a).
+5. **Platform: not « none ».** A deployment edit and an ADR rule (above) — the sprint expected « one optional variable »;
+   a named one is refused by criterion 9, so the file is generic.
+6. **Watch records are JSON files outside the cache's byte budget**, and the Géorisques cache is in memory (DEC-2's table
+   named a TTL, not a store).
+7. **Coverage:** a SHA-256 of the sampled list's codes (not of the 5 MB file) and `--list` to re-run on a saved list;
+   `--record` writes the trimmed fixture; the smoke run is committed, the national one is not.
+8. The reader gained two options, `watchSchedule` and `watchClock`; the default `schedule` is untouched.
+
+**Unverified — say it, do not assume it.**
+
+- **The `Authorization` form Géorisques v2 expects.** The OpenAPI types it as an API key in the header named
+  `Authorization`; the service sends the raw token (`FR_URBAN_RULES_GEORISQUES_AUTH_SCHEME=Bearer` for the other).
+  Probed with two fake values: both answer the same « Jeton non valide ». Only a real token settles it.
+- **v2's real payloads**, for the same reason.
+- **The Géoportail de l'urbanisme's and API Carto's usage terms.** The data is under the Licence Ouverte v2.0 (attribution
+  required) per data.gouv.fr's listings; the official terms page was not found. The watch makes one request a second at
+  most, only for partitions already in use; the coverage script is polite but a 1,000-commune pass is for the owner to
+  decide after reading them.
+- **The editor-side walk** (the line, the badge, the reopened rules, the « Confirmer à nouveau » button on screen).
+- **Compose's `env_file` with `required: false`** (Compose 2.24 or later): the YAML parses and the test asserts the text;
+  Docker was not run. The Helm path is the existing `existingSecret`.
+- **The NAS.** Not deployed; the service image is rebuilt by the plugins CI.
+- **A first real extraction of a new version** after a watch signal (the path is the existing one; nothing new in it).
+
+**Owner steps.** 1. Read the Géoportail de l'urbanisme's terms before any large coverage pass or public claim, then run
+`node tools/measure-coverage.mjs --size 1000 --seed <n> --confirm-terms-read` and commit the report. 2. Register for a
+Géorisques token (free) and put `FR_URBAN_RULES_GEORISQUES_TOKEN=…` in `plugin-services.env` (Compose) or the
+`pluginServices.existingSecret` (Helm); then a follow-up sprint maps v2 to the Risks view, using the real payloads.
+3. Restart the editor with `ARCHISIMPLE_PLUGIN_SERVICES_ORIGIN=http://127.0.0.1:4500` (a gateway running) and look at a
+Lyon project whose confirmations name an older document. 4. Commit both repositories; push the plugins repository only
+after the platform carries nothing new it depends on (nothing here does: no SDK, contract or file-version change).

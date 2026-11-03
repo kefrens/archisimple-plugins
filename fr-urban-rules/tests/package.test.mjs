@@ -32,7 +32,7 @@ const SDK_CATEGORIES = [
 test('criterion 1: the manifest declares an SDK 1.38 extension (002.15: the `stat`, `choice` and `section` blocks; 002.14: a flag’s icon, group, title, code and level; 002.13: the plot view, the edge list, the height section, an assumption’s figure) needing `regulations` and, since 002.1a, `document`', () => {
   assert.equal(manifest.id, 'com.archisimple.fr-urban-rules');
   assert.equal(manifest.type, 'extension');
-  assert.equal(manifest.version, '0.13.0');
+  assert.equal(manifest.version, '0.14.0');
   // 1.38 since 002.15: the `stat`, `choice` and `section` blocks (platform 096.27).
   // 1.37 since 002.14: a flag's `icon`, `group`, `title`, `code` and `level` (platform 096.25).
   // 1.36 since 002.13: `plot-plan` in a view, the `edges` and `height-section` blocks and an
@@ -371,4 +371,20 @@ test('002.8 criterion 2: four questions, ids and parameters as DEC-1, descriptio
   assert.deepEqual(Object.keys(byId.max_height.parameters), ['building']);
   assert.equal(byId.remaining_area.parameters, undefined);
   reader.dispose();
+});
+
+test('002.10 DEC-5 / criterion 8: the package holds no Géorisques token and sends no credential — the service adds it, from its own environment', async () => {
+  // Not the variable's name, not an Authorization header, not a key of any kind: the extension
+  // reads Géorisques v1 from the browser, and the v2 token is the companion service's alone.
+  for (const [name, text] of [
+    ['src/index.js', source],
+    ['package.json', JSON.stringify(manifest)],
+    ['en.json', JSON.stringify(en)],
+    ['fr.json', JSON.stringify(fr)]
+  ]) {
+    assert.ok(!/GEORISQUES_TOKEN/u.test(text), `${name} names the token`);
+    assert.ok(!/authorization|bearer|x-api-key|api_key/iu.test(text), `${name} sends or names a credential`);
+  }
+  // The only request this package makes to its service is a same-origin GET: no credentials header.
+  assert.ok(!/headers:\s*\{[^}]*authorization/iu.test(source));
 });

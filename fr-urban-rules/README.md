@@ -34,7 +34,40 @@ After Phase 3: **0.9.0** is Sprint [002.11 Planning Snapshot](../docs/sprints/sp
 (SDK 1.35, platform 096.19–096.21); **0.11.0** is Sprint [002.13 PLU Panel Diagrams](../docs/sprints/sprint-002.13-plu-panel-diagrams.md)
 (SDK 1.36, platform 096.22); **0.12.0** is Sprint [002.14 PLU Flag Content](../docs/sprints/sprint-002.14-plu-flag-content.md)
 (SDK 1.37, platform 096.25); **0.13.0** is Sprint [002.15 PLU Surfaces Content](../docs/sprints/sprint-002.15-plu-surfaces-content.md)
-(SDK 1.38, platform 096.27).
+(SDK 1.38, platform 096.27); **0.14.0** is Sprint [002.10 Regulation Watch](../docs/sprints/sprint-002.10-regulation-watch.md)
+(SDK 1.38 unchanged; no platform change).
+
+## The document watch (0.14.0)
+
+When the deployment runs the companion service, a read that finds a PLU(i) also asks the service
+about the plot's document (`GET v1/documents/<partition>`): the document in force on the GPU, when
+the service last confirmed it, and what it replaced. The read **does not wait** for the answer; the
+question is asked again once an hour while the plot is on view, and the timer stops with the plot or
+the extension.
+
+- **A newer document than the one the report was read against** (or none in production) makes the
+  extension forget that report and fire the source's `onDidChange` — once per document named — so the
+  host reads again (`reason: 'source'`) and the user hears of the new version within the session, not
+  at the next open. An unchanged answer, an error, a missing service or an answer that is not the
+  route's signals nothing.
+- **The overview says it** for the confirmations made against an earlier *document*: « Une nouvelle
+  version du document a été publiée le {date}. {n} confirmations sont à revoir. » The date is the
+  watch's publication date when the service gave it for this document, else the day the version
+  applies from. A date moved inside the same document is the existing « rules reopened » line; casing
+  alone (`PLUi`/`PLUI`) reopens nothing. When « what changed » (0.9.0) already says the version
+  changed, the line is not said twice.
+- **« Unchanged in the new version — confirm again »** (owner decision, 2026-11-03). A written rule
+  that a reading of the new version finds again — its key is the hash of its normalised passage —
+  with exactly the limit that was confirmed shows that, and its button reads « Confirmer à nouveau »
+  (« Confirmer à nouveau 15 % »). It stays *to confirm* until clicked: nothing is carried over
+  silently. A rule whose limit differs, or whose passage is gone, is a cold review as before.
+- **Reading the new version's written rules is the user's to start** (owner decision Q2): neither
+  the watch nor a read starts an extraction.
+- **Géorisques** is still read from the browser through API v1, now said so in the sources list
+  (« Géorisques v1 — … »). The service can proxy v2 with the deployment's token
+  (`FR_URBAN_RULES_GEORISQUES_TOKEN`, held by the service only), but v2 is a different shape — its
+  `gaspar/risques` lists GASPAR *procedures*, not the commune's risks — so this package does not read
+  it yet; see the sprint's Outcome.
 
 ## The Surfaces view (0.13.0)
 
@@ -393,7 +426,7 @@ The first three rows are `FETCHED_HOSTS` in `src/index.js` and the manifest's
 | `apicarto.ign.fr` | GPU layers by the plot's geometry (`municipality`, `document`, `zone-urba`, `secteur-cc`, `prescription-*`, `info-*`, `assiette-sup-*`) |
 | `www.geoportail-urbanisme.gouv.fr` | The document in force (`api/document?partition=…&status=document.production`) and its file list |
 | `georisques.gouv.fr` | `gaspar/risques`, `gaspar/pprn`, `zonage_sismique`, `rga`, `radon` (v1, keyless) |
-| the editor's own origin | Since 0.5.0, `/plugins-api/com.archisimple.fr-urban-rules/v1/chapter`, and since 0.6.0 `v1/extractions` (cached reads, a `POST` on request, job polls) — the companion service, where the deployment runs it (`locate()`) |
+| the editor's own origin | Since 0.5.0, `/plugins-api/com.archisimple.fr-urban-rules/v1/chapter`, since 0.6.0 `v1/extractions` (cached reads, a `POST` on request, job polls), and since 0.14.0 `v1/documents/<partition>` (the document watch: a `GET` the read does not wait for, then hourly while the plot is on view) — the companion service, where the deployment runs it (`locate()`) |
 
 The browser alone follows the regulation link to `data.geopf.fr` for the PDF;
 the extension never downloads it. Never called: `acte-sup` (ignores the

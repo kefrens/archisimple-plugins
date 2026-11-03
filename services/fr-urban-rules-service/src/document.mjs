@@ -52,6 +52,22 @@ function kernelPageSize() {
 }
 
 /**
+ * The entries of a `document.production` listing that are this partition's
+ * own documents (with a usable `id` and `originalName`). A sector's grid lists
+ * every sector: only the partition's own are its documents. Shared with the
+ * watch (Sprint 002.10), which judges the same listing.
+ */
+export function ownDocuments(documents, partition) {
+  return documents.filter(
+    (d) =>
+      typeof d?.originalName === 'string' &&
+      typeof d?.id === 'string' &&
+      /^[0-9A-Za-z_-]{1,64}$/u.test(d.id) &&
+      (typeof d.name !== 'string' || d.name.toUpperCase() === partition.toUpperCase())
+  );
+}
+
+/**
  * The document in force, as 002.0 resolves it: the one entry of
  * `api/document?partition=…&status=document.production` whose `originalName`
  * equals `idurba` case-insensitively, and whose files list `nomfic`.
@@ -62,14 +78,7 @@ function kernelPageSize() {
 export async function resolveDocument(fetcher, { partition, idurba, nomfic }) {
   const documents = await fetcher.listDocuments(partition);
   if (!Array.isArray(documents)) throw new ServiceError('source_unavailable', { reason: 'malformed' });
-  const named = documents.filter(
-    (d) =>
-      typeof d?.originalName === 'string' &&
-      typeof d?.id === 'string' &&
-      /^[0-9A-Za-z_-]{1,64}$/u.test(d.id) &&
-      // A sector's grid lists every sector: only the partition's own are its documents.
-      (typeof d.name !== 'string' || d.name.toUpperCase() === partition.toUpperCase())
-  );
+  const named = ownDocuments(documents, partition);
   const inForce = named.find((d) => d.originalName.toUpperCase() === idurba.toUpperCase());
   if (inForce === undefined) {
     if (named.length > 0) {

@@ -13,6 +13,11 @@
  *     GET v1/extractions?partition&idurba&nomfic&zone&cachedOnly=1
  *       → { result, current } | 404 { error: 'not_cached', current }
  *
+ *     GET v1/documents/{partition}                                              (002.10)
+ *       → { partition, current, withdrawn, checkedAt, previous[], failing? }
+ *     GET v1/georisques[/<allow-listed v2 path>?…]                              (002.10)
+ *       → { configured, api } | the Géorisques v2 answer, the token added here
+ *
  * `pages` are PDF page indices — what `#page=` opens. One zone per request:
  * a plot that straddles zones asks once per zone. The request may download
  * and read the règlement, so a cache miss counts against the document-fetch
@@ -33,9 +38,12 @@ import { findChapter } from './chapter.mjs';
 import { createDocumentStore, createParser } from './document.mjs';
 import { ServiceError } from './errors.mjs';
 import { createFetcher } from './fetcher.mjs';
+import { createGeorisques } from './georisques.mjs';
 import { createExtractions } from './jobs.mjs';
+import { SCHEMA_VERSION } from './extract.mjs';
 import { createWindowLimiter, limitsFromEnv } from './limits.mjs';
 import { prepareChapter } from './text.mjs';
+import { createWatcher } from './watch.mjs';
 
 export const PACKAGE_ID = 'com.archisimple.fr-urban-rules';
 export const VERSION = JSON.parse(
@@ -79,7 +87,9 @@ function readInputs(query) {
  *   aiServiceUrl?: string,
  *   dataDir: string,
  *   fetcher?: object, parse?: Function, ai?: object, onCall?: Function,
- *   now?: () => Date, clock?: () => number
+ *   now?: () => Date, clock?: () => number,
+ *   georisques?: object,     tests: the Géorisques proxy's own seams (request, port, lookup)
+ *   watch?: boolean | object   the daily schedule starts unless an injected GPU or false; an object is the watcher's test seams
  * }} options from `fetcher` on, for tests and the recording tool
  */
 export async function createService({
@@ -92,7 +102,9 @@ export async function createService({
   ai,
   onCall,
   now = () => new Date(),
-  clock = () => Date.now()
+  clock = () => Date.now(),
+  georisques: georisquesSeams = {},
+  watch
 }) {
   const logger = leveled(log, env.FR_URBAN_RULES_LOG_LEVEL);
   const root = join(dataDir, PACKAGE_ID);
@@ -108,13 +120,74 @@ export async function createService({
     now
   });
   const cache = documentCache(caches.documents, caches.totalBytes);
-  const store = createDocumentStore({
-    fetcher: fetcher ?? createFetcher({ version: VERSION, tmpDir }),
+  const gpu = fetcher ?? createFetcher({ version: VERSION, tmpDir });
+  const documentStore = createDocumentStore({
+    fetcher: gpu,
     parse: parse ?? createParser(),
     cache,
     now
   });
   const limits = limitsFromEnv(env);
+
+  // Sprint 002.10: the watch. A document the service has read — or holds — is
+  // watched; the store below tells it so, with no GPU call of its own.
+  const watcher = createWatcher({
+    dir: join(root, 'watch'),
+    fetcher: gpu,
+    logger,
+    now,
+    clock,
+    ...(typeof watch === 'object' ? watch : {}),
+    evictVersion: (partition, idurba) => evictVersion(partition, idurba),
+    evictOutdated: () => evictOutdated(),
+    cachedDocuments: () => cachedDocuments()
+  });
+  const store = {
+    async get(request, hooks) {
+      const got = await documentStore.get(request, hooks);
+      await watcher.noteDocument(got.document.meta).catch(() => {});
+      return got;
+    }
+  };
+
+  /** The metas of one namespace's entries, read without making any of them the most recently used. */
+  async function metasOf(namespace) {
+    const out = [];
+    for (const key of namespace.keys()) {
+      const files = await namespace.readFiles(key, ['meta.json'], { touch: false });
+      if (files === undefined) continue;
+      try {
+        out.push({ key, meta: JSON.parse(files['meta.json']) });
+      } catch {
+        /* a damaged entry is the cache's to drop on its next read */
+      }
+    }
+    return out;
+  }
+  async function cachedDocuments() {
+    return (await metasOf(caches.documents)).map(({ meta }) => meta);
+  }
+  /** DEC-2: a superseded version's text and extractions, once its 90 days have run. */
+  async function evictVersion(partition, idurba) {
+    const same = (document) =>
+      document?.partition === partition && String(document?.idurba ?? '').toUpperCase() === idurba.toUpperCase();
+    let removed = 0;
+    for (const { key, meta } of await metasOf(caches.documents)) {
+      if (same(meta) && (await caches.documents.remove(key))) removed += 1;
+    }
+    for (const { key, meta } of await metasOf(caches.extractions)) {
+      if (same(meta.document) && (await caches.extractions.remove(key))) removed += 1;
+    }
+    return removed;
+  }
+  /** DEC-2: an extraction under another schema version is not served again; it goes. */
+  async function evictOutdated() {
+    let removed = 0;
+    for (const { key, meta } of await metasOf(caches.extractions)) {
+      if (meta.schemaVersion !== SCHEMA_VERSION && (await caches.extractions.remove(key))) removed += 1;
+    }
+    return removed;
+  }
   const fetches = createWindowLimiter({ limit: limits.fetchesPerHour, windowMs: 3_600_000, now: clock });
   const reads = createWindowLimiter({ limit: limits.readsPerMinute, windowMs: 60_000, now: clock });
   const HOUR = 3_600_000;
@@ -137,6 +210,12 @@ export async function createService({
     chunkChars: limits.chunkChars,
     maxItems: limits.maxItemsPerChunk
   });
+  const seeds = createWindowLimiter({ limit: limits.watchSeedsPerHour, windowMs: HOUR, now: clock });
+  const georisquesCalls = createWindowLimiter({ limit: limits.georisquesPerHour, windowMs: HOUR, now: clock });
+  const georisques = createGeorisques({ env, version: VERSION, logger, clock, ...georisquesSeams });
+  // The daily schedule runs for a real deployment (no injected GPU) or when asked for (`watch: true`);
+  // an object is the watcher's test seams and starts nothing.
+  if ((watch === true || (watch === undefined && fetcher === undefined)) && env.FR_URBAN_RULES_WATCH !== 'off') watcher.start();
   let warnedAddress = false;
 
   function takeRead(limitKey) {
@@ -202,6 +281,33 @@ export async function createService({
     throw new ServiceError('invalid_request', { field: 'method' });
   }
 
+  /** `GET v1/documents/{partition}` (002.10 DEC-3). */
+  async function documentsRoute(request, rest) {
+    if (rest.length !== 1) throw new ServiceError('not_found');
+    takeRead(request.limitKey);
+    if (!INPUT_PATTERNS.partition.test(rest[0])) throw new ServiceError('invalid_request', { field: 'partition' });
+    const body = await watcher.status(rest[0], {
+      // Only a first look at an unwatched partition is a GPU call; it is the user's.
+      beforeSeed: () => {
+        const taken = seeds.take(request.limitKey);
+        if (!taken.ok) throw new ServiceError('rate_limited', { retryAfterSeconds: taken.retryAfterSeconds });
+      }
+    });
+    return { body };
+  }
+
+  /** `GET v1/georisques[/<path>]` (002.10 DEC-5). */
+  async function georisquesRoute(request, rest) {
+    takeRead(request.limitKey);
+    if (rest.length === 0) return { body: georisques.status() };
+    return georisques.get(rest, request.query, {
+      beforeCall: () => {
+        const taken = georisquesCalls.take(request.limitKey);
+        if (!taken.ok) throw new ServiceError('rate_limited', { retryAfterSeconds: taken.retryAfterSeconds });
+      }
+    });
+  }
+
   async function chapter(request) {
     const inputs = readInputs(request.query);
     takeRead(request.limitKey);
@@ -245,10 +351,14 @@ export async function createService({
       const started = clock();
       const route = request.segments.join('/');
       const [version, name, ...rest] = request.segments;
-      if (version !== 'v1' || (name !== 'chapter' && name !== 'extractions') || (name === 'chapter' && rest.length > 0)) {
+      if (
+        version !== 'v1' ||
+        !['chapter', 'extractions', 'documents', 'georisques'].includes(name) ||
+        (name === 'chapter' && rest.length > 0)
+      ) {
         return { status: 404, body: { error: 'not_found' } };
       }
-      if (name === 'chapter' && request.method !== 'GET') {
+      if ((name === 'chapter' || name === 'documents' || name === 'georisques') && request.method !== 'GET') {
         return { status: 405, headers: { Allow: 'GET' }, body: { error: 'invalid_request' } };
       }
       if (request.userSource === 'address' && !warnedAddress) {
@@ -259,6 +369,17 @@ export async function createService({
         });
       }
       const record = { event: 'chapter', route, user: request.userHash, userSource: request.userSource };
+      if (name === 'documents' || name === 'georisques') {
+        const event = name === 'documents' ? 'documents' : 'georisques';
+        const routeName = `v1/${name}${rest.length > 0 ? '/{…}' : ''}`;
+        try {
+          const answer = name === 'documents' ? await documentsRoute(request, rest) : await georisquesRoute(request, rest);
+          logger('info', { event, route: routeName, user: request.userHash, userSource: request.userSource, outcome: 'ok', cache: answer.cache, durationMs: clock() - started });
+          return { status: 200, body: answer.body };
+        } catch (error) {
+          return failed(error, { ...record, event, route: routeName }, started, request.query);
+        }
+      }
       if (name === 'extractions') {
         try {
           const answer = await extraction(request, rest);
@@ -290,7 +411,12 @@ export async function createService({
     },
 
     /** Resolves when no extraction is queued or running (tests, the recording tool). */
-    idle: () => extractions.idle()
+    idle: () => extractions.idle(),
+
+    /** The document watch (002.10): tests and the walk drive it directly. */
+    watcher,
+    /** Stops the watch's timers (tests). */
+    stop: () => watcher.stop()
   };
 
   function failed(error, record, started, q) {

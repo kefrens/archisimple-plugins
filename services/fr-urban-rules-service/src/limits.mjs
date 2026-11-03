@@ -14,6 +14,9 @@ export const DEFAULT_READS_PER_MINUTE = 60;
 export const DEFAULT_EXTRACTS_PER_HOUR = 6;
 export const DEFAULT_EXTRACTS_PER_DAY = 20;
 export const DEFAULT_REFRESHES_PER_DAY = 2;
+/** Sprint 002.10: a first look at a partition not yet watched (one GPU call); Géorisques calls the cache did not answer. */
+export const DEFAULT_WATCH_SEEDS_PER_HOUR = 60;
+export const DEFAULT_GEORISQUES_PER_HOUR = 240;
 
 function positiveInteger(value, fallback) {
   const n = Number(value);
@@ -30,6 +33,8 @@ export function limitsFromEnv(env) {
     // above DEC-4's 40 000 characters or 096.7's ceilings.
     chunkChars: Math.min(40_000, positiveInteger(env.FR_URBAN_RULES_EXTRACT_CHUNK_CHARS, 40_000)),
     maxItemsPerChunk: Math.min(200, positiveInteger(env.FR_URBAN_RULES_EXTRACT_MAX_ITEMS, 120)),
+    watchSeedsPerHour: positiveInteger(env.FR_URBAN_RULES_LIMIT_WATCH_SEED_HOUR, DEFAULT_WATCH_SEEDS_PER_HOUR),
+    georisquesPerHour: positiveInteger(env.FR_URBAN_RULES_LIMIT_GEORISQUES_HOUR, DEFAULT_GEORISQUES_PER_HOUR),
     fetchesPerHour: positiveInteger(env.FR_URBAN_RULES_LIMIT_FETCH_HOUR, DEFAULT_FETCHES_PER_HOUR),
     readsPerMinute: positiveInteger(env.FR_URBAN_RULES_LIMIT_READ_MINUTE, DEFAULT_READS_PER_MINUTE)
   };
