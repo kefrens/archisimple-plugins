@@ -207,6 +207,8 @@ const SAME_SECTOR = serviceRule({
   statement: 'limit',
   limit: metres('min', 4),
   sectorUnplaced: false,
+  // Medium: a high-confidence reading with a figure in its text would be one of « the readings I checked » (002.26), listed apart.
+  confidence: 'medium',
   passage: 'Le retrait est d’au moins 4 mètres.'
 });
 const OTHER_COMMUNE = serviceRule({
@@ -228,8 +230,9 @@ const SILENT = serviceRule({
   passage: 'L’emprise au sol n’est pas réglementée.',
   sectorUnplaced: false
 });
+// A loose note, ranked after the setback (002.26: a parking rule is listed apart, with the rules that do not shape the area).
 const PARKING = serviceRule({
-  kind: 'parking',
+  kind: 'other',
   statement: 'described',
   passage: 'Une place de stationnement par logement.',
   sectorUnplaced: false
@@ -343,7 +346,17 @@ test('002.22: the Rules view lists what is left — what shapes the area first �
   assert.deepEqual(section.title, { key: 'fr-urban-rules.triage.heading', params: { count: 4 } });
   assert.equal(section.open, undefined, 'folded');
   assert.deepEqual(section.summary.value.params, { ruledOut: 2, informational: 2 });
-  const inside = section.blocks.find((b) => b.kind === 'rules');
+  // Sprint 002.24: by what decided them — another sector, other communes, for information — each under its heading.
+  const insideBlocks = section.blocks.filter((b) => b.kind === 'rules');
+  assert.deepEqual(
+    section.blocks.filter((b) => b.kind === 'heading').map((b) => b.text.key),
+    [
+      'fr-urban-rules.triage.group.sector',
+      'fr-urban-rules.triage.group.commune',
+      'fr-urban-rules.triage.group.info'
+    ]
+  );
+  const inside = { ids: insideBlocks.flatMap((b) => b.ids) };
   assert.equal(inside.ids.length, 4);
   const actions = section.blocks.find((b) => b.kind === 'actions').actions;
   assert.deepEqual(

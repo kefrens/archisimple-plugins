@@ -109,7 +109,7 @@ export function createAiClient({
 }) {
   const root = String(baseUrl).replace(/\/+$/u, '');
 
-  async function call(path, init, timeoutMs, longCall = false) {
+  async function call(path, init, timeoutMs, longCall = false, signal) {
     let response;
     try {
       // `dispatcher` is undici's extension to the fetch options; a fetch that
@@ -117,7 +117,7 @@ export function createAiClient({
       const agent = longCall ? await dispatcher() : undefined;
       response = await fetchImpl(`${root}${path}`, {
         ...init,
-        signal: AbortSignal.timeout(timeoutMs),
+        signal: signal === undefined ? AbortSignal.timeout(timeoutMs) : AbortSignal.any([AbortSignal.timeout(timeoutMs), signal]),
         redirect: 'error',
         ...(agent === undefined ? {} : { dispatcher: agent })
       });
@@ -168,7 +168,7 @@ export function createAiClient({
 
     /**
      * One `POST /api/ai/extract`; the response DTO, or an {@link AiError}.
-     * `route` is who is asking and what they chose: `{ providerId?, model?, features? }`. No
+     * `route` is who is asking and what they chose: `{ providerId?, model?, features?, signal? }`. No
      * `providerId` means ai-service's default for that caller (before 002.16, always).
      */
     async extract({ instructions, text, itemSchema, maxItems }, route = {}) {
@@ -188,7 +188,9 @@ export function createAiClient({
           })
         },
         extractTimeoutMs,
-        true
+        true,
+        // 002.23: the job's own signal, so stopping a reading stops the call in flight.
+        route.signal
       );
       if (!Array.isArray(answer?.items)) throw new AiError('malformed', 200);
       for (const item of answer.items) {

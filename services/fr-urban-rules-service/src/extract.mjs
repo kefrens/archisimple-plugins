@@ -19,6 +19,7 @@
 import { createHash } from 'node:crypto';
 
 import { AiError } from './ai-client.mjs';
+import { ServiceError } from './errors.mjs';
 import { allOccurrences, normalisePassage, normaliseText } from './normalise.mjs';
 import { articleAt, pageAt } from './text.mjs';
 
@@ -425,14 +426,17 @@ function ruleKey(rule) {
  * @param {{
  *   prepared, ai: { extract: Function }, maxTextLength?: number, maxItems?: number,
  *   chunkChars?: number,    a deployment's smaller chunk (a slow local model); never above 40 000
- *   onChunk?: (index: number, of: number) => void,
+ *   onChunk?: (index: number, of: number, pages: [number, number]) => void,
+ *   onPart?: (part: { n, of, pages, state: 'done' | 'failed', cached: boolean, rules: number, total: number }) => void,
+ *   signal?: AbortSignal,   002.23: a reading the user stopped ends with `cancelled`, between chunks and inside a call
+ *   memo?: { get(key), set(key, answer) }, memoSalt?: string   002.23: a chunk answered once is not asked again
  *   onCall?: (record: object) => void,
  *   onAnswer?: () => void   the first model answer, for the job's refund (S7)
  * }} options `onCall` sees each 096.7 request's metadata — chunk, attempt, base, length, and
  *   since 002.9 the text's `textSha256` and `promptVersion` — and its answer (the recording mode)
  * @returns {Promise<{ rules, dropped, chunks: { of, failed }, codes: string[], model }>}
  */
-export async function extractChapter({ prepared, ai, maxTextLength, maxItems, chunkChars, onChunk, onCall, onAnswer }) {
+export async function extractChapter({ prepared, ai, maxTextLength, maxItems, chunkChars, onChunk, onPart, onCall, onAnswer, signal, memo, memoSalt = '' }) {
   const chunks = splitChunks(
     prepared,
     Math.min(MAX_CHUNK_CHARS, chunkChars ?? MAX_CHUNK_CHARS, maxTextLength ?? MAX_CHUNK_CHARS)
@@ -455,14 +459,26 @@ export async function extractChapter({ prepared, ai, maxTextLength, maxItems, ch
   let weakest;
 
   for (const [index, chunk] of chunks.entries()) {
-    onChunk?.(index + 1, chunks.length);
+    if (signal?.aborted) throw new ServiceError('cancelled');
+    const pages = [
+      pageAt(prepared, chunk.base),
+      pageAt(prepared, chunk.base + Math.max(0, chunk.text.length - 1))
+    ];
+    onChunk?.(index + 1, chunks.length, pages);
+    // 002.23: the same text, by the same prompt and model, has the same answer: a part that failed
+    // is read again and the parts that were read are not. Never for "Extract again".
+    const memoKey =
+      memo === undefined
+        ? undefined
+        : createHash('sha1').update(`${memoSalt}\0${PROMPT_VERSION}\0${chunk.text}`).digest('hex');
+    let answer = memoKey === undefined ? undefined : memo.get(memoKey);
+    const cached = answer !== undefined;
     const request = {
       instructions: INSTRUCTIONS,
       text: chunk.text,
       itemSchema: ITEM_SCHEMA,
       maxItems: Math.min(MAX_ITEMS_PER_CHUNK, maxItems ?? MAX_ITEMS_PER_CHUNK)
     };
-    let answer;
     // 002.9 DEC-2: what a recording's replay checks beside the length — a hash of
     // the chunk's text (never the text) and the instructions' version.
     const sent =
@@ -476,12 +492,15 @@ export async function extractChapter({ prepared, ai, maxTextLength, maxItems, ch
             promptVersion: PROMPT_VERSION
           };
     for (let attempt = 1; attempt <= 2 && answer === undefined; attempt += 1) {
+      if (signal?.aborted) throw new ServiceError('cancelled');
       try {
         answer = await ai.extract(request);
         onAnswer?.();
         onCall?.({ ...sent, attempt, answer });
       } catch (error) {
         const code = error instanceof AiError ? error.code : 'provider_error';
+        // The call was cut because the user stopped the reading: not a provider error.
+        if (signal?.aborted) throw new ServiceError('cancelled');
         onCall?.({ ...sent, attempt, error: code });
         codes.push(code);
         if (!RETRIED.has(code)) {
@@ -494,8 +513,10 @@ export async function extractChapter({ prepared, ai, maxTextLength, maxItems, ch
     }
     if (answer === undefined) {
       failed += 1;
+      onPart?.({ n: index + 1, of: chunks.length, pages, state: 'failed', cached: false, rules: 0, total: rules.size });
       continue;
     }
+    if (!cached) memo?.set(memoKey, answer);
     model ??= { providerId: answer.providerId, model: answer.model };
     weakest =
       weakest === undefined || WEAKEST.indexOf(answer.constraint) < WEAKEST.indexOf(weakest) ? answer.constraint : weakest;
@@ -505,10 +526,12 @@ export async function extractChapter({ prepared, ai, maxTextLength, maxItems, ch
       else dropped.schemaInvalid += 1;
     }
     const normalisedChunk = normaliseText(chunk.text);
+    const before = rules.size;
     for (const item of answer.items) {
       const rule = placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes, dropped });
       if (rule !== undefined && !rules.has(ruleKey(rule))) rules.set(ruleKey(rule), rule);
     }
+    onPart?.({ n: index + 1, of: chunks.length, pages, state: 'done', cached, rules: rules.size - before, total: rules.size });
   }
 
   return {

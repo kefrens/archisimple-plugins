@@ -29,10 +29,11 @@ const SDK_CATEGORIES = [
   'information'
 ];
 
-test('criterion 1: the manifest declares an SDK 1.40 extension (002.16: the model chosen in the AI panel, `ai.selectedModel()`; 002.15: the `stat`, `choice` and `section` blocks; 002.14: a flag’s icon, group, title, code and level; 002.13: the plot view, the edge list, the height section, an assumption’s figure) needing `regulations` and, since 002.1a, `document`', () => {
+test('criterion 1: the manifest declares an SDK 1.41 extension (002.23: cards in the AI conversation, `ai.cards`; 002.16: the model chosen in the AI panel, `ai.selectedModel()`; 002.15: the `stat`, `choice` and `section` blocks; 002.14: a flag’s icon, group, title, code and level; 002.13: the plot view, the edge list, the height section, an assumption’s figure) needing `regulations` and, since 002.1a, `document`', () => {
   assert.equal(manifest.id, 'com.archisimple.fr-urban-rules');
   assert.equal(manifest.type, 'extension');
-  assert.equal(manifest.version, '0.18.0');
+  assert.equal(manifest.version, '0.21.0');
+  // 1.41 since 002.23: `ai.cards`, the reading's progress as a card in the AI conversation (platform 102.12).
   // 1.40 since 002.16: `ai.selectedModel()`, the provider and model chosen in the AI panel (platform
   // 102.11, ADR-0028 Rule 11). 1.39 is the base-map overlay flag (102.3), used by no rule here.
   // 1.38 since 002.15: the `stat`, `choice` and `section` blocks (platform 096.27).
@@ -44,7 +45,7 @@ test('criterion 1: the manifest declares an SDK 1.40 extension (002.16: the mode
   // ADR-0115). 1.32 since 002.8 (DEC-10): `checkVariation` (1.31, 096.11) and
   // `questions` (1.32, 096.12). 1.30 since 002.7: an envelope's `volume` (1.29)
   // and the report's `sheet` (1.30). 1.28 since 002.6a: `plugin-service` and `locate()`.
-  assert.equal(manifest.sdkVersion, '1.40');
+  assert.equal(manifest.sdkVersion, '1.41');
   assert.equal(manifest.entryPoint, 'src/index.js');
   // `document` since 002.1a: `SitePackageDataService.write` requires it (096.4 DEC-7),
   // and an answer's offer too (096.12 DEC-12). `ai` since 002.3: the programme stage,

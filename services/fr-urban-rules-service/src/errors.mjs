@@ -22,6 +22,8 @@ export const ERROR_STATUS = Object.freeze({
   busy: 503,
   extraction_unavailable: 503,
   extraction_failed: 502,
+  // Sprint 002.23: the user stopped the reading; the job ends with this code, never as a failure to show.
+  cancelled: 409,
   // Sprint 002.16: ai-service's own refusals of the chosen provider, named as it names them.
   // The account was not granted it (`ai-<provider>`), or the id is not a provider there.
   provider_not_permitted: 403,

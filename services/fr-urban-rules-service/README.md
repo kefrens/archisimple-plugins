@@ -84,11 +84,24 @@ POST v1/extractions  { partition, idurba, nomfic, zone }   [?refresh=1]
   → 200 { state: 'done', result }       from the cache, free
   → 202 { jobId, state: 'queued' }      before any fetch
 GET  v1/extractions/{jobId}
-  → { jobId, state, progress: { step, chunk, of }, result?, error? }
+  → { jobId, state, progress: { step, chunk, of, rules?, document?, chapter?, parts? }, result?, error? }
+POST v1/extractions/{jobId}/cancel                      (0.6.0, Sprint 002.23)
+  → the job as it stands; it ends `failed` with `error.code: 'cancelled'`
 GET  v1/extractions?partition&idurba&nomfic&zone&cachedOnly=1
   → { result, current } | 404 { error: 'not_cached', current }   never fetches, never starts work
 ```
 
+- **Progress by part (0.6.0, Sprint 002.23).** While extracting, `progress` also names `chapter: { pages }`, `document`
+  (`hit | miss | joined`), `rules` (found so far) and `parts: [{ n, state: waiting | running | done | failed, pages?, rules?,
+  cached? }]` — counts, pages and states, **never a passage**; the editor's AI panel draws its card from it.
+- **Cancel (0.6.0).** `POST v1/extractions/{jobId}/cancel` stops the job: a queued one never runs, a running one has its model call
+  cut (the job's own `AbortSignal` reaches the call to ai-service) and ends `cancelled`; a job another user joined keeps running until
+  the last one waiting for it cancels. A job stopped before a model answered gives its charge back. Idempotent; a finished job is
+  answered as it stands; `404` for an unknown one; POST only.
+- **A part read again (0.6.0).** A chunk the model answered is kept in memory for 30 minutes (64 at most), keyed by the document, the
+  text, the prompt version and the provider and model asked for. Reading a partly-read chapter again (a plain POST) asks the model for
+  the parts that failed and not for the ones that were read; "Extract again" (`?refresh=1`) never reuses them. Nothing is written to
+  disk: only a complete reading is cached, as before.
 - **States:** `queued → fetching → reading → extracting → done | failed`. A
   fetch or chapter code (`version_changed`, `zone_chapter_not_found`, …) is the
   **job's** `error`, never the POST's. A job is kept 30 minutes after it ends.

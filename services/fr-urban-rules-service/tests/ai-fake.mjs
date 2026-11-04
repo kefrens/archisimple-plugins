@@ -42,7 +42,9 @@ export function fakeAi({
     },
     async extract(request, route = {}) {
       calls.push(request);
-      routes.push(route);
+      // 002.23: the job's own signal rides along; what the tests compare is who asked and what they chose.
+      const { signal: _signal, ...asked } = route;
+      routes.push(asked);
       if (route.providerId !== undefined) {
         if (known !== undefined && !known.includes(route.providerId)) throw new AiError('unknown_provider', 422);
         if (granted.includes(route.providerId) && !(route.features ?? []).includes(`ai-${route.providerId}`)) {

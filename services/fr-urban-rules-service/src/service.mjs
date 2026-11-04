@@ -10,6 +10,7 @@
  *     POST v1/extractions { partition, idurba, nomfic, zone, ai?: { providerId, model? } } [?refresh=1]   (002.5b, 002.16)
  *       → 200 { state: 'done', result } | 202 { jobId, state }
  *     GET v1/extractions/{jobId} → { jobId, state, progress, result?, error? }
+ *     POST v1/extractions/{jobId}/cancel → the job as it stands; it ends `failed` with `cancelled` (002.23)
  *     GET v1/extractions?partition&idurba&nomfic&zone[&provider[&model]]&cachedOnly=1
  *       → { result, current } | 404 { error: 'not_cached', current }
  *
@@ -294,6 +295,12 @@ export async function createService({
     if (rest.length === 1 && request.method === 'GET') {
       const answer = extractions.status(rest[0]);
       return { ...answer, record: { event: 'extraction_poll', state: answer.body.state } };
+    }
+    // 002.23: `POST v1/extractions/{jobId}/cancel` — a POST, so every proxy in front passes it.
+    if (rest.length === 2 && rest[1] === 'cancel') {
+      if (request.method !== 'POST') throw new ServiceError('invalid_request', { field: 'method' });
+      const answer = extractions.cancel(rest[0], request.userHash);
+      return { ...answer, record: { event: 'extraction_cancel', state: answer.body.state } };
     }
     if (rest.length !== 0) throw new ServiceError('not_found');
     if (request.method === 'POST') {

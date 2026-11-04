@@ -78,20 +78,21 @@ function inputs(n = 1, zone = 'A') {
   return { partition: `DU_${String(n).padStart(5, '0')}`, idurba: `IDU_${n}`, nomfic: 'reglement.pdf', zone };
 }
 
-function request(method, segments, { body, query = {}, user = 'alice', source = 'header' } = {}) {
+function request(method, segments, { body, query = {}, user = 'alice', source = 'header', hash = 'hash123456ab' } = {}) {
   return {
     method,
     segments: ['v1', ...segments],
     query: new URLSearchParams(query),
     body: body === undefined ? undefined : JSON.stringify(body),
     limitKey: `${source === 'header' ? 'user' : 'address'}:${user}`,
-    userHash: 'hash123456ab',
+    userHash: hash,
     userSource: source
   };
 }
 
 const post = (s, n, opts = {}) => s.handle(request('POST', ['extractions'], { body: inputs(n, opts.zone), ...opts }));
 const poll = (s, jobId) => s.handle(request('GET', ['extractions', jobId]));
+const cancel = (s, jobId, opts = {}) => s.handle(request('POST', ['extractions', jobId, 'cancel'], opts));
 const cachedOnly = (s, n, zone = 'A') =>
   s.handle(request('GET', ['extractions'], { query: { ...inputs(n, zone), cachedOnly: '1' } }));
 
@@ -333,4 +334,168 @@ test('a refund gives back the job\'s own take, not the latest one', () => {
   const a = limited.take('v');
   limited.refund('v', a.at + 1); // not a take: nothing given back
   assert.equal(limited.take('v').ok, false);
+});
+
+// ── Sprint 002.23: progress by part, a stopped reading, a part read again ──────────────────────
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+async function until(check, what) {
+  for (let i = 0; i < 400; i += 1) {
+    const value = await check();
+    if (value) return value;
+    await sleep(5);
+  }
+  assert.fail(`never: ${what}`);
+}
+/** A model that never answers until the job's signal stops it, as ai-service's call is cut. */
+const stuckAi = () => ({
+  calls: [],
+  health: async () => ({ available: true, defaultProviderId: 'lmstudio', maxTextLength: 200_000, maxItems: 200 }),
+  extract(request, route = {}) {
+    this.calls.push(request);
+    return new Promise((_, reject) => route.signal.addEventListener('abort', () => reject(new AiError('unreachable', 0))));
+  }
+});
+const LIMITS = { FR_URBAN_RULES_LIMIT_EXTRACT_HOUR: '1', FR_URBAN_RULES_LIMIT_EXTRACT_DAY: '1' };
+
+test('002.23: a poll while extracting names the part being read, the chapter, and each part\'s pages and rule count', async () => {
+  let release;
+  const hold = new Promise((resolve) => (release = resolve));
+  const { s } = await service({
+    env: { FR_URBAN_RULES_EXTRACT_CHUNK_CHARS: '12000' },
+    aiOptions: { hold }
+  });
+  const first = await post(s, 1);
+  const during = await until(async () => {
+    const polled = await poll(s, first.body.jobId);
+    return polled.body.progress.parts?.[0]?.state === 'running' ? polled.body : undefined;
+  }, 'the first part is read');
+  assert.equal(during.progress.step, 'extracting');
+  assert.deepEqual(during.progress.chapter.pages, [44, 51]);
+  assert.ok(during.progress.of >= 2);
+  assert.equal(during.progress.parts.length, during.progress.of, 'every part is listed, the unread ones as waiting');
+  assert.equal(during.progress.parts[1].state, 'waiting');
+  assert.deepEqual(Object.keys(during.progress.parts[0]).sort(), ['n', 'pages', 'state'], 'never a passage');
+  release();
+  await s.idle();
+  const done = (await poll(s, first.body.jobId)).body;
+  assert.equal(done.state, 'done');
+  assert.equal(done.progress.step, 'done');
+  assert.equal(done.progress.parts.length, done.progress.of);
+  assert.ok(done.progress.parts.every((part) => part.state === 'done' && Array.isArray(part.pages)));
+  assert.equal(
+    done.progress.parts.reduce((sum, part) => sum + part.rules, 0),
+    done.result.rules.length,
+    'the parts\' counts add up to the rules'
+  );
+  assert.equal(done.progress.rules, done.result.rules.length);
+});
+
+test('002.23: reading a partly-read chapter again asks the model for the failed parts only', async () => {
+  let failing = true;
+  let firstText;
+  const { s, ai } = await service({
+    env: { FR_URBAN_RULES_EXTRACT_CHUNK_CHARS: '12000' },
+    aiOptions: {
+      plan: (text) => {
+        firstText ??= text;
+        if (failing && text !== firstText) throw new AiError('output_invalid', 502);
+        return [{ value: rule({ kind: 'other', statement: 'described' }), passage: PASSAGE }].filter(() => text === firstText);
+      }
+    }
+  });
+  const first = await post(s, 1);
+  await s.idle();
+  const partial = (await poll(s, first.body.jobId)).body;
+  assert.ok(partial.result.chunks.failed >= 1);
+  const failedParts = partial.progress.parts.filter((part) => part.state === 'failed');
+  assert.equal(failedParts.length, partial.result.chunks.failed);
+  assert.equal(partial.progress.parts[0].state, 'done');
+  const callsAfterFirst = ai.calls.length;
+
+  failing = false;
+  const again = await post(s, 1);
+  await s.idle();
+  const complete = (await poll(s, again.body.jobId)).body;
+  assert.equal(complete.result.chunks.failed, 0);
+  assert.equal(complete.progress.parts[0].cached, true, 'the part that was read is not read again');
+  assert.equal(
+    ai.calls.length - callsAfterFirst,
+    failedParts.length,
+    'one call per failed part, none for the part that was read'
+  );
+  assert.equal((await cachedOnly(s, 1)).status, 200, 'a complete reading is cached as before');
+});
+
+test('002.23: "Extract again" never reuses what was read', async () => {
+  const { s, ai } = await service({ env: { FR_URBAN_RULES_EXTRACT_CHUNK_CHARS: '12000' } });
+  await post(s, 1);
+  await s.idle();
+  const calls = ai.calls.length;
+  const refreshed = await s.handle(request('POST', ['extractions'], { body: inputs(1, 'A'), query: { refresh: '1' } }));
+  assert.equal(refreshed.status, 202);
+  await s.idle();
+  assert.equal(ai.calls.length, calls * 2, 'every part is read again');
+});
+
+test('002.23: cancelling stops the call in flight, ends the job as `cancelled`, and gives the charge back', async () => {
+  const ai = stuckAi();
+  const { s } = await service({ ai, env: LIMITS });
+  const first = await post(s, 1);
+  await until(async () => (await poll(s, first.body.jobId)).body.state === 'extracting', 'extracting');
+  await until(() => ai.calls.length === 1, 'a call is in flight');
+  const answer = await cancel(s, first.body.jobId);
+  assert.equal(answer.status, 200);
+  await s.idle();
+  const ended = (await poll(s, first.body.jobId)).body;
+  assert.equal(ended.state, 'failed');
+  assert.equal(ended.error.code, 'cancelled');
+  assert.equal(ai.calls.length, 1, 'no second attempt after the stop');
+  // The hourly budget is one: the stopped reading cost nothing, so another starts.
+  const next = await post(s, 2);
+  assert.equal(next.status, 202);
+  await until(() => ai.calls.length === 2, 'the next reading starts');
+  await cancel(s, next.body.jobId);
+  await s.idle();
+});
+
+test('002.23: a queued job that is cancelled never runs', async () => {
+  const ai = stuckAi();
+  const { s } = await service({ ai, env: { FR_URBAN_RULES_LIMIT_EXTRACT_HOUR: '100', FR_URBAN_RULES_LIMIT_EXTRACT_DAY: '100' } });
+  const first = await post(s, 1);
+  const second = await post(s, 2);
+  await until(() => ai.calls.length === 1, 'the first job is reading');
+  assert.equal((await poll(s, second.body.jobId)).body.state, 'queued');
+  assert.equal((await cancel(s, second.body.jobId)).body.error.code, 'cancelled');
+  await cancel(s, first.body.jobId);
+  await s.idle();
+  assert.equal(ai.calls.length, 1, 'the second job never called a model');
+});
+
+test('002.23: a job another user joined keeps running for them; the last one to stop it stops it', async () => {
+  const ai = stuckAi();
+  const { s } = await service({ ai });
+  const alice = await post(s, 1, { hash: 'alice-hash-1' });
+  const bob = await post(s, 1, { user: 'bob', hash: 'bob-hash-001' });
+  assert.equal(bob.body.jobId, alice.body.jobId, 'joined');
+  await until(() => ai.calls.length === 1, 'reading');
+  const aliceCancel = await cancel(s, alice.body.jobId, { hash: 'alice-hash-1' });
+  assert.equal(aliceCancel.body.state, 'extracting', 'bob is still waiting for it');
+  await sleep(20);
+  assert.equal((await poll(s, alice.body.jobId)).body.state, 'extracting');
+  await cancel(s, alice.body.jobId, { user: 'bob', hash: 'bob-hash-001' });
+  await s.idle();
+  assert.equal((await poll(s, alice.body.jobId)).body.error.code, 'cancelled');
+});
+
+test('002.23: cancel is idempotent, 404 for an unknown job, and POST only', async () => {
+  const { s } = await service();
+  const first = await post(s, 1);
+  await s.idle();
+  const done = await cancel(s, first.body.jobId);
+  assert.equal(done.status, 200);
+  assert.equal(done.body.state, 'done', 'a finished job is answered as it stands');
+  assert.equal((await cancel(s, 'no-such-job')).status, 404);
+  const wrong = await s.handle(request('GET', ['extractions', first.body.jobId, 'cancel']));
+  assert.equal(wrong.status, 400);
 });

@@ -36,6 +36,7 @@ import { prepareChapter } from './text.mjs';
 
 export const QUEUE_MAX = 10;
 export const JOB_TTL_MS = 30 * 60_000;
+export const CHUNK_MEMO_MAX = 64;
 const BUSY_RETRY_SECONDS = 60;
 
 /** `sha1(documentKey, from, to, schemaVersion, promptVersion)` (DEC-3). */
@@ -47,6 +48,24 @@ function chapterPages(document, [from, to]) {
   const pages = [];
   for (let page = from; page <= to; page += 1) pages.push({ page, text: document.pages[page - 1] });
   return pages;
+}
+
+/**
+ * What a poll tells the editor about an extracting job (Sprint 002.23): the chunk being read of
+ * how many, the rules found so far, and each part's state, pages and rule count. Counts and
+ * page numbers only — never a passage.
+ */
+function progressOf(job, chunk, of) {
+  const parts = job.parts ?? [];
+  return {
+    step: 'extracting',
+    chunk,
+    of,
+    rules: parts.reduce((sum, part) => sum + (part.rules ?? 0), 0),
+    ...(job.document === undefined ? {} : { document: job.document }),
+    ...(job.chapter === undefined ? {} : { chapter: job.chapter }),
+    parts: parts.map((part) => ({ ...part }))
+  };
 }
 
 /** `{ providerId?, model?, features? }`: what one model call is told (ai-client's `route`). */
@@ -75,6 +94,29 @@ export function createExtractions({ store, documents, results, ai, limiters, log
   const active = new Map();
   const queue = [];
   let running;
+  /**
+   * Sprint 002.23: a chunk's answer, kept in memory for as long as a job is (30 minutes), so that
+   * reading a partly-read chapter again asks the model for the parts that failed and not for the
+   * ones that were read. Keyed by the document, the text, the prompt version and the provider and
+   * model asked for; never written to disk (the result cache holds only a complete reading) and never kept
+   * past {@link CHUNK_MEMO_MAX} answers.
+   */
+  const chunkMemo = new Map();
+  const memo = {
+    get(key) {
+      const held = chunkMemo.get(key);
+      if (held === undefined) return undefined;
+      if (clock() - held.at > JOB_TTL_MS) {
+        chunkMemo.delete(key);
+        return undefined;
+      }
+      return held.answer;
+    },
+    set(key, answer) {
+      chunkMemo.set(key, { answer, at: clock() });
+      while (chunkMemo.size > CHUNK_MEMO_MAX) chunkMemo.delete(chunkMemo.keys().next().value);
+    }
+  };
 
   function sweep() {
     const cutoff = clock() - JOB_TTL_MS;
@@ -174,8 +216,11 @@ export function createExtractions({ store, documents, results, ai, limiters, log
         }
       });
       job.state = 'reading';
-      job.progress = { step: 'reading' };
+      job.document = got.cache;
       const chapter = findChapter(got.document, job.inputs.zone);
+      // 002.23: what the editor's card says before the first part: where the chapter is.
+      job.chapter = { pages: chapter.pages, ...(typeof chapter.title === 'string' ? { title: chapter.title } : {}) };
+      job.progress = { step: 'reading', document: job.document, chapter: job.chapter };
       const key = resultKey(cacheKey(job.inputs.idurba, job.inputs.nomfic), chapter.pages);
       job.tags.push(`key:${key}`);
       active.set(`key:${key}`, job);
@@ -183,26 +228,45 @@ export function createExtractions({ store, documents, results, ai, limiters, log
         const cached = await results.read(key);
         if (cached !== undefined) {
           job.fromCache = true;
-          return end(job, { state: 'done', progress: { step: 'done' }, result: cached });
+          return end(job, { state: 'done', progress: { step: 'done', cached: true, chapter: job.chapter }, result: cached });
         }
       }
       const prepared = prepareChapter(chapterPages(got.document, chapter.pages));
 
       job.state = 'extracting';
-      job.progress = { step: 'extracting', chunk: 0, of: 0 };
+      job.parts = [];
+      job.progress = progressOf(job, 0, 0);
       let extracted;
       try {
         extracted = await extractChapter({
           prepared,
           // Every model call carries the provider the user chose and the account's entitlement.
-          ai: { ...ai, extract: (request) => ai.extract(request, job.route) },
+          ai: { ...ai, extract: (request) => ai.extract(request, { ...job.route, signal: job.controller.signal }) },
           maxTextLength: health.maxTextLength,
           maxItems: Math.min(maxItems ?? Infinity, health.maxItems ?? Infinity),
           chunkChars,
           // Charged only once a model has answered (S7): a job stopped by
           // `no_provider_configured` or an unreachable service costs nothing.
           onAnswer: () => (job.calledModel = true),
-          onChunk: (chunk, of) => (job.progress = { step: 'extracting', chunk, of }),
+          // 002.23: the parts, one by one — which is being read, which are read and how many rules each gave.
+          onChunk: (chunk, of, pages) => {
+            while (job.parts.length < of) job.parts.push({ n: job.parts.length + 1, state: 'waiting' });
+            job.parts[chunk - 1] = { n: chunk, state: 'running', ...(pages?.[0] === undefined ? {} : { pages }) };
+            job.progress = progressOf(job, chunk, of);
+          },
+          onPart: (part) => {
+            job.parts[part.n - 1] = {
+              n: part.n,
+              state: part.state,
+              ...(part.pages?.[0] === undefined ? {} : { pages: part.pages }),
+              rules: part.rules,
+              ...(part.cached ? { cached: true } : {})
+            };
+            job.progress = progressOf(job, part.n, part.of);
+          },
+          signal: job.controller.signal,
+          // "Extract again" is a new call by design: it never reuses what was read.
+          ...(job.refresh ? {} : { memo, memoSalt: JSON.stringify([cacheKey(job.inputs.idurba, job.inputs.nomfic), job.route.providerId ?? '', job.route.model ?? '']) }),
           onCall
         });
       } catch (error) {
@@ -252,7 +316,7 @@ export function createExtractions({ store, documents, results, ai, limiters, log
       // A partial result is answered to its job and never cached: a later
       // POST tries again rather than serving every user the gaps (S5).
       if (extracted.chunks.failed === 0) await results.write(key, result);
-      end(job, { state: 'done', progress: { step: 'done' }, result });
+      end(job, { state: 'done', progress: { ...progressOf(job, extracted.chunks.of, extracted.chunks.of), step: 'done' }, result });
     } catch (error) {
       fail(error);
     }
@@ -289,11 +353,17 @@ export function createExtractions({ store, documents, results, ai, limiters, log
           if (cached !== undefined) return { status: 200, body: { state: 'done', result: cached }, cache: 'hit' };
         }
         const joined = active.get(`key:${located.key}`);
-        if (joined !== undefined) return { status: 202, body: view(joined), cache: 'joined' };
+        if (joined !== undefined) {
+          joined.watchers.add(who.userHash);
+          return { status: 202, body: view(joined), cache: 'joined' };
+        }
       }
       const tag = `doc:${cacheKey(inputs.idurba, inputs.nomfic)}:${inputs.zone}:${who.refresh ? 1 : 0}`;
       const pending = active.get(tag);
-      if (pending !== undefined) return { status: 202, body: view(pending), cache: 'joined' };
+      if (pending !== undefined) {
+        pending.watchers.add(who.userHash);
+        return { status: 202, body: view(pending), cache: 'joined' };
+      }
 
       if (queue.length >= QUEUE_MAX) {
         throw new ServiceError('busy', { retryAfterSeconds: BUSY_RETRY_SECONDS });
@@ -311,6 +381,9 @@ export function createExtractions({ store, documents, results, ai, limiters, log
         // Kept with the job: it runs later, and it runs as the user who started it (ADR-0114 Rule 14).
         route: routeOf(who.selection, who.features),
         tags: [tag],
+        // 002.23: who is waiting for this job: stopping it is only the last one's to do.
+        watchers: new Set([who.userHash]),
+        controller: new AbortController(),
         refund,
         calledModel: false,
         startedAt: clock()
@@ -327,6 +400,31 @@ export function createExtractions({ store, documents, results, ai, limiters, log
       sweep();
       const job = jobs.get(jobId);
       if (job === undefined) throw new ServiceError('not_found', { reason: 'no_such_job' });
+      return { status: 200, body: view(job) };
+    },
+
+    /**
+     * `POST extractions/{jobId}/cancel` (002.23): the reading stops. A job another user joined
+     * keeps running for them: the one who cancels only stops waiting for it. A job that ended is
+     * not cancelled again; its state is answered as it stands. Idempotent.
+     */
+    cancel(jobId, userHash) {
+      sweep();
+      const job = jobs.get(jobId);
+      if (job === undefined) throw new ServiceError('not_found', { reason: 'no_such_job' });
+      if (job.endedAt === undefined) {
+        job.watchers.delete(userHash);
+        if (job.watchers.size === 0) {
+          const waiting = queue.indexOf(job);
+          if (waiting >= 0) {
+            // Never started: no model call, the charge goes back (`end` does it).
+            queue.splice(waiting, 1);
+            end(job, { state: 'failed', error: { code: 'cancelled' }, progress: { step: 'cancelled' } });
+          } else {
+            job.controller.abort();
+          }
+        }
+      }
       return { status: 200, body: view(job) };
     },
 

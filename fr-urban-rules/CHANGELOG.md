@@ -1,5 +1,63 @@
 # Changelog — `fr-urban-rules`
 
+## 0.21.0 — Sprint 002.26, What Is Left To Decide, Grouped
+
+- **SDK 1.41**, the companion service **0.6.0** and the platform unchanged; the Rules view's own vocabulary carries everything.
+- **Folded like the other automatic decisions** (ruled out, with the reason, under « Même texte lu deux fois, ou partie d'une autre règle »,
+  « Rétablir » on each, never confirmed): the **same sentence read twice** (a list marker, a « ; » against a « , », a heading condition no longer
+  tell two readings apart; across sectors only where both cover the plot's zone), a **bullet of another rule** (« et qu'elles respectent… »,
+  including a « 4 m » height that would have capped the whole building if confirmed), and a **minimum implied by a stricter one** of the same
+  table (the UD 20 % green ratio under the UDa/UDa1/UDb 30 %). A decision you took stands.
+- **Listed apart, still yours to confirm**, each group collapsed with its own button, one write and one undo step, the very entries a single
+  « Confirmer » writes, and nothing stored before the click: **« S'applique au projet, sans effet sur l'aire »** (parking and the connections to
+  the networks and rainwater — budgets and obligations, not shapes) and **« Lectures vérifiées »** (a limit whose figure is in its text, high
+  confidence, no exception, every condition read; a subject that narrows the rule, a case or a graphic reference keeps it for a person).
+- « Left to decide » no longer counts a rule you confirmed or set aside; the notice says how many are listed apart and the reading card shows
+  « À confirmer ensemble ».
+- The rules that depend on the graphic règlement stay manual: the GPU's silence is not the règlement's, and it has no type for a gabarit line.
+- On Marseille's zone UD, left to read, nothing answered: UDa1 56 → 33, UDb 53 → 35, UD 66 → 49 (and 15 + 1 listed apart); housing, new
+  building, 320 m² on UDa1 37 → 20; an extension for a restaurant 43 → 25; a workshop on UDb 38 → 27.
+- Strings: `triage.group.folded`, `triage.reason.{duplicate,fragment,implied}`, `batch.*`, `undo.confirmBatch`, `card.stat.grouped` (en, fr).
+  Tests: `grouping.test.mjs` (16); `project.test.mjs` counts updated deliberately.
+
+## 0.20.0 — Sprints 002.24 and 002.25, The Nature Of The Project And The Rules It Decides
+
+- **SDK 1.41** and the companion service **0.6.0** unchanged: the question card is the same seam as the reading's (`ai.cards`, kinds
+  `questions` and `summary`). On a host without `ai.cards` the panel's form is the way in.
+- **Questions (002.24).** What each candidate depends on is read from its own subject: the uses (a quoted sous-destination, a one-line
+  uses row, a parking table's row), the extension of an existing building, floor-area thresholds (for the plot's own sector), a
+  classified installation. After a reading (once per document, « Not now » is remembered) a card asks what you are planning, what it is
+  used for, its floor area (chips are the thresholds found: « Moins de 250 m² · 250 à 500 · 500 ou plus ») and, only if a rule needs it,
+  whether it is a classified installation; each question says how many rules it could decide and a live line says how many your answers
+  would. Apply stores them in the project's section (`projectNature`, validated, per project) and posts a summary with « Ouvrir les n
+  règles » and « Modifier mes réponses ». The reading's Done card offers « Les préciser avec votre projet » while a question is unanswered.
+- **Decisions (002.25).** A candidate an answer **positively excludes** is ruled out, folded under « Votre projet » in « Décidées
+  automatiquement » with its reason and « Rétablir »; a candidate the answers settle shows « S'applique : … », one they cannot says what is
+  missing and where to give it. A condition this cannot read leaves the candidate alone; « Pas décidé » and « Autre ou mixte » exclude
+  nothing; nothing is ever confirmed. A decision the user took stands. The « Nature du projet » section of the Rules view shows the answers,
+  how many rules they decide and one form (works, use, floor area) that writes them, undoable.
+- On Marseille's zone UD, UDa1: nothing answered 56 to decide (unchanged); housing, new building, 320 m² 37; an extension for a restaurant 43;
+  zone UDb, a workshop 38 (from 53).
+- Strings: `project.*`, `triage.group.*`, `triage.noticeProject`, `triage.summaryProject`, `card.action.narrow`, `card.stat.project`,
+  `undo.projectNature` (en, fr). Tests: `project.test.mjs` (17).
+
+## 0.19.0 — Sprint 002.23, The Reading's Progress In The AI Panel
+
+- **SDK 1.41** (`AiExtensionService.cards`; the capability is `ai`, already declared). Needs the companion service **0.6.0** for the parts, the
+  chapter and the cancel route; against 0.5.0 the card shows its steps without the parts and Cancel stops the polling only. On a 1.40 host
+  there is no card and the panel shows the wait as before.
+- **A card in the AI conversation.** Starting a reading (Extract, Extract again) opens the AI panel on a card — « Lecture du règlement »,
+  its zone, pages and model — with the service's own steps: fetch the document, find the chapter, read part *n* of *N* with the rules each
+  part gave, check the quotes and sort. A progress bar, a Cancel button. It survives closing the panel. It shows **counts, pages and states,
+  never a rule**.
+- **Done, partly read, failed, cancelled.** Done: rules read, decided automatically, left to decide (the rules view's own numbers) and
+  « Ouvrir les règles ». Partly read (a part the model did not answer): « Lire la partie *n* de nouveau » — a plain read, which the service
+  answers from the parts it already read — and « Utiliser ce qui a été lu ». Failed: the reason and « Réessayer » where it can help.
+  Cancelled: « Relire ». Cancel stops the job on the service (the call in flight too); a job another user joined keeps running for them.
+- The PLU panel keeps showing the last result until the reading finishes, as before.
+- Strings: `card.*`, `written.code.cancelled` (en, fr). Tests: six in `written.test.mjs`.
+
+
 ## 0.18.0 — Sprints 002.21 and 002.22, A Height Held To A Strip, And Candidates Decided Automatically
 
 - **SDK 1.40** unchanged. Needs the companion service **0.5.0** (prompt version 3) to *read* a strip from the règlement; against an

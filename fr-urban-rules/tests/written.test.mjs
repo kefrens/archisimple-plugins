@@ -10,7 +10,7 @@ import { test, before } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-import { __testing, createReader } from '../src/index.js';
+import { __testing, createReader, readingCardOf } from '../src/index.js';
 import {
   answering,
   docBlocks,
@@ -103,7 +103,7 @@ const serviceRule = (fields) => ({
  * answer until `release(name)`.
  */
 function fakeService({ cached, current = CURRENT, steps = [], post } = {}) {
-  const calls = { chapter: [], cachedOnly: [], post: [], poll: [], documents: [] };
+  const calls = { chapter: [], cachedOnly: [], post: [], poll: [], documents: [], cancel: [] };
   const held = new Map();
   // `documents`: 002.10's route; a function from the URL to a response, else the route is not there (404).
   const state = { cached, current, steps: [...steps], documents: undefined };
@@ -142,6 +142,10 @@ function fakeService({ cached, current = CURRENT, steps = [], post } = {}) {
       return state.cached === undefined
         ? json(404, { current: state.current, error: 'not_cached' })
         : json(200, { result: state.cached, current: state.current });
+    }
+    if (path.startsWith('v1/extractions/') && path.endsWith('/cancel') && init.method === 'POST') {
+      calls.cancel.push(url);
+      return json(200, { jobId: path.split('/')[2], state: 'failed', error: { code: 'cancelled' } });
     }
     if (path.startsWith('v1/extractions/')) {
       calls.poll.push(url);
@@ -2565,4 +2569,229 @@ test('002.10: the new strings exist in English and French', () => {
   }
   assert.match(en['fr-urban-rules.notice.newDocumentVersion'], /\{date\}/u);
   assert.match(fr['fr-urban-rules.notice.newDocumentVersion'], /\{date\}/u);
+});
+
+
+// ── Sprint 002.23: the reading's progress as a card in the AI conversation (SDK 1.41) ──────────
+
+/** A host's `ai` with `cards`: every post, update and dispose is recorded; a press is `press(id)`. */
+function cardsHost(model = { providerId: 'openai', model: 'gpt-5' }) {
+  const posted = [];
+  const handlers = [];
+  const disposed = [];
+  const ai = {
+    selectedModel: () => model,
+    cards: {
+      post: (card, given) => {
+        posted.push(card);
+        handlers.push(given);
+        return {
+          update: (next) => posted.push(next),
+          dispose: () => disposed.push(card.id)
+        };
+      }
+    }
+  };
+  return {
+    ai,
+    posted,
+    disposed,
+    last: () => posted.at(-1),
+    press: (actionId) => handlers.at(-1).onAction({ cardId: posted.at(-1).id, actionId, answers: {} })
+  };
+}
+const stepsOf = (card) => Object.fromEntries(card.steps.map((step) => [step.id, step.status]));
+const PARTS_DONE = [
+  { n: 1, state: 'done', pages: [121, 125], rules: 31 },
+  { n: 2, state: 'done', pages: [126, 130], rules: 28 }
+];
+
+test('002.23: a reading posts a card, updates it as each part is read, and ends it with the figures the rules view shows', async () => {
+  const host = cardsHost();
+  const schedule = manualTimers();
+  const service = fakeService({
+    steps: [
+      { jobId: 'j', state: 'fetching', progress: { step: 'fetching' } },
+      {
+        jobId: 'j',
+        state: 'extracting',
+        progress: {
+          step: 'extracting',
+          chunk: 1,
+          of: 2,
+          rules: 0,
+          document: 'hit',
+          chapter: { pages: [121, 144] },
+          parts: [{ n: 1, state: 'running', pages: [121, 125] }, { n: 2, state: 'waiting' }]
+        }
+      },
+      {
+        jobId: 'j',
+        state: 'extracting',
+        progress: {
+          step: 'extracting',
+          chunk: 2,
+          of: 2,
+          rules: 31,
+          document: 'hit',
+          chapter: { pages: [121, 144] },
+          parts: [{ n: 1, state: 'done', pages: [121, 125], rules: 31 }, { n: 2, state: 'running', pages: [126, 130] }]
+        }
+      },
+      { jobId: 'j', state: 'done', progress: { step: 'done', of: 2, parts: PARTS_DONE }, result: recorded }
+    ]
+  });
+  const context = readerFor({ service, schedule, ai: host.ai });
+  let report = await read(context);
+  const extract = actions(report).find((a) => a.id === 'written-extract');
+  await act(context, 'written-extract', extract.target);
+
+  // Posted at once, running, under the model the panel chose, with a Cancel.
+  const first = host.last();
+  assert.equal(first.kind, 'activity');
+  assert.equal(first.status, 'running');
+  assert.deepEqual(first.title, { key: 'fr-urban-rules.card.title' });
+  assert.deepEqual(first.subtitle, {
+    key: 'fr-urban-rules.card.subtitle.zoneModel',
+    params: { zone: 'UCe1b', model: 'gpt-5' }
+  });
+  assert.deepEqual(first.actions.map((a) => a.id), ['cancel']);
+  assert.equal(stepsOf(first).fetch, 'waiting');
+
+  await schedule.tick();
+  assert.equal(stepsOf(host.last()).fetch, 'running');
+  await schedule.tick();
+  let card = host.last();
+  assert.equal(card.subtitle.key, 'fr-urban-rules.card.subtitle.pagesModel');
+  assert.deepEqual(card.subtitle.params, { zone: 'UCe1b', from: 121, to: 144, model: 'gpt-5' });
+  assert.deepEqual(stepsOf(card), { fetch: 'done', chapter: 'done', 'part-1': 'running', 'part-2': 'waiting', sort: 'waiting' });
+  assert.deepEqual(card.progress, { done: 0, total: 2 });
+  assert.deepEqual(card.steps[0].detail, { key: 'fr-urban-rules.card.detail.fetchHeld' });
+  await schedule.tick();
+  card = host.last();
+  assert.deepEqual(card.progress, { done: 1, total: 2 });
+  assert.deepEqual(card.steps.find((s) => s.id === 'part-1').detail, {
+    key: 'fr-urban-rules.card.detail.partRules',
+    params: { rules: 31 }
+  });
+  assert.equal(stepsOf(card)['part-2'], 'running');
+
+  await schedule.tick();
+  card = host.last();
+  assert.equal(card.status, 'done');
+  assert.equal(card.progress, undefined);
+  assert.deepEqual(card.actions.map((a) => [a.id, a.reveal === true]), [['open', true]]);
+  assert.ok(card.stats[0].value > 0, 'what was read, before the rules view has counted');
+
+  // The rules view's own numbers complete the card: read, decided automatically, left to decide.
+  report = await read(context, 'source');
+  card = host.last();
+  const view = rulesView(report);
+  const stats = Object.fromEntries(card.stats.map((st) => [st.label.key.split('.').pop(), st.value]));
+  // 002.26: the rules listed apart (readings checked, rules that do not shape the area) are a figure of their own, before « left ».
+  assert.equal(card.stats.length, stats.grouped > 0 ? 4 : 3);
+  assert.ok(Number.isInteger(stats.auto) && Number.isInteger(stats.left) && stats.read > 0);
+  assert.ok(stats.auto + stats.left > 0 && view !== undefined);
+  assert.ok(card.stats.at(-1).emphasis === true);
+  // Nothing of a rule is on the card: counts, pages and states only.
+  assert.ok(!JSON.stringify(host.posted).includes('passage'));
+});
+
+test('002.23: Cancel stops the polling, tells the service, ends the card as cancelled and lets the zone be read again', async () => {
+  const host = cardsHost();
+  const schedule = manualTimers();
+  const service = fakeService({
+    steps: [{ jobId: 'j', state: 'extracting', progress: { step: 'extracting', chunk: 1, of: 3, parts: [{ n: 1, state: 'running' }] } }]
+  });
+  const context = readerFor({ service, schedule, ai: host.ai });
+  let report = await read(context);
+  const extract = actions(report).find((a) => a.id === 'written-extract');
+  await act(context, 'written-extract', extract.target);
+  await schedule.tick();
+  await host.press('cancel');
+  await settle();
+  assert.equal(service.calls.cancel.length, 1);
+  assert.ok(service.calls.cancel[0].endsWith('/v1/extractions/7f9a1c2b-0000-4000-8000-000000000001/cancel'));
+  assert.equal(host.last().status, 'cancelled');
+  assert.deepEqual(host.last().actions.map((a) => a.id), ['retry']);
+  assert.equal(schedule.pending.filter((e) => !e.cancelled).length, 0, 'no more polling');
+  report = await read(context, 'source');
+  assert.ok(actions(report).some((a) => a.id === 'written-extract'), 'Extract is offered again');
+  // Again: a second POST, and the card is running again.
+  await host.press('retry');
+  await settle();
+  assert.equal(service.calls.post.length, 2);
+  assert.equal(host.last().status, 'running');
+});
+
+test('002.23: a part that could not be read ends the card as partial, and "Read part n again" is a plain read, not Extract again', async () => {
+  const host = cardsHost();
+  const schedule = manualTimers();
+  const partial = resultWith({ chunks: { of: 2, failed: 1 } });
+  const service = fakeService({
+    steps: [
+      {
+        jobId: 'j',
+        state: 'done',
+        progress: {
+          step: 'done',
+          of: 2,
+          parts: [{ n: 1, state: 'done', pages: [121, 125], rules: 31 }, { n: 2, state: 'failed', pages: [126, 130], rules: 0 }]
+        },
+        result: partial
+      }
+    ]
+  });
+  const context = readerFor({ service, schedule, ai: host.ai });
+  const report = await read(context);
+  await act(context, 'written-extract', actions(report).find((a) => a.id === 'written-extract').target);
+  await schedule.tick();
+  const card = host.last();
+  assert.equal(card.status, 'partial');
+  assert.deepEqual(card.notes[0], { tone: 'caution', text: { key: 'fr-urban-rules.card.note.partial', params: { parts: '2' } } });
+  assert.deepEqual(card.actions.map((a) => a.id), ['open', 'retry', 'keep']);
+  assert.deepEqual(card.actions[1].label, { key: 'fr-urban-rules.card.action.retryPart', params: { n: 2 } });
+  assert.equal(stepsOf(card)['part-2'], 'failed');
+  await host.press('retry');
+  await settle();
+  assert.equal(service.calls.post.length, 2);
+  assert.ok(!service.calls.post[1].url.includes('refresh'), 'a plain read: the service answers from what it read');
+  await host.press('keep');
+  await settle();
+  assert.deepEqual(host.disposed, ['reading:' + card.id.split(':')[1]]);
+});
+
+test('002.23: a failed reading says why on the card and offers to try again; a host with no cards changes nothing', async () => {
+  const failed = readingCardOf({
+    id: 'z',
+    zone: 'UCe1b',
+    state: 'failed',
+    error: { code: 'extraction_failed' }
+  });
+  assert.equal(failed.status, 'failed');
+  assert.deepEqual(failed.notes[0].text, { key: 'fr-urban-rules.written.code.extraction_failed' });
+  assert.deepEqual(failed.actions.map((a) => a.id), ['retry']);
+  const refused = readingCardOf({ id: 'z', zone: 'UCe1b', state: 'failed', error: { code: 'version_changed' } });
+  assert.deepEqual(refused.actions, [], 'no Try again where it cannot help');
+  assert.equal(readingCardOf({ id: 'z', zone: 'U', state: 'failed', error: { code: 'cancelled' } }).status, 'cancelled');
+
+  // No `ai.cards` (a 1.40 host): the reading runs exactly as before.
+  const schedule = manualTimers();
+  const service = fakeService({ steps: [{ jobId: 'j', state: 'done', progress: { step: 'done' }, result: recorded }] });
+  const context = readerFor({ service, schedule, ai: aiChoosing({ providerId: 'openai' }) });
+  const report = await read(context);
+  await act(context, 'written-extract', actions(report).find((a) => a.id === 'written-extract').target);
+  await schedule.tick();
+  assert.equal(source(await read(context, 'source')).state, 'ready');
+});
+
+test('002.23: the card is taken down when the reader is disposed', async () => {
+  const host = cardsHost();
+  const service = fakeService({ steps: [{ jobId: 'j', state: 'extracting', progress: { step: 'extracting', chunk: 1, of: 2 } }] });
+  const context = readerFor({ service, ai: host.ai });
+  const report = await read(context);
+  await act(context, 'written-extract', actions(report).find((a) => a.id === 'written-extract').target);
+  assert.equal(host.disposed.length, 0);
+  context.reader.dispose();
+  assert.equal(host.disposed.length, 1);
 });

@@ -43,7 +43,11 @@ After Phase 3: **0.9.0** is Sprint [002.11 Planning Snapshot](../docs/sprints/sp
 **0.17.0** is Sprint [002.20 Limits Are Proposed, Cut Areas Are Red](../docs/sprints/sprint-002.20-proposed-limits-red-cut-areas.md)
 (SDK 1.40 unchanged; platform 103.4); **0.18.0** is Sprints [002.21 A Height Held To A Strip](../docs/sprints/sprint-002.21-setback-height-exemption.md)
 and [002.22 Candidate Rules Decided Automatically](../docs/sprints/sprint-002.22-decided-automatically.md) (SDK 1.40 unchanged; companion
-service 0.5.0).
+service 0.5.0); **0.19.0** is Sprint [002.23 The Reading's Progress In The AI Panel](../docs/sprints/sprint-002.23-reading-progress-in-the-ai-panel.md)
+(SDK 1.41, platform 102.12; companion service 0.6.0): a reading shows its steps, its parts and a Cancel as a card in the AI conversation,
+and ends with the figures the rules view shows; **0.20.0** is Sprints [002.24 The Nature Of The Project](../docs/sprints/sprint-002.24-project-nature-questions.md)
+and [002.25 Rules Decided By The Project](../docs/sprints/sprint-002.25-rules-decided-by-the-project.md) (SDK 1.41 and the service unchanged):
+a card in the AI conversation asks what the project is, once, and the answers narrow the rules. **0.21.0** is Sprint [002.26 What Is Left To Decide, Grouped](../docs/sprints/sprint-002.26-left-to-decide-grouped.md) (SDK 1.41 and the service unchanged): the same rule read twice, a bullet of another and a rule implied by a stricter one are folded; parking and the connections to the networks, and the readings that can be checked against their own text, are listed apart and confirmed together by one click.
 
 ## The theoretical buildable area (0.16.0)
 
@@ -90,6 +94,24 @@ confirmed rules and the plan take away, drawn on the plan in one piece or severa
   its reason, and « Rétablir » puts it back (against the document's version: a new version asks again). When in doubt it stays to
   confirm. The same text read for several sectors is one card. On Marseille's zone UD a plot in UDa1 goes from 98 candidates to 56 to
   decide.
+- **The nature of the project** (002.24, 002.25). What the rules depend on is read from each candidate's own subject — a quoted
+  sous-destination or a use's row (« Industrie Interdit »), « les extensions », « surface de plancher inférieure à 500 m² dans le
+  secteur UDa2 », a classified installation — never from free text; a condition this cannot read leaves the candidate alone. After a
+  reading, **one card in the AI conversation asks what you are planning** (new building, extension, annex or pool), **what it is used
+  for** and **its floor area** (the chips are the thresholds the rules state, here 250 and 500 m²), plus a fourth question only if a rule
+  needs it; each says how many rules it could decide, « Not decided » is an answer, and Apply stores them **in the project**. A
+  candidate an answer **positively excludes** (a restaurant rule for a housing project) is folded under « Votre projet » in
+  « Décidées automatiquement » with its reason and « Rétablir »; one the answers settle shows « Applies: … » and one they cannot says what
+  is missing. Nothing is confirmed for you. The Rules view's « Nature du projet » section shows the answers and changes them without the
+  AI panel. On Marseille's zone UD: housing, new building, 320 m² on UDa1 decides 19 more of the 56 (37 left); an extension for a
+  restaurant 13 (43 left); a workshop on UDb 15 (38 left); nothing answered, nothing changes.
+- **What is left to decide, grouped** (002.26). The same sentence read twice (under another list marker or heading), a bullet cut from its
+  sentence and a minimum implied by a stricter one in the same table are folded under « Même texte lu deux fois, ou partie d'une autre
+  règle » with their reason and « Rétablir »; none is confirmed. Two groups are listed apart, collapsed, still for you to confirm: **« S'applique
+  au projet, sans effet sur l'aire »** (parking, connections to the networks and rainwater) and **« Lectures vérifiées »** (a figure written in
+  its text, high confidence, no exception, every condition read). Each has one button — one write, one undo step, the entries a single
+  « Confirmer » writes — and nothing is stored before it is pressed. On Marseille's zone UD, left to read with nothing answered: UDa1 56 → 33,
+  UDb 53 → 35, UD 66 → 49; housing, new building, 320 m² on UDa1 37 → 20.
 
 ## The model that reads (0.15.0)
 

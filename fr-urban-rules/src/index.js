@@ -794,6 +794,8 @@ const WRITTEN_CODES = {
   busy: { retry: true },
   extraction_unavailable: { retry: true },
   extraction_failed: { retry: true },
+  // 002.23: the reading was stopped (here or by the last one waiting for it)
+  cancelled: { retry: true },
   // 002.16: ai-service refused the model chosen in the AI panel; another choice there, then try again
   provider_not_permitted: { retry: true },
   unknown_provider: { retry: true },
@@ -843,6 +845,7 @@ const WRITTEN_CODE_KEYS = {
   busy: 'fr-urban-rules.written.code.busy',
   extraction_unavailable: 'fr-urban-rules.written.code.extraction_unavailable',
   extraction_failed: 'fr-urban-rules.written.code.extraction_failed',
+  cancelled: 'fr-urban-rules.written.code.cancelled',
   provider_not_permitted: 'fr-urban-rules.written.code.provider_not_permitted',
   unknown_provider: 'fr-urban-rules.written.code.unknown_provider',
   internal_error: 'fr-urban-rules.written.code.internal_error',
@@ -1194,6 +1197,575 @@ function chosenModelOf(aiService) {
   const model = typeof chosen.model === 'string' ? chosen.model.trim() : '';
   const usable = model !== '' && model.length <= 120 && !model.includes('://') && !/\p{Cc}/u.test(model);
   return { providerId: chosen.providerId, ...(usable ? { model } : {}) };
+}
+
+
+// ── Sprint 002.23: the reading's progress, as a card in the AI conversation (SDK 1.41) ─────────
+
+const READING_PART_MAX = 60;
+const cardKey = (key, params) => ({ key, ...(params === undefined ? {} : { params }) });
+const pagesOf = (pages) =>
+  Array.isArray(pages) && Number.isSafeInteger(pages[0]) && Number.isSafeInteger(pages[1])
+    ? { from: pages[0], to: pages[1] }
+    : undefined;
+
+/**
+ * What an activity card says of one zone's reading, from its record: the service job's progress
+ * (the parts, the chapter, the document), its result or its error. Pure; counts and page numbers
+ * only — a passage never reaches a card (ADR-0028 Rule 12: a card shows progress, never rules).
+ *
+ * @param {{ zone, state, progress?, result?, error?, model?, counts?, cancelled? }} view
+ */
+export function readingCardOf(view) {
+  const { zone, state, progress, result, error } = view;
+  const parts = Array.isArray(progress?.parts) ? progress.parts : [];
+  const of = Number.isSafeInteger(progress?.of) ? progress.of : parts.length;
+  const chapterPages = pagesOf(progress?.chapter?.pages ?? result?.chapter?.pages);
+  const model = view.model ?? (result?.model?.model ?? result?.model?.providerId);
+  const failedParts = parts.filter((part) => part.state === 'failed');
+  const running = state === 'queued' || state === 'fetching' || state === 'reading' || state === 'extracting';
+  const status = running
+    ? 'running'
+    : view.cancelled === true || error?.code === 'cancelled'
+      ? 'cancelled'
+      : state === 'done'
+        ? failedParts.length > 0 || (result?.chunks?.failed ?? 0) > 0
+          ? 'partial'
+          : 'done'
+        : 'failed';
+
+  const subtitleKey =
+    chapterPages === undefined
+      ? model === undefined
+        ? 'fr-urban-rules.card.subtitle.zone'
+        : 'fr-urban-rules.card.subtitle.zoneModel'
+      : model === undefined
+        ? 'fr-urban-rules.card.subtitle.pages'
+        : 'fr-urban-rules.card.subtitle.pagesModel';
+  const subtitle = cardKey(subtitleKey, {
+    zone: String(zone ?? ''),
+    ...(chapterPages === undefined ? {} : { from: chapterPages.from, to: chapterPages.to }),
+    ...(model === undefined ? {} : { model })
+  });
+
+  const stepOf = (id, label, stepStatus, detail) => ({
+    id,
+    label,
+    status: stepStatus,
+    ...(detail === undefined ? {} : { detail })
+  });
+  const reached = (step) => ['reading', 'extracting', 'done'].includes(step);
+  const step = state === 'done' ? 'done' : (progress?.step ?? state);
+  const fetched = reached(step) || (status !== 'running' && parts.length > 0);
+  const steps = [
+    stepOf(
+      'fetch',
+      cardKey('fr-urban-rules.card.step.fetch'),
+      fetched ? 'done' : state === 'queued' ? 'waiting' : 'running',
+      fetched && progress?.document === 'hit'
+        ? cardKey('fr-urban-rules.card.detail.fetchHeld')
+        : fetched && progress?.document === 'miss'
+          ? cardKey('fr-urban-rules.card.detail.fetchDownloaded')
+          : undefined
+    ),
+    stepOf(
+      'chapter',
+      cardKey('fr-urban-rules.card.step.chapter'),
+      step === 'reading' ? 'running' : fetched ? 'done' : 'waiting',
+      chapterPages === undefined || !fetched
+        ? undefined
+        : cardKey('fr-urban-rules.card.detail.pages', { from: chapterPages.from, to: chapterPages.to })
+    )
+  ];
+  for (const part of parts.slice(0, READING_PART_MAX)) {
+    steps.push(
+      stepOf(
+        `part-${part.n}`,
+        cardKey('fr-urban-rules.card.step.part', { n: part.n, of }),
+        part.state,
+        part.state === 'done'
+          ? cardKey(part.cached === true ? 'fr-urban-rules.card.detail.partCached' : 'fr-urban-rules.card.detail.partRules', { rules: part.rules ?? 0 })
+          : part.state === 'failed'
+            ? cardKey('fr-urban-rules.card.detail.partFailed')
+            : undefined
+      )
+    );
+  }
+  const allSettled = parts.length > 0 && parts.every((part) => part.state === 'done' || part.state === 'failed');
+  steps.push(
+    stepOf(
+      'sort',
+      cardKey('fr-urban-rules.card.step.sort'),
+      state === 'done' ? 'done' : allSettled ? 'running' : 'waiting'
+    )
+  );
+
+  const settled = parts.filter((part) => part.state === 'done' || part.state === 'failed').length;
+  const notes = [];
+  if (status === 'partial')
+    notes.push({
+      tone: 'caution',
+      text: cardKey('fr-urban-rules.card.note.partial', {
+        parts: failedParts.map((part) => part.n).join(', ') || '?'
+      })
+    });
+  if (status === 'failed') notes.push({ tone: 'caution', text: { key: writtenCodeKey(error?.code) } });
+  if (running)
+    notes.push({ text: cardKey('fr-urban-rules.card.note.keepWorking') });
+
+  const actions = [];
+  if (status === 'running') actions.push({ id: 'cancel', label: cardKey('fr-urban-rules.card.action.cancel') });
+  // Sprint 002.24: with questions about the project left, narrowing the rules is the next step.
+  const narrowing = (status === 'done' || status === 'partial') && (view.counts?.ask ?? 0) > 0;
+  if (narrowing)
+    actions.push({
+      id: 'narrow',
+      label: cardKey('fr-urban-rules.card.action.narrow'),
+      emphasis: 'primary'
+    });
+  if (status === 'done' || status === 'partial')
+    actions.push({
+      id: 'open',
+      label: cardKey('fr-urban-rules.card.action.open'),
+      ...(narrowing ? {} : { emphasis: 'primary' }),
+      reveal: true
+    });
+  if (status === 'partial')
+    actions.push(
+      {
+        id: 'retry',
+        label:
+          failedParts.length === 1
+            ? cardKey('fr-urban-rules.card.action.retryPart', { n: failedParts[0].n })
+            : cardKey('fr-urban-rules.card.action.retryParts')
+      },
+      { id: 'keep', label: cardKey('fr-urban-rules.card.action.keep') }
+    );
+  if ((status === 'failed' && WRITTEN_CODES[writtenCodeOf(error?.code)]?.retry !== false) || status === 'cancelled')
+    actions.push({ id: 'retry', label: cardKey(status === 'cancelled' ? 'fr-urban-rules.card.action.again' : 'fr-urban-rules.card.action.retry') });
+
+  const counts = view.counts;
+  const stats =
+    status === 'done' || status === 'partial'
+      ? [
+          { label: cardKey('fr-urban-rules.card.stat.read'), value: result?.rules?.length ?? 0 },
+          ...(counts === undefined
+            ? []
+            : [
+                { label: cardKey('fr-urban-rules.card.stat.auto'), value: counts.auto },
+                ...(counts.project > 0
+                  ? [{ label: cardKey('fr-urban-rules.card.stat.project'), value: counts.project }]
+                  : []),
+                ...(counts.grouped > 0
+                  ? [{ label: cardKey('fr-urban-rules.card.stat.grouped'), value: counts.grouped }]
+                  : []),
+                {
+                  label: cardKey('fr-urban-rules.card.stat.left'),
+                  value: counts.left,
+                  emphasis: true
+                }
+              ])
+        ]
+      : [];
+
+  return {
+    kind: 'activity',
+    id: `reading:${view.id ?? zone}`,
+    title: cardKey('fr-urban-rules.card.title'),
+    subtitle,
+    status,
+    ...(running && of > 0 ? { progress: { done: settled, total: of } } : {}),
+    // The steps are the running story. Once it is done the figures say what it came to, and a partly
+    // read chapter lists only the parts that were not read: a dock is short.
+    steps:
+      status === 'done'
+        ? []
+        : status === 'partial'
+          ? steps.filter((step) => step.status === 'failed')
+          : // A reading that is over is not under way: a step it never finished is not spinning.
+            status === 'running'
+            ? steps
+            : steps.map((step) => (step.status === 'running' ? { ...step, status: 'waiting' } : step)),
+    stats,
+    notes,
+    actions
+  };
+}
+
+/**
+ * Posts and updates one card per zone's reading through the host's `ai.cards` (SDK 1.41), if the
+ * host has one: a host older than 1.41 finds nothing here and the panel shows the wait as before.
+ * Disposing it takes every card down (the extension's own subscriptions do that on a disable).
+ */
+export function createReadingCards({ ai, act, onDone = undefined }) {
+  /** record id → { handle, view } */
+  const posted = new Map();
+  const service = () => {
+    try {
+      const candidate = ai();
+      return typeof candidate?.cards?.post === 'function' ? candidate.cards : undefined;
+    } catch {
+      return undefined;
+    }
+  };
+  const handlersFor = (record) => ({
+    onAction: (event) => {
+      try {
+        // The press is not awaited: the card's button answers at once, the work goes on.
+        void act(record, event.actionId);
+      } catch {
+        // an action that throws costs its own press, not the reading
+      }
+    }
+  });
+  return {
+    /** The card for this record as it now stands: posted on first sight, updated after. */
+    sync(record, extra = {}) {
+      const cards = service();
+      if (cards === undefined) return;
+      const entry = posted.get(record.id);
+      const view = {
+        id: record.id,
+        zone: record.zone,
+        state: record.state,
+        progress: record.progress,
+        result: record.result,
+        error: record.error,
+        model: entry?.model ?? extra.model,
+        counts: entry?.counts,
+        cancelled: record.cancelledByUser === true
+      };
+      const card = readingCardOf(view);
+      const json = JSON.stringify(card);
+      if (entry !== undefined && entry.json === json) return;
+      try {
+        if (entry === undefined) {
+          const handle = cards.post(card, handlersFor(record));
+          posted.set(record.id, { handle, json, model: extra.model, counts: undefined, record });
+        } else {
+          entry.json = json;
+          entry.handle.update(card);
+        }
+      } catch {
+        // a host that refuses a card must not break the reading
+      }
+    },
+    /** What the rules view counted, for the cards of the zones it read (their final state). */
+    counts(counts, zones) {
+      for (const [id, entry] of posted) {
+        const record = entry.record;
+        if (record.state !== 'done' || (zones !== undefined && !zones.has(record.zone))) continue;
+        if (entry.counts !== undefined && JSON.stringify(entry.counts) === JSON.stringify(counts)) continue;
+        const first = entry.counts === undefined;
+        entry.counts = counts;
+        this.sync(record);
+        // Sprint 002.24: the reading has come to its figures — the moment to ask about the project, once.
+        if (first) {
+          try {
+            onDone?.(record, counts);
+          } catch {
+            // a question that cannot be asked costs the question, not the reading
+          }
+        }
+      }
+    },
+    dismiss(record) {
+      const entry = posted.get(record.id);
+      if (entry === undefined) return;
+      posted.delete(record.id);
+      try {
+        entry.handle.dispose();
+      } catch {
+        // already gone
+      }
+    },
+    dispose() {
+      for (const { handle } of posted.values()) {
+        try {
+          handle.dispose();
+        } catch {
+          // already gone
+        }
+      }
+      posted.clear();
+    }
+  };
+}
+
+// ── Sprint 002.24: the questions about the project, as a card in the AI conversation ───────────
+
+/** The chips of « what will it be used for », in plain words; the panel's form lists every sub-destination. */
+const USE_CHIPS = [
+  'logement',
+  'artisanat-commerce',
+  'restauration',
+  'bureau',
+  'hotel',
+  'industrie',
+  'equipements',
+  'agricole',
+  'other'
+];
+const PROJECT_CARD_ID = 'project-nature';
+const PROJECT_SUMMARY_ID = 'project-nature-summary';
+const thresholdsOf = (offer) =>
+  offer.questions.find((question) => question.id === 'area')?.thresholds ?? [];
+/** The bucket an area answer stands on: the one containing an exact area, or the very bucket chosen. */
+function selectedBucketOf(area, buckets) {
+  if (area === undefined) return undefined;
+  if (area.exact === true)
+    return buckets.find(
+      (bucket) => area.from >= bucket.from && (bucket.to === null || area.from < bucket.to)
+    )?.id;
+  return buckets.find((bucket) => bucket.from === area.from && bucket.to === (area.to ?? null))?.id;
+}
+
+/**
+ * The question card: one question per thing the rules depend on, chips for the answers, « not decided »
+ * quiet, and the line saying how many of the open rules these answers would decide. Pure.
+ */
+export function projectQuestionCardOf(offer, nature, decidedNow) {
+  const quiet = {
+    id: NOT_DECIDED,
+    label: cardKey('fr-urban-rules.project.notDecided'),
+    quiet: true
+  };
+  const buckets = areaBucketsOf(thresholdsOf(offer));
+  const bucketLabel = (bucket) =>
+    bucket.from === 0
+      ? cardKey(PROJECT_AREA_KEYS.under, { to: bucket.to })
+      : bucket.to === null
+        ? cardKey(PROJECT_AREA_KEYS.over, { from: bucket.from })
+        : cardKey(PROJECT_AREA_KEYS.range, { from: bucket.from, to: bucket.to });
+  const questions = offer.questions.map((question) => {
+    const hint = cardKey('fr-urban-rules.project.card.decidesUpTo', { n: question.n });
+    switch (question.id) {
+      case 'works':
+        return {
+          id: 'works',
+          label: cardKey('fr-urban-rules.project.q.works'),
+          hint,
+          choices: [
+            ...PROJECT_WORKS.map((id) => ({ id, label: cardKey(PROJECT_WORKS_KEYS[id]) })),
+            quiet
+          ],
+          ...(nature.works === undefined ? {} : { selected: nature.works })
+        };
+      case 'use':
+        return {
+          id: 'use',
+          label: cardKey('fr-urban-rules.project.q.use'),
+          hint,
+          choices: [
+            ...USE_CHIPS.map((id) => ({ id, label: cardKey(PROJECT_CHIP_KEYS[id]) })),
+            quiet
+          ],
+          ...(nature.use === undefined || !USE_CHIPS.includes(nature.use)
+            ? {}
+            : { selected: nature.use })
+        };
+      case 'area': {
+        const selected = selectedBucketOf(nature.area, buckets);
+        return {
+          id: 'area',
+          label: cardKey('fr-urban-rules.project.q.area'),
+          hint: cardKey('fr-urban-rules.project.card.thresholds', {
+            thresholds: question.thresholds.join(' · ')
+          }),
+          choices: [
+            ...buckets.map((bucket) => ({ id: bucket.id, label: bucketLabel(bucket) })),
+            quiet
+          ],
+          ...(selected === undefined ? {} : { selected })
+        };
+      }
+      default:
+        return {
+          id: 'icpe',
+          label: cardKey('fr-urban-rules.project.q.icpe'),
+          hint,
+          choices: [
+            { id: 'yes', label: cardKey(PROJECT_ICPE_KEYS.yes) },
+            { id: 'no', label: cardKey(PROJECT_ICPE_KEYS.no) },
+            quiet
+          ],
+          ...(nature.icpe === undefined ? {} : { selected: nature.icpe })
+        };
+    }
+  });
+  return {
+    kind: 'questions',
+    id: PROJECT_CARD_ID,
+    title: cardKey('fr-urban-rules.project.card.title'),
+    subtitle: cardKey('fr-urban-rules.project.card.subtitle'),
+    questions,
+    summary: cardKey('fr-urban-rules.project.card.summary', { n: decidedNow, m: offer.base }),
+    actions: [
+      { id: 'later', label: cardKey('fr-urban-rules.project.card.later') },
+      { id: 'apply', label: cardKey('fr-urban-rules.project.card.apply'), emphasis: 'primary' }
+    ]
+  };
+}
+
+/**
+ * The answers the card holds, as the project's nature: a chip is an answer, « not decided » and a cleared
+ * chip are none. A question the card did not ask keeps its stored answer; an exact area typed in the
+ * panel stays while its bucket is still the one chosen.
+ */
+export function natureFromAnswers(answers, offer, current) {
+  const asked = new Set(offer.questions.map((question) => question.id));
+  const nature = {};
+  const pick = (id, valid) => {
+    if (!asked.has(id)) return current[id];
+    return valid(answers[id]) ? answers[id] : undefined;
+  };
+  const works = pick('works', (value) => PROJECT_WORKS.includes(value));
+  if (works !== undefined) nature.works = works;
+  const use = pick('use', (value) => USE_CHIPS.includes(value));
+  if (use !== undefined) nature.use = use;
+  const icpe = pick('icpe', (value) => value === 'yes' || value === 'no');
+  if (icpe !== undefined) nature.icpe = icpe;
+  if (!asked.has('area')) {
+    if (current.area !== undefined) nature.area = current.area;
+  } else {
+    const buckets = areaBucketsOf(thresholdsOf(offer));
+    const bucket = buckets.find((candidate) => candidate.id === answers.area);
+    if (bucket !== undefined) {
+      nature.area =
+        current.area?.exact === true && selectedBucketOf(current.area, buckets) === bucket.id
+          ? current.area
+          : { from: bucket.from, to: bucket.to };
+    }
+  }
+  return nature;
+}
+
+/** An area answer as a card text: a number as plain words, a bucket as its key with its edges. */
+const areaCardText = (area) =>
+  area.exact === true
+    ? { text: `${area.from} m²` }
+    : area.from === 0 && area.to !== null
+      ? cardKey(PROJECT_AREA_KEYS.under, { to: area.to })
+      : area.to === null
+        ? cardKey(PROJECT_AREA_KEYS.over, { from: area.from })
+        : cardKey(PROJECT_AREA_KEYS.range, { from: area.from, to: area.to });
+
+/** The card after the answers were applied: them as tags, how many rules they decided, and where to go next. */
+export function projectSummaryCardOf(offer, nature, decidedNow) {
+  const tags = [
+    nature.use === undefined ? undefined : cardKey(PROJECT_USE_KEYS[nature.use]),
+    nature.works === undefined ? undefined : cardKey(PROJECT_WORKS_KEYS[nature.works]),
+    nature.area === undefined ? undefined : areaCardText(nature.area),
+    nature.icpe === undefined ? undefined : cardKey(PROJECT_ICPE_KEYS[nature.icpe])
+  ].filter((tag) => tag !== undefined);
+  const left = Math.max(0, offer.base - decidedNow);
+  return {
+    kind: 'summary',
+    id: PROJECT_SUMMARY_ID,
+    title: cardKey('fr-urban-rules.project.card.title'),
+    tags,
+    notes: [
+      {
+        tone: 'info',
+        text: cardKey('fr-urban-rules.project.card.applied', { n: decidedNow, m: left })
+      },
+      { text: cardKey('fr-urban-rules.project.card.appliedExplain') }
+    ],
+    actions: [
+      {
+        id: 'open',
+        label: cardKey('fr-urban-rules.project.card.open', { m: left }),
+        emphasis: 'primary',
+        reveal: true
+      },
+      { id: 'change', label: cardKey('fr-urban-rules.project.card.change') }
+    ]
+  };
+}
+
+/**
+ * Posts the question card once a reading is over and the answers' summary after them (SDK 1.41). `offer()`
+ * is the latest of the Rules view's (`projectOfferOf`); `save(nature, offer)` stores the answers and
+ * answers whether it did, `dismiss(offer)` records the document as asked. A host without `ai.cards`
+ * finds nothing here: the panel's form is the way in.
+ */
+export function createProjectCards({ ai, offer, save, dismiss }) {
+  let handle;
+  const cards = () => {
+    try {
+      const candidate = ai();
+      return typeof candidate?.cards?.post === 'function' ? candidate.cards : undefined;
+    } catch {
+      return undefined;
+    }
+  };
+  const drop = () => {
+    const held = handle;
+    handle = undefined;
+    try {
+      held?.dispose();
+    } catch {
+      // already gone
+    }
+  };
+  const show = (card, handlers) => {
+    const service = cards();
+    if (service === undefined) return false;
+    drop();
+    try {
+      handle = service.post(card, handlers);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  const decidedBy = (current, nature) => projectDecidedBy(current.entries, nature);
+  const ask = () => {
+    const current = offer();
+    if (current === undefined || current.questions.length === 0) return false;
+    return show(
+      projectQuestionCardOf(current, current.nature, decidedBy(current, current.nature)),
+      {
+        onAnswer: (event) => {
+          const now = offer();
+          if (now === undefined) return;
+          const next = natureFromAnswers(event.answers, now, now.nature);
+          try {
+            handle?.update(projectQuestionCardOf(now, next, decidedBy(now, next)));
+          } catch {
+            // the line under the chips is a courtesy
+          }
+        },
+        onAction: (event) => {
+          const now = offer();
+          if (now === undefined) return;
+          if (event.actionId === 'later') {
+            drop();
+            dismiss(now);
+            return;
+          }
+          if (event.actionId !== 'apply') return;
+          const next = natureFromAnswers(event.answers, now, now.nature);
+          if (!save(next, now)) return;
+          show(projectSummaryCardOf(now, next, decidedBy(now, next)), {
+            onAction: (press) => {
+              if (press.actionId === 'change') ask();
+            }
+          });
+        }
+      }
+    );
+  };
+  return {
+    ask,
+    /** After a reading came to its figures: the question card, once per document, while any is unanswered. */
+    afterReading() {
+      const current = offer();
+      if (current === undefined || current.unanswered === 0 || current.asked) return;
+      ask();
+    },
+    dispose: drop
+  };
 }
 
 /** DEC-1 (B2): Extract again is offered for a partial result, another provider, an older version. */
@@ -2503,6 +3075,39 @@ export function createReader({
    * project's; the job runs on the service.
    */
   const extractions = new Map();
+  /**
+   * Sprint 002.23: the reading's progress as a card in the AI conversation (SDK 1.41). A host
+   * without `ai.cards` has none, and the panel shows the wait as it always did.
+   */
+  /** Sprint 002.24: the Rules view's latest offer of questions about the project. */
+  let projectOffer;
+  const cards = createReadingCards({
+    ai,
+    act: (record, actionId) => cardAction(record, actionId),
+    onDone: () => projectCards.afterReading()
+  });
+  const projectCards = createProjectCards({
+    ai,
+    offer: () => projectOffer,
+    save: (nature, offer) => {
+      const written = writeSectionWith(
+        (section) => withProjectNature(section, nature, offer.documentKey, now().toISOString()),
+        'set-project-nature'
+      );
+      if (written) requestSignal();
+      return written;
+    },
+    dismiss: (offer) => {
+      if (
+        writeSectionWith(
+          (section) => withProjectAsked(section, offer.documentKey, now().toISOString()),
+          'set-project-nature'
+        )
+      )
+        requestSignal();
+    }
+  });
+
   /** S5: reads in flight; a change during one is signalled once it has returned. */
   let readsInFlight = 0;
   let signalPending = false;
@@ -2620,7 +3225,12 @@ export function createReader({
       const answer = withZonePages(
         rnu.augment(base, request, answeredRoads, facts.get(base), {
           written,
-          documentWatch: documentWatchOf(facts.get(base)?.partition)
+          documentWatch: documentWatchOf(facts.get(base)?.partition),
+          // 002.23: the rules view's own numbers, for the reading's card.
+          onCounts: (counts, zones, offer) => {
+            projectOffer = offer;
+            cards.counts(counts, zones);
+          }
         }),
         pages
       );
@@ -3342,6 +3952,8 @@ export function createReader({
     listeners.clear();
     for (const record of extractions.values()) record.cancel?.();
     extractions.clear();
+    cards.dispose();
+    projectCards.dispose();
     for (const w of watches.values()) {
       w.wanted = false;
       w.cancel?.();
@@ -3817,6 +4429,7 @@ export function createReader({
       while (extractions.size > CHAPTER_ENTRIES) {
         const oldest = extractions.values().next().value;
         oldest.cancel?.();
+        cards.dismiss(oldest);
         extractions.delete(oldest.id);
       }
     }
@@ -3921,6 +4534,7 @@ export function createReader({
       JOB_ID.test(answer.json.jobId)
     ) {
       record.jobId = answer.json.jobId;
+      record.cancelledByUser = false;
       record.state =
         JOB_STATES.has(answer.json.state) &&
         answer.json.state !== 'done' &&
@@ -3934,6 +4548,7 @@ export function createReader({
       record.stateSince = now().getTime();
       record.pollFailures = 0;
       record.failingSince = undefined;
+      cards.sync(record, { model: chosen === undefined ? undefined : (chosen.model ?? chosen.providerId) });
       poll(record);
       return undefined;
     }
@@ -3946,7 +4561,30 @@ export function createReader({
     ...(Number.isSafeInteger(progress?.chunk) && progress.chunk >= 0
       ? { chunk: progress.chunk }
       : {}),
-    ...(Number.isSafeInteger(progress?.of) && progress.of >= 0 ? { of: progress.of } : {})
+    ...(Number.isSafeInteger(progress?.of) && progress.of >= 0 ? { of: progress.of } : {}),
+    // Sprint 002.23: what the AI panel's card tells — counts, pages and states, never a passage.
+    ...(typeof progress?.step === 'string' && /^[a-z]{1,20}$/.test(progress.step) ? { step: progress.step } : {}),
+    ...(Number.isSafeInteger(progress?.rules) && progress.rules >= 0 ? { rules: progress.rules } : {}),
+    ...(progress?.document === 'hit' || progress?.document === 'miss' || progress?.document === 'joined'
+      ? { document: progress.document }
+      : {}),
+    ...(pagesOf(progress?.chapter?.pages) === undefined
+      ? {}
+      : { chapter: { pages: [...progress.chapter.pages] } }),
+    ...(Array.isArray(progress?.parts)
+      ? {
+          parts: progress.parts
+            .slice(0, READING_PART_MAX)
+            .filter((part) => Number.isSafeInteger(part?.n) && ['waiting', 'running', 'done', 'failed'].includes(part.state))
+            .map((part) => ({
+              n: part.n,
+              state: part.state,
+              ...(pagesOf(part.pages) === undefined ? {} : { pages: [...part.pages] }),
+              ...(Number.isSafeInteger(part.rules) && part.rules >= 0 ? { rules: part.rules } : {}),
+              ...(part.cached === true ? { cached: true } : {})
+            }))
+        }
+      : {})
   });
 
   /**
@@ -3966,6 +4604,8 @@ export function createReader({
     const fast = now().getTime() - record.pollStarted < POLL_FAST_FOR_MS;
     record.cancel = schedule(
       async () => {
+        try {
+          await (async () => {
         record.cancel = undefined;
         const jobId = record.jobId;
         if (jobId === undefined || record.paused) return;
@@ -3984,6 +4624,7 @@ export function createReader({
           record.failingSince = undefined;
           const state = answer.json?.state;
           if (state === 'done') {
+            record.progress = progressOf(answer.json.progress);
             takeResult(record, answer.json.result);
             record.pollStarted = undefined;
             record.revision += 1;
@@ -4036,9 +4677,76 @@ export function createReader({
         }
         const retry = errorOf(answer).retryAfterSeconds;
         poll(record, retry === undefined ? undefined : retry * 1000);
+          })();
+        } finally {
+          cards.sync(record);
+        }
       },
       Math.max(fast ? POLL_FAST_MS : POLL_SLOW_MS, delay ?? 0)
     );
+  }
+
+  /**
+   * Sprint 002.23: a card's buttons. Cancel stops the job on the service (best effort — the user
+   * has stopped waiting either way); retry is Extract again's cheaper sibling, a plain read, which
+   * the service answers from what it already read; keep takes the card down; open is the host's.
+   */
+  /** Writes the section as `update` makes it from the one held, undoable; `false` when it cannot (no section, read-only, stale). */
+  function writeSectionWith(update, actionId) {
+    try {
+      const data = packageData();
+      if (data === undefined || typeof data.write !== 'function') return false;
+      const before = data.read();
+      const { section, readOnly } = sectionOf(before);
+      if (readOnly) return false;
+      const label = cut(translate(UNDO_KEYS[actionId]) ?? 'Planning rules', LABEL_MAX);
+      return Boolean(data.write(update(section), label, before ?? null));
+    } catch (cause) {
+      log(`${SOURCE_ID}: the section could not be written: ${String(cause)}`);
+      return false;
+    }
+  }
+
+  async function cardAction(record, actionId) {
+    if (actionId === 'keep') {
+      cards.dismiss(record);
+      return;
+    }
+    if (actionId === 'narrow') {
+      projectCards.ask();
+      return;
+    }
+    if (actionId === 'cancel') {
+      const jobId = record.jobId;
+      if (jobId === undefined) return;
+      record.cancelledByUser = true;
+      record.cancel?.();
+      record.cancel = undefined;
+      record.jobId = undefined;
+      record.pollStarted = undefined;
+      record.state = record.result === undefined ? 'not_started' : 'done';
+      record.error = undefined;
+      record.revision += 1;
+      cards.sync(record);
+      requestSignal();
+      await serviceCall(new URL(`v1/extractions/${encodeURIComponent(jobId)}/cancel`, record.baseUrl), {
+        method: 'POST'
+      });
+      return;
+    }
+    if (actionId === 'retry') {
+      if (record.baseUrl === undefined || record.starting) return;
+      if (record.jobId !== undefined && record.state !== 'done' && record.state !== 'failed') return;
+      record.starting = true;
+      try {
+        await startExtraction(record, false);
+      } finally {
+        record.starting = false;
+      }
+      record.revision += 1;
+      cards.sync(record);
+      requestSignal();
+    }
   }
 
   /** DEC-1: polling stops for a zone not on view (another plot, another version); it resumes on return. */
@@ -5958,6 +6666,9 @@ function sectionOf(raw) {
       return { section: raw, readOnly: true };
     }
   }
+  // Sprint 002.24: the project's nature is one record, never overwritten in a shape not recognised.
+  if (raw.projectNature !== undefined && !isProjectNature(raw.projectNature))
+    return { section: raw, readOnly: true };
   return { section: raw, readOnly: false };
 }
 
@@ -6576,12 +7287,790 @@ function triageOf({ item, zone, commune }) {
   }
   return undefined;
 }
+// ── Sprint 002.24: the nature of the project ───────────────────────────────────
+
+/**
+ * A text as a comparison key: no accent, no case, no apostrophe, hyphen or star, one space between
+ * words. « d’activités de service » and « d activites de service » are one.
+ */
+const foldText = (text) =>
+  String(text)
+    .normalize('NFKC')
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+    .replace(/[’'‘`\-–—*]/gu, ' ')
+    .replace(/\s+/gu, ' ')
+    .trim();
+
+/** What the user is planning: a new building, an extension of an existing one, an annex or a pool. */
+const PROJECT_WORKS = ['new', 'extension', 'annex'];
+/**
+ * What the project is used for: the Code de l'urbanisme's sub-destinations (R.151-28), kept as the
+ * règlement quotes them, and the destination it groups under `equipements`. `other` is « mixed or
+ * not listed »: it settles nothing.
+ */
+const PROJECT_USES = [
+  'logement',
+  'hebergement',
+  'artisanat-commerce',
+  'restauration',
+  'commerce-gros',
+  'services-clientele',
+  'hotel',
+  'cinema',
+  'equipements',
+  'bureau',
+  'industrie',
+  'entrepot',
+  'centre-congres',
+  'agricole',
+  'forestier',
+  'other'
+];
+const COMMERCE_USES = [
+  'artisanat-commerce',
+  'restauration',
+  'commerce-gros',
+  'services-clientele',
+  'hotel',
+  'cinema'
+];
+/** A label as the règlement writes it (folded) → the uses it names; a destination names its sub-destinations. */
+const USE_ALIASES = new Map(
+  [
+    [['logement', 'logements'], ['logement']],
+    [
+      ['habitation', 'habitations'],
+      ['logement', 'hebergement']
+    ],
+    [['hebergement', 'hebergements'], ['hebergement']],
+    [
+      [
+        'artisanat et commerce de detail',
+        'artisanat et commerces de detail',
+        'artisanat et commerce de details'
+      ],
+      ['artisanat-commerce']
+    ],
+    [['restauration'], ['restauration']],
+    [['commerce de gros'], ['commerce-gros']],
+    [
+      [
+        'activites de service ou s effectue l accueil d une clientele',
+        'activites de services ou s effectue l accueil d une clientele',
+        'activite de service ou s effectue l accueil d une clientele',
+        'services avec accueil de clients'
+      ],
+      ['services-clientele']
+    ],
+    [
+      [
+        'hebergement hotelier et touristique',
+        'hotels et autres hebergements touristiques',
+        'hotel',
+        'hotels'
+      ],
+      ['hotel']
+    ],
+    [['cinema'], ['cinema']],
+    [
+      [
+        'commerce et activites de services',
+        'commerce et activites de service',
+        'commerces et activites de services',
+        'commerces et activites de service'
+      ],
+      COMMERCE_USES
+    ],
+    [['equipements d interet collectif et services publics'], ['equipements']],
+    [['bureau', 'bureaux'], ['bureau']],
+    [['industrie'], ['industrie']],
+    [['entrepot', 'entrepots'], ['entrepot']],
+    [['centre de congres et d exposition'], ['centre-congres']],
+    [
+      ['autres activites des secteurs secondaire ou tertiaire'],
+      ['industrie', 'entrepot', 'bureau', 'centre-congres']
+    ],
+    [['exploitation agricole'], ['agricole']],
+    [['exploitation forestiere'], ['forestier']],
+    [['exploitation agricole et forestiere'], ['agricole', 'forestier']]
+  ].flatMap(([labels, ids]) => labels.map((label) => [label, ids]))
+);
+
+/**
+ * The uses a candidate is about, when it says so in its own subject — a condition that is a use's name
+ * (a parking table's row), one that quotes « sous-destination … » or « à destination de … », or a
+ * one-line row of the uses table (« Industrie Interdit »). A use quoted that this does not know makes
+ * the whole candidate unreadable (`undefined`): it is never scoped on a guess. A destination and one of
+ * its sub-destinations named together are the sub-destination (the finer one wins).
+ */
+function usesOfCandidate(item) {
+  const sets = [];
+  for (const condition of item.conditions) {
+    const folded = foldText(condition);
+    const direct = USE_ALIASES.get(folded);
+    if (direct !== undefined) {
+      sets.push(direct);
+      continue;
+    }
+    if (/sous ?destinations?|a destination d/u.test(folded)) {
+      const quoted = [
+        ...String(condition)
+          .normalize('NFKC')
+          .matchAll(/[«"]\s*([^»"]+?)\s*[»"]/gu)
+      ].map((match) => USE_ALIASES.get(foldText(match[1])));
+      if (quoted.length === 0 || quoted.some((ids) => ids === undefined)) return undefined;
+      sets.push([...new Set(quoted.flat())]);
+    }
+  }
+  if (sets.length === 0 && item.passage.length <= 80) {
+    const row =
+      /^(.+?) (?:interdit|interdite|interdits|interdites|autorise|autorisee|autorises|admis|admise|admises)$/u.exec(
+        foldText(item.passage)
+      );
+    const ids = row === null ? undefined : USE_ALIASES.get(row[1]);
+    if (ids !== undefined) sets.push(ids);
+  }
+  if (sets.length === 0) return undefined;
+  const finest = sets.filter(
+    (set) =>
+      !sets.some(
+        (other) =>
+          other !== set && other.length < set.length && other.every((id) => set.includes(id))
+      )
+  );
+  return [...new Set(finest.flat())].sort();
+}
+
+const EXTENSION_SUBJECT = /^(?:\[\w+\] )?(?:(?:les|une seule|une|des|l) )?extensions?\b/u;
+const EXTENSION_ADMITTED =
+  /^(?:\[\w+\] )?(?:est admise|sont admises|est autorisee|sont autorisees) (?:l |les |une seule )?extensions?\b/u;
+/**
+ * A candidate that is about the extension of an existing building and nothing else, by its subject: its
+ * passage or one of its conditions begins with « extension(s) », or says extensions are admitted. Not
+ * « les nouvelles constructions et les extensions »: that one is about both.
+ */
+function extensionOnly(item) {
+  return (
+    EXTENSION_SUBJECT.test(foldText(item.passage)) ||
+    item.conditions.some((condition) => EXTENSION_SUBJECT.test(foldText(condition))) ||
+    EXTENSION_ADMITTED.test(foldText(item.passage))
+  );
+}
+
+const SDP_COMPARISON = {
+  'inferieure ou egale': 'le',
+  'egale ou inferieure': 'le',
+  'superieure ou egale': 'ge',
+  'egale ou superieure': 'ge',
+  'au moins egale': 'ge',
+  'au plus egale': 'le',
+  inferieure: 'lt',
+  superieure: 'gt'
+};
+const SDP_CONDITION =
+  /surface de plancher (?:totale )?(?:est |sont )?(inferieure ou egale|egale ou inferieure|superieure ou egale|egale ou superieure|au moins egale|au plus egale|inferieure|superieure) ?a? ?(\d+(?:[.,]\d+)?) ?m2(.*)$/u;
+/**
+ * The floor-area thresholds a candidate's conditions state — « constructions d'une surface de plancher
+ * inférieure à 500 m2 dans les secteurs UDa et UDa1, ou 250 m2 dans le secteur UDa2 » — as
+ * `{ cmp, threshold }` for the plot's own zone. A threshold stated for sectors that do not include the
+ * zone, or a condition this cannot read, is no threshold: the candidate is left alone.
+ */
+function sdpOf(item, zone) {
+  const mine = foldText(zone ?? '').replace(/ /gu, '');
+  const found = [];
+  for (const condition of item.conditions) {
+    const match = SDP_CONDITION.exec(foldText(condition));
+    if (match === null) continue;
+    const number = (text) => Number(text.replace(',', '.'));
+    const tail = match[3];
+    const sectors =
+      /dans (?:les |le )?secteurs? ([a-z0-9]+(?: (?:et|ou) [a-z0-9]+| ?, ?[a-z0-9]+)*)/u.exec(tail);
+    const second = /(?:ou|,) ?(\d+(?:[.,]\d+)?) ?m2 dans (?:le )?secteurs? ([a-z0-9]+)/u.exec(tail);
+    let threshold = number(match[2]);
+    if (sectors !== null || second !== null) {
+      const listed = sectors === null ? [] : sectors[1].split(/ ?, ?| et | ou /u);
+      if (mine !== '' && listed.includes(mine)) threshold = number(match[2]);
+      else if (mine !== '' && second !== null && second[2] === mine) threshold = number(second[1]);
+      else continue;
+    }
+    if (Number.isFinite(threshold)) found.push({ cmp: SDP_COMPARISON[match[1]], threshold });
+  }
+  return found;
+}
+
+const ICPE_SUBJECT =
+  /^(?:\[\w+\] )?(?:dans [^,]{0,40}, )?(?:sont admises|est admise|sont autorisees) les installations classees/u;
+
+/**
+ * Sprint 002.24: what a candidate is about, read from its own subject and conditions, never from free
+ * text: the uses (`uses`), the extension of an existing building (`works`), floor-area thresholds
+ * (`sdp`) and classified installations (`icpe`). `undefined` when it names none — most are general.
+ */
+function scopeOf({ item, zone }) {
+  const scope = {};
+  const uses = usesOfCandidate(item);
+  if (uses !== undefined) scope.uses = uses;
+  if (extensionOnly(item)) scope.works = 'extension';
+  const sdp = sdpOf(item, zone);
+  if (sdp.length > 0) scope.sdp = sdp;
+  if (ICPE_SUBJECT.test(foldText(item.passage))) scope.icpe = true;
+  return Object.keys(scope).length === 0 ? undefined : scope;
+}
+
+/**
+ * Whether `cmp threshold` holds for the project's floor area: `true`, `false`, or `undefined` where the
+ * answer leaves it open. An exact area is a number; a bucket `[from, to)` leaves open what it straddles.
+ */
+function sdpHolds(cmp, threshold, area) {
+  const { from, to } = area;
+  if (area.exact === true) {
+    return {
+      lt: from < threshold,
+      le: from <= threshold,
+      gt: from > threshold,
+      ge: from >= threshold
+    }[cmp];
+  }
+  const high = to === null || to === undefined ? Infinity : to;
+  switch (cmp) {
+    case 'lt':
+      return high <= threshold ? true : from >= threshold ? false : undefined;
+    case 'le':
+      return high <= threshold ? true : from > threshold ? false : undefined;
+    case 'gt':
+      return from > threshold ? true : high <= threshold ? false : undefined;
+    default:
+      return from >= threshold ? true : high <= threshold ? false : undefined;
+  }
+}
+
+/**
+ * Sprint 002.24: what the project's answers say of one scoped candidate. `excluded` — an answer
+ * positively puts it outside the project (the first such fact); `applies` — the answers settle that it
+ * concerns the project; `needs` — an answer that would settle it is missing. A candidate no answer
+ * speaks of has none of the three. Pure; never reads a candidate beyond its scope.
+ */
+function projectCheck(scope, nature) {
+  const check = { applies: [], needs: [] };
+  if (scope === undefined) return check;
+  const put = (fact, state) => {
+    if (state === 'excluded') check.excluded ??= fact;
+    else check[state].push(fact);
+  };
+  if (scope.uses !== undefined) {
+    const fact = { facet: 'use', ids: scope.uses };
+    if (nature.use === undefined) put(fact, 'needs');
+    else if (nature.use !== 'other')
+      put(fact, scope.uses.includes(nature.use) ? 'applies' : 'excluded');
+  }
+  if (scope.works === 'extension') {
+    const fact = { facet: 'works' };
+    if (nature.works === undefined) put(fact, 'needs');
+    else put(fact, nature.works === 'extension' ? 'applies' : 'excluded');
+  }
+  for (const { cmp, threshold } of scope.sdp ?? []) {
+    const fact = { facet: 'sdp', cmp, threshold };
+    if (nature.area === undefined) {
+      put(fact, 'needs');
+      continue;
+    }
+    const holds = sdpHolds(cmp, threshold, nature.area);
+    if (holds === undefined) put(fact, 'needs');
+    else put(fact, holds ? 'applies' : 'excluded');
+  }
+  if (scope.icpe === true) {
+    const fact = { facet: 'icpe' };
+    if (nature.icpe === undefined) put(fact, 'needs');
+    else put(fact, nature.icpe === 'yes' ? 'applies' : 'excluded');
+  }
+  return check;
+}
+
+/**
+ * The questions the candidates ask, and how many each could settle (`n`: the candidates scoped to
+ * it). Only a question some candidate depends on is asked, at most five. The floor-area question
+ * carries the thresholds the rules state, sorted. `entries` are `{ scope }`.
+ */
+function projectQuestionsOf(entries) {
+  const count = (facet) => entries.filter((entry) => entry.scope?.[facet] !== undefined).length;
+  const thresholds = [
+    ...new Set(entries.flatMap((entry) => (entry.scope?.sdp ?? []).map((limit) => limit.threshold)))
+  ].sort((a, b) => a - b);
+  return [
+    { id: 'works', n: count('works') },
+    { id: 'use', n: count('uses') },
+    { id: 'area', n: count('sdp'), thresholds },
+    { id: 'icpe', n: count('icpe') }
+  ].filter((question) => question.n > 0);
+}
+
+// ── Sprint 002.26: rules that apply without shaping the area, and readings that can be checked ──
+
+const NETWORK_WORDS =
+  /\braccord|reseau public|assainissement|eaux usees|eaux pluviales|potable|retention|debit de fuite|impermeabilis/u;
+const GEOMETRY_WORDS =
+  /limites? separatives?|alignement|\brecul|\bretrait|\bhauteur|\bemprise|\bdistance|\bimplant/u;
+/**
+ * Whether a candidate applies to the project without shaping the buildable area: the parking
+ * requirements (by kind) and the connections to the networks and the rainwater management (by the
+ * words of the passage, none of them about a distance, a height or a footprint). Unsure is `false`.
+ */
+function noDrawingOf(item) {
+  if (item.kind === 'parking') return true;
+  if (
+    item.kind !== 'other' ||
+    item.statement === 'see_graphic' ||
+    item.statement === 'not_regulated'
+  )
+    return false;
+  const text = foldText(item.passage);
+  return NETWORK_WORDS.test(text) && !GEOMETRY_WORDS.test(text);
+}
+
+/** Whether the figure a limit states is written in the passage, in its unit (« 3,5 mètres », « 30 % », « 250 m2 »). */
+function quantityIn(passage, limit) {
+  const text = String(passage).normalize('NFKC').toLowerCase();
+  const value = limit.kind === 'ratio' ? limit.percent : limit.value;
+  const unit = limit.kind === 'ratio' ? 'percent' : limit.unit;
+  const after =
+    unit === 'percent'
+      ? '\\s*(?:%|pour cent)'
+      : unit === 'm2'
+        ? '\\s*(?:m²|m2)(?![a-z0-9])'
+        : '\\s*(?:mètres?|metres?|m)(?![a-zà-ÿ0-9²])';
+  return [String(value), String(value).replace('.', ',')].some((written) =>
+    new RegExp(`(?<![\\d.,])${written.replace('.', '\\.')}${after}`, 'u').test(text)
+  );
+}
+
+/** A condition that only repeats the heading the sentence stands under (« Dans la zone UD et les secteurs UDa… »). */
+const HEADING_CONDITION = /^(?:dans|pour|sur) (?:toute )?(?:la |le |les )?(?:zones?|secteurs?)\b/u;
+const CONDITION_WORDS =
+  /\b(?:si|lorsque|lorsqu|quand|a condition|sauf|hors|en dehors|au dela|uniquement|seulement|dans le cas|en cas|excepte|en l absence|pour les constructions|pour les|le long)\b/u;
+/** A condition on the scale of the whole plot, which settles nothing about which rule it is. */
+const SCALE_CONDITION = /^a l echelle (?:du |de l |de la )?(?:terrain|unite fonciere)\b/u;
+
+/**
+ * Whether a candidate's condition is one this knows how to read: a heading naming the plot's zone (or
+ * no zone at all), the scale of the plot, a use, an extension, or a floor-area threshold the plot's
+ * zone is concerned by. Anything else — « lorsqu'elle existe », « le long des linéaires de gabarit », a
+ * subject that narrows the rule (« le bassin de piscine non couvert ») — is not read.
+ */
+function conditionReadable(condition, item, zone) {
+  const folded = foldText(condition);
+  if (SCALE_CONDITION.test(folded)) return true;
+  if (HEADING_CONDITION.test(folded) && !CONDITION_WORDS.test(folded)) {
+    const mine = foldText(zone ?? '').replace(/ /gu, '');
+    const named = (folded.match(/\bu[a-z0-9]*\b/gu) ?? []).filter((word) => word !== 'une');
+    return named.length === 0 || named.some((word) => mine.startsWith(word));
+  }
+  if (USE_ALIASES.has(folded)) return true;
+  if (/sous ?destinations?|a destination d/u.test(folded))
+    return usesOfCandidate(item) !== undefined;
+  if (EXTENSION_SUBJECT.test(folded)) return true;
+  if (SDP_CONDITION.test(folded)) return sdpOf({ conditions: [condition] }, zone).length > 0;
+  return false;
+}
+
+/**
+ * A reading that can be checked against its own text, and nothing else: a limit stated with a figure
+ * (a value or a percentage) the passage writes in that unit, read with high confidence, with no
+ * exception and no strip, whose every condition is one this reads. Pure; the project's answers
+ * (a use, a floor area it depends on) are the caller's to add.
+ */
+function checkedReadingOf({ item, zone }) {
+  if (item.statement !== 'limit' || item.confidence !== 'high' || item.sectorUnplaced === true)
+    return false;
+  const limit = item.limit;
+  if (limit?.kind !== 'value' && limit?.kind !== 'ratio') return false;
+  if (item.strip != null || item.stripRefused === true) return false;
+  if ([item.passage, ...item.conditions].some(mentionsStrip)) return false;
+  if (item.exceptions.length > 0) return false;
+  if (!quantityIn(item.passage, limit)) return false;
+  return item.conditions.every((condition) => conditionReadable(condition, item, zone));
+}
+
+/** The buckets the floor-area chips stand for: `[0, t1)`, `[t1, t2)` … `[tk, ∞)`, from the thresholds. */
+function areaBucketsOf(thresholds) {
+  const edges = [0, ...thresholds];
+  return edges.map((from, index) => ({
+    id: `b${index}`,
+    from,
+    to: index + 1 < edges.length ? edges[index + 1] : null
+  }));
+}
+
+/** How many scoped candidates the answers positively exclude. */
+const projectDecidedBy = (entries, nature) =>
+  entries.filter((entry) => projectCheck(entry.scope, nature).excluded !== undefined).length;
+
+const isAreaAnswer = (area) =>
+  area !== null &&
+  typeof area === 'object' &&
+  Number.isFinite(area.from) &&
+  area.from >= 0 &&
+  area.from <= 1_000_000 &&
+  (area.exact === true
+    ? area.to === area.from
+    : area.to === null ||
+      (Number.isFinite(area.to) && area.to > area.from && area.to <= 1_000_000)) &&
+  (area.exact === undefined || area.exact === true);
+/** The stored `projectNature` is a record whose every member is one of the known answers. */
+const isProjectNature = (value) =>
+  value !== null &&
+  typeof value === 'object' &&
+  !Array.isArray(value) &&
+  (value.works === undefined || PROJECT_WORKS.includes(value.works)) &&
+  (value.use === undefined || PROJECT_USES.includes(value.use)) &&
+  (value.area === undefined || isAreaAnswer(value.area)) &&
+  (value.icpe === undefined || value.icpe === 'yes' || value.icpe === 'no') &&
+  (value.askedFor === undefined ||
+    (Array.isArray(value.askedFor) &&
+      value.askedFor.length <= 50 &&
+      value.askedFor.every((id) => typeof id === 'string' && id.length <= 200)));
+/** The answers the section holds: a record of what is known; nothing known is `{}`. */
+const projectNatureOf = (section) => {
+  const stored = section?.projectNature;
+  if (!isProjectNature(stored)) return {};
+  const { works, use, area, icpe } = stored;
+  return {
+    ...(works === undefined ? {} : { works }),
+    ...(use === undefined ? {} : { use }),
+    ...(area === undefined ? {} : { area }),
+    ...(icpe === undefined ? {} : { icpe })
+  };
+};
+const projectAskedFor = (section) =>
+  isProjectNature(section?.projectNature) && Array.isArray(section.projectNature.askedFor)
+    ? section.projectNature.askedFor
+    : [];
+/** The next section with these answers (an empty member is no member), the document marked as asked. */
+function withProjectNature(section, nature, documentKey, at) {
+  const asked = [
+    ...new Set([
+      ...projectAskedFor(section),
+      ...(typeof documentKey === 'string' && documentKey !== '' ? [documentKey] : [])
+    ])
+  ].slice(-50);
+  const { works, use, area, icpe } = nature;
+  return {
+    ...(section ?? {}),
+    schema: SECTION_SCHEMA,
+    projectNature: {
+      ...(works === undefined ? {} : { works }),
+      ...(use === undefined ? {} : { use }),
+      ...(area === undefined ? {} : { area }),
+      ...(icpe === undefined ? {} : { icpe }),
+      ...(asked.length === 0 ? {} : { askedFor: asked }),
+      at
+    }
+  };
+}
+/** The next section with the document marked as asked, the answers kept: « Not now ». */
+const withProjectAsked = (section, documentKey, at) =>
+  withProjectNature(section, projectNatureOf(section), documentKey, at);
+
+/** The strings of a use, a kind of works and an answer, written out: every shipped key is named in the source. */
+const PROJECT_WORKS_KEYS = {
+  new: 'fr-urban-rules.project.works.new',
+  extension: 'fr-urban-rules.project.works.extension',
+  annex: 'fr-urban-rules.project.works.annex'
+};
+const PROJECT_USE_KEYS = {
+  logement: 'fr-urban-rules.project.use.logement',
+  hebergement: 'fr-urban-rules.project.use.hebergement',
+  'artisanat-commerce': 'fr-urban-rules.project.use.artisanat-commerce',
+  restauration: 'fr-urban-rules.project.use.restauration',
+  'commerce-gros': 'fr-urban-rules.project.use.commerce-gros',
+  'services-clientele': 'fr-urban-rules.project.use.services-clientele',
+  hotel: 'fr-urban-rules.project.use.hotel',
+  cinema: 'fr-urban-rules.project.use.cinema',
+  equipements: 'fr-urban-rules.project.use.equipements',
+  bureau: 'fr-urban-rules.project.use.bureau',
+  industrie: 'fr-urban-rules.project.use.industrie',
+  entrepot: 'fr-urban-rules.project.use.entrepot',
+  'centre-congres': 'fr-urban-rules.project.use.centre-congres',
+  agricole: 'fr-urban-rules.project.use.agricole',
+  forestier: 'fr-urban-rules.project.use.forestier',
+  other: 'fr-urban-rules.project.use.other'
+};
+const PROJECT_CHIP_KEYS = {
+  logement: 'fr-urban-rules.project.chip.logement',
+  'artisanat-commerce': 'fr-urban-rules.project.chip.artisanat-commerce',
+  restauration: 'fr-urban-rules.project.chip.restauration',
+  bureau: 'fr-urban-rules.project.chip.bureau',
+  hotel: 'fr-urban-rules.project.chip.hotel',
+  industrie: 'fr-urban-rules.project.chip.industrie',
+  equipements: 'fr-urban-rules.project.chip.equipements',
+  agricole: 'fr-urban-rules.project.chip.agricole',
+  other: 'fr-urban-rules.project.chip.other'
+};
+const PROJECT_ICPE_KEYS = {
+  yes: 'fr-urban-rules.project.icpe.yes',
+  no: 'fr-urban-rules.project.icpe.no'
+};
+const PROJECT_CMP_KEYS = {
+  lt: 'fr-urban-rules.project.cmp.lt',
+  le: 'fr-urban-rules.project.cmp.le',
+  gt: 'fr-urban-rules.project.cmp.gt',
+  ge: 'fr-urban-rules.project.cmp.ge'
+};
+const PROJECT_FACT_KEYS = {
+  excluded: {
+    use: 'fr-urban-rules.project.excluded.use',
+    works: 'fr-urban-rules.project.excluded.works',
+    sdp: 'fr-urban-rules.project.excluded.sdp',
+    icpe: 'fr-urban-rules.project.excluded.icpe'
+  },
+  applies: {
+    use: 'fr-urban-rules.project.applies.use',
+    works: 'fr-urban-rules.project.applies.works',
+    sdp: 'fr-urban-rules.project.applies.sdp',
+    icpe: 'fr-urban-rules.project.applies.icpe'
+  },
+  needs: {
+    use: 'fr-urban-rules.project.needs.use',
+    works: 'fr-urban-rules.project.needs.works',
+    sdp: 'fr-urban-rules.project.needs.sdp',
+    icpe: 'fr-urban-rules.project.needs.icpe'
+  }
+};
+const TRIAGE_GROUP_KEYS = {
+  sector: 'fr-urban-rules.triage.group.sector',
+  commune: 'fr-urban-rules.triage.group.commune',
+  info: 'fr-urban-rules.triage.group.info',
+  folded: 'fr-urban-rules.triage.group.folded',
+  project: 'fr-urban-rules.triage.group.project'
+};
+const PROJECT_AREA_KEYS = {
+  under: 'fr-urban-rules.project.area.under',
+  range: 'fr-urban-rules.project.area.range',
+  over: 'fr-urban-rules.project.area.over'
+};
+const fillTemplate = (template, params) =>
+  Object.entries(params).reduce(
+    (text, [name, value]) => text.replaceAll(`{${name}}`, String(value)),
+    template
+  );
+
+/** The project's floor area as the answer says it: `320 m²`, `Under 250 m²`, `250 to 500 m²`, `500 m² or more`. */
+function areaWords(area, label) {
+  if (area === undefined) return '';
+  if (area.exact === true) return `${area.from} m²`;
+  if (area.from === 0 && area.to !== null)
+    return fillTemplate(label(PROJECT_AREA_KEYS.under), { to: area.to });
+  if (area.to === null) return fillTemplate(label(PROJECT_AREA_KEYS.over), { from: area.from });
+  return fillTemplate(label(PROJECT_AREA_KEYS.range), { from: area.from, to: area.to });
+}
+/**
+ * Sprint 002.24: one fact of `projectCheck` as the phrase the rule's conditions show — a key of the
+ * `project.<state>.<facet>` family with what it needs: the uses the rule is about, the project's own,
+ * the threshold and the area. `label(key)` translates a use, a kind of works or a comparison.
+ */
+function projectWords(fact, state, nature, label) {
+  const key = PROJECT_FACT_KEYS[state][fact.facet];
+  switch (fact.facet) {
+    case 'use': {
+      const names = fact.ids.slice(0, 4).map((id) => label(PROJECT_USE_KEYS[id]));
+      return {
+        key,
+        params: {
+          scope: (fact.ids.length > 4 ? [...names, '…'] : names).join(', '),
+          use: nature.use === undefined ? '' : label(PROJECT_USE_KEYS[nature.use])
+        }
+      };
+    }
+    case 'works':
+      return {
+        key,
+        params: { works: nature.works === undefined ? '' : label(PROJECT_WORKS_KEYS[nature.works]) }
+      };
+    case 'sdp':
+      return {
+        key,
+        params: {
+          cmp: label(PROJECT_CMP_KEYS[fact.cmp]),
+          threshold: fact.threshold,
+          area: areaWords(nature.area, label)
+        }
+      };
+    default:
+      return { key };
+  }
+}
+
+/**
+ * Sprint 002.24: the questions this reading asks about the project, with what the answers stand at:
+ * the questions (`questions`, each with `n` and `answered`), how many are not answered (`unanswered`),
+ * how many candidates the stored answers decide (`decided`), the open ones whatever the answers say
+ * (`base`), whether any answer is stored (`known`) and the document it is asked for. Pure.
+ */
+function projectOfferOf(planned, left) {
+  const entries = planned.projectEntries ?? [];
+  const nature = planned.nature ?? {};
+  const answeredOf = { works: nature.works, use: nature.use, area: nature.area, icpe: nature.icpe };
+  const questions = projectQuestionsOf(entries).map((question) => ({
+    ...question,
+    answered: answeredOf[question.id] !== undefined
+  }));
+  const decided = [...(planned.autoDecided ?? new Map()).values()].filter(
+    (auto) => auto.group === 'project'
+  ).length;
+  return {
+    questions,
+    entries,
+    nature,
+    decided,
+    base: left + decided,
+    unanswered: questions.filter((question) => !question.answered).length,
+    known: Object.keys(nature).length > 0,
+    documentKey: String(planned.current?.idurba ?? '').toUpperCase(),
+    asked: (planned.projectAsked ?? []).includes(
+      String(planned.current?.idurba ?? '').toUpperCase()
+    ),
+    zone: planned.zone
+  };
+}
+
+const NOT_DECIDED = 'undecided';
+const PROJECT_FIELD_KEYS = {
+  works: 'fr-urban-rules.project.field.works',
+  use: 'fr-urban-rules.project.field.use',
+  icpe: 'fr-urban-rules.project.field.icpe'
+};
+/** The Rules view's « Project nature » section: what is answered, what it decides, and one form to change it. */
+function projectNatureSection(planned, offer, readOnly, label) {
+  const { nature } = offer;
+  const words = (key) => ({ key });
+  const rows = [
+    {
+      label: words('fr-urban-rules.project.field.works'),
+      value:
+        nature.works === undefined
+          ? words('fr-urban-rules.project.notDecided')
+          : words(PROJECT_WORKS_KEYS[nature.works])
+    },
+    {
+      label: words('fr-urban-rules.project.field.use'),
+      value:
+        nature.use === undefined
+          ? words('fr-urban-rules.project.notDecided')
+          : words(PROJECT_USE_KEYS[nature.use])
+    },
+    {
+      label: words('fr-urban-rules.project.field.area'),
+      value:
+        nature.area === undefined
+          ? words('fr-urban-rules.project.notDecided')
+          : { text: areaWords(nature.area, label) }
+    },
+    ...(offer.questions.some((question) => question.id === 'icpe') || nature.icpe !== undefined
+      ? [
+          {
+            label: words('fr-urban-rules.project.field.icpe'),
+            value:
+              nature.icpe === undefined
+                ? words('fr-urban-rules.project.notDecided')
+                : words(PROJECT_ICPE_KEYS[nature.icpe])
+          }
+        ]
+      : [])
+  ];
+  const summary = [
+    nature.use === undefined ? undefined : { key: PROJECT_USE_KEYS[nature.use] },
+    nature.works === undefined ? undefined : { key: PROJECT_WORKS_KEYS[nature.works] },
+    nature.area === undefined ? undefined : { text: areaWords(nature.area, label) }
+  ].filter((part) => part !== undefined);
+  const exactArea = nature.area?.exact === true ? nature.area.from : undefined;
+  const choice = (id, keyOf, ids, initial) => ({
+    key: id,
+    label: { key: PROJECT_FIELD_KEYS[id] },
+    kind: 'choice',
+    required: true,
+    initial: initial ?? NOT_DECIDED,
+    options: [
+      { value: NOT_DECIDED, label: words('fr-urban-rules.project.notDecided') },
+      ...ids.map((value) => ({ value, label: words(keyOf(value)) }))
+    ]
+  });
+  return {
+    kind: 'section',
+    id: 'project-nature',
+    title: words('fr-urban-rules.project.heading'),
+    icon: 'rules',
+    summary: {
+      value: summary.length === 0 ? words('fr-urban-rules.project.summary.none') : summary[0]
+    },
+    blocks: [
+      { kind: 'fields', rows },
+      ...(offer.questions.length > 0
+        ? [
+            {
+              kind: 'notice',
+              tone: 'info',
+              text: {
+                key: 'fr-urban-rules.project.decides',
+                params: { count: offer.decided, base: offer.base }
+              }
+            }
+          ]
+        : []),
+      ...(readOnly
+        ? []
+        : [
+            {
+              kind: 'actions',
+              actions: [
+                {
+                  id: 'set-project-nature',
+                  label: words('fr-urban-rules.project.action.change'),
+                  fields: [
+                    choice('works', (id) => PROJECT_WORKS_KEYS[id], PROJECT_WORKS, nature.works),
+                    choice('use', (id) => PROJECT_USE_KEYS[id], PROJECT_USES, nature.use),
+                    {
+                      key: 'area',
+                      label: { key: 'fr-urban-rules.project.field.area' },
+                      kind: 'number',
+                      unit: 'm2',
+                      min: 0,
+                      max: 100000,
+                      ...(exactArea === undefined ? {} : { initial: exactArea })
+                    },
+                    ...(offer.questions.some((question) => question.id === 'icpe') ||
+                    nature.icpe !== undefined
+                      ? [choice('icpe', (id) => PROJECT_ICPE_KEYS[id], ['yes', 'no'], nature.icpe)]
+                      : [])
+                  ]
+                }
+              ]
+            }
+          ])
+    ]
+  };
+}
+
+/** What a « Change project nature » form says, as answers: « not decided » and an empty area are no answer. */
+function natureFromValues(values, current) {
+  const nature = {};
+  if (PROJECT_WORKS.includes(values?.works)) nature.works = values.works;
+  if (PROJECT_USES.includes(values?.use)) nature.use = values.use;
+  if (values?.icpe === 'yes' || values?.icpe === 'no') nature.icpe = values.icpe;
+  const area = values?.area;
+  if (typeof area === 'number' && Number.isFinite(area) && area >= 0 && area <= 100000)
+    nature.area = { from: area, to: area, exact: true };
+  // A bucket the chips chose stays unless a number is typed.
+  else if (current.area !== undefined && current.area.exact !== true) nature.area = current.area;
+  return nature;
+}
+
 /**
  * Sprint 002.22 (e): the same text read for several sectors is one card showing them. Per zone:
  * which candidates fold into another (`drop`) and which sectors a kept one stands for (`also`). A
  * candidate with a decision already stored stands for the others and is never folded away.
  */
-function foldedSectors(rules, keys, zone, keep) {
+function foldedSectors(rules, keys, zone, keep, open = () => true) {
   const groups = new Map();
   rules.forEach((item, index) => {
     if (keys[index] === undefined) return;
@@ -6614,8 +8103,150 @@ function foldedSectors(rules, keys, zone, keep) {
     for (const index of members) if (index !== standing) folded.set(index, { drop: true });
     folded.set(standing, { also });
   }
+  foldedReadings(rules, keys, zone, keep, open, folded);
   return folded;
 }
+
+/**
+ * Sprint 002.26: what is still the same rule once the sectors are folded, marked `{ fold: { kind, of } }`
+ * (never dropped: it is listed among the rules decided automatically, with its reason and « Rétablir »).
+ * Only candidates still open (`open`: not decided by another cause) take part, and a candidate with a
+ * decision stored (`keep`) stands and is never folded.
+ *
+ * - `duplicate`: the same sentence under another heading — same page, kind, limit, exceptions and
+ *   floor-area/use scope, the passage equal without its list marker (« [a] », « [b] ») and the
+ *   conditions it quotes equal; a condition the passage does not contain is a heading and decides nothing.
+ * - `fragment`: a bullet cut from its sentence (« et qu'elles respectent… ») is read with the nearest
+ *   candidate before it that introduces a list (« à condition »), on the same or the page before.
+ * - `implied`: an unconditional minimum below (or maximum above) another of the same measure, kind and
+ *   page, stated for a sector that contains the other's and that contains the plot's zone.
+ */
+function foldedReadings(rules, keys, zone, keep, open, folded) {
+  const live = (index) =>
+    keys[index] !== undefined &&
+    folded.get(index)?.drop !== true &&
+    folded.get(index)?.fold === undefined &&
+    open(index);
+  const free = (index) => live(index) && !keep.has(keys[index]);
+  const mark = (index, fold) => folded.set(index, { ...(folded.get(index) ?? {}), fold });
+
+  // A sentence folds across sectors only where both cover the plot's zone (no sector, or one the zone
+  // begins with): for a zone with no sector, « UDa » and « UDa2 » stay two rules.
+  const mine = foldText(zone ?? '').replace(/ /gu, '');
+  const coversZone = (sector) =>
+    typeof sector !== 'string' ||
+    (mine !== '' && mine.startsWith(foldText(sector).replace(/ /gu, '')));
+  const sentences = new Map();
+  rules.forEach((item, index) => {
+    if (!live(index)) return;
+    const identity = JSON.stringify([
+      coversZone(item.sector) ? null : item.sector,
+      item.kind,
+      item.statement,
+      item.limit,
+      item.strip ?? null,
+      item.page,
+      sentenceOf(item.passage),
+      item.exceptions.map(sentenceOf),
+      sdpOf(item, zone),
+      usesOfCandidate(item) ?? null,
+      item.conditions
+        .filter((condition) => sentenceOf(item.passage).includes(sentenceOf(condition)))
+        .map(sentenceOf)
+        .sort()
+    ]);
+    sentences.set(identity, [...(sentences.get(identity) ?? []), index]);
+  });
+  for (const members of sentences.values()) {
+    if (members.length < 2) continue;
+    const standing = members.find((index) => keep.has(keys[index])) ?? members[0];
+    for (const index of members)
+      if (index !== standing && free(index)) mark(index, { kind: 'duplicate', of: standing });
+  }
+
+  rules.forEach((item, index) => {
+    if (!free(index) || !FRAGMENT.test(sentenceOf(item.passage)) || item.conditions.length > 1)
+      return;
+    for (let back = index - 1; back >= 0; back -= 1) {
+      if (!live(back)) continue;
+      const parent = rules[back];
+      if (FRAGMENT.test(sentenceOf(parent.passage))) continue;
+      // The nearest candidate before it that is not a bullet itself, or none.
+      if (
+        /\ba condition\b/u.test(sentenceOf(parent.passage)) &&
+        item.page - parent.page <= 1 &&
+        item.page >= parent.page
+      )
+        mark(index, { kind: 'fragment', of: back });
+      break;
+    }
+  });
+
+  const impliable = (item) =>
+    item.statement === 'limit' &&
+    (item.limit?.kind === 'value' || item.limit?.kind === 'ratio') &&
+    item.strip == null &&
+    item.stripRefused !== true &&
+    item.conditions.length === 0 &&
+    item.exceptions.length === 0 &&
+    // A table row writes its sector first (« UDa, UDa1 et UDb Au moins 30 % »): placed by its own words.
+    (item.sectorUnplaced !== true ||
+      sentenceOf(item.passage).startsWith(`${foldText(item.sector ?? '')} `)) &&
+    item.confidence !== 'low' &&
+    typeof item.sector === 'string';
+  const figure = (limit) => (limit.kind === 'ratio' ? limit.percent : limit.value);
+  const measure = (limit) => (limit.kind === 'ratio' ? limit.base : limit.unit);
+  const sectorKey = (sector) => foldText(sector).replace(/ /gu, '');
+  const candidates = rules
+    .map((item, index) => index)
+    .filter((index) => live(index) && impliable(rules[index]));
+  for (const weak of candidates) {
+    if (!free(weak)) continue;
+    const w = rules[weak];
+    const stronger = candidates.find((other) => {
+      const s = rules[other];
+      return (
+        other !== weak &&
+        s.kind === w.kind &&
+        s.page === w.page &&
+        s.limit.kind === w.limit.kind &&
+        s.limit.comparison === w.limit.comparison &&
+        measure(s.limit) === measure(w.limit) &&
+        (w.limit.comparison === 'min'
+          ? figure(s.limit) > figure(w.limit)
+          : figure(s.limit) < figure(w.limit)) &&
+        sectorKey(s.sector) !== sectorKey(w.sector) &&
+        sectorKey(s.sector).startsWith(sectorKey(w.sector)) &&
+        sectorKey(zone ?? '').startsWith(sectorKey(s.sector))
+      );
+    });
+    if (stronger !== undefined) mark(weak, { kind: 'implied', of: stronger });
+  }
+}
+
+/**
+ * A passage as a sentence to compare: no accent or case, no list marker in front, and no punctuation
+ * (a PDF breaks the same list with « ; » on one page and « , » on the next) except a decimal comma.
+ */
+const sentenceOf = (text) =>
+  foldText(text)
+    .replace(/^(?:\[\w+\]|\(\w+\)|[•·▪])\s*/u, '')
+    .replace(/(?<!\d)[;:,.•·▪]|[;:,.•·▪](?!\d)/gu, ' ')
+    .replace(/\s+/gu, ' ')
+    .trim();
+/** A bullet that begins « et … » or « ou … »: the rest of a sentence, not a rule. */
+const FRAGMENT = /^(?:et|ou) /u;
+/** What a fold says of the rule it folds: ruled out, grouped apart, with the page of the rule that stands. */
+const FOLD_REASON_KEYS = {
+  duplicate: 'fr-urban-rules.triage.reason.duplicate',
+  fragment: 'fr-urban-rules.triage.reason.fragment',
+  implied: 'fr-urban-rules.triage.reason.implied'
+};
+const foldDecisionOf = (fold, standing) => ({
+  decision: 'ruled_out',
+  group: 'folded',
+  reason: { key: FOLD_REASON_KEYS[fold.kind], params: { page: standing.page } }
+});
 /** A written rule's rank in the list of what is left to decide: what shapes the area first. */
 const RULE_RANK = {
   road_setback: 0,
@@ -6842,7 +8473,9 @@ const UNDO_KEYS = {
   'forget-exclusion': 'fr-urban-rules.undo.exclusion',
   'show-exclusions': 'fr-urban-rules.undo.exclusion',
   'hide-exclusions': 'fr-urban-rules.undo.exclusion',
-  'bring-back': 'fr-urban-rules.undo.bringBack'
+  'set-project-nature': 'fr-urban-rules.undo.projectNature',
+  'bring-back': 'fr-urban-rules.undo.bringBack',
+  'confirm-batch': 'fr-urban-rules.undo.confirmBatch'
 };
 
 /** A version as stored and compared (DEC-4): `idurba` upper-cased, `datvalid` as read. */
@@ -7671,6 +9304,8 @@ function createRnu({
   now,
   log
 }) {
+  /** Sprint 002.24: a use, a kind of works or a comparison, in the language the host speaks (the key when none answers). */
+  const projectLabel = (key) => translate(key) ?? key;
   /** Ring digest → `{ segments } | { refused }` (DEC-4): per Site boundary, per session. */
   const roadCache = new Map();
   /**
@@ -8131,7 +9766,7 @@ function createRnu({
     request,
     roads,
     reportFacts,
-    { checks: measure = true, written, documentWatch } = {}
+    { checks: measure = true, written, documentWatch, onCounts } = {}
   ) {
     const regime = report?.regime?.code;
     // 002.1a–b: the national rules under the RNU and a carte communale; 002.2:
@@ -8571,7 +10206,7 @@ function createRnu({
           ? { ...view, blocks: [...view.blocks, ...prescriptionChoices] }
           : view
       ),
-      rulesView(planned, readOnly, writtenBlocks),
+      rulesView(planned, readOnly, writtenBlocks, onCounts),
       ...(surfaces === undefined ? [] : [surfaces.view]),
       edgesView(edges, reportEdges, corrections, plot, readOnly),
       {
@@ -8971,7 +10606,7 @@ function createRnu({
    * and the decisions no longer applied: "no longer in the plan" and "from
    * another plot", each with Forget. A section of a newer version: read-only.
    */
-  function rulesView(planned, readOnly, writtenBlocks = []) {
+  function rulesView(planned, readOnly, writtenBlocks = [], onCounts = undefined) {
     const blocks = [{ kind: 'meter', rules: true }];
     // Sprint 002.22: the rules decided automatically are folded under their own heading, and what is
     // left to decide is listed with what shapes the area first.
@@ -8981,34 +10616,169 @@ function createRnu({
       .filter(({ rule }) => !auto.has(rule.id))
       .sort((a, b) => a.rank - b.rank || a.index - b.index)
       .map(({ rule }) => rule);
+    // Sprint 002.26: two groups are listed apart, still to confirm by a person: the readings that can be
+    // checked against their own text, and the rules that apply without shaping the area.
+    const batchOf = (rule) => planned.meta.get(rule.id)?.batch;
+    const mainOpen = stillOpen.filter((rule) => batchOf(rule) === undefined);
+    const checked = stillOpen.filter((rule) => batchOf(rule) === 'checked');
+    const applies = stillOpen.filter((rule) => batchOf(rule) === 'applies');
+    const grouped = checked.length + applies.length;
+    // « Left to decide » is what no one has decided: a rule the user confirmed or set aside is not left.
+    const leftOf = mainOpen.filter((rule) => rule.status !== 'confirmed' && rule.status !== 'not_applicable');
+    const BATCH_KEYS = {
+      checked: {
+        id: 'checked-readings',
+        heading: 'fr-urban-rules.batch.checked.heading',
+        summary: 'fr-urban-rules.batch.checked.summary',
+        explain: 'fr-urban-rules.batch.checked.explain',
+        confirm: 'fr-urban-rules.batch.checked.confirm'
+      },
+      applies: {
+        id: 'applies-no-drawing',
+        heading: 'fr-urban-rules.batch.applies.heading',
+        summary: 'fr-urban-rules.batch.applies.summary',
+        explain: 'fr-urban-rules.batch.applies.explain',
+        confirm: 'fr-urban-rules.batch.applies.confirm'
+      }
+    };
+    const batchSection = (name, list) => {
+      const keys = BATCH_KEYS[name];
+      const count = list.length;
+      const subject = `${subjectFor(planned.current)}|b=${name}|h=${cyrb53(
+        list
+          .map((rule) => rule.id)
+          .sort()
+          .join('\n')
+      )}`;
+      return {
+        kind: 'section',
+        id: keys.id,
+        title: { key: keys.heading, params: { count } },
+        icon: 'rules',
+        summary: { value: { key: keys.summary, params: { count } } },
+        blocks: [
+          { kind: 'notice', tone: 'info', text: { key: keys.explain } },
+          { kind: 'rules', ids: list.map((rule) => rule.id) },
+          ...(readOnly
+            ? []
+            : [
+                {
+                  kind: 'actions',
+                  actions: [
+                    {
+                      id: 'confirm-batch',
+                      label: { key: keys.confirm, params: { count } },
+                      emphasis: 'primary',
+                      target: { subjectId: subject }
+                    }
+                  ]
+                }
+              ])
+        ]
+      };
+    };
+    const groupBlocks = [
+      ...(grouped === 0
+        ? []
+        : [
+            {
+              kind: 'notice',
+              tone: 'info',
+              text: {
+                key: 'fr-urban-rules.batch.notice',
+                params: { count: grouped }
+              }
+            }
+          ]),
+      ...(checked.length === 0 ? [] : [batchSection('checked', checked)]),
+      ...(applies.length === 0 ? [] : [batchSection('applies', applies)])
+    ];
+    // Sprint 002.24: the questions the candidates ask about the project, and what the answers decide.
+    const offer = projectOfferOf(planned, stillOpen.length);
+    // Sprint 002.23: what the reading's card says it came to, from the very numbers this view shows.
+    if (planned.writtenRead?.readZones?.size > 0)
+      onCounts?.(
+        {
+          read: planned.rules.length,
+          auto: auto.size,
+          left: leftOf.length,
+          grouped,
+          project: offer.decided,
+          ask: offer.unanswered
+        },
+        planned.writtenRead.readZones,
+        offer
+      );
     if (auto.size === 0) {
-      if (planned.rules.length > 0) blocks.push({ kind: 'rules' });
+      if (grouped > 0) {
+        if (mainOpen.length > 0)
+          blocks.push({ kind: 'rules', ids: mainOpen.map((rule) => rule.id) });
+        blocks.push(...groupBlocks);
+      } else if (planned.rules.length > 0) blocks.push({ kind: 'rules' });
+      if (offer.questions.length > 0 || offer.known)
+        blocks.push(projectNatureSection(planned, offer, readOnly, projectLabel));
     } else {
       const decidedRules = planned.rules.filter((rule) => auto.has(rule.id));
       const ruledOut = decidedRules.filter((rule) => auto.get(rule.id).decision === 'ruled_out').length;
       blocks.push({
         kind: 'notice',
         tone: 'info',
-        text: {
-          key: 'fr-urban-rules.triage.notice',
-          params: { count: auto.size, left: stillOpen.length }
-        }
+        text:
+          offer.decided > 0
+            ? {
+                key: 'fr-urban-rules.triage.noticeProject',
+                params: { count: auto.size, left: leftOf.length, project: offer.decided }
+              }
+            : {
+                key: 'fr-urban-rules.triage.notice',
+                params: { count: auto.size, left: leftOf.length }
+              }
       });
-      if (stillOpen.length > 0) blocks.push({ kind: 'rules', ids: stillOpen.map((rule) => rule.id) });
+      if (mainOpen.length > 0) blocks.push({ kind: 'rules', ids: mainOpen.map((rule) => rule.id) });
+      blocks.push(...groupBlocks);
+      // Sprint 002.24: the decided ones by what decided them, when more than one thing did.
+      const groupOf = (rule) => {
+        const decision = auto.get(rule.id);
+        if (decision.group === 'project') return 'project';
+        if (decision.group === 'folded') return 'folded';
+        if (decision.decision === 'informational') return 'info';
+        return decision.reason?.key === 'fr-urban-rules.triage.reason.commune'
+          ? 'commune'
+          : 'sector';
+      };
+      const groups = ['sector', 'commune', 'info', 'folded', 'project']
+        .map((name) => [name, decidedRules.filter((rule) => groupOf(rule) === name)])
+        .filter(([, list]) => list.length > 0);
+      if (offer.questions.length > 0 || offer.known)
+        blocks.push(projectNatureSection(planned, offer, readOnly, projectLabel));
       blocks.push({
         kind: 'section',
         id: 'decided-automatically',
         title: { key: 'fr-urban-rules.triage.heading', params: { count: auto.size } },
         icon: 'rules',
         summary: {
-          value: {
-            key: 'fr-urban-rules.triage.summary',
-            params: { ruledOut, informational: auto.size - ruledOut }
-          }
+          value:
+            offer.decided > 0
+              ? {
+                  key: 'fr-urban-rules.triage.summaryProject',
+                  params: { ruledOut, informational: auto.size - ruledOut, project: offer.decided }
+                }
+              : {
+                  key: 'fr-urban-rules.triage.summary',
+                  params: { ruledOut, informational: auto.size - ruledOut }
+                }
         },
         blocks: [
           { kind: 'notice', tone: 'info', text: { key: 'fr-urban-rules.triage.explain' } },
-          { kind: 'rules', ids: decidedRules.map((rule) => rule.id) },
+          ...(groups.length < 2
+            ? [{ kind: 'rules', ids: decidedRules.map((rule) => rule.id) }]
+            : groups.flatMap(([name, list]) => [
+                {
+                  kind: 'heading',
+                  text: { key: TRIAGE_GROUP_KEYS[name], params: { count: list.length } }
+                },
+                { kind: 'rules', ids: list.map((rule) => rule.id) }
+              ])),
           ...(readOnly
             ? []
             : [
@@ -9447,6 +11217,14 @@ const edgeLetter = (number) => {
         request.actionId === 'show-exclusions',
         now().toISOString()
       );
+    } else if (request.actionId === 'set-project-nature') {
+      // Sprint 002.24: the project's nature, from the panel's form (the card's chips write the same member).
+      next = withProjectNature(
+        section,
+        natureFromValues(request.values, projectNatureOf(section)),
+        undefined,
+        now().toISOString()
+      );
     } else if (request.actionId === 'set-exclusion' || request.actionId === 'forget-exclusion') {
       // Sprint 002.17 DEC-2: one choice on an exclusion area, stamped with the document it was read in.
       const fields = subjectFields(request.target?.subjectId);
@@ -9487,7 +11265,8 @@ const edgeLetter = (number) => {
       request.actionId === 'set-exclusion' ||
       request.actionId === 'forget-exclusion' ||
       request.actionId === 'show-exclusions' ||
-      request.actionId === 'hide-exclusions';
+      request.actionId === 'hide-exclusions' ||
+      request.actionId === 'set-project-nature';
     const label = cut(
       translate(
         Object.hasOwn(UNDO_KEYS, request.actionId)
@@ -10168,7 +11947,15 @@ const edgeLetter = (number) => {
       // Sprint 002.11 DEC-5: one computation of the keys, which a restored rule's stored key joins.
       const keys = writtenKeysOf(result, zone);
       // Sprint 002.22 (e): the same text read for several sectors is one card.
-      const folded = foldedSectors(result.rules, keys, zone, context.keep ?? new Set());
+      const folded = foldedSectors(
+        result.rules,
+        keys,
+        zone,
+        context.keep ?? new Set(),
+        // Sprint 002.26: a candidate another cause decided takes no part in the folds.
+        (index) =>
+          triageOf({ item: result.rules[index], zone, commune: context.commune }) === undefined
+      );
       for (const [index, item] of result.rules.entries()) {
         const id = keys[index];
         if (id === undefined) {
@@ -10284,10 +12071,23 @@ const edgeLetter = (number) => {
                   stripEntry: { depth: strip.depth, edges: strip.edges, permits: strip.permits, of: item.kind }
                 }),
             ...(unstructuredStrip ? { unstructuredStrip: true } : {}),
-            // Sprint 002.22: what the system decides about it on its own, if anything.
+            // Sprint 002.22: what the system decides about it on its own, if anything; 002.26: or that it
+            // is the same rule as another, listed there.
             ...(() => {
-              const auto = triageOf({ item, zone, commune: context.commune });
+              const fold = folded.get(index)?.fold;
+              const auto =
+                triageOf({ item, zone, commune: context.commune }) ??
+                (fold === undefined ? undefined : foldDecisionOf(fold, result.rules[fold.of]));
               return auto === undefined ? {} : { auto };
+            })(),
+            // Sprint 002.26: the groups an open rule can be listed in (the project's answers add to the second).
+            ...(noDrawingOf(item) ? { noDrawing: true } : {}),
+            ...(checkedReadingOf({ item, zone }) ? { checked: true } : {}),
+            // Sprint 002.24: what it is about — the uses, an extension, floor-area thresholds — for the
+            // answers about the project to speak of.
+            ...(() => {
+              const scope = scopeOf({ item, zone });
+              return scope === undefined ? {} : { scope };
             })(),
             // A setback read with an exception the plan cannot draw: said when it is confirmed.
             ...(WRITTEN_SETBACK_KINDS.has(item.kind) && item.exceptions.length > 0 ? { setbackExceptions: true } : {})
@@ -10733,6 +12533,8 @@ const edgeLetter = (number) => {
     const broughtBack = Array.isArray(section?.broughtBack)
       ? section.broughtBack.filter(isBroughtBack)
       : [];
+    // Sprint 002.24: what the user said of the project (per project, not per plot).
+    const nature = projectNatureOf(section);
     const relabel =
       read.items.some(
         (r) => r.rule.kind === 'height_facade' && r.rule.statement === 'see_graphic'
@@ -11002,25 +12804,72 @@ const edgeLetter = (number) => {
         (entry.ruleKey.startsWith('written:') ? staleWritten : stale).push(entry);
     }
     const autoDecided = new Map();
+    // Sprint 002.24: the candidates the project's answers could speak of — open whatever they say.
+    const projectEntries = [];
     const decided = rules.map((rule) => {
       const info = meta.get(rule.id);
       if (info.provenance === 'entered') return rule;
       const entry = confirmations.find((c) => c.ruleKey === rule.id && onPlot(c, plot));
       if (entry === undefined) {
+        const backAgain = broughtBack.some(
+          (b) => b.ruleKey === rule.id && onPlot(b, plot) && sameVersion(b, info.version)
+        );
+        // Sprint 002.24: the project's answers, for a candidate nothing else decided.
+        const project =
+          info.scope === undefined || info.auto !== undefined || rule.status !== 'to_confirm'
+            ? undefined
+            : projectCheck(info.scope, nature);
+        if (
+          rule.status === 'to_confirm' &&
+          info.auto === undefined &&
+          !backAgain &&
+          info.scope !== undefined
+        )
+          projectEntries.push({ id: rule.id, scope: info.scope });
         // Sprint 002.22: decided automatically unless the user brought it back, against this very
         // version of the document (a new version asks the question again). Never `confirmed`.
-        if (
-          info.auto === undefined ||
-          rule.status !== 'to_confirm' ||
-          broughtBack.some((b) => b.ruleKey === rule.id && onPlot(b, plot) && sameVersion(b, info.version))
-        )
-          return rule;
+        const auto =
+          info.auto ??
+          (project?.excluded === undefined
+            ? undefined
+            : {
+                decision: 'ruled_out',
+                group: 'project',
+                reason: projectWords(project.excluded, 'excluded', nature, projectLabel)
+              });
+        if (auto === undefined || rule.status !== 'to_confirm' || backAgain) {
+          // Sprint 002.26: an open rule nothing decided is listed with a group when it belongs to one — the
+          // rules that apply without shaping the area, and the readings that can be checked (those the
+          // project's answers leave nothing to ask about). A rule brought back is looked at one by one.
+          if (rule.status === 'to_confirm' && !backAgain && auto === undefined) {
+            if (info.noDrawing === true) info.batch = 'applies';
+            else if (
+              info.checked === true &&
+              (project === undefined ||
+                (project.excluded === undefined && project.needs.length === 0))
+            )
+              info.batch = 'checked';
+          }
+          // What the answers say of an open one: where it applies, and what is missing.
+          const lines =
+            project === undefined || backAgain
+              ? []
+              : [
+                  ...project.applies.map((fact) =>
+                    projectWords(fact, 'applies', nature, projectLabel)
+                  ),
+                  ...project.needs.map((fact) => projectWords(fact, 'needs', nature, projectLabel))
+                ];
+          return lines.length === 0
+            ? rule
+            : { ...rule, conditions: [...(rule.conditions ?? []), ...lines] };
+        }
         info.autoDecided = true;
-        autoDecided.set(rule.id, info.auto);
+        autoDecided.set(rule.id, auto);
         return {
           ...rule,
-          status: info.auto.decision === 'ruled_out' ? 'not_applicable' : 'information',
-          conditions: [...(rule.conditions ?? []), info.auto.reason]
+          status: auto.decision === 'ruled_out' ? 'not_applicable' : 'information',
+          conditions: [...(rule.conditions ?? []), auto.reason]
         };
       }
       if (!sameVersion(entry, info.version)) {
@@ -11151,6 +13000,16 @@ const edgeLetter = (number) => {
       };
     });
 
+    // Sprint 002.26: the rules each batch confirms, kept in the session so the click confirms exactly these.
+    const batches = { applies: [], checked: [] };
+    for (const rule of decided) {
+      const batch = meta.get(rule.id)?.batch;
+      if (batch === undefined) continue;
+      batches[batch].push(rule.id);
+      const found = writtenSessionNext.get(rule.id);
+      if (found !== undefined) found.batch = batch;
+    }
+
     const actionsFor = (rule) => {
       const info = meta.get(rule.id);
       // 002.6b: a written rule's subject is its version alone (DEC-4); a drawn
@@ -11259,7 +13118,11 @@ const edgeLetter = (number) => {
       stale,
       staleWritten,
       writtenSession: writtenSessionNext,
+      batches,
       autoDecided,
+      nature,
+      projectEntries,
+      projectAsked: projectAskedFor(section),
       writtenRead: read,
       newer,
       foreign,
@@ -14873,6 +16736,22 @@ const edgeLetter = (number) => {
           ? { ...limit, percent: given }
           : { ...limit, quantity: { value: given, unit: limit.quantity.unit } };
     }
+    const entry = writtenEntryOf(
+      found,
+      ruleId,
+      version,
+      plot,
+      request.actionId === 'not-applicable' ? 'not_applicable' : 'confirmed',
+      limit,
+      edited
+    );
+    return { next: { ...base, confirmations: [...withoutRule(ruleId), entry] } };
+  }
+
+  /** A written decision as the section stores it (DEC-6): one shape for a single act and for a batch. */
+  function writtenEntryOf(found, ruleId, version, plot, decision, stated, edited) {
+    const rule = found.rule;
+    let limit = stated;
     if (limit?.kind === 'described')
       limit = {
         kind: 'described',
@@ -14884,11 +16763,11 @@ const edgeLetter = (number) => {
         : limit?.kind === 'ratio'
           ? { kind: 'value', value: limit.percent, unit: 'percent' }
           : undefined;
-    const entry = {
+    return {
       ruleKey: ruleId,
       plot,
       ...version,
-      decision: request.actionId === 'not-applicable' ? 'not_applicable' : 'confirmed',
+      decision,
       kind: rule.kind,
       ...(rule.statement === undefined ? {} : { statement: rule.statement }),
       ...(value === undefined ? {} : { value }),
@@ -14900,7 +16779,29 @@ const edgeLetter = (number) => {
       ...(found.strip === undefined ? {} : { strip: found.strip }),
       citation: found.citation
     };
-    return { next: { ...base, confirmations: [...withoutRule(ruleId), entry] } };
+  }
+
+  /**
+   * Sprint 002.26: one click confirms a batch — exactly the rules the view listed under it (the subject
+   * carries their digest, so a list that changed since is « read again », never a different set), each
+   * with the entry a single « Confirm » writes. Nothing here decides anything by itself.
+   */
+  function nextBatch(base, confirmations, request, version, plot, refuse) {
+    const fields = subjectFields(request.target?.subjectId);
+    if (fields.b !== 'checked' && fields.b !== 'applies')
+      return refuse('fr-urban-rules.edges.changed');
+    const members = [...writtenSession].filter(
+      ([, found]) => found.batch === fields.b && sameVersion(version, found.version)
+    );
+    const ids = members.map(([id]) => id).sort();
+    if (ids.length === 0 || cyrb53(ids.join('\n')) !== fields.h)
+      return refuse('fr-urban-rules.written.readAgain');
+    const entries = members
+      .filter(([id]) => !confirmations.some((c) => c.ruleKey === id && onPlot(c, plot)))
+      .map(([id, found]) =>
+        writtenEntryOf(found, id, version, plot, 'confirmed', found.rule.limit, false)
+      );
+    return { next: { ...base, confirmations: [...confirmations, ...entries] } };
   }
 
   /** DEC-5's section builders: the next section from the one read and the act; `{ next }` or `{ refused }`. */
@@ -14922,6 +16823,7 @@ const edgeLetter = (number) => {
     ) {
       return refuse('fr-urban-rules.edges.changed');
     }
+    if (request.actionId === 'confirm-batch') return nextBatch(base, confirmations, request, version, plot, refuse);
     // Sprint 002.22: a rule decided automatically is brought back — one entry per rule and plot,
     // against the document version read, which a new version lets expire.
     if (request.actionId === 'bring-back') {
@@ -17112,6 +19014,30 @@ export const __testing = {
   boundaryEdges,
   insetByRole,
   triageOf,
+  noDrawingOf,
+  checkedReadingOf,
+  conditionReadable,
+  quantityIn,
+  sentenceOf,
+  scopeOf,
+  usesOfCandidate,
+  sdpOf,
+  sdpHolds,
+  projectCheck,
+  projectWords,
+  projectQuestionsOf,
+  projectDecidedBy,
+  projectOfferOf,
+  areaBucketsOf,
+  areaWords,
+  natureFromValues,
+  projectNatureOf,
+  withProjectNature,
+  withProjectAsked,
+  isProjectNature,
+  foldText,
+  PROJECT_USES,
+  PROJECT_WORKS,
   foldedSectors,
   sectorsDiffer,
   communesIn,

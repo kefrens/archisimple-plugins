@@ -89,5 +89,13 @@ datvalid, at }`, one undo entry, validated like the section's other members: a m
   doubt, leave it ». If a plot's GPU zone is the bare `UD` while the règlement's sectors are drawn as their own zones, more of them could be
   ruled out; that needs the owner's word, not a guess. (2) The fence-height rules of other communes are ruled out only when the commune
   is known (the planning read has it). (3) Cross-references are rare in the extraction of prompt 3 (4 in the earlier run, 0 now).
-- **Unverified.** The folded view in the owner's editor on Marseille (the browser pass used Lyon); the host's rendering of a `section`
+- **Browser pass** (the real 0.18.0 package built from this checkout, installed in the editor from a scratch index; a scratch gateway 0.5.0
+  with its own data dir, `gpt-6.1-terra` reading Lyon's UCe1 chapter at prompt 3: 168 rules, 9 chunks, none failed). On « Regulations – Lyon »
+  (zone UCe1b, commune LYON): **« Décidées automatiquement (8) »** folded under the rules still to decide, opened to its explanation and cards
+  (« Non réglementé · Information » with « Rétablir »); « Rétablir » moved one rule back (8 → 7, 147 → 148 to confirm); the list opens
+  with the setback and the strip (what shapes the area first). Two synthetic candidates (5 m setback; 2 m strip within 5 m, `permits`) added
+  to that cache: the strip card reads « Hauteur limitée à une bande de 5 m le long des limites latérales et de fond » and « le recul y est
+  levé », « Confirmer 5 m » then « Confirmer 2 m » leave **1183.3 m², 100 % of the Site boundary**, with the 2 m height limit listed. No page
+  error. On Lyon the real counts are small: 170 read, 163 listed, 12 decided (4 other sector, 4 not regulated, 4 reference).
+- **Unverified.** The folded view in the owner's editor on Marseille (the browser pass used Lyon, where little is folded); the host's rendering of a `section`
   that holds a `rules` block and its actions on a very long list (the section keeps 200 actions at most).
