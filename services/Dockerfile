@@ -13,7 +13,7 @@
 # reached only through web's nginx, behind Caddy's authentication.
 #
 # Its environment: PLUGIN_SERVICES_DATA_DIR (/data), PLUGIN_SERVICES_PORT
-# (4500), PLUGIN_SERVICES_LOG_KEY (from .env; random per start when unset),
+# (4500), PLUGIN_SERVICES_HOST (0.0.0.0), PLUGIN_SERVICES_LOG_KEY (from .env; random per start when unset),
 # ARCHISIMPLE_AI_SERVICE_URL (unused before 002.5b), and each service's own
 # variables (see its README). No model key, ever (ADR-0114 Rule 7).
 
@@ -26,9 +26,14 @@
 # 2026-10-26 (the multi-architecture index).
 FROM node:24.22.1-alpine@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53
 
+# PLUGIN_SERVICES_HOST: the gateway binds the loopback unless told otherwise (archisimple
+# pentest F-03), and in a container `web` reaches it over the network, so this image says
+# 0.0.0.0 itself. The compose service and the Helm chart set it as well; the containment is
+# their network (only `web` can connect), not the bind address.
 ENV NODE_ENV=production \
     PLUGIN_SERVICES_DATA_DIR=/data \
-    PLUGIN_SERVICES_PORT=4500
+    PLUGIN_SERVICES_PORT=4500 \
+    PLUGIN_SERVICES_HOST=0.0.0.0
 
 WORKDIR /srv/services
 

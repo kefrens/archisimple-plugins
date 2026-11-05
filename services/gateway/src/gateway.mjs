@@ -21,10 +21,19 @@
  * `X-Authenticated-User` (capped at 128 characters) and, since Sprint 002.16,
  * `X-Authenticated-Features` (ADR-0114 Rule 14) because the account gateway
  * overwrites both and `web` forwards them, and nothing else can connect: the compose service
- * publishes no port, and the gateway binds where the deployment says
- * (`PLUGIN_SERVICES_HOST`, `0.0.0.0` inside the container's own network). Run
+ * publishes no port, and the gateway binds where the deployment says. Run
  * outside that arrangement, anyone could claim any name. No shared secret
  * between `web` and the gateway for now (owner decision, 2026-10-20).
+ *
+ * **It binds the loopback unless told otherwise** (archisimple pentest F-03, 2026-11):
+ * `PLUGIN_SERVICES_HOST` names the address, and every launcher that must be reached from
+ * another container sets it to `0.0.0.0` itself — this repository's `services/Dockerfile`
+ * (`ENV`), archisimple's `docker-compose.yml` and Helm chart (`env`). A process started by
+ * hand (`npm run dev`) is therefore reachable from this machine only. Keep it that way:
+ * a gateway on every interface of a developer's laptop answers any web page and any host on
+ * the LAN with whatever user name and features the caller writes. In a deployment the
+ * containment is the network — Compose's `plugin-services` network and the chart's
+ * NetworkPolicy let only `web` in — not this process.
  *
  * No dependency: `node:http` only.
  */
@@ -46,6 +55,16 @@ export const MAX_FEATURES = 32;
 /** A feature id as the account service defines them (`ai-openai`, `plu`); anything else is dropped. */
 const FEATURE_TOKEN = /^[a-z0-9][a-z0-9-]{0,39}$/u;
 export const DEFAULT_PORT = 4500;
+/** The loopback: a gateway started by hand is reachable from this machine only. */
+export const DEFAULT_HOST = '127.0.0.1';
+
+/**
+ * The address to bind. An unset or EMPTY `PLUGIN_SERVICES_HOST` is the loopback: Node's
+ * `listen('')` binds every interface, which a blank line in an `.env` file must not do.
+ */
+export function listenHost(env = process.env) {
+  return env.PLUGIN_SERVICES_HOST || DEFAULT_HOST;
+}
 export const GATEWAY_VERSION = JSON.parse(
   readFileSync(new URL('../package.json', import.meta.url), 'utf8')
 ).version;
@@ -272,8 +291,9 @@ export async function main(env = process.env) {
   const port = Number(env.PLUGIN_SERVICES_PORT ?? DEFAULT_PORT);
   const mounted = await mountServices({ env, log, dataDir, aiServiceUrl });
   const server = createGateway({ mounted, env, log });
-  server.listen(port, env.PLUGIN_SERVICES_HOST ?? '0.0.0.0', () => {
-    log({ level: 'info', event: 'gateway_listening', port, version: GATEWAY_VERSION, services: [...mounted.keys()] });
+  const host = listenHost(env);
+  server.listen(port, host, () => {
+    log({ level: 'info', event: 'gateway_listening', host, port, version: GATEWAY_VERSION, services: [...mounted.keys()] });
   });
   const stop = () => server.close(() => process.exit(0));
   process.once('SIGTERM', stop);

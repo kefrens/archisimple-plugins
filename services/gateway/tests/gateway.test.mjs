@@ -13,7 +13,15 @@ import http from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { after, test } from 'node:test';
-import { createGateway, createUserHasher, mountServices, parseFeatures, parseTarget } from '../src/gateway.mjs';
+import {
+  createGateway,
+  createUserHasher,
+  DEFAULT_HOST,
+  listenHost,
+  mountServices,
+  parseFeatures,
+  parseTarget
+} from '../src/gateway.mjs';
 import { createParser } from '../../fr-urban-rules-service/src/document.mjs';
 import { createService } from '../../fr-urban-rules-service/src/service.mjs';
 import { buildPdf, capturingLog } from '../../fr-urban-rules-service/tests/helpers.mjs';
@@ -247,4 +255,15 @@ test('a parse child that dies is document_unreadable, and the gateway keeps answ
   const health = await get(port, '/plugins-api/com.archisimple.fr-urban-rules/health');
   assert.equal(health.status, 200);
   assert.equal(health.body.status, 'ok');
+});
+
+// archisimple pentest F-03: the gateway believes the user name and features it is sent, so a
+// process started by hand must not answer the LAN. Containers say 0.0.0.0 themselves.
+test('binds the loopback unless the deployment names another address', () => {
+  assert.equal(DEFAULT_HOST, '127.0.0.1');
+  assert.equal(listenHost({}), '127.0.0.1');
+  assert.equal(listenHost({ PLUGIN_SERVICES_HOST: '0.0.0.0' }), '0.0.0.0');
+  assert.equal(listenHost({ PLUGIN_SERVICES_HOST: '10.1.2.3' }), '10.1.2.3');
+  // A blank `.env` line must not become listen(''), which binds every interface.
+  assert.equal(listenHost({ PLUGIN_SERVICES_HOST: '' }), '127.0.0.1');
 });
