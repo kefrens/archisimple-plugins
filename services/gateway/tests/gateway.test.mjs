@@ -8,7 +8,7 @@
 import '../../test-support/no-network.mjs';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import http from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -112,7 +112,11 @@ test('the real services folder mounts com.archisimple.fr-urban-rules, and its he
   assert.deepEqual([...mounted.keys()], ['com.archisimple.fr-urban-rules']);
   const port = await listen(createGateway({ mounted, env: {}, log: capture.log }));
   const health = await get(port, '/plugins-api/com.archisimple.fr-urban-rules/health');
-  assert.deepEqual(health.body, { status: 'ok', packageId: 'com.archisimple.fr-urban-rules', contract: 1, version: '0.5.0' });
+  // The service's own version, read from its package.json: a bump must not break this test (it did, 0.5.0 → 0.6.0).
+  const { version } = JSON.parse(
+    readFileSync(new URL('../../fr-urban-rules-service/package.json', import.meta.url), 'utf8')
+  );
+  assert.deepEqual(health.body, { status: 'ok', packageId: 'com.archisimple.fr-urban-rules', contract: 1, version });
   assert.equal((await get(port, '/plugins-api/org.example.other/health')).status, 404);
   assert.ok(capture.records.some((r) => r.event === 'log_key_random'), 'an unset log key is said');
 });
