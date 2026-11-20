@@ -1,0 +1,659 @@
+{
+  "zoneId": "pays-d-aix-uc",
+  "model": "anthropic:claude-haiku-5-5",
+  "variant": "sectors-in-code",
+  "result": {
+    "rules": [
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 154,
+        "article": "704.1",
+        "passage": "Sont précisées dans le tableau suivant, selon la zone et ses secteurs, les destinations et sous-destinations\nautorisées, admises sous condition ou interdites.",
+        "offset": {
+          "start": 1357,
+          "end": 1515
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "selon la zone et ses secteurs"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium"
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 4,
+          "unit": "m"
+        },
+        "page": 156,
+        "article": "724.1",
+        "passage": "Les constructions doivent être implantées avec un recul minimum de 4 mètres par rapport à l’alignement*",
+        "offset": {
+          "start": 6067,
+          "end": 6170
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "extension_max",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 156,
+        "article": "724.1",
+        "passage": "Les extensions* de constructions existantes régulièrement édifiées mais non conformes aux règles d’implantation\ndu présent PLUi peuvent être implantées à une distance inférieure de la règle générale, à condition :",
+        "offset": {
+          "start": 6333,
+          "end": 6546
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "qu’elles soient réalisées dans le prolongement de la construction* existante, à la même distance de la limite de\nla voie que celle du rez-de-chaussée existant",
+          "et que sa hauteur de façade* respecte la hauteur autorisée dans la zone sans excéder celle de la construction*\nexistante",
+          "et qu’elles respectent les règles d’implantation indiquées dans l’article 4.2",
+          "et qu’elles concourent à la qualité architecturale, urbaine et paysagère du projet, qu’elles ne remettent pas en\ncause l’identité du lieu"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 4,
+          "unit": "m"
+        },
+        "page": 156,
+        "article": "724.1",
+        "passage": "Les constructions doivent être implantées avec un retrait minimum de 4 mètres de la limite séparative*",
+        "offset": {
+          "start": 7113,
+          "end": 7215
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "height_total",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 4,
+          "unit": "m"
+        },
+        "strip": {
+          "depthMetres": 4,
+          "edges": "side_rear",
+          "permits": true
+        },
+        "page": 156,
+        "article": "724.1",
+        "passage": "Les constructions peuvent être implantées en tout ou partie, dans une bande de 0 à 4 mètres à compter de la limite\nséparative, lorsque la hauteur totale de la construction* édifiée en limite séparative* n’excède pas 4 mètres.",
+        "offset": {
+          "start": 7256,
+          "end": 7481
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "lorsque la hauteur totale de la construction* édifiée en limite séparative* n’excède pas 4 mètres"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 2,
+          "unit": "m"
+        },
+        "page": 156,
+        "article": "724.1",
+        "passage": "Le bassin de piscine non couvert peut être implanté en retrait minimum de 2 mètres par rapport aux limites\nséparatives*.",
+        "offset": {
+          "start": 7482,
+          "end": 7602
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "bassin de piscine non couvert"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "building_distance",
+        "sector": null,
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 156,
+        "article": "724.1",
+        "passage": "Non réglementée",
+        "offset": {
+          "start": 7700,
+          "end": 7715
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "footprint_ratio",
+        "sector": null,
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 156,
+        "article": "724.1",
+        "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+        "offset": {
+          "start": 7737,
+          "end": 7861
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "lorsqu’elle existe"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "height_total",
+        "sector": null,
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 156,
+        "article": "724.1",
+        "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle\nexiste.",
+        "offset": {
+          "start": 7876,
+          "end": 7986
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "lorsqu’elle existe"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 157,
+        "article": "734.1",
+        "passage": "La hauteur totale des clôtures (parties pleine et/ou ajourée) mesurée par rapport au terrain naturel* est\ninférieure ou égale à :",
+        "offset": {
+          "start": 8683,
+          "end": 8812
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 157,
+        "article": "734.1",
+        "passage": "En limite des emprises publiques* ou voies*, les clôtures ajourées peuvent comporter un mur bahut dont\nla hauteur mesurée par rapport au terrain naturel* ne dépasse pas :",
+        "offset": {
+          "start": 9436,
+          "end": 9606
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "En limite des emprises publiques* ou voies*, les clôtures ajourées"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium"
+      },
+      {
+        "kind": "green_ratio",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 30,
+          "base": "plot_area"
+        },
+        "page": 157,
+        "article": "734.1",
+        "passage": "Au moins 30 % du terrain d'assiette* du projet",
+        "offset": {
+          "start": 10473,
+          "end": 10519
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "green_ratio",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 158,
+        "article": "744.1",
+        "passage": "Lorsqu’un terrain d'assiette* est non conforme à la règle générale du présent article, la création et l’extension\nd’annexes ainsi que l’extension* des constructions existantes ayant une existence légale peuvent être admises à\ncondition qu’ils ne diminuent pas la surface d’espace de pleine terre* existante sur l’ensemble du terrain avant\ntravaux.",
+        "offset": {
+          "start": 10744,
+          "end": 11091
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 158,
+        "article": "744.1",
+        "passage": "Le calcul des obligations de stationnement est réalisé suivant les règles minimales définies dans le\ntableau ci-dessous.",
+        "offset": {
+          "start": 11578,
+          "end": 11698
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium"
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 158,
+        "article": "744.1",
+        "passage": "Pour les constructions neuves à destination d’« habitation » de plus de 500 m2 de surface de plancher*,\nau minimum 50% de l’ensemble des places de stationnement doivent être couvertes ou aménagées dans\nle volume de la construction* principale.",
+        "offset": {
+          "start": 12587,
+          "end": 12830
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Pour les constructions neuves à destination d’« habitation » de plus de 500 m2 de surface de plancher*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 160,
+        "article": "764.1",
+        "passage": "Toute surface nouvellement imperméabilisée* supérieure ou égale à 50 m2 doit faire l’objet d’une\ncompensation de l’imperméabilisation.",
+        "offset": {
+          "start": 14740,
+          "end": 14874
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Toute surface nouvellement imperméabilisée* supérieure ou égale à 50 m2"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      }
+    ],
+    "dropped": {
+      "passageNotFound": 0,
+      "schemaInvalid": 0,
+      "overLimit": 0,
+      "conditionNotVerbatim": 2,
+      "incoherent": 0,
+      "valueNotInPassage": 0,
+      "droppedConditions": 2
+    },
+    "chunks": {
+      "of": 1,
+      "failed": 0
+    },
+    "model": {
+      "providerId": "anthropic",
+      "model": "claude-haiku-5-5",
+      "constraint": "schema"
+    }
+  },
+  "usage": {
+    "calls": 1,
+    "settled": 1,
+    "inputTokens": 11604,
+    "outputTokens": 4876,
+    "cacheReadTokens": 0,
+    "costMicrousd": 3599,
+    "estimated": false,
+    "unlisted": false
+  },
+  "seconds": 18.8,
+  "finishedAt": "2026-11-20T16:46:56.073Z",
+  "validated": true,
+  "validatedBy": "independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",
+  "score": {
+    "counts": {
+      "truth": 8,
+      "read": 10,
+      "exact": 8,
+      "sectorError": 0,
+      "found": 8,
+      "wrongValue": 0,
+      "missed": 0,
+      "extra": 2,
+      "duplicates": 0,
+      "outOfScope": 6
+    },
+    "recall": 1,
+    "wrongValueRate": 0,
+    "sectorAttribution": 1,
+    "verified": 1,
+    "verifiedCount": 10,
+    "droppedTotal": 4,
+    "figureCoverage": {
+      "covered": 6,
+      "total": 16,
+      "uncovered": [
+        "0.6|m",
+        "1.2|m",
+        "1.6|m",
+        "1.8|m",
+        "100|m2",
+        "250|m2",
+        "25|m2",
+        "30|m2",
+        "60|m2",
+        "70|m2"
+      ]
+    },
+    "repeats": {
+      "acrossSectors": 0,
+      "exact": 0
+    },
+    "details": {
+      "missed": [],
+      "wrongValue": [],
+      "sectorError": [],
+      "extra": [
+        {
+          "kind": "extension_max",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 156,
+          "article": "724.1",
+          "passage": "Les extensions* de constructions existantes régulièrement édifiées mais non conformes aux règles d’implantation\ndu présent PLUi peuvent être implantées à une distance inférieure de la règle générale, à condition :",
+          "offset": {
+            "start": 6333,
+            "end": 6546
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "qu’elles soient réalisées dans le prolongement de la construction* existante, à la même distance de la limite de\nla voie que celle du rez-de-chaussée existant",
+            "et que sa hauteur de façade* respecte la hauteur autorisée dans la zone sans excéder celle de la construction*\nexistante",
+            "et qu’elles respectent les règles d’implantation indiquées dans l’article 4.2",
+            "et qu’elles concourent à la qualité architecturale, urbaine et paysagère du projet, qu’elles ne remettent pas en\ncause l’identité du lieu"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        },
+        {
+          "kind": "green_ratio",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 158,
+          "article": "744.1",
+          "passage": "Lorsqu’un terrain d'assiette* est non conforme à la règle générale du présent article, la création et l’extension\nd’annexes ainsi que l’extension* des constructions existantes ayant une existence légale peuvent être admises à\ncondition qu’ils ne diminuent pas la surface d’espace de pleine terre* existante sur l’ensemble du terrain avant\ntravaux.",
+          "offset": {
+            "start": 10744,
+            "end": 11091
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        }
+      ],
+      "duplicates": [],
+      "outOfScope": [
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 154,
+          "article": "704.1",
+          "passage": "Sont précisées dans le tableau suivant, selon la zone et ses secteurs, les destinations et sous-destinations\nautorisées, admises sous condition ou interdites.",
+          "offset": {
+            "start": 1357,
+            "end": 1515
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "selon la zone et ses secteurs"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium"
+        },
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 157,
+          "article": "734.1",
+          "passage": "La hauteur totale des clôtures (parties pleine et/ou ajourée) mesurée par rapport au terrain naturel* est\ninférieure ou égale à :",
+          "offset": {
+            "start": 8683,
+            "end": 8812
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        },
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 157,
+          "article": "734.1",
+          "passage": "En limite des emprises publiques* ou voies*, les clôtures ajourées peuvent comporter un mur bahut dont\nla hauteur mesurée par rapport au terrain naturel* ne dépasse pas :",
+          "offset": {
+            "start": 9436,
+            "end": 9606
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "En limite des emprises publiques* ou voies*, les clôtures ajourées"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium"
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 158,
+          "article": "744.1",
+          "passage": "Le calcul des obligations de stationnement est réalisé suivant les règles minimales définies dans le\ntableau ci-dessous.",
+          "offset": {
+            "start": 11578,
+            "end": 11698
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium"
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 158,
+          "article": "744.1",
+          "passage": "Pour les constructions neuves à destination d’« habitation » de plus de 500 m2 de surface de plancher*,\nau minimum 50% de l’ensemble des places de stationnement doivent être couvertes ou aménagées dans\nle volume de la construction* principale.",
+          "offset": {
+            "start": 12587,
+            "end": 12830
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Pour les constructions neuves à destination d’« habitation » de plus de 500 m2 de surface de plancher*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        },
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 160,
+          "article": "764.1",
+          "passage": "Toute surface nouvellement imperméabilisée* supérieure ou égale à 50 m2 doit faire l’objet d’une\ncompensation de l’imperméabilisation.",
+          "offset": {
+            "start": 14740,
+            "end": 14874
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Toute surface nouvellement imperméabilisée* supérieure ou égale à 50 m2"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        }
+      ]
+    }
+  }
+}

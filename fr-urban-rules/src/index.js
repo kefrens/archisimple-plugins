@@ -3183,6 +3183,23 @@ const localDay = (date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 const dayOfIso = (iso) => localDay(new Date(iso));
 
+/**
+ * The day a règlement version came into force, from the end of its GPU identifier
+ * (`200046977_PLUI_20260326` → 26 March 2026) — the GPU spells a version's date in its `idurba`. `undefined`
+ * when the identifier does not end in a real date: never guessed (Sprint 002.28's follow-up).
+ */
+function versionDayOfIdurba(idurba) {
+  const match = /_(\d{4})(\d{2})(\d{2})$/.exec(String(idurba ?? ''));
+  if (match === null) return undefined;
+  const [year, month, day] = [Number(match[1]), Number(match[2]), Number(match[3])];
+  const at = new Date(Date.UTC(year, month - 1, day, 12));
+  if (at.getUTCFullYear() !== year || at.getUTCMonth() !== month - 1 || at.getUTCDate() !== day) return undefined;
+  return dayOfIso(at.toISOString());
+}
+
+/** A reading that is whole: nothing failed, nothing stopped. Only such a reading is kept for everyone. */
+const isSharedReading = (result) => result.chunks.failed === 0 && result.stopped === undefined;
+
 // ── The reader ──────────────────────────────────────────────────────────────────
 
 /**
@@ -5045,6 +5062,16 @@ export function createReader({
     }
     if (record === undefined || record.baseUrl === undefined) {
       return { status: 'refused', message: { key: 'fr-urban-rules.written.readAgain' } };
+    }
+    // The shared reading is replaced only on the person's word (the form's `replace` = yes), not by a press
+    // alone and not by a caller that skips the form.
+    if (
+      request.actionId === 'written-extract-again' &&
+      record.result !== undefined &&
+      isSharedReading(record.result) &&
+      request.values?.replace !== 'yes'
+    ) {
+      return { status: 'refused', message: { key: 'fr-urban-rules.written.again.notConfirmed' } };
     }
     // One Extract per zone: running, or its POST already on its way (review NIT).
     if (
@@ -12639,10 +12666,18 @@ const edgeLetter = (number) => {
         // « Extract » button is explained and the person knows it cost nothing.
         if (record.foundReady === true && !record.restored) {
           zoneBlocks.push(
-            notice('info', 'fr-urban-rules.written.state.alreadyRead', {
-              date: dayOfIso(result.extractedAt ?? record.readAt),
-              model: cut(result.model.model || result.model.providerId || '—', 120)
-            })
+            ((version) =>
+              notice(
+                'info',
+                version === undefined
+                  ? 'fr-urban-rules.written.state.alreadyReadNoVersion'
+                  : 'fr-urban-rules.written.state.alreadyRead',
+                {
+                  date: dayOfIso(result.extractedAt ?? record.readAt),
+                  model: cut(result.model.model || result.model.providerId || '—', 120),
+                  ...(version === undefined ? {} : { version })
+                }
+              ))(versionDayOfIdurba(result.document?.idurba))
           );
         }
         zoneBlocks.push({ kind: 'fields', rows });
@@ -12687,9 +12722,38 @@ const edgeLetter = (number) => {
         }
         if (written.available && !waiting && extractAgainOffered(result, currentNow)) {
           if (chosenNow !== undefined) zoneBlocks.push({ kind: 'fields', rows: [willReadRow(chosenNow)] });
+          // A whole reading is the one kept for everyone on this server: reading again replaces it, so the
+          // button is a form that must be confirmed, and a notice says whose reading goes. A partial or
+          // stopped one is kept for nobody — nothing is replaced, no confirmation.
+          const shared = isSharedReading(result);
+          if (shared) {
+            zoneBlocks.push(
+              notice('info', 'fr-urban-rules.written.again.replaces', {
+                date: dayOfIso(result.extractedAt ?? record.readAt),
+                model: cut(result.model.model || result.model.providerId || '—', 120)
+              })
+            );
+          }
           zoneBlocks.push({
             kind: 'actions',
-            actions: [action('written-extract-again', 'fr-urban-rules.written.extractAgain')]
+            actions: [
+              {
+                ...action('written-extract-again', 'fr-urban-rules.written.extractAgain'),
+                ...(shared
+                  ? {
+                      fields: [
+                        {
+                          key: 'replace',
+                          label: { key: 'fr-urban-rules.written.again.field' },
+                          kind: 'choice',
+                          required: true,
+                          options: [{ value: 'yes', label: { key: 'fr-urban-rules.written.again.option' } }]
+                        }
+                      ]
+                    }
+                  : {})
+              }
+            ]
           });
         }
       } else {
@@ -19233,6 +19297,7 @@ export function deactivate() {
 
 export const __testing = {
   SOURCE_ID,
+  versionDayOfIdurba,
   checkedDocumentStatus,
   FETCHED_HOSTS,
   LINK_HOSTS,

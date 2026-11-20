@@ -1,0 +1,169 @@
+{
+  "format": "archisimple-reading-truth",
+  "version": 1,
+  "zone": "UC",
+  "document": {
+    "idurba": "200054807_PLUi_20260306_B",
+    "nomfic": "200054807_reglement_20260306_B.pdf",
+    "partition": "DU_200054807_B"
+  },
+  "chapter": {
+    "pages": [
+      153,
+      160
+    ]
+  },
+  "scopeKinds": [
+    "road_setback",
+    "boundary_setback",
+    "building_distance",
+    "footprint_ratio",
+    "extension_max",
+    "annex_max",
+    "height_total",
+    "height_facade",
+    "green_ratio"
+  ],
+  "scopeNote": "The kinds the buildable area uses. Not covered (never counted as an extra): parking, floor-area thresholds (the three 250 m² thresholds of article UC1), fences (2 m, 1.80 m, 1.60 m by commune, and the 0.60 m or 1.20 m low wall) and stormwater figures, which are 'other' rules or kinds outside the scope; the figure coverage still watches them.",
+  "provenance": {
+    "source": "Géoportail de l'urbanisme (GPU)",
+    "licence": "Licence Ouverte v2.0 (Etalab)",
+    "retrievedAt": "2026-11-20",
+    "text": "test-fixtures/fr-urban-rules/evaluation/pays-d-aix-uc/pages.json"
+  },
+  "draftedBy": "Claude Code",
+  "draftedAt": "2026-11-20",
+  "draftNote": "Drafted from the chapter's text (pages 153 to 160) before looking at any model's reading of it. The drafter is itself a model: every number, sector and page needs the owner's eye.",
+  "validatedBy": "independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",
+  "validatedAt": "2026-11-20",
+  "rules": [
+    {
+      "id": "u01",
+      "kind": "road_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 156,
+      "quote": "Les constructions doivent être implantées avec un recul minimum de 4 mètres par rapport à l’alignement* actuel ou futur des voies* et emprises publiques* et privées ouvertes à la circulation publique"
+    },
+    {
+      "id": "u02",
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 156,
+      "quote": "Les constructions doivent être implantées avec un retrait minimum de 4 mètres de la limite séparative* ;"
+    },
+    {
+      "id": "u03",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 156,
+      "quote": "lorsque la hauteur totale de la construction* édifiée en limite séparative* n’excède pas 4 mètres.",
+      "note": "The alternative rule: a building may stand in a 0 to 4 m strip along the boundary if its total height does not exceed 4 m (a height limit with a strip of 4 m, permitting the construction there)."
+    },
+    {
+      "id": "u04",
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 2,
+        "unit": "m"
+      },
+      "page": 156,
+      "quote": "Le bassin de piscine non couvert peut être implanté en retrait minimum de 2 mètres par rapport aux limites séparatives*.",
+      "note": "An uncovered pool only: an exception to the 4 m rule."
+    },
+    {
+      "id": "u05",
+      "kind": "building_distance",
+      "sector": null,
+      "statement": "not_regulated",
+      "limit": null,
+      "page": 156,
+      "quote": "4.3 / Implantation des constructions les unes par rapport aux autres sur une même unité foncière Non réglementée"
+    },
+    {
+      "id": "u06",
+      "kind": "footprint_ratio",
+      "sector": null,
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 156,
+      "quote": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement graphique lorsqu’elle existe."
+    },
+    {
+      "id": "u07",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 156,
+      "quote": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle existe."
+    },
+    {
+      "id": "u08",
+      "kind": "green_ratio",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 30,
+        "base": "plot_area"
+      },
+      "page": 157,
+      "quote": "UC Au moins 30 % du terrain d'assiette* du projet",
+      "note": "The table's row is labelled « UC », the zone itself: the whole zone, no sector."
+    }
+  ],
+  "crossCheck": {
+    "by": "a second model (Fable 5.2) given only the chapter text and the product's rule definitions, never this truth",
+    "at": "2026-11-20",
+    "blindRules": 10,
+    "draftersRulesFoundExactly": "8 of 8 (wrong values 0, other sectors 0, not found 0)",
+    "adopted": [],
+    "notAdopted": [
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 156,
+        "quote": "Les extensions* de constructions existantes régulièrement édifiées mais non conformes aux règles d’implantation du présent PLUi peuvent être implantées à une di",
+        "why": "Alternative rule to UC4.1: extensions of non-conforming buildings may stand closer to the road, in line with the existing ground floor, under conditions (one of them caps the extension's facade height at the existing building's). Hesitated with extension_max; kept as road_setback because it governs where the extension stands, not its size."
+      },
+      {
+        "kind": "green_ratio",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 158,
+        "quote": "Lorsqu’un terrain d'assiette* est non conforme à la règle générale du présent article, la création et l’extension d’annexes ainsi que l’extension* des construct",
+        "why": "Alternative rule to UC6.1: on a plot already below 30 %, annexes and extensions are allowed if they do not reduce the existing open-ground area. Kept under green_ratio (it is a pleine-terre rule), not extension_max or annex_max."
+      }
+    ],
+    "notAdoptedNote": "Judgment calls the two readers differ on (what a kind covers, or a rule stated with no figure). They are left out of this truth, so a model that reads them is reported as an extra to classify, and the owner decides whether any belongs here."
+  }
+}

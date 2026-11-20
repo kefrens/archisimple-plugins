@@ -1,0 +1,1829 @@
+{
+  "zoneId": "pays-d-aix-ud",
+  "model": "anthropic:claude-haiku-5-5",
+  "variant": "sectors-in-code",
+  "result": {
+    "rules": [
+      {
+        "kind": "floor_area_max",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 250,
+          "unit": "m2"
+        },
+        "page": 171,
+        "article": "874.1",
+        "passage": "surface de plancher* totale à destination d’artisanat et commerce de détail, à l’échelle du terrain\nd'assiette* du projet, soit inférieure ou égale à 250 m2",
+        "offset": {
+          "start": 3890,
+          "end": 4046
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "floor_area_max",
+        "sector": "UDa",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 250,
+          "unit": "m2"
+        },
+        "page": 171,
+        "article": "874.1",
+        "passage": "surface de plancher* totale à destination d’artisanat et commerce de détail, à l’échelle du terrain\nd'assiette* du projet, soit inférieure ou égale à 250 m2",
+        "offset": {
+          "start": 3890,
+          "end": 4046
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "floor_area_max",
+        "sector": "UDa2",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 250,
+          "unit": "m2"
+        },
+        "page": 171,
+        "article": "874.1",
+        "passage": "surface de plancher* totale à destination d’artisanat et commerce de détail, à l’échelle du terrain\nd'assiette* du projet, soit inférieure ou égale à 250 m2",
+        "offset": {
+          "start": 3890,
+          "end": 4046
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "extension_max",
+        "sector": "UDa1",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "max",
+          "percent": 15,
+          "base": "surface_de_plancher"
+        },
+        "page": 172,
+        "article": "884.1",
+        "passage": "dans la\nlimite de 15% de la surface de plancher* existante.",
+        "offset": {
+          "start": 5376,
+          "end": 5435
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "extension_max",
+        "sector": "UDb",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "max",
+          "percent": 15,
+          "base": "surface_de_plancher"
+        },
+        "page": 172,
+        "article": "884.1",
+        "passage": "dans la\nlimite de 15% de la surface de plancher* existante.",
+        "offset": {
+          "start": 5376,
+          "end": 5435
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 4,
+          "unit": "m"
+        },
+        "page": 173,
+        "article": "894.1",
+        "passage": "Les constructions doivent être implantées avec un recul minimum de 4 mètres par rapport à l’alignement*\nactuel ou futur des voies* et emprises publiques* et privées ouvertes à la circulation publique.",
+        "offset": {
+          "start": 7840,
+          "end": 8040
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 174,
+        "article": "904.1",
+        "passage": "Les constructions doivent être implantées sur au moins une limite séparative* latérale.",
+        "offset": {
+          "start": 10232,
+          "end": 10319
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "height_relative",
+          "reference": "facade_height",
+          "factor": 0.5,
+          "offsetMetres": null,
+          "minimumMetres": 4
+        },
+        "page": 174,
+        "article": "904.1",
+        "passage": "Dans le cas d’une implantation en retrait d’une des limites séparatives* latérales, ou par rapport à la limite\nséparative* de fond de parcelle, la distance comptée horizontalement de tout point de la construction* au\npoint le plus proche de la limite parcellaire est au moins égale à la moitié de la hauteur de la façade* de\nla construction* sans toutefois être inférieure à 4 mètres.",
+        "offset": {
+          "start": 10320,
+          "end": 10704
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans le cas d’une implantation en retrait d’une des limites séparatives* latérales, ou par rapport à la limite\nséparative* de fond de parcelle"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 12,
+          "unit": "m"
+        },
+        "page": 174,
+        "article": "904.1",
+        "passage": "La longueur totale de façade* des constructions implantées en limite séparative* est limitée à 12 mètres.",
+        "offset": {
+          "start": 10705,
+          "end": 10810
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 2,
+          "unit": "m"
+        },
+        "page": 174,
+        "article": "904.1",
+        "passage": "Le bassin de piscine non couvert peut être implanté à une distance minimale de 2 mètres par rapport aux limites\nséparatives*.",
+        "offset": {
+          "start": 11579,
+          "end": 11704
+        },
+        "occurrence": {
+          "of": 4,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UDa",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 4,
+          "unit": "m"
+        },
+        "page": 174,
+        "article": "904.1",
+        "passage": "en retrait minimum de 4 mètres des limites",
+        "offset": {
+          "start": 11929,
+          "end": 11971
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [
+          "Pour les constructions d’une\nsurface de plancher* inférieure à 500\nm2 dans les secteurs UDa et UDa1, ou\n250 m2 dans le secteur UDa2"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UDa1",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 4,
+          "unit": "m"
+        },
+        "page": 174,
+        "article": "904.1",
+        "passage": "en retrait minimum de 4 mètres des limites",
+        "offset": {
+          "start": 11929,
+          "end": 11971
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [
+          "Pour les constructions d’une\nsurface de plancher* inférieure à 500\nm2 dans les secteurs UDa et UDa1, ou\n250 m2 dans le secteur UDa2"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UDa2",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 4,
+          "unit": "m"
+        },
+        "page": 174,
+        "article": "904.1",
+        "passage": "en retrait minimum de 4 mètres des limites",
+        "offset": {
+          "start": 11929,
+          "end": 11971
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [
+          "Pour les constructions d’une\nsurface de plancher* inférieure à 500\nm2 dans les secteurs UDa et UDa1, ou\n250 m2 dans le secteur UDa2"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "height_total",
+        "sector": "UDa",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 4,
+          "unit": "m"
+        },
+        "strip": {
+          "depthMetres": 4,
+          "edges": "side_rear",
+          "permits": true
+        },
+        "page": 175,
+        "article": "914.1",
+        "passage": "dans une bande de 0 à 4 mètres à compter de la limite séparative",
+        "offset": {
+          "start": 12330,
+          "end": 12394
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "height_total",
+        "sector": "UDa1",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 4,
+          "unit": "m"
+        },
+        "strip": {
+          "depthMetres": 4,
+          "edges": "side_rear",
+          "permits": true
+        },
+        "page": 175,
+        "article": "914.1",
+        "passage": "dans une bande de 0 à 4 mètres à compter de la limite séparative",
+        "offset": {
+          "start": 12330,
+          "end": 12394
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "height_total",
+        "sector": "UDa2",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 4,
+          "unit": "m"
+        },
+        "strip": {
+          "depthMetres": 4,
+          "edges": "side_rear",
+          "permits": true
+        },
+        "page": 175,
+        "article": "914.1",
+        "passage": "dans une bande de 0 à 4 mètres à compter de la limite séparative",
+        "offset": {
+          "start": 12330,
+          "end": 12394
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "height_facade",
+        "sector": "UDa",
+        "statement": "described",
+        "limit": null,
+        "page": 175,
+        "article": "914.1",
+        "passage": "et leur hauteur de façade* n’excède pas 3,5 mètres.",
+        "offset": {
+          "start": 12455,
+          "end": 12506
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "height_facade",
+        "sector": "UDa1",
+        "statement": "described",
+        "limit": null,
+        "page": 175,
+        "article": "914.1",
+        "passage": "et leur hauteur de façade* n’excède pas 3,5 mètres.",
+        "offset": {
+          "start": 12455,
+          "end": 12506
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "height_facade",
+        "sector": "UDa2",
+        "statement": "described",
+        "limit": null,
+        "page": 175,
+        "article": "914.1",
+        "passage": "et leur hauteur de façade* n’excède pas 3,5 mètres.",
+        "offset": {
+          "start": 12455,
+          "end": 12506
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UDa",
+        "statement": "limit",
+        "limit": {
+          "kind": "height_relative",
+          "reference": "facade_height",
+          "factor": 1,
+          "offsetMetres": null,
+          "minimumMetres": 4
+        },
+        "page": 175,
+        "article": "914.1",
+        "passage": "au point de la limite\nséparative* la plus rapprochée doit être au moins",
+        "offset": {
+          "start": 12850,
+          "end": 12921
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UDa1",
+        "statement": "limit",
+        "limit": {
+          "kind": "height_relative",
+          "reference": "facade_height",
+          "factor": 1,
+          "offsetMetres": null,
+          "minimumMetres": 4
+        },
+        "page": 175,
+        "article": "914.1",
+        "passage": "au point de la limite\nséparative* la plus rapprochée doit être au moins",
+        "offset": {
+          "start": 12850,
+          "end": 12921
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UDa2",
+        "statement": "limit",
+        "limit": {
+          "kind": "height_relative",
+          "reference": "facade_height",
+          "factor": 1,
+          "offsetMetres": null,
+          "minimumMetres": 4
+        },
+        "page": 175,
+        "article": "914.1",
+        "passage": "au point de la limite\nséparative* la plus rapprochée doit être au moins",
+        "offset": {
+          "start": 12850,
+          "end": 12921
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UDb",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 4,
+          "unit": "m"
+        },
+        "page": 175,
+        "article": "914.1",
+        "passage": "Les constructions doivent obligatoirement être implantées en retrait minimum de 4 mètres des limites",
+        "offset": {
+          "start": 13988,
+          "end": 14088
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high"
+      },
+      {
+        "kind": "building_distance",
+        "sector": null,
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 176,
+        "article": "924.1",
+        "passage": "Non réglementée.",
+        "offset": {
+          "start": 15293,
+          "end": 15309
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "building_distance",
+        "sector": "UDa",
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 176,
+        "article": "924.1",
+        "passage": "Non réglementée.",
+        "offset": {
+          "start": 15293,
+          "end": 15309
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high"
+      },
+      {
+        "kind": "building_distance",
+        "sector": "UDa1",
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 176,
+        "article": "924.1",
+        "passage": "Non réglementée.",
+        "offset": {
+          "start": 15293,
+          "end": 15309
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high"
+      },
+      {
+        "kind": "building_distance",
+        "sector": "UDa2",
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 176,
+        "article": "924.1",
+        "passage": "Non réglementée.",
+        "offset": {
+          "start": 15293,
+          "end": 15309
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high"
+      },
+      {
+        "kind": "building_distance",
+        "sector": "UDb",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 6,
+          "unit": "m"
+        },
+        "page": 176,
+        "article": "924.1",
+        "passage": "Lorsque deux constructions ne sont pas accolées, la distance mesurée horizontalement entre tout point",
+        "offset": {
+          "start": 15338,
+          "end": 15439
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Lorsque deux constructions ne sont pas accolées"
+        ],
+        "exceptions": [
+          "Cette règle ne s’applique pas aux annexes*, ni aux piscines."
+        ],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "footprint_ratio",
+        "sector": null,
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 176,
+        "article": "924.1",
+        "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+        "offset": {
+          "start": 15641,
+          "end": 15765
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "height_total",
+        "sector": null,
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 176,
+        "article": "924.1",
+        "passage": "La hauteur des constructions* ne pourra excéder les hauteurs indiquées au règlement graphique",
+        "offset": {
+          "start": 16010,
+          "end": 16103
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [
+          "En l’absence de linéaire de gabarit"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "height_total",
+        "sector": "UDa",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 176,
+        "article": "924.1",
+        "passage": "La hauteur des constructions* ne pourra excéder les hauteurs indiquées au règlement graphique",
+        "offset": {
+          "start": 16010,
+          "end": 16103
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [
+          "En l’absence de linéaire de gabarit"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "height_total",
+        "sector": "UDa1",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 176,
+        "article": "924.1",
+        "passage": "La hauteur des constructions* ne pourra excéder les hauteurs indiquées au règlement graphique",
+        "offset": {
+          "start": 16010,
+          "end": 16103
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [
+          "En l’absence de linéaire de gabarit"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "height_total",
+        "sector": "UDa2",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 176,
+        "article": "924.1",
+        "passage": "La hauteur des constructions* ne pourra excéder les hauteurs indiquées au règlement graphique",
+        "offset": {
+          "start": 16010,
+          "end": 16103
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [
+          "En l’absence de linéaire de gabarit"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 176,
+        "article": "924.1",
+        "passage": "Le volume situé entre la hauteur de façade* HF et la hauteur totale HT doit être accessible par un accès",
+        "offset": {
+          "start": 16124,
+          "end": 16228
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium"
+      },
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "max",
+          "percent": 20,
+          "base": "plot_area"
+        },
+        "page": 177,
+        "article": "934.1",
+        "passage": "la part du\nterrain d'assiette* du projet assurant une fonction de desserte ne doit pas dépasser 20 % de la surface",
+        "offset": {
+          "start": 19124,
+          "end": 19238
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans le cas d’un projet dont le terrain d'assiette* présente une configuration en drapeau*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "green_ratio",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 20,
+          "base": "plot_area"
+        },
+        "page": 178,
+        "article": "944.1",
+        "passage": "UD Au moins 20 % du terrain d'assiette* du projet",
+        "offset": {
+          "start": 19629,
+          "end": 19678
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "green_ratio",
+        "sector": "UDa2",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 20,
+          "base": "plot_area"
+        },
+        "page": 178,
+        "article": "944.1",
+        "passage": "Au moins 20 % du terrain d'assiette* du projet",
+        "offset": {
+          "start": 19632,
+          "end": 19678
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "green_ratio",
+        "sector": "UDa",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 30,
+          "base": "plot_area"
+        },
+        "page": 178,
+        "article": "944.1",
+        "passage": "UDa, UDa1 et UDb Au moins 30 % du terrain d'assiette* du projet",
+        "offset": {
+          "start": 19679,
+          "end": 19742
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high"
+      },
+      {
+        "kind": "green_ratio",
+        "sector": "UDa1",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 30,
+          "base": "plot_area"
+        },
+        "page": 178,
+        "article": "944.1",
+        "passage": "UDa, UDa1 et UDb Au moins 30 % du terrain d'assiette* du projet",
+        "offset": {
+          "start": 19679,
+          "end": 19742
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high"
+      },
+      {
+        "kind": "green_ratio",
+        "sector": "UDb",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 30,
+          "base": "plot_area"
+        },
+        "page": 178,
+        "article": "944.1",
+        "passage": "UDa, UDa1 et UDb Au moins 30 % du terrain d'assiette* du projet",
+        "offset": {
+          "start": 19679,
+          "end": 19742
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high"
+      },
+      {
+        "kind": "green_ratio",
+        "sector": "UDa2",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 60,
+          "base": "plot_area"
+        },
+        "page": 178,
+        "article": "944.1",
+        "passage": "Au moins 60 % du terrain d'assiette* du projet",
+        "offset": {
+          "start": 19963,
+          "end": 20009
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "green_ratio",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 178,
+        "article": "944.1",
+        "passage": "ne diminuent pas la surface d’espace de pleine terre* existante sur l’ensemble du terrain avant",
+        "offset": {
+          "start": 20291,
+          "end": 20386
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 178,
+        "article": "944.1",
+        "passage": "de 2 places par logement",
+        "offset": {
+          "start": 21177,
+          "end": 21201
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 178,
+        "article": "944.1",
+        "passage": "de 1 place par logement",
+        "offset": {
+          "start": 21422,
+          "end": 21445
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 179,
+        "article": "954.1",
+        "passage": "1 place pour 30 m2 de SDP*",
+        "offset": {
+          "start": 21790,
+          "end": 21816
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Artisanat et commerces\nde détail"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium"
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 179,
+        "article": "954.1",
+        "passage": "1 place pour 1 chambre",
+        "offset": {
+          "start": 21935,
+          "end": 21957
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Hôtels et autres\nhébergements\ntouristiques"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium"
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 179,
+        "article": "954.1",
+        "passage": "1 place/25 m2 de SDP*",
+        "offset": {
+          "start": 22015,
+          "end": 22036
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Bureaux"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium"
+      },
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 180,
+        "article": "964.1",
+        "passage": "Toute surface nouvellement imperméabilisée* supérieure ou égale à 50 m2 doit faire l’objet d’une\ncompensation de l’imperméabilisation.",
+        "offset": {
+          "start": 24169,
+          "end": 24303
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Toute surface nouvellement imperméabilisée* supérieure ou égale à 50 m2"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium"
+      }
+    ],
+    "dropped": {
+      "passageNotFound": 1,
+      "schemaInvalid": 0,
+      "overLimit": 0,
+      "conditionNotVerbatim": 22,
+      "incoherent": 4,
+      "valueNotInPassage": 4,
+      "droppedConditions": 22,
+      "stripNotInPassage": 3
+    },
+    "chunks": {
+      "of": 1,
+      "failed": 0
+    },
+    "model": {
+      "providerId": "anthropic",
+      "model": "claude-haiku-5-5",
+      "constraint": "schema"
+    }
+  },
+  "usage": {
+    "calls": 1,
+    "settled": 1,
+    "inputTokens": 15716,
+    "outputTokens": 16331,
+    "cacheReadTokens": 0,
+    "costMicrousd": 9738,
+    "estimated": false,
+    "unlisted": false
+  },
+  "seconds": 58,
+  "finishedAt": "2026-11-20T16:51:36.010Z",
+  "validated": true,
+  "validatedBy": "independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",
+  "score": {
+    "counts": {
+      "truth": 45,
+      "read": 36,
+      "exact": 32,
+      "sectorError": 0,
+      "found": 32,
+      "wrongValue": 0,
+      "missed": 13,
+      "extra": 4,
+      "duplicates": 0,
+      "outOfScope": 12
+    },
+    "recall": 0.7111111111111111,
+    "wrongValueRate": 0,
+    "sectorAttribution": 1,
+    "verified": 0.8888888888888888,
+    "verifiedCount": 32,
+    "droppedTotal": 56,
+    "figureCoverage": {
+      "covered": 12,
+      "total": 20,
+      "uncovered": [
+        "0.6|m",
+        "1.2|m",
+        "1.6|m",
+        "1.8|m",
+        "100|m2",
+        "14|m",
+        "60|m2",
+        "6|m"
+      ]
+    },
+    "repeats": {
+      "acrossSectors": 17,
+      "exact": 0
+    },
+    "details": {
+      "missed": [
+        {
+          "id": "d05",
+          "kind": "height_total",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 4,
+            "unit": "m"
+          },
+          "page": 174,
+          "quote": "la hauteur totale de l’extension soit inférieure ou égale à 4 mètres",
+          "note": "The alternative rule for an extension in the strip closer than the setback."
+        },
+        {
+          "id": "d12",
+          "kind": "boundary_setback",
+          "sector": "UDa",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 2,
+            "unit": "m"
+          },
+          "page": 175,
+          "quote": "Le bassin de piscine non couvert peut être implanté à une distance minimale de 2 mètres par rapport aux limites séparatives*.",
+          "note": "An uncovered pool only (stated under [a] and under [b]; one rule per sector)."
+        },
+        {
+          "id": "d13",
+          "kind": "boundary_setback",
+          "sector": "UDa1",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 2,
+            "unit": "m"
+          },
+          "page": 175,
+          "quote": "Le bassin de piscine non couvert peut être implanté à une distance minimale de 2 mètres par rapport aux limites séparatives*.",
+          "note": "An uncovered pool only (stated under [a] and under [b]; one rule per sector)."
+        },
+        {
+          "id": "d14",
+          "kind": "boundary_setback",
+          "sector": "UDa2",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 2,
+            "unit": "m"
+          },
+          "page": 175,
+          "quote": "Le bassin de piscine non couvert peut être implanté à une distance minimale de 2 mètres par rapport aux limites séparatives*.",
+          "note": "An uncovered pool only (stated under [a] and under [b]; one rule per sector)."
+        },
+        {
+          "id": "d18",
+          "kind": "height_facade",
+          "sector": "UDa",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 3.5,
+            "unit": "m"
+          },
+          "page": 175,
+          "quote": "leur hauteur de façade* n’excède pas 3,5 mètres.",
+          "note": "The alternative rule of [a], with the 4 m total height."
+        },
+        {
+          "id": "d19",
+          "kind": "height_facade",
+          "sector": "UDa1",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 3.5,
+            "unit": "m"
+          },
+          "page": 175,
+          "quote": "leur hauteur de façade* n’excède pas 3,5 mètres.",
+          "note": "The alternative rule of [a], with the 4 m total height."
+        },
+        {
+          "id": "d20",
+          "kind": "height_facade",
+          "sector": "UDa2",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 3.5,
+            "unit": "m"
+          },
+          "page": 175,
+          "quote": "leur hauteur de façade* n’excède pas 3,5 mètres.",
+          "note": "The alternative rule of [a], with the 4 m total height."
+        },
+        {
+          "id": "d22",
+          "kind": "boundary_setback",
+          "sector": "UDb",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 2,
+            "unit": "m"
+          },
+          "page": 176,
+          "quote": "Le bassin de piscine non couvert peut être implanté à une distance minimale de 2 mètres par rapport aux limites séparatives*.",
+          "note": "An uncovered pool only."
+        },
+        {
+          "id": "d23",
+          "kind": "height_total",
+          "sector": "UDb",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 4,
+            "unit": "m"
+          },
+          "page": 176,
+          "quote": "la hauteur totale de l’extension soit inférieure ou égale à 4 mètres dans la bande de 0 à 4 mètres",
+          "note": "The alternative rule for an extension."
+        },
+        {
+          "id": "d31",
+          "kind": "height_facade",
+          "sector": null,
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 176,
+          "quote": "La hauteur des constructions* ne pourra excéder une hauteur de façade* maximale indiquée par le linéaire de gabarit* figurant sur le règlement graphique.",
+          "note": "4.5.1 [b]: in the band defined by the gabarit line."
+        },
+        {
+          "id": "d43",
+          "kind": "height_facade",
+          "sector": "UDa",
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 176,
+          "quote": "La hauteur des constructions* ne pourra excéder une hauteur de façade* maximale indiquée par le linéaire de gabarit* figurant sur le règlement graphique.",
+          "note": "Added after the independent cross-check. 4.5.1 [b]: within the band defined by the linéaire de gabarit; heading 'Dans la zone UD et les secteurs UDa, UDa1 et UDa2'."
+        },
+        {
+          "id": "d44",
+          "kind": "height_facade",
+          "sector": "UDa1",
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 176,
+          "quote": "La hauteur des constructions* ne pourra excéder une hauteur de façade* maximale indiquée par le linéaire de gabarit* figurant sur le règlement graphique.",
+          "note": "Added after the independent cross-check. 4.5.1 [b]: within the band defined by the linéaire de gabarit; heading 'Dans la zone UD et les secteurs UDa, UDa1 et UDa2'."
+        },
+        {
+          "id": "d45",
+          "kind": "height_facade",
+          "sector": "UDa2",
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 176,
+          "quote": "La hauteur des constructions* ne pourra excéder une hauteur de façade* maximale indiquée par le linéaire de gabarit* figurant sur le règlement graphique.",
+          "note": "Added after the independent cross-check. 4.5.1 [b]: within the band defined by the linéaire de gabarit; heading 'Dans la zone UD et les secteurs UDa, UDa1 et UDa2'."
+        }
+      ],
+      "wrongValue": [],
+      "sectorError": [],
+      "extra": [
+        {
+          "kind": "height_facade",
+          "sector": "UDa",
+          "statement": "described",
+          "limit": null,
+          "page": 175,
+          "article": "914.1",
+          "passage": "et leur hauteur de façade* n’excède pas 3,5 mètres.",
+          "offset": {
+            "start": 12455,
+            "end": 12506
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "low"
+        },
+        {
+          "kind": "height_facade",
+          "sector": "UDa1",
+          "statement": "described",
+          "limit": null,
+          "page": 175,
+          "article": "914.1",
+          "passage": "et leur hauteur de façade* n’excède pas 3,5 mètres.",
+          "offset": {
+            "start": 12455,
+            "end": 12506
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "low"
+        },
+        {
+          "kind": "height_facade",
+          "sector": "UDa2",
+          "statement": "described",
+          "limit": null,
+          "page": 175,
+          "article": "914.1",
+          "passage": "et leur hauteur de façade* n’excède pas 3,5 mètres.",
+          "offset": {
+            "start": 12455,
+            "end": 12506
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "low"
+        },
+        {
+          "kind": "green_ratio",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 178,
+          "article": "944.1",
+          "passage": "ne diminuent pas la surface d’espace de pleine terre* existante sur l’ensemble du terrain avant",
+          "offset": {
+            "start": 20291,
+            "end": 20386
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        }
+      ],
+      "duplicates": [],
+      "outOfScope": [
+        {
+          "kind": "floor_area_max",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 250,
+            "unit": "m2"
+          },
+          "page": 171,
+          "article": "874.1",
+          "passage": "surface de plancher* totale à destination d’artisanat et commerce de détail, à l’échelle du terrain\nd'assiette* du projet, soit inférieure ou égale à 250 m2",
+          "offset": {
+            "start": 3890,
+            "end": 4046
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        },
+        {
+          "kind": "floor_area_max",
+          "sector": "UDa",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 250,
+            "unit": "m2"
+          },
+          "page": 171,
+          "article": "874.1",
+          "passage": "surface de plancher* totale à destination d’artisanat et commerce de détail, à l’échelle du terrain\nd'assiette* du projet, soit inférieure ou égale à 250 m2",
+          "offset": {
+            "start": 3890,
+            "end": 4046
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "low"
+        },
+        {
+          "kind": "floor_area_max",
+          "sector": "UDa2",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 250,
+            "unit": "m2"
+          },
+          "page": 171,
+          "article": "874.1",
+          "passage": "surface de plancher* totale à destination d’artisanat et commerce de détail, à l’échelle du terrain\nd'assiette* du projet, soit inférieure ou égale à 250 m2",
+          "offset": {
+            "start": 3890,
+            "end": 4046
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "low"
+        },
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 12,
+            "unit": "m"
+          },
+          "page": 174,
+          "article": "904.1",
+          "passage": "La longueur totale de façade* des constructions implantées en limite séparative* est limitée à 12 mètres.",
+          "offset": {
+            "start": 10705,
+            "end": 10810
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        },
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 176,
+          "article": "924.1",
+          "passage": "Le volume situé entre la hauteur de façade* HF et la hauteur totale HT doit être accessible par un accès",
+          "offset": {
+            "start": 16124,
+            "end": 16228
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium"
+        },
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "ratio",
+            "comparison": "max",
+            "percent": 20,
+            "base": "plot_area"
+          },
+          "page": 177,
+          "article": "934.1",
+          "passage": "la part du\nterrain d'assiette* du projet assurant une fonction de desserte ne doit pas dépasser 20 % de la surface",
+          "offset": {
+            "start": 19124,
+            "end": 19238
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans le cas d’un projet dont le terrain d'assiette* présente une configuration en drapeau*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 178,
+          "article": "944.1",
+          "passage": "de 2 places par logement",
+          "offset": {
+            "start": 21177,
+            "end": 21201
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 178,
+          "article": "944.1",
+          "passage": "de 1 place par logement",
+          "offset": {
+            "start": 21422,
+            "end": 21445
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 179,
+          "article": "954.1",
+          "passage": "1 place pour 30 m2 de SDP*",
+          "offset": {
+            "start": 21790,
+            "end": 21816
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Artisanat et commerces\nde détail"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium"
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 179,
+          "article": "954.1",
+          "passage": "1 place pour 1 chambre",
+          "offset": {
+            "start": 21935,
+            "end": 21957
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Hôtels et autres\nhébergements\ntouristiques"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium"
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 179,
+          "article": "954.1",
+          "passage": "1 place/25 m2 de SDP*",
+          "offset": {
+            "start": 22015,
+            "end": 22036
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Bureaux"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium"
+        },
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 180,
+          "article": "964.1",
+          "passage": "Toute surface nouvellement imperméabilisée* supérieure ou égale à 50 m2 doit faire l’objet d’une\ncompensation de l’imperméabilisation.",
+          "offset": {
+            "start": 24169,
+            "end": 24303
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Toute surface nouvellement imperméabilisée* supérieure ou égale à 50 m2"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium"
+        }
+      ]
+    }
+  }
+}

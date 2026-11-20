@@ -23,8 +23,15 @@ import { ServiceError } from './errors.mjs';
 import { allOccurrences, normalisePassage, normaliseText } from './normalise.mjs';
 import { articleAt, pageAt } from './text.mjs';
 
-export const SCHEMA_VERSION = 1;
-export const PROMPT_VERSION = 3;
+/**
+ * Sprint 002.33 raises both: 2 and 4. The result's shape is unchanged (one rule per sector) but the answer the model
+ * is asked for is not (`appliesTo`, not `sector`), so every reading made by the earlier prompt is read again once:
+ * the schema bump empties the cache at the service's start, the prompt bump changes every result's key.
+ */
+export const SCHEMA_VERSION = 2;
+export const PROMPT_VERSION = 4;
+/** What the service reads with since 002.33: the sectors expanded by the code. `extractChapter`'s own default stays the earlier reading, which the recorded fixtures replay. */
+export const SECTORS_IN_CODE = true;
 export const MAX_CHUNK_CHARS = 40_000;
 export const MAX_ITEMS_PER_CHUNK = 120;
 export const CONDITION_WINDOW = 1_500;
@@ -43,7 +50,14 @@ const REFUSED = new Set(['no_provider_configured', 'provider_not_permitted', 'un
  * ends the chunk at once. Sprint 002.27: `ai_budget_unavailable` (HTTP 503) is ai-service saying its
  * ledger could not be reached — transient, so retried like `provider_error`.
  */
-const RETRIED = new Set(['output_truncated', 'output_invalid', 'provider_error', 'unreachable', 'malformed', 'ai_budget_unavailable']);
+const RETRIED = new Set([
+  'output_truncated',
+  'output_invalid',
+  'provider_error',
+  'unreachable',
+  'malformed',
+  'ai_budget_unavailable'
+]);
 
 /**
  * Sprint 002.27: what a budget stop says, as the job answers it — `{ reason: 'ai-budget',
@@ -77,7 +91,12 @@ export const RULE_KINDS = [
   'other'
 ];
 /** The package's floors (`fr-urban-rules/src/index.js`, `MINIMUM_KINDS`); the rest are caps. */
-export const MINIMUM_KINDS = new Set(['road_setback', 'boundary_setback', 'building_distance', 'green_ratio']);
+export const MINIMUM_KINDS = new Set([
+  'road_setback',
+  'boundary_setback',
+  'building_distance',
+  'green_ratio'
+]);
 
 /**
  * Sprint 002.21: the limits a height-limited strip runs along, by the words the model returns
@@ -91,7 +110,16 @@ const STRIP_KINDS = new Set(['height_total', 'height_facade']);
 export const ITEM_SCHEMA = Object.freeze({
   type: 'object',
   additionalProperties: false,
-  required: ['kind', 'sector', 'statement', 'limit', 'strip', 'conditions', 'exceptions', 'confidence'],
+  required: [
+    'kind',
+    'sector',
+    'statement',
+    'limit',
+    'strip',
+    'conditions',
+    'exceptions',
+    'confidence'
+  ],
   properties: {
     kind: { enum: RULE_KINDS },
     sector: { type: ['string', 'null'], maxLength: 40 },
@@ -118,7 +146,9 @@ export const ITEM_SCHEMA = Object.freeze({
             kind: { const: 'ratio' },
             comparison: { enum: ['min', 'max'] },
             percent: { type: 'number', minimum: 0, maximum: 100 },
-            base: { enum: ['plot_area', 'emprise', 'surface_de_plancher', 'existing_emprise', 'other'] }
+            base: {
+              enum: ['plot_area', 'emprise', 'surface_de_plancher', 'existing_emprise', 'other']
+            }
           }
         },
         {
@@ -164,14 +194,120 @@ export const ITEM_SCHEMA = Object.freeze({
 export const INSTRUCTIONS = [
   'The text is one zone chapter of a French local planning regulation (règlement de PLU). List every rule it sets on building, one item per rule and per sector.',
   'kind — road_setback: distance from the road or public space (voies et emprises publiques); boundary_setback: distance from the side or rear plot boundaries (limites séparatives); building_distance: distance between buildings on one plot; footprint_ratio: emprise au sol; floor_area_max: maximum floor area (surface de plancher); extension_max: limit on extending an existing building; annex_max: limit on annexes; height_total: maximum total height (hauteur maximale, au faîtage); height_facade: maximum façade height (hauteur de façade); green_ratio: minimum planted or open-ground share (pleine terre, espaces verts); parking: parking requirements; other: any other rule. If a rule fits no kind, use other. The depth of a band of constructibility (bande de constructibilité) is not a setback: it is other.',
-  'statement — limit: the text sets a value (fill limit); not_regulated: the text says the matter is not regulated (« n\'est pas réglementé »), return these, never omit them; see_graphic: the value is given on the graphic documents (« figure aux documents graphiques »); described: a rule in words with no value. For not_regulated, see_graphic and described, limit is null.',
+  "statement — limit: the text sets a value (fill limit); not_regulated: the text says the matter is not regulated (« n'est pas réglementé »), return these, never omit them; see_graphic: the value is given on the graphic documents (« figure aux documents graphiques »); described: a rule in words with no value. For not_regulated, see_graphic and described, limit is null.",
   'limit — value: a number with its unit as written (m, m2 or percent), never converted, never computed; comparison is min for « au moins », « minimum », and max for « au plus », « maximum », « ne peut excéder ». ratio: a percentage of a base. height_relative: a distance against a height, as « R ≥ Hf - 4 m, avec un minimum de 2 mètres » (reference facade_height, factor 1, offsetMetres -4, minimumMetres 2) or « D ≥ Hf/2 » (factor 0.5).',
-  'strip — null, except for a height limit (height_total or height_facade) that holds only within a strip along the plot limits, as « dans une bande de 0 à 4 mètres à compter de la limite séparative » or « sur une profondeur de 5 mètres ». Then { depthMetres: the strip\'s width from the limit as the text writes it (4 for « de 0 à 4 mètres »), edges: all, street (alignment, voies), side (limites latérales), rear (limite de fond de parcelle) or side_rear (limites séparatives), permits: true when the text lets a construction stand in the strip on condition of that height — a derogation from a setback — and false when it only limits the height there }. A sentence that sets a setback and lets lower constructions stand within it is two items: the setback, and the height limit with its strip (permits true). A height limit that holds only in a strip never comes without its strip.',
+  "strip — null, except for a height limit (height_total or height_facade) that holds only within a strip along the plot limits, as « dans une bande de 0 à 4 mètres à compter de la limite séparative » or « sur une profondeur de 5 mètres ». Then { depthMetres: the strip's width from the limit as the text writes it (4 for « de 0 à 4 mètres »), edges: all, street (alignment, voies), side (limites latérales), rear (limite de fond de parcelle) or side_rear (limites séparatives), permits: true when the text lets a construction stand in the strip on condition of that height — a derogation from a setback — and false when it only limits the height there }. A sentence that sets a setback and lets lower constructions stand within it is two items: the setback, and the height limit with its strip (permits true). A height limit that holds only in a strip never comes without its strip.",
   'sector — the sector the rule applies to, spelled as the text spells it (« UCe1b »), or JSON null (not the word "null") when it applies to the whole zone. When the same sentence applies to several sectors, return one item per sector.',
   'passage — one contiguous quotation from the text, copied exactly, that states the rule: the sentence, not a paraphrase.',
   'conditions and exceptions — short phrases copied exactly from the text just before or in the passage (« Dans le secteur UCe1b »), never reworded; empty when there are none.',
   'confidence — high when the passage states the rule plainly, medium or low otherwise.'
 ].join('\n');
+
+// Sectors in code (Sprint 002.33) ---------------------------------------------------------------
+
+/**
+ * Sprint 002.33. The model says **where** a rule applies and the code gives one item per sector, instead of the
+ * model repeating each item for each sector (which it does badly: on a four-sector zone about a third of the
+ * rules were never read). Behind `extractChapter`'s `sectorsInCode` option; the reading as it ships is unchanged.
+ */
+export const INSTRUCTIONS_SECTORS_IN_CODE = INSTRUCTIONS.replace(
+  'one item per rule and per sector.',
+  'one item per rule.'
+).replace(
+  /^sector — .*$/mu,
+  'applies — where the rule applies: "zone" when it is the zone\'s own rule and the text names no sector; "all" when the text states it for the zone and every one of its sectors; otherwise an array of the sector codes it names, spelled as the text spells them (« UDa », « UCe1b »), the zone\'s own code standing for the zone itself. One item per rule: never repeat an item for each sector, list the sectors in appliesTo.'
+);
+
+/** The item schema with `appliesTo` in place of `sector`. */
+export const ITEM_SCHEMA_SECTORS_IN_CODE = Object.freeze({
+  ...ITEM_SCHEMA,
+  required: ITEM_SCHEMA.required.map((name) => (name === 'sector' ? 'appliesTo' : name)),
+  properties: Object.fromEntries(
+    Object.entries(ITEM_SCHEMA.properties).flatMap(([name, schema]) =>
+      name === 'sector'
+        ? [
+            [
+              'appliesTo',
+              {
+                anyOf: [
+                  { const: 'zone' },
+                  { const: 'all' },
+                  {
+                    type: 'array',
+                    minItems: 1,
+                    maxItems: 12,
+                    items: { type: 'string', maxLength: 40 }
+                  }
+                ]
+              }
+            ]
+          ]
+        : [[name, schema]]
+    )
+  )
+});
+
+const squashCode = (code) => String(code).toLowerCase().replace(/\s+/gu, '');
+
+/**
+ * The chapter's zone code and its sector codes, from its own text. The sectors are the codes the chapter writes
+ * (« UDa », « UDa1 ») that start with the zone's code and are longer: a heading is not needed (the zone UD of the
+ * Pays d'Aix has four sectors and no heading names one). The zone's code is the longest common prefix of the
+ * codes that share their first two characters; failing that, the first « Zone XX » near the top of the text.
+ */
+export function sectorsOfChapter(prepared) {
+  const mentions = [...new Set(prepared.sectors.map((s) => s.code))];
+  const groups = new Map();
+  for (const code of mentions)
+    groups.set(code.slice(0, 2), [...(groups.get(code.slice(0, 2)) ?? []), code]);
+  const cluster = [...groups.values()]
+    .filter((g) => g.length >= 2)
+    .sort((a, b) => b.length - a.length)[0];
+  let zone;
+  if (cluster !== undefined) {
+    zone = cluster.reduce((prefix, code) => {
+      let i = 0;
+      while (i < prefix.length && i < code.length && prefix[i] === code[i]) i += 1;
+      return prefix.slice(0, i);
+    });
+  } else {
+    for (const m of prepared.text
+      .slice(0, 1500)
+      .matchAll(/\bzone[ \t]+([A-Za-z][A-Za-z0-9]{0,7})(?![A-Za-z0-9])/giu)) {
+      if (/^[A-Z]/u.test(m[1])) {
+        zone = m[1];
+        break;
+      }
+    }
+  }
+  if (zone === undefined || zone === '') return { zone: undefined, sectors: [] };
+  const sectors = mentions.filter(
+    (code) => code.length > zone.length && code.toLowerCase().startsWith(zone.toLowerCase())
+  );
+  return { zone, sectors };
+}
+
+/**
+ * What an item's `appliesTo` stands for: `{ sectors, unknown? }`, sectors being codes as the chapter spells them
+ * and `null` for the zone itself. A code that is not a sector of the chapter is returned in `unknown`, never repaired.
+ */
+export function expandAppliesTo(appliesTo, { zone, sectors }) {
+  if (appliesTo === 'zone') return { sectors: [null] };
+  if (appliesTo === 'all') return { sectors: [null, ...sectors] };
+  if (!Array.isArray(appliesTo) || appliesTo.length === 0) return { sectors: [], unknown: [] };
+  const out = [];
+  const unknown = [];
+  for (const code of appliesTo) {
+    if (typeof code !== 'string' || code.trim() === '') continue;
+    const spelled =
+      zone !== undefined && squashCode(code) === squashCode(zone)
+        ? null
+        : sectors.find((s) => squashCode(s) === squashCode(code));
+    if (spelled === undefined) unknown.push(code.trim());
+    else if (!out.includes(spelled)) out.push(spelled);
+  }
+  return unknown.length === 0 ? { sectors: out } : { sectors: out, unknown };
+}
 
 // Chunks --------------------------------------------------------------------------
 
@@ -181,7 +317,8 @@ export const INSTRUCTIONS = [
  * is cut at a line end, and only failing that mid-line.
  */
 export function splitChunks(prepared, max = MAX_CHUNK_CHARS) {
-  if (!Number.isInteger(max) || max < 1) throw new RangeError(`chunk size must be a positive integer, not ${max}`);
+  if (!Number.isInteger(max) || max < 1)
+    throw new RangeError(`chunk size must be a positive integer, not ${max}`);
   const cuts = prepared.articles.map((a) => a.offset).filter((o) => o > 0);
   const chunks = [];
   let start = 0;
@@ -209,7 +346,13 @@ export function splitChunks(prepared, max = MAX_CHUNK_CHARS) {
 
 // Post-validation -------------------------------------------------------------------
 
-const METRE_KINDS = new Set(['road_setback', 'boundary_setback', 'building_distance', 'height_total', 'height_facade']);
+const METRE_KINDS = new Set([
+  'road_setback',
+  'boundary_setback',
+  'building_distance',
+  'height_total',
+  'height_facade'
+]);
 
 /** DEC-6's coherence: true when statement, limit and unit agree for the kind. */
 export function coherent(value) {
@@ -231,7 +374,10 @@ export function coherent(value) {
     case 'green_ratio':
       return (limit.kind === 'value' && limit.unit === 'percent') || limit.kind === 'ratio';
     case 'extension_max':
-      return (limit.kind === 'value' && (limit.unit === 'm2' || limit.unit === 'percent')) || limit.kind === 'ratio';
+      return (
+        (limit.kind === 'value' && (limit.unit === 'm2' || limit.unit === 'percent')) ||
+        limit.kind === 'ratio'
+      );
     default:
       return true; // parking, other
   }
@@ -241,7 +387,13 @@ export function coherent(value) {
 export function comparisonAgrees(value) {
   const { kind, limit } = value;
   // `other` has no direction, and `parking` is as often a minimum (places) as a cap.
-  if (kind === 'other' || kind === 'parking' || limit === null || (limit.kind !== 'value' && limit.kind !== 'ratio')) return true;
+  if (
+    kind === 'other' ||
+    kind === 'parking' ||
+    limit === null ||
+    (limit.kind !== 'value' && limit.kind !== 'ratio')
+  )
+    return true;
   return limit.comparison === (MINIMUM_KINDS.has(kind) ? 'min' : 'max');
 }
 
@@ -251,9 +403,11 @@ export function comparisonAgrees(value) {
 export function numbersIn(passage) {
   const text = String(passage).normalize('NFKC');
   // Not a digit inside a word: « m2 », « UCe1b » write no number.
-  return [...text.matchAll(/(?<![\p{L}\d])(?:\d{1,3}(?:[ \u00A0\u202F]\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?)/gu)].map((m) =>
-    Number(m[0].replace(/[ \u00A0\u202F]/gu, '').replace(',', '.'))
-  );
+  return [
+    ...text.matchAll(
+      /(?<![\p{L}\d])(?:\d{1,3}(?:[ \u00A0\u202F]\d{3})+(?:[.,]\d+)?|\d+(?:[.,]\d+)?)/gu
+    )
+  ].map((m) => Number(m[0].replace(/[ \u00A0\u202F]/gu, '').replace(',', '.')));
 }
 
 /** The numbers a limit claims, which the passage must write (S1 of the 002.5b review). */
@@ -262,9 +416,10 @@ function claimedNumbers(limit) {
   if (limit.kind === 'value') return [limit.value];
   if (limit.kind === 'ratio') return [limit.percent];
   if (limit.kind === 'height_relative') {
-    return [limit.minimumMetres, limit.offsetMetres === null ? null : Math.abs(limit.offsetMetres)].filter(
-      (n) => typeof n === 'number'
-    );
+    return [
+      limit.minimumMetres,
+      limit.offsetMetres === null ? null : Math.abs(limit.offsetMetres)
+    ].filter((n) => typeof n === 'number');
   }
   return [];
 }
@@ -296,7 +451,9 @@ export function sectorOf(sector) {
 
 const MIN_CONDITION_LENGTH = 4;
 
-const sameCode = (a, b) => normalisePassage(a).replace(/\s+/gu, '').toLowerCase() === normalisePassage(b).replace(/\s+/gu, '').toLowerCase();
+const sameCode = (a, b) =>
+  normalisePassage(a).replace(/\s+/gu, '').toLowerCase() ===
+  normalisePassage(b).replace(/\s+/gu, '').toLowerCase();
 
 /** The nearest sector heading at or before a chapter offset. */
 function sectorHeadingBefore(prepared, offset) {
@@ -324,7 +481,11 @@ export function verifiedStrip(value, passage) {
     value.statement !== 'limit' ||
     value.limit?.kind !== 'value' ||
     value.limit.unit !== 'm' ||
-    !(typeof strip.depthMetres === 'number' && strip.depthMetres >= 0.1 && strip.depthMetres <= 50) ||
+    !(
+      typeof strip.depthMetres === 'number' &&
+      strip.depthMetres >= 0.1 &&
+      strip.depthMetres <= 50
+    ) ||
     !STRIP_EDGES.includes(strip.edges) ||
     typeof strip.permits !== 'boolean'
   )
@@ -389,7 +550,9 @@ export function placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes,
   // DEC-6: conditions and exceptions, verbatim within the window.
   const heading = sectorHeadingBefore(prepared, start);
   const windowStart = Math.max(heading?.lineStart ?? 0, start - CONDITION_WINDOW, 0);
-  const window = normaliseText(prepared.text.slice(windowStart, Math.min(prepared.text.length, end + CONDITION_WINDOW_AFTER)));
+  const window = normaliseText(
+    prepared.text.slice(windowStart, Math.min(prepared.text.length, end + CONDITION_WINDOW_AFTER))
+  );
   /** The phrase as the text writes it (a slice of the source), or `undefined`. */
   const verbatim = (phrase) => {
     const needle = normalisePassage(phrase);
@@ -398,7 +561,10 @@ export function placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes,
       dropped.conditionNotVerbatim += 1;
       return undefined;
     }
-    return prepared.text.slice(windowStart + window.starts[at], windowStart + window.ends[at + needle.length - 1]);
+    return prepared.text.slice(
+      windowStart + window.starts[at],
+      windowStart + window.ends[at + needle.length - 1]
+    );
   };
   const askedConditions = value.conditions ?? [];
   const askedExceptions = value.exceptions ?? [];
@@ -415,7 +581,8 @@ export function placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes,
     confidence = 'low';
   }
   if (!comparisonAgrees(value)) confidence = 'low';
-  const sectorUnplaced = value.sector !== null && ![...sectorCodes].some((code) => sameCode(code, value.sector));
+  const sectorUnplaced =
+    value.sector !== null && ![...sectorCodes].some((code) => sameCode(code, value.sector));
   const article = articleAt(prepared, start);
 
   return {
@@ -437,8 +604,23 @@ export function placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes,
   };
 }
 
+/** One answer item as one item per sector, each then checked and placed like any other; none if it names no usable sector. */
+function expandedItems(item, sectorInfo, dropped) {
+  const { sectors, unknown = [] } = expandAppliesTo(item.value.appliesTo, sectorInfo);
+  if (unknown.length > 0) dropped.unknownSector = (dropped.unknownSector ?? 0) + 1;
+  else if (sectors.length === 0) dropped.schemaInvalid += 1;
+  const { appliesTo: _appliesTo, ...value } = item.value;
+  return sectors.map((sector) => ({ ...item, value: { ...value, sector } }));
+}
+
 function ruleKey(rule) {
-  return JSON.stringify([rule.kind, rule.sector, rule.limit, rule.strip, normalisePassage(rule.passage)]);
+  return JSON.stringify([
+    rule.kind,
+    rule.sector,
+    rule.limit,
+    rule.strip,
+    normalisePassage(rule.passage)
+  ]);
 }
 
 /**
@@ -460,12 +642,34 @@ function ruleKey(rule) {
  *   because the account's AI budget ran out at one (it and every chunk after it) — are present only then;
  *   the rules of the chunks read before it are returned like any partial result's.
  */
-export async function extractChapter({ prepared, ai, maxTextLength, maxItems, chunkChars, onChunk, onPart, onCall, onAnswer, signal, memo, memoSalt = '' }) {
+export async function extractChapter({
+  prepared,
+  ai,
+  maxTextLength,
+  maxItems,
+  chunkChars,
+  onChunk,
+  onPart,
+  onCall,
+  onAnswer,
+  signal,
+  memo,
+  memoSalt = '',
+  sectorsInCode = false
+}) {
   const chunks = splitChunks(
     prepared,
     Math.min(MAX_CHUNK_CHARS, chunkChars ?? MAX_CHUNK_CHARS, maxTextLength ?? MAX_CHUNK_CHARS)
   );
   const sectorCodes = new Set(prepared.sectors.filter((s) => s.heading).map((s) => s.code));
+  // Sprint 002.33: the sectors expanded by the code. The model is told the zone and its sectors, as found in the text.
+  const sectorInfo = sectorsInCode ? sectorsOfChapter(prepared) : undefined;
+  const instructions =
+    sectorInfo === undefined
+      ? INSTRUCTIONS
+      : sectorInfo.zone === undefined
+        ? INSTRUCTIONS_SECTORS_IN_CODE
+        : `${INSTRUCTIONS_SECTORS_IN_CODE}\nZone: ${sectorInfo.zone}. ${sectorInfo.sectors.length === 0 ? 'This zone has no sector.' : `Sectors of this zone: ${sectorInfo.sectors.join(', ')}.`}`;
   // `valueNotInPassage` and `droppedConditions` count rules kept at low confidence.
   const dropped = {
     passageNotFound: 0,
@@ -496,13 +700,17 @@ export async function extractChapter({ prepared, ai, maxTextLength, maxItems, ch
     const memoKey =
       memo === undefined
         ? undefined
-        : createHash('sha1').update(`${memoSalt}\0${PROMPT_VERSION}\0${chunk.text}`).digest('hex');
+        : createHash('sha1')
+            .update(
+              `${memoSalt}\0${PROMPT_VERSION}${sectorsInCode ? '\0sectors-in-code' : ''}\0${chunk.text}`
+            )
+            .digest('hex');
     let answer = memoKey === undefined ? undefined : memo.get(memoKey);
     const cached = answer !== undefined;
     const request = {
-      instructions: INSTRUCTIONS,
+      instructions,
       text: chunk.text,
-      itemSchema: ITEM_SCHEMA,
+      itemSchema: sectorsInCode ? ITEM_SCHEMA_SECTORS_IN_CODE : ITEM_SCHEMA,
       maxItems: Math.min(MAX_ITEMS_PER_CHUNK, maxItems ?? MAX_ITEMS_PER_CHUNK)
     };
     // 002.9 DEC-2: what a recording's replay checks beside the length — a hash of
@@ -546,18 +754,36 @@ export async function extractChapter({ prepared, ai, maxTextLength, maxItems, ch
     if (stopped !== undefined) {
       unread = chunks.length - index;
       // The refused part was announced as running: it was not read.
-      onPart?.({ n: index + 1, of: chunks.length, pages, state: 'waiting', cached: false, rules: 0, total: rules.size });
+      onPart?.({
+        n: index + 1,
+        of: chunks.length,
+        pages,
+        state: 'waiting',
+        cached: false,
+        rules: 0,
+        total: rules.size
+      });
       break;
     }
     if (answer === undefined) {
       failed += 1;
-      onPart?.({ n: index + 1, of: chunks.length, pages, state: 'failed', cached: false, rules: 0, total: rules.size });
+      onPart?.({
+        n: index + 1,
+        of: chunks.length,
+        pages,
+        state: 'failed',
+        cached: false,
+        rules: 0,
+        total: rules.size
+      });
       continue;
     }
     if (!cached) memo?.set(memoKey, answer);
     model ??= { providerId: answer.providerId, model: answer.model };
     weakest =
-      weakest === undefined || WEAKEST.indexOf(answer.constraint) < WEAKEST.indexOf(weakest) ? answer.constraint : weakest;
+      weakest === undefined || WEAKEST.indexOf(answer.constraint) < WEAKEST.indexOf(weakest)
+        ? answer.constraint
+        : weakest;
     for (const rejection of answer.rejected ?? []) {
       if (String(rejection.reason).startsWith('passage-')) dropped.passageNotFound += 1;
       else if (rejection.reason === 'over-limit') dropped.overLimit += 1;
@@ -566,10 +792,27 @@ export async function extractChapter({ prepared, ai, maxTextLength, maxItems, ch
     const normalisedChunk = normaliseText(chunk.text);
     const before = rules.size;
     for (const item of answer.items) {
-      const rule = placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes, dropped });
-      if (rule !== undefined && !rules.has(ruleKey(rule))) rules.set(ruleKey(rule), rule);
+      for (const placed of sectorsInCode ? expandedItems(item, sectorInfo, dropped) : [item]) {
+        const rule = placeItem({
+          prepared,
+          chunk,
+          normalisedChunk,
+          item: placed,
+          sectorCodes,
+          dropped
+        });
+        if (rule !== undefined && !rules.has(ruleKey(rule))) rules.set(ruleKey(rule), rule);
+      }
     }
-    onPart?.({ n: index + 1, of: chunks.length, pages, state: 'done', cached, rules: rules.size - before, total: rules.size });
+    onPart?.({
+      n: index + 1,
+      of: chunks.length,
+      pages,
+      state: 'done',
+      cached,
+      rules: rules.size - before,
+      total: rules.size
+    });
   }
 
   return {

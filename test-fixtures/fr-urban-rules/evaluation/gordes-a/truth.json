@@ -1,0 +1,383 @@
+{
+  "format": "archisimple-reading-truth",
+  "version": 1,
+  "zone": "A",
+  "document": {
+    "idurba": "84050_PLU_20241017",
+    "nomfic": "84050_reglement_20220411.pdf",
+    "partition": "DU_84050"
+  },
+  "chapter": {
+    "pages": [
+      44,
+      51
+    ]
+  },
+  "scopeKinds": [
+    "road_setback",
+    "boundary_setback",
+    "building_distance",
+    "footprint_ratio",
+    "extension_max",
+    "annex_max",
+    "height_total",
+    "height_facade",
+    "green_ratio"
+  ],
+  "scopeNote": "The kinds the buildable area uses. Not covered (never counted as an extra): floor-area allowances (250 m² of housing, 50 m² of farm reception, the 70 m² minimum), the pool basin areas (60 m² and 80 m²), the 20 m radius of annexes, the number of annexes, the 10 m setback along rivers, the 1.80 m fence and the 0.60 m low wall, the roof pitch of 25 to 35 %; the figure coverage still watches them.",
+  "provenance": {
+    "source": "Géoportail de l'urbanisme (GPU)",
+    "licence": "Licence Ouverte v2.0 (Etalab)",
+    "retrievedAt": "2026-10-20",
+    "text": "test-fixtures/fr-urban-rules/gordes/regulation/pages.jsonl"
+  },
+  "draftedBy": "Claude Code",
+  "draftedAt": "2026-11-20",
+  "draftNote": "Drafted from the chapter's text (pages 44 to 51) with no model's reading in front of me (none is recorded for Gordes). An old-style PLU of fourteen articles with no sectors in the zone A itself (the sector Ast has no rule of these kinds). The drafter is itself a model: every number and page needs the owner's eye.",
+  "validatedBy": "independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",
+  "validatedAt": "2026-11-20",
+  "rules": [
+    {
+      "id": "g01",
+      "kind": "road_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 75,
+        "unit": "m"
+      },
+      "page": 47,
+      "quote": "Route départementale D900 : 75 mètres de l’axe de la voie.",
+      "note": "Measured from the road's axis. Not for road infrastructure, public services needing it, farm buildings and homes, or public-interest networks."
+    },
+    {
+      "id": "g02",
+      "kind": "road_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 25,
+        "unit": "m"
+      },
+      "page": 47,
+      "quote": "Route départementale D2 : 25 mètres de l’axe de la voie,",
+      "note": "From the axis."
+    },
+    {
+      "id": "g03",
+      "kind": "road_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 15,
+        "unit": "m"
+      },
+      "page": 47,
+      "quote": "Autres routes départementales : 15 mètres de l’axe de la voie,",
+      "note": "From the axis."
+    },
+    {
+      "id": "g04",
+      "kind": "road_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 10,
+        "unit": "m"
+      },
+      "page": 47,
+      "quote": "Voies communales : 10 mètres de l’axe de la voie.",
+      "note": "From the axis."
+    },
+    {
+      "id": "g05",
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 48,
+      "quote": "doit être au moins égale à 4 mètres.",
+      "note": "Where the building does not stand on the boundary."
+    },
+    {
+      "id": "g06",
+      "kind": "building_distance",
+      "sector": null,
+      "statement": "not_regulated",
+      "limit": null,
+      "page": 48,
+      "quote": "ARTICLE A 8 - IMPLANTATION DES CONSTRUCTIONS LES UNES PAR RAPPORT AUX AUTRES SUR UNE MEME PROPRIETE Non réglementé"
+    },
+    {
+      "id": "g07",
+      "kind": "footprint_ratio",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 250,
+        "unit": "m2"
+      },
+      "page": 48,
+      "quote": "L’emprise au sol des constructions à usage d’habitations visées à l’article A2 est limitée à 250 m2.",
+      "note": "A footprint in square metres, not a ratio."
+    },
+    {
+      "id": "g08",
+      "kind": "annex_max",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 30,
+        "unit": "m2"
+      },
+      "page": 48,
+      "quote": "Les annexes visées à l’article A2 sont limitées à 30 m2 d’emprise au sol par annexe."
+    },
+    {
+      "id": "g09",
+      "kind": "height_facade",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 7,
+        "unit": "m"
+      },
+      "page": 48,
+      "quote": "7 mètres à l’égout du toit",
+      "note": "Housing: 7 m at the eaves."
+    },
+    {
+      "id": "g10",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 8.5,
+        "unit": "m"
+      },
+      "page": 48,
+      "quote": "8,50 mètres au faîtage pour les constructions à usage d’habitation",
+      "note": "Housing: 8.50 m at the ridge."
+    },
+    {
+      "id": "g11",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 4.5,
+        "unit": "m"
+      },
+      "page": 48,
+      "quote": "4,50 mètres au faîtage pour les annexes à l’habitation",
+      "note": "Annexes: 4.50 m at the ridge."
+    },
+    {
+      "id": "g12",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 10,
+        "unit": "m"
+      },
+      "page": 48,
+      "quote": "10 mètres au faîtage pour les autres constructions",
+      "note": "Other buildings: 10 m at the ridge."
+    },
+    {
+      "id": "g13",
+      "kind": "extension_max",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 30,
+        "base": "surface_de_plancher"
+      },
+      "page": 45,
+      "quote": "à 30% de la surface de plancher de la construction à usage d'habitation existante",
+      "note": "Existing housing outside the PPRIF red zone, within 250 m² of floor area in all."
+    },
+    {
+      "id": "g14",
+      "kind": "extension_max",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 20,
+        "unit": "m2"
+      },
+      "page": 45,
+      "quote": "+ 20 m2 de surface de plancher",
+      "note": "PPRIF red zone, initial floor area 121 to 200 m²: an absolute allowance."
+    },
+    {
+      "id": "g15",
+      "kind": "extension_max",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 10,
+        "base": "surface_de_plancher"
+      },
+      "page": 45,
+      "quote": "+ 10% de surface de plancher existante à la date",
+      "note": "PPRIF red zone, initial floor area from 201 m², within 250 m² in all."
+    },
+    {
+      "id": "g16",
+      "kind": "annex_max",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 60,
+        "unit": "m2"
+      },
+      "page": 44,
+      "quote": "les annexes à l’habitation dans la limite de 30 m2 d’emprise au sol par annexe et de 60 m2 de surface de bassin pour les piscines.",
+      "note": "Added after the independent cross-check. Hesitation: pool basin area, for dwellings necessary to a farm (A 2-1). Kept as annex_max because this sentence places pools under annexes."
+    },
+    {
+      "id": "g17",
+      "kind": "extension_max",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 250,
+        "unit": "m2"
+      },
+      "page": 45,
+      "quote": "à 30% de la surface de plancher de la construction à usage d'habitation existante à la date d'approbation du PLU dans la limite de 250 m2 de surface de plancher (existant + extension),",
+      "note": "Added after the independent cross-check. Hesitation: cap on total floor area after extension (existing + extension); could be read as a floor-area maximum, kept as extension_max because it bounds the extension. Also applies in the red-zone row 'A partir de 201 m2'."
+    },
+    {
+      "id": "g18",
+      "kind": "extension_max",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 140,
+        "unit": "m2"
+      },
+      "page": 45,
+      "quote": "30% de la surface de plancher existante à la date d’approbation du PLU dans la limite de 140 m2 de surface de plancher au total (existant + extension)",
+      "note": "Added after the independent cross-check. PPRIF red zone, initial floor area 70 to 120 m2: total (existing + extension) capped at 140 m2. Not a zoning sector, so sector null."
+    },
+    {
+      "id": "g19",
+      "kind": "extension_max",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 50,
+        "unit": "m2"
+      },
+      "page": 44,
+      "quote": "réalisées en extension dans la limite de 50 m2 de surface de plancher formant un ensemble bâti regroupé et cohérent avec les bâtiments existants,",
+      "note": "Added after the independent cross-check. Extension for farm reception / produce sales premises (A 2-1)."
+    }
+  ],
+  "crossCheck": {
+    "by": "a second model (Fable 5.2) given only the chapter text and the product's rule definitions, never this truth",
+    "at": "2026-11-20",
+    "blindRules": 24,
+    "draftersRulesFoundExactly": "19 of 19 (wrong values 0, other sectors 0, not found 0)",
+    "adopted": {
+      "reason": "A limit on extending an existing building (the 250 m² and 140 m² totals « existant + extension », the 50 m² of an extension for farm reception) is an extension_max by the definitions; the 60 m² pool basin stands in the sentence about annexes (article A 2-1), which is an annex_max.",
+      "ids": [
+        "g16",
+        "g17",
+        "g18",
+        "g19"
+      ]
+    },
+    "notAdopted": [
+      {
+        "kind": "annex_max",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 20,
+          "unit": "m"
+        },
+        "page": 44,
+        "quote": "Les annexes devront être situées dans un rayon de 20 mètres de la construction à usage d’habitation auquel elle se rattache.",
+        "why": "Maximum distance of an annex from its dwelling, measured at the annex's farthest point; judged annex_max rather than building_distance (which is a minimum spacing, and is 'non réglementé' here). Repeated on p.45 for annexes and pools of existing dwellings - same figure, listed once."
+      },
+      {
+        "kind": "annex_max",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 45,
+        "quote": "la création de trois annexes (garage, abri, cuisine d'été, etc.),",
+        "why": "A count limit (three annexes per existing dwelling) that fits none of the limit units; given as described."
+      },
+      {
+        "kind": "annex_max",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 80,
+          "unit": "m2"
+        },
+        "page": 48,
+        "quote": "Les piscines visées à l’article A2 sont limitées à 80 m2 de surface de bassin.",
+        "why": "Hesitation: pool basin area (also p.45 for existing dwellings). Conflicts with the 60 m2 of A 2-1 for farm dwellings; both listed."
+      },
+      {
+        "kind": "extension_max",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 45,
+        "quote": "que l'extension s'intègre dans le prolongement et en harmonie avec la volumétrie globale de la construction à usage d'habitation existante,",
+        "why": "Qualitative condition on extensions; borderline (could be read as an appearance rule)."
+      }
+    ],
+    "notAdoptedNote": "Judgment calls the two readers differ on (what a kind covers, or a rule stated with no figure). They are left out of this truth, so a model that reads them is reported as an extra to classify, and the owner decides whether any belongs here."
+  }
+}

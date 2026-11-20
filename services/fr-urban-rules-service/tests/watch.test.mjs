@@ -9,7 +9,14 @@
 // 002.9 criterion 2: no network but loopback, before anything else is loaded.
 import '../../test-support/no-network.mjs';
 import assert from 'node:assert/strict';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  writeFileSync
+} from 'node:fs';
 import http from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -17,6 +24,7 @@ import { after, test } from 'node:test';
 import { cacheKey } from '../src/cache.mjs';
 import { ServiceError } from '../src/errors.mjs';
 import { createFetcher } from '../src/fetcher.mjs';
+import { SCHEMA_VERSION } from '../src/extract.mjs';
 import { createService } from '../src/service.mjs';
 import {
   CHECK_INTERVAL_MS,
@@ -56,7 +64,7 @@ function harness({ listings = {}, evictVersion, evictOutdated, cachedDocuments }
       calls.push({ partition, at });
       if (state.failWith !== undefined) throw state.failWith;
       const listing = state.listings[partition];
-      return typeof listing === 'function' ? listing() : listing ?? [];
+      return typeof listing === 'function' ? listing() : (listing ?? []);
     }
   };
   const watcher = createWatcher({
@@ -75,10 +83,13 @@ function harness({ listings = {}, evictVersion, evictOutdated, cachedDocuments }
   return { dir, watcher, calls, capture, state, advance: (ms) => (at += ms), time: () => at };
 }
 
-const readRecord = (dir, partition = PARTITION) => JSON.parse(readFileSync(join(dir, `${partition}.json`), 'utf8'));
+const readRecord = (dir, partition = PARTITION) =>
+  JSON.parse(readFileSync(join(dir, `${partition}.json`), 'utf8'));
 
 test('a first look at an unwatched partition is one GPU call, recorded, with the publication date as an ISO date', async () => {
-  const { watcher, calls, dir } = harness({ listings: { [PARTITION]: [item('id-1', '200046977_PLUi_20260326')] } });
+  const { watcher, calls, dir } = harness({
+    listings: { [PARTITION]: [item('id-1', '200046977_PLUi_20260326')] }
+  });
   const view = await watcher.status(PARTITION);
   assert.equal(calls.length, 1);
   assert.deepEqual(view.current, {
@@ -107,13 +118,16 @@ test('criterion 1: the current version is item 25 of Lyon’s history, and the w
   // The GPU's trap (probe 2026-10-19, rows 1–4): without the status filter the
   // default page is 20 archived items, oldest first; the current one is not on it.
   const archived = Array.from({ length: 24 }, (_, i) =>
-    item(`old-${i + 1}`, `200046977_PLUi_2022${String(i + 1).padStart(4, '0')}`, { status: 'document.deleted' })
+    item(`old-${i + 1}`, `200046977_PLUi_2022${String(i + 1).padStart(4, '0')}`, {
+      status: 'document.deleted'
+    })
   );
   const current = item('4f3ddc27a9611b4bc94fa161443b8e86', '200046977_PLUi_20260326');
   const seen = [];
   const server = http.createServer((req, res) => {
     seen.push(req.url);
-    const filtered = new URL(req.url, 'http://x').searchParams.get('status') === 'document.production';
+    const filtered =
+      new URL(req.url, 'http://x').searchParams.get('status') === 'document.production';
     res.writeHead(200, { 'content-type': 'application/json' });
     res.end(JSON.stringify(filtered ? [current] : archived.slice(0, 20)));
   });
@@ -125,8 +139,18 @@ test('criterion 1: the current version is item 25 of Lyon’s history, and the w
     else callback(null, '127.0.0.1', 4);
   };
   const tmpDir = mkdtempSync(join(tmpdir(), 'fr-urban-rules-watch-fetch-'));
-  const fetcher = createFetcher({ version: '0.3.0', tmpDir, request: http.request, port: server.address().port, lookup: toStub });
-  const watcher = createWatcher({ dir: mkdtempSync(join(tmpdir(), 'fr-urban-rules-watch-')), fetcher, logger: () => {} });
+  const fetcher = createFetcher({
+    version: '0.3.0',
+    tmpDir,
+    request: http.request,
+    port: server.address().port,
+    lookup: toStub
+  });
+  const watcher = createWatcher({
+    dir: mkdtempSync(join(tmpdir(), 'fr-urban-rules-watch-')),
+    fetcher,
+    logger: () => {}
+  });
   const view = await watcher.status(PARTITION);
   assert.equal(view.current.gpuDocId, '4f3ddc27a9611b4bc94fa161443b8e86');
   assert.match(seen[0], /status=document\.production/u);
@@ -137,14 +161,22 @@ test('criterion 2: a changed id supersedes the document; the previous one is rec
   const h = harness({ listings: { [PARTITION]: [item('id-1', '200046977_PLUi_20260326')] } });
   await h.watcher.status(PARTITION);
   h.advance(DAY_MS);
-  h.state.listings[PARTITION] = [item('id-2', '200046977_PLUi_20260701', { publicationDate: '01/07/2026 09:00:00' })];
+  h.state.listings[PARTITION] = [
+    item('id-2', '200046977_PLUi_20260701', { publicationDate: '01/07/2026 09:00:00' })
+  ];
   const { changed, view } = await h.watcher.check(PARTITION);
   assert.equal(changed, true);
   assert.equal(view.current.gpuDocId, 'id-2');
   assert.deepEqual(view.previous, [
-    { gpuDocId: 'id-1', originalName: '200046977_PLUi_20260326', supersededAt: new Date(h.time()).toISOString() }
+    {
+      gpuDocId: 'id-1',
+      originalName: '200046977_PLUi_20260326',
+      supersededAt: new Date(h.time()).toISOString()
+    }
   ]);
-  assert.ok(h.capture.records.some((l) => l.event === 'watch_changed' && l.to === '200046977_PLUi_20260701'));
+  assert.ok(
+    h.capture.records.some((l) => l.event === 'watch_changed' && l.to === '200046977_PLUi_20260701')
+  );
   // Unchanged on the next look: nothing added.
   h.advance(DAY_MS);
   const again = await h.watcher.check(PARTITION);
@@ -222,7 +254,12 @@ test('criterion 4: never more than one request a second to the GPU, whoever asks
   for (let n = 1; n <= 5; n += 1) {
     const partition = `DU_0000${n}`;
     h.state.listings[partition] = [item(`id-${n}`, `IDU_${n}`, { name: partition })];
-    await h.watcher.noteDocument({ partition, documentId: `id-${n}`, idurba: `IDU_${n}`, retrievedAt: new Date(T0).toISOString() });
+    await h.watcher.noteDocument({
+      partition,
+      documentId: `id-${n}`,
+      idurba: `IDU_${n}`,
+      retrievedAt: new Date(T0).toISOString()
+    });
   }
   h.advance(CHECK_INTERVAL_MS + CHECK_JITTER_MS + 1);
   const before = h.time();
@@ -230,12 +267,16 @@ test('criterion 4: never more than one request a second to the GPU, whoever asks
   assert.equal(checked, 5);
   assert.equal(h.calls.length, 5);
   for (let i = 1; i < h.calls.length; i += 1) {
-    assert.ok(h.calls[i].at - h.calls[i - 1].at >= GPU_GAP_MS, `gap ${i}: ${h.calls[i].at - h.calls[i - 1].at}`);
+    assert.ok(
+      h.calls[i].at - h.calls[i - 1].at >= GPU_GAP_MS,
+      `gap ${i}: ${h.calls[i].at - h.calls[i - 1].at}`
+    );
   }
   assert.ok(h.time() - before >= 4 * GPU_GAP_MS);
   // Concurrent first looks share the same gate.
   const more = ['DU_00006', 'DU_00007', 'DU_00008'];
-  for (const partition of more) h.state.listings[partition] = [item('x', 'IDU_X', { name: partition })];
+  for (const partition of more)
+    h.state.listings[partition] = [item('x', 'IDU_X', { name: partition })];
   const start = h.calls.length;
   await Promise.all(more.map((p) => h.watcher.status(p)));
   for (let i = start + 1; i < h.calls.length; i += 1) {
@@ -267,7 +308,9 @@ test('criterion 4: a 5xx backs off — 5 minutes, doubling — and three days of
     h.advance(DAY_MS);
     result = await h.watcher.check(PARTITION);
   }
-  assert.ok(h.capture.records.some((l) => l.event === 'watch_failing' && l.code === 'source_unavailable'));
+  assert.ok(
+    h.capture.records.some((l) => l.event === 'watch_failing' && l.code === 'source_unavailable')
+  );
   assert.ok(result.view.failing.days >= 3);
   // The record is still there, still pointing at the document it last confirmed.
   assert.equal(readRecord(h.dir).current.gpuDocId, 'id-1');
@@ -302,7 +345,12 @@ test('a malformed listing is a failure, not a withdrawal', async () => {
 test('DEC-1 seeding: a document the service holds is watched from its meta, with no GPU call', async () => {
   const h = harness({
     cachedDocuments: async () => [
-      { partition: 'DU_84050', documentId: 'doc-g', idurba: '84050_PLU_20241017', retrievedAt: '2026-10-19T08:00:00.000Z' }
+      {
+        partition: 'DU_84050',
+        documentId: 'doc-g',
+        idurba: '84050_PLU_20241017',
+        retrievedAt: '2026-10-19T08:00:00.000Z'
+      }
     ]
   });
   await h.watcher.seedFromCache();
@@ -312,7 +360,12 @@ test('DEC-1 seeding: a document the service holds is watched from its meta, with
   assert.equal(record.checkedAt, '2026-10-19T08:00:00.000Z');
   assert.ok(Date.parse(record.nextCheckAt) > Date.parse(record.checkedAt) + CHECK_INTERVAL_MS - 1);
   // A reading marks it read; it does not reset what the GPU last said.
-  await h.watcher.noteDocument({ partition: 'DU_84050', documentId: 'other', idurba: 'X', retrievedAt: 'now' });
+  await h.watcher.noteDocument({
+    partition: 'DU_84050',
+    documentId: 'other',
+    idurba: 'X',
+    retrievedAt: 'now'
+  });
   assert.equal(readRecord(h.dir, 'DU_84050').current.gpuDocId, 'doc-g');
 });
 
@@ -320,7 +373,12 @@ test('the checks are spread: a partition’s time of day is stable and within th
   const h = harness();
   const first = [];
   for (const partition of ['DU_00001', 'DU_00002', 'DU_84050']) {
-    await h.watcher.noteDocument({ partition, documentId: 'd', idurba: 'I', retrievedAt: new Date(T0).toISOString() });
+    await h.watcher.noteDocument({
+      partition,
+      documentId: 'd',
+      idurba: 'I',
+      retrievedAt: new Date(T0).toISOString()
+    });
     const next = Date.parse(readRecord(h.dir, partition).nextCheckAt) - T0;
     assert.ok(next >= CHECK_INTERVAL_MS && next < CHECK_INTERVAL_MS + CHECK_JITTER_MS);
     first.push(next);
@@ -382,7 +440,11 @@ test('the history is bounded and has one entry per superseded document', async (
 test('a record survives a restart', async () => {
   const h = harness({ listings: { [PARTITION]: [item('id-1', 'N_1')] } });
   await h.watcher.status(PARTITION);
-  const again = createWatcher({ dir: h.dir, fetcher: { listDocuments: async () => assert.fail('no call') }, logger: () => {} });
+  const again = createWatcher({
+    dir: h.dir,
+    fetcher: { listDocuments: async () => assert.fail('no call') },
+    logger: () => {}
+  });
   const view = await again.status(PARTITION);
   assert.equal(view.current.gpuDocId, 'id-1');
 });
@@ -402,7 +464,12 @@ test('a partition that fails its pattern is refused before anything is read or f
 
 const gordes = loadRegulation('gordes');
 
-function serviceWith({ listings, env = {}, dataDir = mkdtempSync(join(tmpdir(), 'fr-urban-rules-service-watch-')), startAt = T0 } = {}) {
+function serviceWith({
+  listings,
+  env = {},
+  dataDir = mkdtempSync(join(tmpdir(), 'fr-urban-rules-service-watch-')),
+  startAt = T0
+} = {}) {
   const capture = capturingLog();
   let at = startAt;
   const calls = { documents: 0 };
@@ -428,10 +495,22 @@ function serviceWith({ listings, env = {}, dataDir = mkdtempSync(join(tmpdir(), 
     dataDir,
     fetcher,
     parse,
-    watch: { sleep: async (ms) => { at += ms; } },
+    watch: {
+      sleep: async (ms) => {
+        at += ms;
+      }
+    },
     clock: () => at,
     now: () => new Date(at)
-  }).then((s) => ({ s, capture, calls, state, dataDir, advance: (ms) => (at += ms), time: () => at }));
+  }).then((s) => ({
+    s,
+    capture,
+    calls,
+    state,
+    dataDir,
+    advance: (ms) => (at += ms),
+    time: () => at
+  }));
 }
 
 const req = (segments, query = {}, user = 'alice') => ({
@@ -444,7 +523,9 @@ const req = (segments, query = {}, user = 'alice') => ({
 });
 
 test('GET v1/documents/{partition} answers the watch and seeds on a first look', async () => {
-  const { s, calls } = await serviceWith({ listings: { DU_00001: [item('d1', 'IDU_1', { name: 'DU_00001' })] } });
+  const { s, calls } = await serviceWith({
+    listings: { DU_00001: [item('d1', 'IDU_1', { name: 'DU_00001' })] }
+  });
   const first = await s.handle(req(['v1', 'documents', 'DU_00001']));
   assert.equal(first.status, 200);
   assert.equal(first.body.current.originalName, 'IDU_1');
@@ -462,8 +543,12 @@ test('GET v1/documents/{partition} answers the watch and seeds on a first look',
 
 test('a first look is the user’s budget: past it, 429 with Retry-After, and the GPU is not asked', async () => {
   const listings = {};
-  for (let n = 1; n <= 4; n += 1) listings[`DU_0000${n}`] = [item(`d${n}`, `IDU_${n}`, { name: `DU_0000${n}` })];
-  const { s, calls } = await serviceWith({ listings, env: { FR_URBAN_RULES_LIMIT_WATCH_SEED_HOUR: '2' } });
+  for (let n = 1; n <= 4; n += 1)
+    listings[`DU_0000${n}`] = [item(`d${n}`, `IDU_${n}`, { name: `DU_0000${n}` })];
+  const { s, calls } = await serviceWith({
+    listings,
+    env: { FR_URBAN_RULES_LIMIT_WATCH_SEED_HOUR: '2' }
+  });
   assert.equal((await s.handle(req(['v1', 'documents', 'DU_00001']))).status, 200);
   assert.equal((await s.handle(req(['v1', 'documents', 'DU_00002']))).status, 200);
   const third = await s.handle(req(['v1', 'documents', 'DU_00003']));
@@ -481,12 +566,22 @@ test('a GPU failure on a first look is a named error, never an empty record', as
   const res = await s.handle(req(['v1', 'documents', 'DU_00001']));
   assert.equal(res.status, 502);
   assert.equal(res.body.error, 'source_unavailable');
-  assert.equal(existsSync(join(dataDir, 'com.archisimple.fr-urban-rules', 'watch', 'DU_00001.json')), false);
+  assert.equal(
+    existsSync(join(dataDir, 'com.archisimple.fr-urban-rules', 'watch', 'DU_00001.json')),
+    false
+  );
 });
 
 test('reading a chapter puts its document in the watch with no GPU call of its own', async () => {
-  const { s, calls, dataDir } = await serviceWith({ listings: { DU_00001: [{ id: 'doc1', originalName: 'IDU_1', name: 'DU_00001' }] } });
-  const query = new URLSearchParams({ partition: 'DU_00001', idurba: 'IDU_1', nomfic: 'reglement.pdf', zone: 'A' });
+  const { s, calls, dataDir } = await serviceWith({
+    listings: { DU_00001: [{ id: 'doc1', originalName: 'IDU_1', name: 'DU_00001' }] }
+  });
+  const query = new URLSearchParams({
+    partition: 'DU_00001',
+    idurba: 'IDU_1',
+    nomfic: 'reglement.pdf',
+    zone: 'A'
+  });
   const chapter = await s.handle({ ...req(['v1', 'chapter']), query });
   assert.equal(chapter.status, 200);
   const before = calls.documents; // the chapter's own resolution
@@ -498,19 +593,31 @@ test('reading a chapter puts its document in the watch with no GPU call of its o
 });
 
 test('DEC-2 through the caches: a superseded version’s text and extractions go 90 days after the change, another version’s stay', async () => {
-  const first = await serviceWith({ listings: { DU_00001: [{ id: 'doc1', originalName: 'IDU_1', name: 'DU_00001' }] } });
+  const first = await serviceWith({
+    listings: { DU_00001: [{ id: 'doc1', originalName: 'IDU_1', name: 'DU_00001' }] }
+  });
   const { dataDir } = first;
   const root = join(dataDir, 'com.archisimple.fr-urban-rules');
   const read = (s, idurba) =>
     s.handle({
       ...req(['v1', 'chapter']),
-      query: new URLSearchParams({ partition: 'DU_00001', idurba, nomfic: 'reglement.pdf', zone: 'A' })
+      query: new URLSearchParams({
+        partition: 'DU_00001',
+        idurba,
+        nomfic: 'reglement.pdf',
+        zone: 'A'
+      })
     });
   assert.equal((await read(first.s, 'IDU_1')).status, 200);
   const keyOld = cacheKey('IDU_1', 'reglement.pdf');
   assert.ok(existsSync(join(root, 'documents', keyOld)));
   // An extraction result for that version sits beside it (as jobs.mjs writes one), and one for another version.
-  const meta = (idurba) => JSON.stringify({ schemaVersion: 1, document: { partition: 'DU_00001', idurba, nomfic: 'reglement.pdf' }, rules: [] });
+  const meta = (idurba) =>
+    JSON.stringify({
+      schemaVersion: SCHEMA_VERSION,
+      document: { partition: 'DU_00001', idurba, nomfic: 'reglement.pdf' },
+      rules: []
+    });
   const resultOld = join(root, 'extractions', 'a'.repeat(40));
   const resultOther = join(root, 'extractions', 'c'.repeat(40));
   mkdirSync(resultOld, { recursive: true });
@@ -545,12 +652,19 @@ test('DEC-2: an extraction result under another schema version is not kept', asy
   // A running service indexes entries at start; a result written by hand needs a reopen.
   const dir = join(root, 'extractions', 'b'.repeat(40));
   mkdirSync(dir, { recursive: true });
-  writeFileSync(join(dir, 'meta.json'), JSON.stringify({ schemaVersion: 0, document: {}, rules: [] }));
+  writeFileSync(
+    join(dir, 'meta.json'),
+    JSON.stringify({ schemaVersion: 0, document: {}, rules: [] })
+  );
   const reopened = await createService({
     env: {},
     log: () => {},
     dataDir,
-    fetcher: { listDocuments: async () => [], listFiles: async () => [], downloadPdf: async () => assert.fail('no') },
+    fetcher: {
+      listDocuments: async () => [],
+      listFiles: async () => [],
+      downloadPdf: async () => assert.fail('no')
+    },
     parse: async () => assert.fail('no'),
     watch: false
   });
@@ -561,10 +675,21 @@ test('DEC-2: an extraction result under another schema version is not kept', asy
 });
 
 test('criterion 5: the service stores no parcel, address, geometry or user name — a query that carries them leaves nothing in the volume', async () => {
-  const { s, dataDir, capture } = await serviceWith({ listings: { DU_00001: [item('d1', 'IDU_1', { name: 'DU_00001' })] } });
-  const secrets = ['692660000A0001', '12 rue Distinctive du Test', 'Zéphyrine Distinctname', '4.8357,45.7640'];
+  const { s, dataDir, capture } = await serviceWith({
+    listings: { DU_00001: [item('d1', 'IDU_1', { name: 'DU_00001' })] }
+  });
+  const secrets = [
+    '692660000A0001',
+    '12 rue Distinctive du Test',
+    'Zéphyrine Distinctname',
+    '4.8357,45.7640'
+  ];
   await s.handle(
-    req(['v1', 'documents', 'DU_00001'], { idu: secrets[0], address: secrets[1], user: secrets[2], point: secrets[3] }, secrets[2])
+    req(
+      ['v1', 'documents', 'DU_00001'],
+      { idu: secrets[0], address: secrets[1], user: secrets[2], point: secrets[3] },
+      secrets[2]
+    )
   );
   const files = [];
   const walk = (dir) => {

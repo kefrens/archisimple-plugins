@@ -34,7 +34,7 @@ When the person is looking at a plot whose written rules have not been read, the
 1. **One offer per zone, derived.** For each zone of the plot on view in `not_started`, post `offer:<record id>`: a `ready` activity card, `quiet: true`, title « Read the written rules — zone UDA1 », subtitle the document and, when known, the pages. When the zone leaves `not_started` (it starts, it was read, the plot changed) the handle is disposed and, if it started, the existing reading card takes over. A function of the record, no stored flag. _Recommended._
 2. **One start path.** The offer's button id maps to `written-extract` and calls `runWrittenAction`; the Rules view button and the card cannot diverge, and a reading started from one shows in the other.
 3. **The model is shown, not chosen, on the card.** A note « Will read with <provider · model> » follows the AI panel's chosen model; changing it in the panel updates the note. The card has no picker (the panel's own is the one).
-4. **It says the reading is shared.** A note: « The result is saved for this zone: the next reading of it is free, for everyone. » (true: the service's result cache is shared and a cached zone costs nothing).
+4. **It says the reading is shared.** A note: « The result is kept for this zone until the regulation is replaced, so reading it again uses no AI budget. » (true: the service's result cache is shared and a cached zone costs nothing).
 5. **It never claims a price or a budget it cannot know.** The budget strip at the panel's foot (120.1) carries the allowance; the card says nothing about money in this sprint.
 6. **Disabled with a reason, never absent.** With no model usable (`ai` not granted, none chosen and no deployment default) the button is `disabled` with a note naming why. A budget refusal still arrives as the existing refusal (002.27), not here.
 7. **Quiet, and only for the plot on view.** Posts are `quiet: true`. Offers for another plot are disposed, so the cap is not reached by plots the person left. If the cap is reached anyway, the card for the zone on view wins (the extension disposes others first).
@@ -63,15 +63,15 @@ Map the card's action to `runWrittenAction('written-extract')`; the reading card
 
 ## Wording (en / fr)
 
-| Key                       | English                                                                          | Français                                                                                           |
-| ------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `offer.title`             | Read the written rules — zone {zone}                                             | Lire les règles écrites — zone {zone}                                                              |
-| `offer.subtitle`          | {document}                                                                       | {document}                                                                                         |
-| `offer.note.model`        | Will read with {model}.                                                          | Lecture avec {model}.                                                                              |
-| `offer.note.defaultModel` | Will read with the deployment’s default model.                                   | Lecture avec le modèle par défaut du déploiement.                                                  |
-| `offer.note.shared`       | The result is saved for this zone: the next reading of it is free, for everyone. | Le résultat est conservé pour cette zone : la prochaine lecture sera gratuite, pour tout le monde. |
-| `offer.action`            | Read the written rules                                                           | Lire les règles écrites                                                                            |
-| `offer.note.noModel` (D6) | No AI model is available to read with. Choose one in this panel.                 | Aucun modèle d’IA n’est disponible pour la lecture. Choisissez-en un dans ce panneau.              |
+| Key                       | English                                                                                                   | Français                                                                                                                   |
+| ------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `offer.title`             | Read the written rules — zone {zone}                                                                      | Lire les règles écrites — zone {zone}                                                                                      |
+| `offer.subtitle`          | {document}                                                                                                | {document}                                                                                                                 |
+| `offer.note.model`        | Will read with {model}.                                                                                   | Lecture avec {model}.                                                                                                      |
+| `offer.note.defaultModel` | Will read with the deployment’s default model.                                                            | Lecture avec le modèle par défaut du déploiement.                                                                          |
+| `offer.note.shared`       | The result is kept for this zone until the regulation is replaced, so reading it again uses no AI budget. | Le résultat est conservé pour cette zone tant que le règlement n’est pas remplacé : le relire ne consomme aucun budget IA. |
+| `offer.action`            | Read the written rules                                                                                    | Lire les règles écrites                                                                                                    |
+| `offer.note.noModel` (D6) | No AI model is available to read with. Choose one in this panel.                                          | Aucun modèle d’IA n’est disponible pour la lecture. Choisissez-en un dans ce panneau.                                      |
 
 ## Open Questions
 

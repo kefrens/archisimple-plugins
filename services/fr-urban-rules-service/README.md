@@ -253,6 +253,18 @@ GET  v1/extractions?partition&idurba&nomfic&zone[&provider[&model]]&cachedOnly=1
   header only when `AI_SERVICE_TRUST_ACCOUNT_FEATURES` is on, treats the call as anonymous.
 - Logs name `requestedProvider`; never the features.
 
+## Sectors in code (0.7.0, Sprint 002.33) — release note
+
+**What changes.** The model no longer repeats each rule for each sector. It says where a rule applies (`appliesTo`: `"zone"`, `"all"` — the zone and every sector — or a list of the sector codes the text names) and **the service gives one item per sector**, each then checked and placed exactly as before (the occurrence by its sector heading, the figure and the conditions verbatim). The model is told the zone and its sectors, read from the chapter's own text (« Zone: UD. Sectors of this zone: UDa, UDa1, UDa2, UDb. »): a sector is a code the chapter writes that starts with the zone's code, since a sector need not have a heading. A code that is not one of the chapter's sectors is refused and counted in `dropped.unknownSector`, never repaired.
+
+**What does not change.** The result's shape: one rule per sector, `sector`, `page`, `passage`, and so on. The extension, the gateway and the account service need nothing.
+
+**Why.** Measured on four zones (a 12-run baseline and 24 runs of the new reading, 2026-11-20): on the zone with four sectors the reading found **81 % of the rules instead of 53 %** (Sonnet 5.5), overall 79 % instead of 64 %, with no loss elsewhere, no sector error and no change in cost; the model that put rules under the wrong sector (Haiku 5.5) stopped doing so. Report: `docs/measurements/reading-quality-2026-11-20.md`.
+
+**What an operator must expect.** `SCHEMA_VERSION` is now **2** and `PROMPT_VERSION` **4**. At start the service **removes every cached reading** (a schema change) and every new reading has a new key (a prompt change): **each chapter is read again once, when next asked**, at about $0.04 to $0.14 on Claude Sonnet 5.5 (about a cent on Haiku), paid by the first person to open it and shared afterwards. A project that holds a reading made by the earlier version is offered « Read again » (its schema is older). Nothing else is lost: the documents' text cache is untouched.
+
+**For tests and tools.** `extractChapter` keeps the earlier reading as its own default (the recorded fixtures replay it); the service passes `sectorsInCode: SECTORS_IN_CODE` (true). `tools/evaluate-reading.mjs` runs the shipped reading by default and the earlier one with `--variant previous`.
+
 ## The AI budget (0.7.0, Sprint 002.27)
 
 A reading spends the account's money like every other AI feature, and is metered and budgeted by ai-service (platform ADR-0136,

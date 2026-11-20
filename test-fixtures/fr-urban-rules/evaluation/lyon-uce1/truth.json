@@ -1,0 +1,222 @@
+{
+  "format": "archisimple-reading-truth",
+  "version": 1,
+  "zone": "UCe1",
+  "document": {
+    "idurba": "200046977_PLUi_20260326",
+    "nomfic": "200046977_reglement_20260326.pdf",
+    "partition": "DU_200046977"
+  },
+  "chapter": {
+    "pages": [
+      121,
+      144
+    ]
+  },
+  "scopeKinds": [
+    "road_setback",
+    "boundary_setback",
+    "building_distance",
+    "footprint_ratio",
+    "extension_max",
+    "annex_max",
+    "height_total",
+    "height_facade",
+    "green_ratio"
+  ],
+  "scopeNote": "The kinds the buildable area uses. Not covered by this truth (so never counted as an extra): parking, floor-area thresholds and 'other' rules (fences 2 m, overhangs, commerce and office thresholds, the band-of-constructibility depth of article 1.2.2.1 — 17 m in UCe1a and 30 m in UCe1b — and a ground-floor height of 3.50 m), which the figure coverage still watches.",
+  "provenance": {
+    "source": "Géoportail de l'urbanisme (GPU)",
+    "licence": "Licence Ouverte v2.0 (Etalab)",
+    "retrievedAt": "2026-10-20",
+    "text": "test-fixtures/fr-urban-rules/lyon/regulation/pages.jsonl"
+  },
+  "draftedBy": "Claude Code",
+  "draftedAt": "2026-11-20",
+  "draftNote": "Drafted from the chapter's text (pages 121 to 144) before looking at any model's reading of it, so the truth does not echo a model. The drafter is itself a model: every number, sector and page needs the owner's eye.",
+  "validatedBy": "owner",
+  "validatedAt": "2026-11-20",
+  "rules": [
+    {
+      "id": "r01",
+      "kind": "road_setback",
+      "sector": null,
+      "statement": "described",
+      "limit": null,
+      "page": 124,
+      "quote": "Les constructions sont implantées en limite de référence* ou en limite de la marge de recul*.",
+      "note": "Alignment on the reference limit or the setback line: a rule with no figure."
+    },
+    {
+      "id": "r02",
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "described",
+      "limit": null,
+      "page": 125,
+      "quote": "Les constructions sont implantées sur les deux limites séparatives latérales*.",
+      "note": "In the main band of constructibility (both sectors)."
+    },
+    {
+      "id": "r03",
+      "kind": "boundary_setback",
+      "sector": "UCe1a",
+      "statement": "limit",
+      "limit": {
+        "kind": "height_relative",
+        "reference": "facade_height",
+        "factor": 1,
+        "offsetMetres": -4,
+        "minimumMetres": 2
+      },
+      "page": 126,
+      "quote": "ce dernier est au moins égal à la hauteur de façade* de la construction moins 4 mètres (R ≥ Hf - 4 m), avec un minimum de 2 mètres.",
+      "note": "In the secondary band; the building may also stand on the boundary."
+    },
+    {
+      "id": "r04",
+      "kind": "boundary_setback",
+      "sector": "UCe1b",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 126,
+      "quote": "Le retrait* est au moins égal à 4 mètres.",
+      "note": "In the secondary band."
+    },
+    {
+      "id": "r05",
+      "kind": "building_distance",
+      "sector": "UCe1a",
+      "statement": "limit",
+      "limit": {
+        "kind": "height_relative",
+        "reference": "facade_height",
+        "factor": 0.5,
+        "offsetMetres": null,
+        "minimumMetres": null
+      },
+      "page": 127,
+      "quote": "dans le secteur UCe1a, à la moitié de la hauteur de façade* la plus élevée (D ≥ Hf/2) ;"
+    },
+    {
+      "id": "r06",
+      "kind": "building_distance",
+      "sector": "UCe1b",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 127,
+      "quote": "dans le secteur UCe1b, à 4 mètres."
+    },
+    {
+      "id": "r07",
+      "kind": "building_distance",
+      "sector": null,
+      "statement": "not_regulated",
+      "limit": null,
+      "page": 127,
+      "quote": "La distance* entre une annexe* et une autre construction n'est pas réglementée.",
+      "note": "One of two « not regulated » sentences."
+    },
+    {
+      "id": "r08",
+      "kind": "building_distance",
+      "sector": null,
+      "statement": "not_regulated",
+      "limit": null,
+      "page": 127,
+      "quote": "La distance* entre une construction à destination d'équipements d'intérêt collectif et services publics et une autre construction n'est pas réglementée.",
+      "note": "The second « not regulated » sentence."
+    },
+    {
+      "id": "r09",
+      "kind": "footprint_ratio",
+      "sector": null,
+      "statement": "not_regulated",
+      "limit": null,
+      "page": 128,
+      "quote": "L'emprise au sol* des constructions n'est pas réglementée."
+    },
+    {
+      "id": "r10",
+      "kind": "footprint_ratio",
+      "sector": null,
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 128,
+      "quote": "Dès lors que figure aux documents graphiques du règlement un coefficient d'emprise au sol*, sa valeur se substitue aux dispositions du paragraphe 2.4.1"
+    },
+    {
+      "id": "r11",
+      "kind": "extension_max",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 5,
+        "base": "existing_emprise"
+      },
+      "page": 128,
+      "quote": "dès lors qu'elle est limitée à une augmentation de 5% de l'emprise au sol* existante, à la date d'approbation du PLU-H.",
+      "note": "An extension of a building already over the footprint rule."
+    },
+    {
+      "id": "r12",
+      "kind": "height_facade",
+      "sector": null,
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 129,
+      "quote": "La hauteur de façade* maximale des constructions figure aux documents graphiques du règlement"
+    },
+    {
+      "id": "r13",
+      "kind": "height_facade",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 3.5,
+        "unit": "m"
+      },
+      "page": 129,
+      "quote": "une verticale élevée à l'aplomb de la limite séparative d'une hauteur de 3,50 mètres ;",
+      "note": "A gabarit in the secondary band along a boundary with a URi or AURi zone, over a depth of 5 m: a height limited to 3.50 m at the boundary."
+    },
+    {
+      "id": "r14",
+      "kind": "green_ratio",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 15,
+        "base": "plot_area"
+      },
+      "page": 133,
+      "quote": "Le coefficient de pleine terre* est au minimum de 15%."
+    },
+    {
+      "id": "r15",
+      "kind": "green_ratio",
+      "sector": null,
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 133,
+      "quote": "Dès lors que figure aux documents graphiques du règlement un coefficient de pleine terre* graphique, sa valeur se substitue aux dispositions du paragraphe 3.2.1"
+    }
+  ],
+  "validationNote": "\"ok for now\" (2026-11-20): accepted as the working truth; a number the owner or a later run finds wrong is corrected here and the date moves."
+}

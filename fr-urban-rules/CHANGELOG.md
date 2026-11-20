@@ -6,12 +6,19 @@
   version** — release the platform first. The companion service (0.7.0) is unchanged.
 - **The AI panel offers the reading.** For each zone of the plot on view that the Rules view shows as « not read yet », a **quiet « ready » card**
   is posted in the AI conversation: « Lire les règles écrites — zone UE », the document, « Lecture avec <model> » (the model chosen in the panel,
-  else the deployment's default), « Le résultat est conservé pour cette zone : la prochaine lecture sera gratuite, pour tout le monde », and one
+  else the deployment's default), « Le résultat est conservé pour cette zone tant que le règlement n’est pas remplacé : le relire ne consomme aucun budget IA », and one
   button. **It never opens the panel** (it is `quiet`); it is there when the panel is open. Pressing it starts **exactly the reading the Rules
   view's button starts** (`runWrittenAction('written-extract')`, one path); the card is taken down and the reading card of 002.23 takes over.
 - **Derived, not stored.** The offers are a function of what each read shows: a zone found already read, being read, or on another plot has none; a
   service that cannot be reached has none; a changed model updates the card. No price on it (only the AI service knows prices) and no passage, ever.
 - A zone whose reading the person **cancelled** is not offered again beside its own « Read again » card (found by the browser walk).
+- **Wording and validity (the owner's questions after the first NUC deploy).** The offer's note now reads « Le résultat est conservé pour cette zone tant
+  que le règlement n’est pas remplacé : le relire ne consomme aucun budget IA » (no « pour tout le monde »). The already-read notice names the
+  **regulation version** it is for (« pour le règlement en vigueur depuis le … », from the end of the document's identifier; no date, no claim).
+- **Reading again replaces the reading everyone on the server shares, so it must be confirmed.** « Read the written rules again » of a whole reading
+  now shows a notice (« Relire remplace la lecture partagée du … (…) pour tous les utilisateurs de ce serveur ») and opens a required « Remplacer la
+  lecture partagée » choice; the action is refused without it. A partial or stopped reading has no form (nothing shared is replaced).
+- Strings: `written.again.{replaces,field,option,notConfirmed}`, `written.state.alreadyReadNoVersion` (en, fr); `written.state.alreadyRead` gains `{version}`.
 - A host without `ai.cards` changes nothing: the Rules view's button (002.28) stays the way in.
 - Strings: `offer.{title,note.model,note.defaultModel,note.shared,action}` (en, fr). Tests: eight in `written.test.mjs`; the 002.23 disposal test now
   also counts the offer.

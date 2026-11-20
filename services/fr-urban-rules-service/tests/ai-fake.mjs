@@ -21,7 +21,12 @@ import { allOccurrences, normaliseText } from '../src/normalise.mjs';
 
 export function fakeAi({
   plan = () => [],
-  health = { available: true, defaultProviderId: 'lmstudio', maxTextLength: 200_000, maxItems: 200 },
+  health = {
+    available: true,
+    defaultProviderId: 'lmstudio',
+    maxTextLength: 200_000,
+    maxItems: 200
+  },
   providerId = 'lmstudio',
   model = 'fake-model',
   constraint = 'schema',
@@ -46,13 +51,19 @@ export function fakeAi({
       const { signal: _signal, ...asked } = route;
       routes.push(asked);
       if (route.providerId !== undefined) {
-        if (known !== undefined && !known.includes(route.providerId)) throw new AiError('unknown_provider', 422);
-        if (granted.includes(route.providerId) && !(route.features ?? []).includes(`ai-${route.providerId}`)) {
+        if (known !== undefined && !known.includes(route.providerId))
+          throw new AiError('unknown_provider', 422);
+        if (
+          granted.includes(route.providerId) &&
+          !(route.features ?? []).includes(`ai-${route.providerId}`)
+        ) {
           throw new AiError('provider_not_permitted', 403);
         }
       }
       if (hold !== undefined) await hold;
-      const planned = await plan(request.text, calls.length, request);
+      const planned = (await plan(request.text, calls.length, request)).map((p) =>
+        asAsked(p, request)
+      );
       const normalised = normaliseText(request.text);
       const items = [];
       const rejected = [];
@@ -68,7 +79,12 @@ export function fakeAi({
         }
         items.push({
           value: p.value,
-          passage: { text: p.passage, start: found[0].start, end: found[0].end, occurrences: found.length }
+          passage: {
+            text: p.passage,
+            start: found[0].start,
+            end: found[0].end,
+            occurrences: found.length
+          }
         });
       });
       return {
@@ -81,6 +97,26 @@ export function fakeAi({
         constraint: typeof constraint === 'function' ? constraint(calls.length) : constraint
       };
     }
+  };
+}
+
+/**
+ * Sprint 002.33: when the request asks for `appliesTo` and the plan wrote the earlier `sector`, answer as a model would:
+ * no sector is the zone, a sector is a one-item list. A plan that already says `appliesTo` is left as it is.
+ */
+function asAsked(planned, request) {
+  const asksAppliesTo = request.itemSchema?.properties?.appliesTo !== undefined;
+  if (
+    !asksAppliesTo ||
+    planned.value === undefined ||
+    planned.value.appliesTo !== undefined ||
+    !('sector' in planned.value)
+  )
+    return planned;
+  const { sector, ...rest } = planned.value;
+  return {
+    ...planned,
+    value: { ...rest, appliesTo: sector === null || sector === undefined ? 'zone' : [sector] }
   };
 }
 

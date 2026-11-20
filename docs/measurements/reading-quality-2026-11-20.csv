@@ -1,0 +1,13 @@
+zone,model,validatedBy,truth,found,exact,sectorError,wrongValue,missed,extra,duplicates,outOfScope,recall,verified,figureCovered,figureTotal,repeatsAcrossSectors,calls,inputTokens,outputTokens,costUsd,seconds
+gordes-a,anthropic:claude-haiku-5-5,"independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",19,11,11,0,1,7,1,1,5,0.579,1.000,12,26,0,1,12762,3455,0.0030,11.6
+gordes-a,anthropic:claude-haiku-5-5@low,"independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",19,9,9,0,0,10,1,0,2,0.474,1.000,8,26,0,1,12766,2164,0.0024,7.9
+gordes-a,anthropic:claude-sonnet-5-5,"independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",19,12,12,0,1,6,0,1,1,0.632,1.000,12,26,0,1,12758,2549,0.0510,15
+lyon-uce1,anthropic:claude-haiku-5-5,"owner",15,8,8,0,0,7,1,2,16,0.533,1.000,10,25,0,2,30488,7764,0.0069,29.4
+lyon-uce1,anthropic:claude-haiku-5-5@low,"owner",15,10,10,0,1,4,3,1,13,0.667,1.000,15,25,0,2,30500,4772,0.0054,16.4
+lyon-uce1,anthropic:claude-sonnet-5-5,"owner",15,13,13,0,0,2,2,0,20,0.867,1.000,13,25,0,2,30504,7419,0.1352,41.8
+pays-d-aix-uc,anthropic:claude-haiku-5-5,"independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",8,8,8,0,0,0,1,0,10,1.000,1.000,9,16,0,1,11402,6670,0.0045,24.6
+pays-d-aix-uc,anthropic:claude-haiku-5-5@low,"independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",8,7,7,0,0,1,3,0,1,0.875,1.000,5,16,0,1,11398,1558,0.0019,6.3
+pays-d-aix-uc,anthropic:claude-sonnet-5-5,"independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",8,8,8,0,0,0,0,0,1,1.000,1.000,4,16,0,1,11378,1521,0.0380,8.7
+pays-d-aix-ud,anthropic:claude-haiku-5-5,"independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",45,21,11,10,0,24,0,0,4,0.467,1.000,11,20,3,1,15495,8630,0.0059,29.7
+pays-d-aix-ud,anthropic:claude-haiku-5-5@low,"independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",45,13,9,4,0,32,2,0,3,0.289,1.000,7,20,1,1,15495,3906,0.0035,12.9
+pays-d-aix-ud,anthropic:claude-sonnet-5-5,"independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",45,23,23,0,0,22,1,0,3,0.511,1.000,11,20,4,1,15479,4596,0.0769,23.5

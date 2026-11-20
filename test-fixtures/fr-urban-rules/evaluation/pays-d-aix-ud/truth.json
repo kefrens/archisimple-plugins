@@ -1,0 +1,682 @@
+{
+  "format": "archisimple-reading-truth",
+  "version": 1,
+  "zone": "UD",
+  "document": {
+    "idurba": "200054807_PLUi_20260306_B",
+    "nomfic": "200054807_reglement_20260306_B.pdf",
+    "partition": "DU_200054807_B"
+  },
+  "chapter": {
+    "pages": [
+      170,
+      180
+    ]
+  },
+  "scopeKinds": [
+    "road_setback",
+    "boundary_setback",
+    "building_distance",
+    "footprint_ratio",
+    "extension_max",
+    "annex_max",
+    "height_total",
+    "height_facade",
+    "green_ratio"
+  ],
+  "scopeNote": "The kinds the buildable area uses. Not covered (never counted as an extra): the band of 14 m along a gabarit line (article 4.1.2, a band, kind 'other'), the 12 m limit on the length of a facade on a boundary, the floor-area thresholds (250 m² and 500 m²), the 20 % share of a flag lot's access strip, fences (2 m, 1.80 m, 1.60 m, 1.20 m, 0.60 m by commune), parking and stormwater figures; the figure coverage still watches them.",
+  "provenance": {
+    "source": "Géoportail de l'urbanisme (GPU)",
+    "licence": "Licence Ouverte v2.0 (Etalab)",
+    "retrievedAt": "2026-11-20",
+    "text": "test-fixtures/fr-urban-rules/evaluation/pays-d-aix-ud/pages.json"
+  },
+  "draftedBy": "Claude Code",
+  "draftedAt": "2026-11-20",
+  "draftNote": "Drafted from the chapter's text (pages 170 to 180) before looking at any model's reading of it. A rule that the text states once for several sectors is one truth rule per sector, as the prompt asks. The drafter is itself a model: every number, sector and page needs the owner's eye.",
+  "validatedBy": "independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",
+  "validatedAt": "2026-11-20",
+  "rules": [
+    {
+      "id": "d01",
+      "kind": "road_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 173,
+      "quote": "Les constructions doivent être implantées avec un recul minimum de 4 mètres par rapport à l’alignement* actuel ou futur des voies* et emprises publiques* et privées ouvertes à la circulation publique.",
+      "note": "Article 4.1.1: where there is no gabarit line or beyond its band; the zone and all its sectors."
+    },
+    {
+      "id": "d02",
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "described",
+      "limit": null,
+      "page": 174,
+      "quote": "Les constructions doivent être implantées sur au moins une limite séparative* latérale.",
+      "note": "4.2.1, the zone UD proper (sector null); the sectors have their own articles."
+    },
+    {
+      "id": "d03",
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "height_relative",
+        "reference": "facade_height",
+        "factor": 0.5,
+        "offsetMetres": null,
+        "minimumMetres": 4
+      },
+      "page": 174,
+      "quote": "au moins égale à la moitié de la hauteur de la façade* de la construction* sans toutefois être inférieure à 4 mètres.",
+      "note": "4.2.1, UD proper: half the facade height, at least 4 m."
+    },
+    {
+      "id": "d04",
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 2,
+        "unit": "m"
+      },
+      "page": 174,
+      "quote": "Le bassin de piscine non couvert peut être implanté à une distance minimale de 2 mètres par rapport aux limites séparatives*.",
+      "note": "An uncovered pool only; the same sentence follows each sector's article."
+    },
+    {
+      "id": "d05",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 174,
+      "quote": "la hauteur totale de l’extension soit inférieure ou égale à 4 mètres",
+      "note": "The alternative rule for an extension in the strip closer than the setback."
+    },
+    {
+      "id": "d06",
+      "kind": "boundary_setback",
+      "sector": "UDa",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 174,
+      "quote": "Les constructions doivent être implantées en retrait minimum de 4 mètres des limites séparatives*.",
+      "note": "[a]: floor area under 500 m² in UDa and UDa1, under 250 m² in UDa2."
+    },
+    {
+      "id": "d07",
+      "kind": "boundary_setback",
+      "sector": "UDa1",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 174,
+      "quote": "Les constructions doivent être implantées en retrait minimum de 4 mètres des limites séparatives*.",
+      "note": "[a]: floor area under 500 m² in UDa and UDa1, under 250 m² in UDa2."
+    },
+    {
+      "id": "d08",
+      "kind": "boundary_setback",
+      "sector": "UDa2",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 174,
+      "quote": "Les constructions doivent être implantées en retrait minimum de 4 mètres des limites séparatives*.",
+      "note": "[a]: floor area under 500 m² in UDa and UDa1, under 250 m² in UDa2."
+    },
+    {
+      "id": "d09",
+      "kind": "boundary_setback",
+      "sector": "UDa",
+      "statement": "limit",
+      "limit": {
+        "kind": "height_relative",
+        "reference": "facade_height",
+        "factor": 1,
+        "offsetMetres": null,
+        "minimumMetres": 4
+      },
+      "page": 175,
+      "quote": "égale à la hauteur de façade* de la construction* sans être inférieure à 4 mètres.",
+      "note": "[b]: floor area of 500 m² or more in UDa and UDa1, 250 m² or more in UDa2: the facade height, at least 4 m."
+    },
+    {
+      "id": "d10",
+      "kind": "boundary_setback",
+      "sector": "UDa1",
+      "statement": "limit",
+      "limit": {
+        "kind": "height_relative",
+        "reference": "facade_height",
+        "factor": 1,
+        "offsetMetres": null,
+        "minimumMetres": 4
+      },
+      "page": 175,
+      "quote": "égale à la hauteur de façade* de la construction* sans être inférieure à 4 mètres.",
+      "note": "[b]: floor area of 500 m² or more in UDa and UDa1, 250 m² or more in UDa2: the facade height, at least 4 m."
+    },
+    {
+      "id": "d11",
+      "kind": "boundary_setback",
+      "sector": "UDa2",
+      "statement": "limit",
+      "limit": {
+        "kind": "height_relative",
+        "reference": "facade_height",
+        "factor": 1,
+        "offsetMetres": null,
+        "minimumMetres": 4
+      },
+      "page": 175,
+      "quote": "égale à la hauteur de façade* de la construction* sans être inférieure à 4 mètres.",
+      "note": "[b]: floor area of 500 m² or more in UDa and UDa1, 250 m² or more in UDa2: the facade height, at least 4 m."
+    },
+    {
+      "id": "d12",
+      "kind": "boundary_setback",
+      "sector": "UDa",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 2,
+        "unit": "m"
+      },
+      "page": 175,
+      "quote": "Le bassin de piscine non couvert peut être implanté à une distance minimale de 2 mètres par rapport aux limites séparatives*.",
+      "note": "An uncovered pool only (stated under [a] and under [b]; one rule per sector)."
+    },
+    {
+      "id": "d13",
+      "kind": "boundary_setback",
+      "sector": "UDa1",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 2,
+        "unit": "m"
+      },
+      "page": 175,
+      "quote": "Le bassin de piscine non couvert peut être implanté à une distance minimale de 2 mètres par rapport aux limites séparatives*.",
+      "note": "An uncovered pool only (stated under [a] and under [b]; one rule per sector)."
+    },
+    {
+      "id": "d14",
+      "kind": "boundary_setback",
+      "sector": "UDa2",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 2,
+        "unit": "m"
+      },
+      "page": 175,
+      "quote": "Le bassin de piscine non couvert peut être implanté à une distance minimale de 2 mètres par rapport aux limites séparatives*.",
+      "note": "An uncovered pool only (stated under [a] and under [b]; one rule per sector)."
+    },
+    {
+      "id": "d15",
+      "kind": "height_total",
+      "sector": "UDa",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 175,
+      "quote": "à condition que leur hauteur totale n’excède pas 4 mètres",
+      "note": "The alternative rule of [a]: a strip of 0 to 4 m along the boundary, total height at most 4 m (and for an extension under [b], the same)."
+    },
+    {
+      "id": "d16",
+      "kind": "height_total",
+      "sector": "UDa1",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 175,
+      "quote": "à condition que leur hauteur totale n’excède pas 4 mètres",
+      "note": "The alternative rule of [a]: a strip of 0 to 4 m along the boundary, total height at most 4 m (and for an extension under [b], the same)."
+    },
+    {
+      "id": "d17",
+      "kind": "height_total",
+      "sector": "UDa2",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 175,
+      "quote": "à condition que leur hauteur totale n’excède pas 4 mètres",
+      "note": "The alternative rule of [a]: a strip of 0 to 4 m along the boundary, total height at most 4 m (and for an extension under [b], the same)."
+    },
+    {
+      "id": "d18",
+      "kind": "height_facade",
+      "sector": "UDa",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 3.5,
+        "unit": "m"
+      },
+      "page": 175,
+      "quote": "leur hauteur de façade* n’excède pas 3,5 mètres.",
+      "note": "The alternative rule of [a], with the 4 m total height."
+    },
+    {
+      "id": "d19",
+      "kind": "height_facade",
+      "sector": "UDa1",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 3.5,
+        "unit": "m"
+      },
+      "page": 175,
+      "quote": "leur hauteur de façade* n’excède pas 3,5 mètres.",
+      "note": "The alternative rule of [a], with the 4 m total height."
+    },
+    {
+      "id": "d20",
+      "kind": "height_facade",
+      "sector": "UDa2",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 3.5,
+        "unit": "m"
+      },
+      "page": 175,
+      "quote": "leur hauteur de façade* n’excède pas 3,5 mètres.",
+      "note": "The alternative rule of [a], with the 4 m total height."
+    },
+    {
+      "id": "d21",
+      "kind": "boundary_setback",
+      "sector": "UDb",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 175,
+      "quote": "Les constructions doivent obligatoirement être implantées en retrait minimum de 4 mètres des limites séparatives*."
+    },
+    {
+      "id": "d22",
+      "kind": "boundary_setback",
+      "sector": "UDb",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 2,
+        "unit": "m"
+      },
+      "page": 176,
+      "quote": "Le bassin de piscine non couvert peut être implanté à une distance minimale de 2 mètres par rapport aux limites séparatives*.",
+      "note": "An uncovered pool only."
+    },
+    {
+      "id": "d23",
+      "kind": "height_total",
+      "sector": "UDb",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 176,
+      "quote": "la hauteur totale de l’extension soit inférieure ou égale à 4 mètres dans la bande de 0 à 4 mètres",
+      "note": "The alternative rule for an extension."
+    },
+    {
+      "id": "d24",
+      "kind": "building_distance",
+      "sector": null,
+      "statement": "not_regulated",
+      "limit": null,
+      "page": 176,
+      "quote": "4.3.1 / Dans la zone UD et ses secteurs UDa, UDa1, UDa2 Non réglementée.",
+      "note": "UD proper and UDa, UDa1, UDa2 share one sentence."
+    },
+    {
+      "id": "d25",
+      "kind": "building_distance",
+      "sector": "UDa",
+      "statement": "not_regulated",
+      "limit": null,
+      "page": 176,
+      "quote": "4.3.1 / Dans la zone UD et ses secteurs UDa, UDa1, UDa2 Non réglementée.",
+      "note": "UD proper and UDa, UDa1, UDa2 share one sentence."
+    },
+    {
+      "id": "d26",
+      "kind": "building_distance",
+      "sector": "UDa1",
+      "statement": "not_regulated",
+      "limit": null,
+      "page": 176,
+      "quote": "4.3.1 / Dans la zone UD et ses secteurs UDa, UDa1, UDa2 Non réglementée.",
+      "note": "UD proper and UDa, UDa1, UDa2 share one sentence."
+    },
+    {
+      "id": "d27",
+      "kind": "building_distance",
+      "sector": "UDa2",
+      "statement": "not_regulated",
+      "limit": null,
+      "page": 176,
+      "quote": "4.3.1 / Dans la zone UD et ses secteurs UDa, UDa1, UDa2 Non réglementée.",
+      "note": "UD proper and UDa, UDa1, UDa2 share one sentence."
+    },
+    {
+      "id": "d28",
+      "kind": "building_distance",
+      "sector": "UDb",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 6,
+        "unit": "m"
+      },
+      "page": 176,
+      "quote": "doit être supérieure ou égale à 6 mètres.",
+      "note": "Two buildings not joined; annexes and pools excepted."
+    },
+    {
+      "id": "d29",
+      "kind": "footprint_ratio",
+      "sector": null,
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 176,
+      "quote": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement graphique lorsqu’elle existe."
+    },
+    {
+      "id": "d30",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 176,
+      "quote": "La hauteur des constructions* ne pourra excéder les hauteurs indiquées au règlement graphique lorsqu’elle existe."
+    },
+    {
+      "id": "d31",
+      "kind": "height_facade",
+      "sector": null,
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 176,
+      "quote": "La hauteur des constructions* ne pourra excéder une hauteur de façade* maximale indiquée par le linéaire de gabarit* figurant sur le règlement graphique.",
+      "note": "4.5.1 [b]: in the band defined by the gabarit line."
+    },
+    {
+      "id": "d32",
+      "kind": "green_ratio",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 20,
+        "base": "plot_area"
+      },
+      "page": 178,
+      "quote": "UD Au moins 20 % du terrain d'assiette* du projet",
+      "note": "The table's row « UD » is the zone itself: the whole zone, no sector."
+    },
+    {
+      "id": "d33",
+      "kind": "green_ratio",
+      "sector": "UDa",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 30,
+        "base": "plot_area"
+      },
+      "page": 178,
+      "quote": "UDa, UDa1 et UDb Au moins 30 % du terrain d'assiette* du projet"
+    },
+    {
+      "id": "d34",
+      "kind": "green_ratio",
+      "sector": "UDa1",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 30,
+        "base": "plot_area"
+      },
+      "page": 178,
+      "quote": "UDa, UDa1 et UDb Au moins 30 % du terrain d'assiette* du projet"
+    },
+    {
+      "id": "d35",
+      "kind": "green_ratio",
+      "sector": "UDb",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 30,
+        "base": "plot_area"
+      },
+      "page": 178,
+      "quote": "UDa, UDa1 et UDb Au moins 30 % du terrain d'assiette* du projet"
+    },
+    {
+      "id": "d36",
+      "kind": "green_ratio",
+      "sector": "UDa2",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 20,
+        "base": "plot_area"
+      },
+      "page": 178,
+      "quote": "UDa2 pour les constructions dont la surface de plancher* est inférieure à 250 m2 Au moins 20 % du terrain d'assiette* du projet",
+      "note": "Floor area under 250 m²."
+    },
+    {
+      "id": "d37",
+      "kind": "green_ratio",
+      "sector": "UDa2",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 60,
+        "base": "plot_area"
+      },
+      "page": 178,
+      "quote": "UDa2 : pour les constructions dont la surface de plancher* est égale ou supérieure à 250 m2 Au moins 60 % du terrain d'assiette* du projet",
+      "note": "Floor area of 250 m² or more."
+    },
+    {
+      "id": "d38",
+      "kind": "extension_max",
+      "sector": "UDa1",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 15,
+        "base": "surface_de_plancher"
+      },
+      "page": 172,
+      "quote": "dans la limite de 15% de la surface de plancher* existante.",
+      "note": "Article UD1 [3c]: a single extension of an existing shop or service."
+    },
+    {
+      "id": "d39",
+      "kind": "extension_max",
+      "sector": "UDb",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 15,
+        "base": "surface_de_plancher"
+      },
+      "page": 172,
+      "quote": "dans la limite de 15% de la surface de plancher* existante.",
+      "note": "Article UD1 [3c]: a single extension of an existing shop or service."
+    },
+    {
+      "id": "d40",
+      "kind": "height_total",
+      "sector": "UDa",
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 176,
+      "quote": "La hauteur des constructions* ne pourra excéder les hauteurs indiquées au règlement graphique lorsqu’elle existe.",
+      "note": "Added after the independent cross-check. Same sentence repeated under 4.5.1 [a] 'Dans la zone UD et les secteurs UDa, UDa1 et UDa2', in the absence of a linéaire de gabarit; redundant with the whole-zone rule."
+    },
+    {
+      "id": "d41",
+      "kind": "height_total",
+      "sector": "UDa1",
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 176,
+      "quote": "La hauteur des constructions* ne pourra excéder les hauteurs indiquées au règlement graphique lorsqu’elle existe.",
+      "note": "Added after the independent cross-check. Same sentence repeated under 4.5.1 [a] 'Dans la zone UD et les secteurs UDa, UDa1 et UDa2', in the absence of a linéaire de gabarit; redundant with the whole-zone rule."
+    },
+    {
+      "id": "d42",
+      "kind": "height_total",
+      "sector": "UDa2",
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 176,
+      "quote": "La hauteur des constructions* ne pourra excéder les hauteurs indiquées au règlement graphique lorsqu’elle existe.",
+      "note": "Added after the independent cross-check. Same sentence repeated under 4.5.1 [a] 'Dans la zone UD et les secteurs UDa, UDa1 et UDa2', in the absence of a linéaire de gabarit; redundant with the whole-zone rule."
+    },
+    {
+      "id": "d43",
+      "kind": "height_facade",
+      "sector": "UDa",
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 176,
+      "quote": "La hauteur des constructions* ne pourra excéder une hauteur de façade* maximale indiquée par le linéaire de gabarit* figurant sur le règlement graphique.",
+      "note": "Added after the independent cross-check. 4.5.1 [b]: within the band defined by the linéaire de gabarit; heading 'Dans la zone UD et les secteurs UDa, UDa1 et UDa2'."
+    },
+    {
+      "id": "d44",
+      "kind": "height_facade",
+      "sector": "UDa1",
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 176,
+      "quote": "La hauteur des constructions* ne pourra excéder une hauteur de façade* maximale indiquée par le linéaire de gabarit* figurant sur le règlement graphique.",
+      "note": "Added after the independent cross-check. 4.5.1 [b]: within the band defined by the linéaire de gabarit; heading 'Dans la zone UD et les secteurs UDa, UDa1 et UDa2'."
+    },
+    {
+      "id": "d45",
+      "kind": "height_facade",
+      "sector": "UDa2",
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 176,
+      "quote": "La hauteur des constructions* ne pourra excéder une hauteur de façade* maximale indiquée par le linéaire de gabarit* figurant sur le règlement graphique.",
+      "note": "Added after the independent cross-check. 4.5.1 [b]: within the band defined by the linéaire de gabarit; heading 'Dans la zone UD et les secteurs UDa, UDa1 et UDa2'."
+    }
+  ],
+  "crossCheck": {
+    "by": "a second model (Fable 5.2) given only the chapter text and the product's rule definitions, never this truth",
+    "at": "2026-11-20",
+    "blindRules": 47,
+    "draftersRulesFoundExactly": "45 of 45 (wrong values 0, other sectors 0, not found 0)",
+    "adopted": {
+      "reason": "Article 4.5.1 reads « Dans la zone UD et les secteurs UDa, UDa1 et UDa2 »: the product's definitions say a sentence that applies to several sectors is one item per sector, so the see_graphic height rules belong to each of the three sectors as well as to the zone.",
+      "ids": [
+        "d40",
+        "d41",
+        "d42",
+        "d43",
+        "d44",
+        "d45"
+      ]
+    },
+    "notAdopted": [
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 173,
+        "quote": "Le long des linéaires de gabarit* figurant sur le règlement graphique, les constructions doivent être implantées sur le linéaire de gabarit* dans une bande de 1",
+        "why": "Implantation on the gabarit line (line drawn on the graphic regulation, so see_graphic is a plausible alternative); the 14 m band is a constructibility band, not listed. The 'Règle alternative' letting non-conforming extensions stand closer to the road (4.1.1 and 4.1.2) would also be a described road_setback for the whole zone and is merged here."
+      },
+      {
+        "kind": "green_ratio",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 178,
+        "quote": "Lorsqu’un terrain d'assiette* est non conforme à la règle générale du présent article, la création et l’extension d’annexes ainsi que l’extension* des construct",
+        "why": "Alternative rule to 6.1 (whole zone): an exception to the open-ground ratio rather than a rule of its own; hesitated over listing it, and over extension_max/annex_max, kept as green_ratio."
+      }
+    ],
+    "notAdoptedNote": "Judgment calls the two readers differ on (what a kind covers, or a rule stated with no figure). They are left out of this truth, so a model that reads them is reported as an extra to classify, and the owner decides whether any belongs here."
+  }
+}

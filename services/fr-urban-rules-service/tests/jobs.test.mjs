@@ -17,7 +17,8 @@ import { fakeAi, rule } from './ai-fake.mjs';
 import { capturingLog, loadRegulation } from './helpers.mjs';
 
 const gordes = loadRegulation('gordes');
-const PASSAGE = 'Les occupations et utilisations du sol non mentionnées à l’article A 2 sont interdites.';
+const PASSAGE =
+  'Les occupations et utilisations du sol non mentionnées à l’article A 2 sont interdites.';
 const SECRET_USER = 'Zéphyrine Distinctname';
 
 function fakeFetcher(dir, versions = {}) {
@@ -75,10 +76,19 @@ async function service(options = {}) {
 }
 
 function inputs(n = 1, zone = 'A') {
-  return { partition: `DU_${String(n).padStart(5, '0')}`, idurba: `IDU_${n}`, nomfic: 'reglement.pdf', zone };
+  return {
+    partition: `DU_${String(n).padStart(5, '0')}`,
+    idurba: `IDU_${n}`,
+    nomfic: 'reglement.pdf',
+    zone
+  };
 }
 
-function request(method, segments, { body, query = {}, user = 'alice', source = 'header', hash = 'hash123456ab' } = {}) {
+function request(
+  method,
+  segments,
+  { body, query = {}, user = 'alice', source = 'header', hash = 'hash123456ab' } = {}
+) {
   return {
     method,
     segments: ['v1', ...segments],
@@ -90,14 +100,16 @@ function request(method, segments, { body, query = {}, user = 'alice', source = 
   };
 }
 
-const post = (s, n, opts = {}) => s.handle(request('POST', ['extractions'], { body: inputs(n, opts.zone), ...opts }));
+const post = (s, n, opts = {}) =>
+  s.handle(request('POST', ['extractions'], { body: inputs(n, opts.zone), ...opts }));
 const poll = (s, jobId) => s.handle(request('GET', ['extractions', jobId]));
-const cancel = (s, jobId, opts = {}) => s.handle(request('POST', ['extractions', jobId, 'cancel'], opts));
+const cancel = (s, jobId, opts = {}) =>
+  s.handle(request('POST', ['extractions', jobId, 'cancel'], opts));
 const cachedOnly = (s, n, zone = 'A') =>
   s.handle(request('GET', ['extractions'], { query: { ...inputs(n, zone), cachedOnly: '1' } }));
 
 test('POST answers 202 before any fetch; the job walks to done; polls show the result', async () => {
-  const { s, fetcher } = await service();
+  const { s, fetcher, ai } = await service();
   const first = await post(s, 1);
   assert.equal(first.status, 202);
   assert.equal(first.body.state, 'queued');
@@ -108,15 +120,23 @@ test('POST answers 202 before any fetch; the job walks to done; polls show the r
   assert.equal(done.status, 200);
   assert.equal(done.body.state, 'done');
   const { result } = done.body;
-  assert.equal(result.schemaVersion, 1);
-  assert.equal(result.promptVersion, 3);
+  assert.equal(result.schemaVersion, 2);
+  assert.equal(result.promptVersion, 4);
+  // 002.33: the service reads with the sectors expanded by the code: it asks `appliesTo`, not `sector`.
+  assert.ok(ai.calls[0].itemSchema.properties.appliesTo, 'the job asked where each rule applies');
+  assert.ok(!ai.calls[0].itemSchema.properties.sector);
+  assert.match(ai.calls[0].instructions, /never repeat an item for each sector/);
   assert.deepEqual(result.chapter.pages, [44, 51]);
   assert.equal(result.document.idurba, 'IDU_1');
   assert.equal(result.rules.length, 1);
   assert.equal(result.rules[0].page, 44);
   assert.equal(result.rules[0].article, 'A 1');
   assert.deepEqual(result.rules[0].conditions, ['ARTICLE A 1']);
-  assert.deepEqual(result.model, { providerId: 'lmstudio', model: 'fake-model', constraint: 'schema' });
+  assert.deepEqual(result.model, {
+    providerId: 'lmstudio',
+    model: 'fake-model',
+    constraint: 'schema'
+  });
   assert.equal((await poll(s, 'no-such-job')).status, 404);
 });
 
@@ -135,9 +155,11 @@ test('joins and the cache: one model call for a repeated POST, a later POST and 
   assert.equal(later.status, 200);
   assert.equal(later.body.state, 'done');
   const sector = await post(s, 1, { zone: 'Ast' });
-  assert.equal(sector.status, 200, 'Ast shares zone A\'s chapter, and its result');
+  assert.equal(sector.status, 200, "Ast shares zone A's chapter, and its result");
   assert.equal(ai.calls.length, 1);
-  const refreshed = await s.handle(request('POST', ['extractions'], { body: inputs(1), query: { refresh: '1' } }));
+  const refreshed = await s.handle(
+    request('POST', ['extractions'], { body: inputs(1), query: { refresh: '1' } })
+  );
   assert.equal(refreshed.status, 202, 'refresh=1 ignores the cache');
   await s.idle();
   assert.equal(ai.calls.length, 2);
@@ -145,12 +167,15 @@ test('joins and the cache: one model call for a repeated POST, a later POST and 
 
 test('cachedOnly never fetches: not_cached without the text, the result with current once cached', async () => {
   const { s, fetcher } = await service({
-    aiOptions: { providerId: 'openai', health: { available: true, defaultProviderId: 'ollama', maxTextLength: 200000, maxItems: 200 } }
+    aiOptions: {
+      providerId: 'openai',
+      health: { available: true, defaultProviderId: 'ollama', maxTextLength: 200000, maxItems: 200 }
+    }
   });
   const none = await cachedOnly(s, 1);
   assert.equal(none.status, 404);
   assert.equal(none.body.error, 'not_cached');
-  assert.deepEqual(none.body.current, { providerId: 'ollama', schemaVersion: 1, promptVersion: 3 });
+  assert.deepEqual(none.body.current, { providerId: 'ollama', schemaVersion: 2, promptVersion: 4 });
   assert.equal(fetcher.documents + fetcher.downloads, 0, 'nothing fetched');
 
   await post(s, 1);
@@ -158,7 +183,11 @@ test('cachedOnly never fetches: not_cached without the text, the result with cur
   const hit = await cachedOnly(s, 1, 'Ast');
   assert.equal(hit.status, 200);
   assert.equal(hit.body.result.model.providerId, 'openai');
-  assert.equal(hit.body.current.providerId, 'ollama', 'a result from another provider, read with the current default');
+  assert.equal(
+    hit.body.current.providerId,
+    'ollama',
+    'a result from another provider, read with the current default'
+  );
   assert.equal(fetcher.downloads, 1);
   const missing = await s.handle(request('GET', ['extractions'], { query: inputs(1) }));
   assert.equal(missing.status, 400, 'a GET without cachedOnly=1 starts nothing');
@@ -182,26 +211,48 @@ test('the seventh extraction start in an hour is 429 with Retry-After; hits, joi
 });
 
 test('a job that never calls a model gives its charge back', async () => {
-  const { s } = await service({ env: { FR_URBAN_RULES_LIMIT_EXTRACT_HOUR: '1' }, versions: { 1: 'OTHER_1' } });
+  const { s } = await service({
+    env: { FR_URBAN_RULES_LIMIT_EXTRACT_HOUR: '1' },
+    versions: { 1: 'OTHER_1' }
+  });
   const first = await post(s, 1);
   await s.idle();
   const failed = await poll(s, first.body.jobId);
   assert.equal(failed.body.state, 'failed');
-  assert.equal(failed.body.error.code, 'version_changed', 'a fetch code is the job\'s error, not the POST\'s');
+  assert.equal(
+    failed.body.error.code,
+    'version_changed',
+    "a fetch code is the job's error, not the POST's"
+  );
   assert.equal((await post(s, 2)).status, 202, 'the failed job cost nothing');
 });
 
 test('refresh=1 is limited to two a day', async () => {
-  const { s } = await service({ env: { FR_URBAN_RULES_LIMIT_EXTRACT_HOUR: '100', FR_URBAN_RULES_LIMIT_EXTRACT_DAY: '100' } });
+  const { s } = await service({
+    env: { FR_URBAN_RULES_LIMIT_EXTRACT_HOUR: '100', FR_URBAN_RULES_LIMIT_EXTRACT_DAY: '100' }
+  });
   for (let i = 0; i < 2; i += 1) {
-    assert.equal((await s.handle(request('POST', ['extractions'], { body: inputs(1), query: { refresh: '1' } }))).status, 202);
+    assert.equal(
+      (
+        await s.handle(
+          request('POST', ['extractions'], { body: inputs(1), query: { refresh: '1' } })
+        )
+      ).status,
+      202
+    );
     await s.idle();
   }
-  assert.equal((await s.handle(request('POST', ['extractions'], { body: inputs(1), query: { refresh: '1' } }))).status, 429);
+  assert.equal(
+    (await s.handle(request('POST', ['extractions'], { body: inputs(1), query: { refresh: '1' } })))
+      .status,
+    429
+  );
 });
 
 test('without structured-output, the POST is 202 and the job fails extraction_unavailable before any fetch', async () => {
-  const { s, fetcher } = await service({ aiOptions: { health: { available: false, defaultProviderId: 'lmstudio' } } });
+  const { s, fetcher } = await service({
+    aiOptions: { health: { available: false, defaultProviderId: 'lmstudio' } }
+  });
   const answer = await post(s, 1);
   assert.equal(answer.status, 202);
   await s.idle();
@@ -211,7 +262,7 @@ test('without structured-output, the POST is 202 and the job fails extraction_un
   assert.equal(fetcher.documents + fetcher.downloads, 0);
 });
 
-test('every chunk failing is extraction_failed, naming 096.7\'s codes', async () => {
+test("every chunk failing is extraction_failed, naming 096.7's codes", async () => {
   const { s } = await service({
     aiOptions: {
       plan: () => {
@@ -229,7 +280,14 @@ test('every chunk failing is extraction_failed, naming 096.7\'s codes', async ()
 test('a full queue is 503 busy with Retry-After', async () => {
   let release;
   const hold = new Promise((resolve) => (release = resolve));
-  const { s } = await service({ aiOptions: { hold }, env: { FR_URBAN_RULES_LIMIT_EXTRACT_HOUR: '100', FR_URBAN_RULES_LIMIT_EXTRACT_DAY: '100', FR_URBAN_RULES_LIMIT_FETCH_HOUR: '100' } });
+  const { s } = await service({
+    aiOptions: { hold },
+    env: {
+      FR_URBAN_RULES_LIMIT_EXTRACT_HOUR: '100',
+      FR_URBAN_RULES_LIMIT_EXTRACT_DAY: '100',
+      FR_URBAN_RULES_LIMIT_FETCH_HOUR: '100'
+    }
+  });
   for (let n = 1; n <= 11; n += 1) assert.equal((await post(s, n)).status, 202, `job ${n}`);
   await new Promise((resolve) => setTimeout(resolve, 20));
   const busy = await post(s, 12);
@@ -242,7 +300,12 @@ test('a full queue is 503 busy with Retry-After', async () => {
 
 test('a bad body is invalid_request: unknown fields, non-strings, not JSON', async () => {
   const { s, ai } = await service();
-  for (const body of ['{"partition":"DU_00001","idurba":"IDU_1","nomfic":"reglement.pdf","zone":"A","url":"http://x"}', '{"partition":1}', 'nope', '[]']) {
+  for (const body of [
+    '{"partition":"DU_00001","idurba":"IDU_1","nomfic":"reglement.pdf","zone":"A","url":"http://x"}',
+    '{"partition":1}',
+    'nope',
+    '[]'
+  ]) {
     const answer = await s.handle({ ...request('POST', ['extractions']), body });
     assert.equal(answer.status, 400, body);
     assert.equal(answer.body.error, 'invalid_request');
@@ -250,14 +313,16 @@ test('a bad body is invalid_request: unknown fields, non-strings, not JSON', asy
   assert.equal(ai.calls.length, 0);
 });
 
-test('no log line holds a passage, a condition, a chunk\'s text or a raw user name', async () => {
+test("no log line holds a passage, a condition, a chunk's text or a raw user name", async () => {
   const { s, capture } = await service();
   const first = await post(s, 1, { user: SECRET_USER });
   await s.idle();
   await poll(s, first.body.jobId);
   await cachedOnly(s, 1);
   const text = capture.text();
-  assert.ok(capture.records.some((r) => r.event === 'extraction' && r.outcome === 'ok' && r.rules === 1));
+  assert.ok(
+    capture.records.some((r) => r.event === 'extraction' && r.outcome === 'ok' && r.rules === 1)
+  );
   assert.ok(!text.includes('occupations et utilisations'), 'no passage or chunk text');
   assert.ok(!text.includes('ARTICLE A 1'), 'no condition');
   assert.ok(!text.includes(SECRET_USER) && !text.includes('Zéphyrine'));
@@ -276,7 +341,7 @@ test('S5: a partial result is answered to its job and never cached', async () =>
     aiOptions: {
       plan: () => {
         n += 1;
-        if (n >= 2) throw new AiError("output_invalid", 502);
+        if (n >= 2) throw new AiError('output_invalid', 502);
         return [];
       }
     }
@@ -295,7 +360,11 @@ test('S5: a partial result is answered to its job and never cached', async () =>
 test('S7: a job stopped by no_provider_configured gives its charge back', async () => {
   const { s } = await service({
     env: { FR_URBAN_RULES_LIMIT_EXTRACT_HOUR: '1' },
-    aiOptions: { plan: () => { throw new AiError('no_provider_configured', 503); } }
+    aiOptions: {
+      plan: () => {
+        throw new AiError('no_provider_configured', 503);
+      }
+    }
   });
   const first = await post(s, 1);
   await s.idle();
@@ -307,8 +376,24 @@ test('S7: a job stopped by no_provider_configured gives its charge back', async 
 test('S6: an unexpected exception is internal_error, logged by name only', async () => {
   const { s, capture } = await service({
     ai: {
-      health: async () => ({ available: true, defaultProviderId: 'p', maxTextLength: 200000, maxItems: 200 }),
-      extract: async () => ({ providerId: 'p', model: 'm', items: [{ value: null, passage: { text: 'secret passage text', start: 0, end: 1, occurrences: 1 } }], rejected: [], constraint: 'schema' })
+      health: async () => ({
+        available: true,
+        defaultProviderId: 'p',
+        maxTextLength: 200000,
+        maxItems: 200
+      }),
+      extract: async () => ({
+        providerId: 'p',
+        model: 'm',
+        items: [
+          {
+            value: null,
+            passage: { text: 'secret passage text', start: 0, end: 1, occurrences: 1 }
+          }
+        ],
+        rejected: [],
+        constraint: 'schema'
+      })
     }
   });
   const first = await post(s, 1);
@@ -320,7 +405,7 @@ test('S6: an unexpected exception is internal_error, logged by name only', async
   assert.ok(!capture.text().includes('secret passage text'));
 });
 
-test('a refund gives back the job\'s own take, not the latest one', () => {
+test("a refund gives back the job's own take, not the latest one", () => {
   let t = 0;
   const limiter = createWindowLimiter({ limit: 10, windowMs: 1000, now: () => t });
   const mine = limiter.take('u');
@@ -350,15 +435,22 @@ async function until(check, what) {
 /** A model that never answers until the job's signal stops it, as ai-service's call is cut. */
 const stuckAi = () => ({
   calls: [],
-  health: async () => ({ available: true, defaultProviderId: 'lmstudio', maxTextLength: 200_000, maxItems: 200 }),
+  health: async () => ({
+    available: true,
+    defaultProviderId: 'lmstudio',
+    maxTextLength: 200_000,
+    maxItems: 200
+  }),
   extract(request, route = {}) {
     this.calls.push(request);
-    return new Promise((_, reject) => route.signal.addEventListener('abort', () => reject(new AiError('unreachable', 0))));
+    return new Promise((_, reject) =>
+      route.signal.addEventListener('abort', () => reject(new AiError('unreachable', 0)))
+    );
   }
 });
 const LIMITS = { FR_URBAN_RULES_LIMIT_EXTRACT_HOUR: '1', FR_URBAN_RULES_LIMIT_EXTRACT_DAY: '1' };
 
-test('002.23: a poll while extracting names the part being read, the chapter, and each part\'s pages and rule count', async () => {
+test("002.23: a poll while extracting names the part being read, the chapter, and each part's pages and rule count", async () => {
   let release;
   const hold = new Promise((resolve) => (release = resolve));
   const { s } = await service({
@@ -373,20 +465,30 @@ test('002.23: a poll while extracting names the part being read, the chapter, an
   assert.equal(during.progress.step, 'extracting');
   assert.deepEqual(during.progress.chapter.pages, [44, 51]);
   assert.ok(during.progress.of >= 2);
-  assert.equal(during.progress.parts.length, during.progress.of, 'every part is listed, the unread ones as waiting');
+  assert.equal(
+    during.progress.parts.length,
+    during.progress.of,
+    'every part is listed, the unread ones as waiting'
+  );
   assert.equal(during.progress.parts[1].state, 'waiting');
-  assert.deepEqual(Object.keys(during.progress.parts[0]).sort(), ['n', 'pages', 'state'], 'never a passage');
+  assert.deepEqual(
+    Object.keys(during.progress.parts[0]).sort(),
+    ['n', 'pages', 'state'],
+    'never a passage'
+  );
   release();
   await s.idle();
   const done = (await poll(s, first.body.jobId)).body;
   assert.equal(done.state, 'done');
   assert.equal(done.progress.step, 'done');
   assert.equal(done.progress.parts.length, done.progress.of);
-  assert.ok(done.progress.parts.every((part) => part.state === 'done' && Array.isArray(part.pages)));
+  assert.ok(
+    done.progress.parts.every((part) => part.state === 'done' && Array.isArray(part.pages))
+  );
   assert.equal(
     done.progress.parts.reduce((sum, part) => sum + part.rules, 0),
     done.result.rules.length,
-    'the parts\' counts add up to the rules'
+    "the parts' counts add up to the rules"
   );
   assert.equal(done.progress.rules, done.result.rules.length);
 });
@@ -400,7 +502,9 @@ test('002.23: reading a partly-read chapter again asks the model for the failed 
       plan: (text) => {
         firstText ??= text;
         if (failing && text !== firstText) throw new AiError('output_invalid', 502);
-        return [{ value: rule({ kind: 'other', statement: 'described' }), passage: PASSAGE }].filter(() => text === firstText);
+        return [
+          { value: rule({ kind: 'other', statement: 'described' }), passage: PASSAGE }
+        ].filter(() => text === firstText);
       }
     }
   });
@@ -432,7 +536,9 @@ test('002.23: "Extract again" never reuses what was read', async () => {
   await post(s, 1);
   await s.idle();
   const calls = ai.calls.length;
-  const refreshed = await s.handle(request('POST', ['extractions'], { body: inputs(1, 'A'), query: { refresh: '1' } }));
+  const refreshed = await s.handle(
+    request('POST', ['extractions'], { body: inputs(1, 'A'), query: { refresh: '1' } })
+  );
   assert.equal(refreshed.status, 202);
   await s.idle();
   assert.equal(ai.calls.length, calls * 2, 'every part is read again');
@@ -442,7 +548,10 @@ test('002.23: cancelling stops the call in flight, ends the job as `cancelled`, 
   const ai = stuckAi();
   const { s } = await service({ ai, env: LIMITS });
   const first = await post(s, 1);
-  await until(async () => (await poll(s, first.body.jobId)).body.state === 'extracting', 'extracting');
+  await until(
+    async () => (await poll(s, first.body.jobId)).body.state === 'extracting',
+    'extracting'
+  );
   await until(() => ai.calls.length === 1, 'a call is in flight');
   const answer = await cancel(s, first.body.jobId);
   assert.equal(answer.status, 200);
@@ -461,7 +570,10 @@ test('002.23: cancelling stops the call in flight, ends the job as `cancelled`, 
 
 test('002.23: a queued job that is cancelled never runs', async () => {
   const ai = stuckAi();
-  const { s } = await service({ ai, env: { FR_URBAN_RULES_LIMIT_EXTRACT_HOUR: '100', FR_URBAN_RULES_LIMIT_EXTRACT_DAY: '100' } });
+  const { s } = await service({
+    ai,
+    env: { FR_URBAN_RULES_LIMIT_EXTRACT_HOUR: '100', FR_URBAN_RULES_LIMIT_EXTRACT_DAY: '100' }
+  });
   const first = await post(s, 1);
   const second = await post(s, 2);
   await until(() => ai.calls.length === 1, 'the first job is reading');

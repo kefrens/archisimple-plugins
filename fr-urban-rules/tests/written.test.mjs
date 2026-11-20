@@ -1230,7 +1230,7 @@ test('criterion 13: Extract again is offered for another provider, an older prom
   const context = readerFor({ service });
   const report = await read(context);
   const again = actions(report).find((a) => a.id === 'written-extract-again');
-  await act(context, 'written-extract-again', again.target);
+  await act(context, 'written-extract-again', again.target, { replace: 'yes' });
   assert.ok(service.calls.post[0].url.endsWith('?refresh=1'));
   // A partial result says what it lacks.
   const partial = await read(
@@ -3005,7 +3005,8 @@ test('002.28: a zone found already read opens with a notice naming the date and 
   const blocks = rulesView(report).blocks;
   const notice = blocks.find((b) => b.kind === 'notice' && b.text.key === ALREADY_READ);
   assert.ok(notice, 'the notice is there');
-  assert.deepEqual(Object.keys(notice.text.params).sort(), ['date', 'model']);
+  // The recording's document is dated (its idurba), so the notice also names the regulation version (002.28 follow-up).
+  assert.deepEqual(Object.keys(notice.text.params).sort(), ['date', 'model', 'version']);
   assert.ok(notice.text.params.date !== '' && notice.text.params.model !== '');
   assert.ok(!actions(report).some((a) => a.id === 'written-extract'), 'nothing left to extract');
   const fields = blocks.findIndex((b) => b.kind === 'fields');
@@ -3040,7 +3041,7 @@ test('002.28: reading again after an already-read zone drops the notice', async 
   assert.ok(noticeKeys(report).includes(ALREADY_READ));
   const again = actions(report).find((a) => a.id === 'written-extract-again');
   if (again === undefined) return; // not offered for this fixture: nothing to read again
-  await act(context, 'written-extract-again', again.target);
+  await act(context, 'written-extract-again', again.target, { replace: 'yes' });
   await schedule.tick();
   report = await read(context, 'source');
   assert.ok(!noticeKeys(report).includes(ALREADY_READ));
@@ -3207,4 +3208,86 @@ test('002.29: after the person cancels a reading the zone is not offered again b
     offersBefore,
     'no second offer beside the cancelled reading card'
   );
+});
+
+
+// ── Replacing the shared reading, and saying which regulation it is for ────────────────────────
+
+const AGAIN_NOTICE = 'fr-urban-rules.written.again.replaces';
+const ANOTHER_PROVIDER = { ...CURRENT, providerId: 'openai' };
+
+test('the shared reading is not replaced by a press alone: « Read again » of a complete reading is a form that must be confirmed', async () => {
+  const service = fakeService({ cached: recorded, current: ANOTHER_PROVIDER });
+  const context = readerFor({ service });
+  await read(context);
+  await settle();
+  const report = await read(context, 'source');
+  const blocks = rulesView(report).blocks;
+  const again = actions(report).find((a) => a.id === 'written-extract-again');
+  assert.ok(again, 'offered for another provider');
+  assert.equal(again.fields.length, 1);
+  assert.deepEqual(
+    [again.fields[0].key, again.fields[0].kind, again.fields[0].required, again.fields[0].options.map((o) => o.value)],
+    ['replace', 'choice', true, ['yes']]
+  );
+  const notice = blocks.find((b) => b.kind === 'notice' && b.text.key === AGAIN_NOTICE);
+  assert.ok(notice, 'the notice says what pressing it does');
+  assert.deepEqual(Object.keys(notice.text.params).sort(), ['date', 'model']);
+  assert.ok(
+    blocks.indexOf(notice) < blocks.findIndex((b) => b.kind === 'actions' && b.actions.some((a) => a.id === 'written-extract-again')),
+    'the notice comes before the button'
+  );
+  // Pressed without the confirmation: refused, no model call.
+  const refused = await act(context, 'written-extract-again', again.target);
+  assert.equal(refused.status, 'refused');
+  assert.equal(refused.message.key, 'fr-urban-rules.written.again.notConfirmed');
+  assert.equal(service.calls.post.length, 0);
+  // Confirmed: one POST with refresh.
+  assert.deepEqual(await act(context, 'written-extract-again', again.target, { replace: 'yes' }), { status: 'done' });
+  assert.equal(service.calls.post.length, 1);
+  assert.ok(service.calls.post[0].url.endsWith('?refresh=1'));
+});
+
+test('a partial reading is read again with no confirmation: nothing shared is replaced', async () => {
+  const service = fakeService({ cached: resultWith({ chunks: { of: 9, failed: 2 } }) });
+  const context = readerFor({ service });
+  await read(context);
+  await settle();
+  const report = await read(context, 'source');
+  const again = actions(report).find((a) => a.id === 'written-extract-again');
+  assert.ok(again, 'offered');
+  assert.equal(again.fields, undefined, 'no form');
+  assert.ok(!noticeKeys(report).includes(AGAIN_NOTICE));
+  assert.deepEqual(await act(context, 'written-extract-again', again.target), { status: 'done' });
+  assert.equal(service.calls.post.length, 1);
+});
+
+test('the regulation version a reading is for is read from the end of the document\'s identifier, never guessed', () => {
+  const day = __testing.versionDayOfIdurba;
+  assert.ok(day('200046977_PLUI_20260326'), 'a dated identifier gives a day');
+  assert.notEqual(day('200046977_PLUI_20260326'), day('200046977_PLUI_20261103'));
+  assert.equal(day('MYSTERY'), undefined);
+  assert.equal(day('X_PLUI_20261399'), undefined, 'an impossible date is no date');
+  assert.equal(day('X_PLUI_20260230'), undefined, 'a 30 February is no date');
+  assert.equal(day(undefined), undefined);
+  assert.equal(day('PLUI_2026'), undefined);
+});
+
+test('the offer card says the result is kept until the regulation is replaced, and that reading it again uses no AI budget', async () => {
+  const dir = new URL('../resources/i18n/fr-urban-rules/', import.meta.url);
+  const en = JSON.parse(await readFile(new URL('en.json', dir), 'utf8'));
+  const fr = JSON.parse(await readFile(new URL('fr.json', dir), 'utf8'));
+  assert.equal(
+    fr['fr-urban-rules.offer.note.shared'],
+    'Le résultat est conservé pour cette zone tant que le règlement n’est pas remplacé : le relire ne consomme aucun budget IA.'
+  );
+  assert.equal(
+    en['fr-urban-rules.offer.note.shared'],
+    'The result is kept for this zone until the regulation is replaced, so reading it again uses no AI budget.'
+  );
+  for (const key of ['written.again.replaces', 'written.again.notConfirmed', 'written.again.field', 'written.again.option', 'written.state.alreadyReadNoVersion']) {
+    assert.ok(en[`fr-urban-rules.${key}`] && fr[`fr-urban-rules.${key}`], key);
+  }
+  assert.match(fr['fr-urban-rules.written.state.alreadyRead'], /\{version\}/);
+  for (const t of [en, fr]) assert.match(t['fr-urban-rules.written.again.replaces'], /\{date\}.*\{model\}|\{model\}.*\{date\}/);
 });
