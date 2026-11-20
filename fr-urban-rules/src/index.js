@@ -796,6 +796,9 @@ const WRITTEN_CODES = {
   extraction_failed: { retry: true },
   // 002.23: the reading was stopped (here or by the last one waiting for it)
   cancelled: { retry: true },
+  // 002.27: the account's monthly AI budget ended the reading before any part was read (a reading that
+  // had read some is a result with `stopped`, not this error). Trying again is free: a refusal costs nothing.
+  ai_budget_exhausted: { retry: true },
   // 002.16: ai-service refused the model chosen in the AI panel; another choice there, then try again
   provider_not_permitted: { retry: true },
   unknown_provider: { retry: true },
@@ -846,6 +849,7 @@ const WRITTEN_CODE_KEYS = {
   extraction_unavailable: 'fr-urban-rules.written.code.extraction_unavailable',
   extraction_failed: 'fr-urban-rules.written.code.extraction_failed',
   cancelled: 'fr-urban-rules.written.code.cancelled',
+  ai_budget_exhausted: 'fr-urban-rules.written.code.ai_budget_exhausted',
   provider_not_permitted: 'fr-urban-rules.written.code.provider_not_permitted',
   unknown_provider: 'fr-urban-rules.written.code.unknown_provider',
   internal_error: 'fr-urban-rules.written.code.internal_error',
@@ -1103,6 +1107,70 @@ function checkedServiceRule(item, documentPages) {
 }
 
 /**
+ * Sprint 002.27: what ended a reading because the account's monthly AI budget ran out, as the service
+ * answers it (`result.stopped`, or the job's error when no part was read): `{ reason: 'ai-budget',
+ * detailReason?, remainingMicrousd?, budgetMicrousd?, resetsAt? }`, each field only when well-formed —
+ * integer micro-dollars (1e-6 USD, list-price ESTIMATES) and an ISO date. `undefined` when it is not one.
+ */
+const BUDGET_DETAIL_REASONS = new Set(['exhausted', 'held', 'run-ceiling', 'floor', 'unavailable']);
+function checkedStop(raw) {
+  if (!isRecord(raw) || raw.reason !== 'ai-budget') return undefined;
+  const micro = (value) => Number.isSafeInteger(value) && value >= 0;
+  const resets = typeof raw.resetsAt === 'string' ? Date.parse(raw.resetsAt) : Number.NaN;
+  return {
+    reason: 'ai-budget',
+    ...(BUDGET_DETAIL_REASONS.has(raw.detailReason) ? { detailReason: raw.detailReason } : {}),
+    ...(micro(raw.remainingMicrousd) ? { remainingMicrousd: raw.remainingMicrousd } : {}),
+    ...(micro(raw.budgetMicrousd) || raw.budgetMicrousd === null ? { budgetMicrousd: raw.budgetMicrousd } : {}),
+    ...(Number.isNaN(resets) ? {} : { resetsAt: new Date(resets).toISOString() })
+  };
+}
+
+/** Parts of a chapter neither read nor tried again to no avail: those that failed and those a budget stop left unread. */
+const unreadPartsOf = (result) => (result?.chunks?.failed ?? 0) + (result?.chunks?.unread ?? 0);
+/** Sprint 002.27: the account's AI budget ended this reading (the service says so, or says parts were left unread). */
+const stoppedByBudget = (result) => result?.stopped !== undefined || (result?.chunks?.unread ?? 0) > 0;
+/** A reading that did not read every part, for whatever reason: what the panel and the card call partial. */
+const isPartialReading = (result) => unreadPartsOf(result) > 0 || result?.stopped !== undefined;
+
+/**
+ * The parameters of the budget stop's sentences (strings `written.stopped.*`): the remainder in
+ * dollars, rounded DOWN to the cent (never promise more than is left), and the day the budget renews,
+ * as a number the host's formatter writes in the reader's locale. `has…` say which of the two the
+ * service gave; a sentence leaves a missing figure out rather than invent one.
+ */
+function budgetParamsOf(stop) {
+  const dollars =
+    stop?.remainingMicrousd === undefined ? undefined : Math.floor(stop.remainingMicrousd / 10_000) / 100;
+  const day = dayNumber(stop?.resetsAt);
+  return {
+    hasAmount: dollars === undefined ? 'no' : 'yes',
+    amount: dollars ?? 0,
+    hasDate: day === undefined ? 'no' : 'yes',
+    date: day ?? 0
+  };
+}
+
+/** `read` and `of` (parts), and the budget's figures, for a stopped result's sentence. */
+function stoppedParamsOf(result) {
+  const of = result.chunks?.of ?? 0;
+  return {
+    read: Math.max(0, of - unreadPartsOf(result)),
+    of,
+    ...budgetParamsOf(result.stopped)
+  };
+}
+
+/**
+ * The text that says why a zone could not be read, with its parameters where the code needs some:
+ * a budget stop says the remainder and the renewal; every other code is its own sentence.
+ */
+const writtenErrorText = (error) =>
+  error?.code === 'ai_budget_exhausted'
+    ? { key: 'fr-urban-rules.written.stopped.none', params: budgetParamsOf(error.stopped) }
+    : { key: writtenCodeKey(error?.code) };
+
+/**
  * A 002.5b result, checked (DEC-8): the document it reads, its chapter, its
  * rules (each checked; a rule of another shape is left out and counted), the
  * counts, the model and the versions. `undefined` when it is not a result.
@@ -1152,7 +1220,13 @@ function checkedResult(json) {
     ...(pages === undefined ? {} : { chapter: { pages } }),
     rules,
     dropped: dropped + refused,
-    chunks: { of: count(json.chunks?.of), failed: count(json.chunks?.failed) },
+    chunks: {
+      of: count(json.chunks?.of),
+      failed: count(json.chunks?.failed),
+      // Sprint 002.27: parts left unread because the account's AI budget ran out (absent otherwise).
+      ...(count(json.chunks?.unread) > 0 ? { unread: count(json.chunks.unread) } : {})
+    },
+    ...(checkedStop(json.stopped) === undefined ? {} : { stopped: checkedStop(json.stopped) }),
     model: {
       providerId: typeof json.model?.providerId === 'string' ? cut(json.model.providerId, 80) : '',
       model: typeof json.model?.model === 'string' ? cut(json.model.model, 120) : ''
@@ -1229,7 +1303,7 @@ export function readingCardOf(view) {
     : view.cancelled === true || error?.code === 'cancelled'
       ? 'cancelled'
       : state === 'done'
-        ? failedParts.length > 0 || (result?.chunks?.failed ?? 0) > 0
+        ? failedParts.length > 0 || isPartialReading(result)
           ? 'partial'
           : 'done'
         : 'failed';
@@ -1302,14 +1376,22 @@ export function readingCardOf(view) {
 
   const settled = parts.filter((part) => part.state === 'done' || part.state === 'failed').length;
   const notes = [];
-  if (status === 'partial')
+  // Sprint 002.27: the account's AI budget ended the reading. Its own sentence — what was read is kept,
+  // what is left and when it renews — and no « connection » wording: nothing failed to be reached.
+  const budgetStop = status === 'partial' && stoppedByBudget(result);
+  if (budgetStop)
+    notes.push({
+      tone: 'caution',
+      text: cardKey('fr-urban-rules.written.stopped.partial', stoppedParamsOf(result))
+    });
+  else if (status === 'partial')
     notes.push({
       tone: 'caution',
       text: cardKey('fr-urban-rules.card.note.partial', {
         parts: failedParts.map((part) => part.n).join(', ') || '?'
       })
     });
-  if (status === 'failed') notes.push({ tone: 'caution', text: { key: writtenCodeKey(error?.code) } });
+  if (status === 'failed') notes.push({ tone: 'caution', text: writtenErrorText(error) });
   if (running)
     notes.push({ text: cardKey('fr-urban-rules.card.note.keepWorking') });
 
@@ -1330,7 +1412,13 @@ export function readingCardOf(view) {
       ...(narrowing ? {} : { emphasis: 'primary' }),
       reveal: true
     });
-  if (status === 'partial')
+  if (budgetStop)
+    // A plain read, which starts a new reading: nothing is promised to be resumed.
+    actions.push(
+      { id: 'retry', label: cardKey('fr-urban-rules.card.action.again') },
+      { id: 'keep', label: cardKey('fr-urban-rules.card.action.keep') }
+    );
+  else if (status === 'partial')
     actions.push(
       {
         id: 'retry',
@@ -1488,6 +1576,106 @@ export function createReadingCards({ ai, act, onDone = undefined }) {
         }
       }
       posted.clear();
+    }
+  };
+}
+
+// ── Sprint 002.29: the offer to read, as a quiet « ready » card in the AI conversation (SDK 1.43) ──
+
+/**
+ * The card that offers the reading of one unread zone: nothing started, the model it would use, one
+ * button. `quiet` — posting it never opens the AI panel (platform 121.0); it is there when the panel is
+ * open. Pure; no price (only the AI service knows prices) and no passage, ever.
+ *
+ * @param {{ id: string, zone: string, model?: string, document?: string }} view
+ */
+export function offerCardOf({ id, zone, model, document }) {
+  return {
+    kind: 'activity',
+    id: `offer:${id}`,
+    status: 'ready',
+    quiet: true,
+    title: cardKey('fr-urban-rules.offer.title', { zone: cut(zone, 64) }),
+    ...(typeof document === 'string' && document !== '' ? { subtitle: { text: cut(document, 200) } } : {}),
+    notes: [
+      {
+        tone: 'info',
+        text:
+          model === undefined
+            ? cardKey('fr-urban-rules.offer.note.defaultModel')
+            : cardKey('fr-urban-rules.offer.note.model', { model: cut(model, 200) })
+      },
+      { tone: 'info', text: cardKey('fr-urban-rules.offer.note.shared') }
+    ],
+    actions: [{ id: 'read', label: cardKey('fr-urban-rules.offer.action'), emphasis: 'primary' }]
+  };
+}
+
+/**
+ * Posts one offer card per zone the Rules view shows as « not read yet », through the host's `ai.cards`
+ * (SDK 1.43), and takes it down when the zone is no longer wanted — it is being read, it was found read,
+ * or the plot changed. A function of what the view shows: `sync(wanted)` is told the whole list each time
+ * and nothing is stored beyond the handles. `act(record)` is the one start path (the Rules view's own
+ * « Extract »). A host without `ai.cards` finds nothing here: the Rules view's button is the way in.
+ */
+export function createOfferCards({ ai, act }) {
+  /** record id → { handle, json } */
+  const posted = new Map();
+  const service = () => {
+    try {
+      const candidate = ai();
+      return typeof candidate?.cards?.post === 'function' ? candidate.cards : undefined;
+    } catch {
+      return undefined;
+    }
+  };
+  const drop = (id) => {
+    const entry = posted.get(id);
+    if (entry === undefined) return;
+    posted.delete(id);
+    try {
+      entry.handle.dispose();
+    } catch {
+      // already gone
+    }
+  };
+  return {
+    /** @param {{ record: { id: string, zone: string }, model?: string, document?: string }[]} wanted */
+    sync(wanted) {
+      const keep = new Set(wanted.map(({ record }) => record.id));
+      for (const id of [...posted.keys()]) if (!keep.has(id)) drop(id);
+      const cards = service();
+      if (cards === undefined) return;
+      for (const { record, model, document } of wanted) {
+        const card = offerCardOf({ id: record.id, zone: record.zone, model, document });
+        const json = JSON.stringify(card);
+        const entry = posted.get(record.id);
+        if (entry?.json === json) continue;
+        try {
+          if (entry === undefined) {
+            const handle = cards.post(card, {
+              onAction: (event) => {
+                if (event.actionId !== 'read') return;
+                try {
+                  // Not awaited: the button answers at once and the reading goes on.
+                  void Promise.resolve(act(record)).catch(() => {});
+                } catch {
+                  // a press that throws costs its own press
+                }
+              }
+            });
+            posted.set(record.id, { handle, json });
+          } else {
+            entry.json = json;
+            entry.handle.update(card);
+          }
+        } catch {
+          // a host that refuses a card must not break the read
+        }
+      }
+    },
+    dispose() {
+      for (const id of [...posted.keys()]) drop(id);
     }
   };
 }
@@ -2701,6 +2889,8 @@ function storedResultOf(result, zone) {
     })),
     dropped: { total: result.dropped },
     chunks: result.chunks,
+    // Sprint 002.27: a reading the AI budget stopped stays said so when the project is opened again.
+    ...(result.stopped === undefined ? {} : { stopped: result.stopped }),
     model: result.model,
     ...(result.extractedAt === undefined ? {} : { extractedAt: result.extractedAt })
   };
@@ -3086,6 +3276,18 @@ export function createReader({
     act: (record, actionId) => cardAction(record, actionId),
     onDone: () => projectCards.afterReading()
   });
+  // Sprint 002.29: the offer to read, in the AI panel (SDK 1.43), through the Rules view's own start path.
+  const offers = createOfferCards({
+    ai,
+    act: async (record) => {
+      await runWrittenAction({
+        actionId: 'written-extract',
+        target: { subjectId: `x=${subjectPart(record.id)}` }
+      });
+      cards.sync(record);
+      requestSignal();
+    }
+  });
   const projectCards = createProjectCards({
     ai,
     offer: () => projectOffer,
@@ -3222,6 +3424,23 @@ export function createReader({
       await pages.settled();
       if (signal.aborted) throw new ReadAborted();
       const written = writtenInput(pages, facts.get(base));
+      // 002.29: one offer per zone shown as « not read yet »; none while the service is not located.
+      const chosenNow = chosenModelOf(ai());
+      offers.sync(
+        written?.available !== true
+          ? []
+          : written.zones
+              // A reading the person cancelled keeps its own card with « Read again »: not offered twice.
+              .filter(({ record }) => record.state === 'not_started' && record.cancelledByUser !== true)
+              .map(({ record }) => ({
+                record,
+                model:
+                  chosenNow === undefined
+                    ? undefined
+                    : [chosenNow.providerId, chosenNow.model].filter(Boolean).join(' · '),
+                document: facts.get(base)?.documentName
+              }))
+      );
       const answer = withZonePages(
         rnu.augment(base, request, answeredRoads, facts.get(base), {
           written,
@@ -3953,6 +4172,7 @@ export function createReader({
     for (const record of extractions.values()) record.cancel?.();
     extractions.clear();
     cards.dispose();
+    offers.dispose();
     projectCards.dispose();
     for (const w of watches.values()) {
       w.wanted = false;
@@ -4326,8 +4546,12 @@ export function createReader({
     const listed = Array.isArray(codes)
       ? codes.filter((c) => typeof c === 'string' && /^[^\p{Cc}]{1,40}$/u.test(c)).slice(0, 60)
       : [];
+    // Sprint 002.27: a job that ended on the account's AI budget before any part was read says how much
+    // is left and when it renews, in the error itself (the service's `error`, not the POST's answer).
+    const stopped = code === 'ai_budget_exhausted' ? checkedStop({ reason: 'ai-budget', ...(isRecord(body?.error) ? body.error : {}) }) : undefined;
     return {
       code: writtenCodeOf(code),
+      ...(stopped === undefined ? {} : { stopped }),
       ...(listed.length > 0 ? { codes: listed } : {}),
       ...(Number.isFinite(retry) && retry > 0 ? { retryAfterSeconds: Math.min(retry, 86_400) } : {})
     };
@@ -4338,8 +4562,12 @@ export function createReader({
     result.document.idurba.toUpperCase() === query.idurba.toUpperCase() &&
     result.document.nomfic === query.nomfic;
 
-  /** A result answered for a record: kept when it reads its version, else the zone is not read. */
-  function takeResult(record, json) {
+  /**
+   * A result answered for a record: kept when it reads its version, else the zone is not read.
+   * `found` (002.28): the answer came from the cache lookup, not from a reading this session ran,
+   * so the panel can say the zone was already read (shared, nothing used from the person's budget).
+   */
+  function takeResult(record, json, found = false) {
     const result = checkedResult(json);
     if (result === undefined) {
       fail(record, { code: 'malformed' });
@@ -4358,6 +4586,7 @@ export function createReader({
     // 002.11: a reading taken (Extract, Extract again) is this session's, no longer the snapshot's.
     record.restored = false;
     record.offer = undefined;
+    record.foundReady = found;
   }
 
   /**
@@ -4496,7 +4725,7 @@ export function createReader({
         offerIfNewer(record, answer.json?.result);
         return;
       }
-      takeResult(record, answer.json?.result);
+      takeResult(record, answer.json?.result, true);
       return;
     }
     const error = errorOf(answer);
@@ -4825,7 +5054,7 @@ export function createReader({
       return { status: 'done' };
     }
     if (record.notBefore !== undefined && now().getTime() < record.notBefore) {
-      return { status: 'refused', message: { key: writtenCodeKey(record.error?.code) } };
+      return { status: 'refused', message: writtenErrorText(record.error) };
     }
     record.starting = true;
     let error;
@@ -4838,7 +5067,7 @@ export function createReader({
     record.revision += 1;
     return error === undefined
       ? { status: 'done' }
-      : { status: 'refused', message: { key: writtenCodeKey(error.code) } };
+      : { status: 'refused', message: writtenErrorText(error) };
   }
 
   /** The source's `onDidChange` (SDK 1.28): a signal only; the host decides when to read. */
@@ -11941,7 +12170,7 @@ const edgeLetter = (number) => {
       )
         continue; // DEC-7: another version's rules are never shown
       // Review NIT: a partial result reads too little to say a key is no longer read.
-      if (result.chunks.failed === 0) readZones.add(zone);
+      if (!isPartialReading(result)) readZones.add(zone);
       let shown = 0;
       let others = 0;
       // Sprint 002.11 DEC-5: one computation of the keys, which a restored rule's stored key joins.
@@ -12315,12 +12544,13 @@ const edgeLetter = (number) => {
         zoneBlocks.push(
           notice('info', 'fr-urban-rules.written.state.notStarted', { zone: cut(zone, 64) })
         );
-        // 002.16: which model will read — the one chosen in the AI panel, else the deployment's own.
-        zoneBlocks.push({ kind: 'fields', rows: [willReadRow(chosenModelOf(aiOf()))] });
+        // 002.28: the action leads, then the model row (002.16: which model will read — the one
+        // chosen in the AI panel, else the deployment's own).
         zoneBlocks.push({
           kind: 'actions',
           actions: [action('written-extract', 'fr-urban-rules.written.extract', true)]
         });
+        zoneBlocks.push({ kind: 'fields', rows: [willReadRow(chosenModelOf(aiOf()))] });
       } else if (['queued', 'fetching', 'reading', 'extracting'].includes(state)) {
         const progress = record.progress ?? {};
         const params =
@@ -12340,14 +12570,18 @@ const edgeLetter = (number) => {
         zoneBlocks.push(notice('info', key, params));
       } else if (state === 'done' && record.result !== undefined) {
         const result = record.result;
-        const partial = result.chunks.failed > 0;
+        const partial = isPartialReading(result);
+        // 002.27: a reading the account's AI budget stopped says so in its own sentence, not the partial one.
+        const budgetStop = stoppedByBudget(result);
         const counts = planned.writtenRead.perZone.get(zone) ?? { shown: 0, others: 0 };
         sources.push({
           id: sourceId,
           name,
           state: 'ready',
           ...(result.extractedAt === undefined ? {} : { retrievedAt: result.extractedAt }),
-          ...(partial ? { detail: { key: 'fr-urban-rules.written.status.partial' } } : {})
+          ...(partial
+            ? { detail: { key: budgetStop ? 'fr-urban-rules.written.status.stopped' : 'fr-urban-rules.written.status.partial' } }
+            : {})
         });
         const rows = [
           {
@@ -12401,8 +12635,20 @@ const edgeLetter = (number) => {
             actions: [action('written-use-newer', 'fr-urban-rules.snapshot.useNewer', true)]
           });
         }
+        // 002.28: a zone found already read (the shared cache) says so, first, so the missing
+        // « Extract » button is explained and the person knows it cost nothing.
+        if (record.foundReady === true && !record.restored) {
+          zoneBlocks.push(
+            notice('info', 'fr-urban-rules.written.state.alreadyRead', {
+              date: dayOfIso(result.extractedAt ?? record.readAt),
+              model: cut(result.model.model || result.model.providerId || '—', 120)
+            })
+          );
+        }
         zoneBlocks.push({ kind: 'fields', rows });
-        if (partial) {
+        if (budgetStop) {
+          zoneBlocks.push(notice('warning', 'fr-urban-rules.written.stopped.partial', stoppedParamsOf(result)));
+        } else if (partial) {
           zoneBlocks.push(
             notice('warning', 'fr-urban-rules.written.state.partial', {
               failed: result.chunks.failed,
@@ -12414,7 +12660,8 @@ const edgeLetter = (number) => {
         const waiting = record.notBefore !== undefined && now().getTime() < record.notBefore;
         if (record.error !== undefined) {
           // A passing failure after a result: the result stays, and the failure is said.
-          zoneBlocks.push(notice('warning', writtenCodeKey(record.error.code)));
+          const said = writtenErrorText(record.error);
+          zoneBlocks.push(notice('warning', said.key, said.params));
           if (waiting)
             zoneBlocks.push(
               notice('info', 'fr-urban-rules.written.status.retryAfter', {
@@ -12430,6 +12677,14 @@ const edgeLetter = (number) => {
           chosenNow === undefined
             ? record.current
             : { schemaVersion: 0, promptVersion: 0, ...record.current, providerId: chosenNow.providerId };
+        // 002.27: after a budget stop a new reading is a plain one — the service's own chunk memory is
+        // all it reuses, and nothing is promised — not "Extract again", which discards even that.
+        if (written.available && !waiting && budgetStop) {
+          zoneBlocks.push({
+            kind: 'actions',
+            actions: [action('written-try-again', 'fr-urban-rules.written.stopped.readAgain')]
+          });
+        }
         if (written.available && !waiting && extractAgainOffered(result, currentNow)) {
           if (chosenNow !== undefined) zoneBlocks.push({ kind: 'fields', rows: [willReadRow(chosenNow)] });
           zoneBlocks.push({
@@ -12452,12 +12707,9 @@ const edgeLetter = (number) => {
               ? { key: writtenCodeKey(code) }
               : { key: 'fr-urban-rules.written.status.retryAfter', params: { time: retryAt } }
         });
+        const said = writtenErrorText(record.error);
         zoneBlocks.push(
-          notice(
-            'warning',
-            writtenCodeKey(code),
-            code === 'zone_chapter_not_found' ? { zone: cut(zone, 64) } : undefined
-          )
+          notice('warning', said.key, code === 'zone_chapter_not_found' ? { zone: cut(zone, 64) } : said.params)
         );
         if (Array.isArray(record.error?.codes) && record.error.codes.length > 0) {
           zoneBlocks.push({

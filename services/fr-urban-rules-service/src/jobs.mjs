@@ -21,6 +21,16 @@
  * model call, which is all the entitlement guards; "Extract again" is a new call,
  * and is refused like any other when the account may not use the chosen provider.
  *
+ * Sprint 002.27: whose AI budget a reading spends. The account's opaque AI subject (the gateway's stamp,
+ * ADR-0136 Rule 1) rides with the job like the features, is taken at the POST that STARTS the job, and
+ * goes to ai-service on every model call of that job — never the user, never logged. A job is shared (a
+ * POST for a reading already running joins it), so the reading runs as, and is charged to, whoever
+ * started it; a joiner is never charged, and the starter's budget stop ends the joiner's reading too,
+ * with the same answer. When ai-service says the budget is out, the job stops at that chunk: the
+ * chunks read stay in its answer (`result.stopped`, never cached as complete), or, with none read, it
+ * fails with `ai_budget_exhausted`. There is no resume: the memo below holds the chunks read for the
+ * job's 30 minutes, which is all a reading started again in that time reuses.
+ *
  * A model call starts only from a POST. A POST answered from the cache, or
  * joining a job already queued or running for the same thing, costs nothing;
  * a job that ends without calling a model gives its charge back.
@@ -68,11 +78,12 @@ function progressOf(job, chunk, of) {
   };
 }
 
-/** `{ providerId?, model?, features? }`: what one model call is told (ai-client's `route`). */
-function routeOf(selection, features) {
+/** `{ providerId?, model?, features?, aiSubject? }`: what one model call is told (ai-client's `route`). */
+function routeOf(selection, features, aiSubject) {
   return {
     ...(selection === undefined ? {} : { providerId: selection.providerId, ...(selection.model === undefined ? {} : { model: selection.model }) }),
-    ...(features === undefined ? {} : { features })
+    ...(features === undefined ? {} : { features }),
+    ...(aiSubject === undefined ? {} : { aiSubject })
   };
 }
 
@@ -280,9 +291,11 @@ export function createExtractions({ store, documents, results, ai, limiters, log
         }
         throw error;
       }
+      const read = extracted.chunks.of - extracted.chunks.failed - (extracted.chunks.unread ?? 0);
       job.summary = {
         chunks: extracted.chunks.of,
         chunksFailed: extracted.chunks.failed,
+        ...(extracted.stopped === undefined ? {} : { stopped: extracted.stopped.reason, chunksUnread: extracted.chunks.unread }),
         rules: extracted.rules.length,
         dropped: extracted.dropped,
         codes: extracted.codes,
@@ -290,6 +303,11 @@ export function createExtractions({ store, documents, results, ai, limiters, log
         model: extracted.model?.model,
         constraint: extracted.model?.constraint
       };
+      // 002.27: the budget ran out before a single chunk was read: nothing to answer but the stop.
+      if (extracted.stopped !== undefined && read === 0) {
+        const { reason: _reason, ...numbers } = extracted.stopped;
+        throw new ServiceError('ai_budget_exhausted', numbers);
+      }
       if (extracted.chunks.failed === extracted.chunks.of) {
         throw new ServiceError('extraction_failed', { codes: [...new Set(extracted.codes)] });
       }
@@ -311,11 +329,14 @@ export function createExtractions({ store, documents, results, ai, limiters, log
         dropped: extracted.dropped,
         chunks: extracted.chunks,
         model: extracted.model,
+        // 002.27: present only when the account's AI budget ended the reading; the chunks read are the rules above.
+        ...(extracted.stopped === undefined ? {} : { stopped: extracted.stopped }),
         extractedAt: now().toISOString()
       };
       // A partial result is answered to its job and never cached: a later
-      // POST tries again rather than serving every user the gaps (S5).
-      if (extracted.chunks.failed === 0) await results.write(key, result);
+      // POST tries again rather than serving every user the gaps (S5). A
+      // budget stop is partial by `chunks.unread`, so the same line holds it.
+      if (extracted.chunks.failed === 0 && extracted.stopped === undefined) await results.write(key, result);
       end(job, { state: 'done', progress: { ...progressOf(job, extracted.chunks.of, extracted.chunks.of), step: 'done' }, result });
     } catch (error) {
       fail(error);
@@ -335,9 +356,11 @@ export function createExtractions({ store, documents, results, ai, limiters, log
     /**
      * @param {{ partition, idurba, nomfic, zone }} inputs checked by the caller
      * @param {{ refresh: boolean, limitKey: string, userHash: string, userSource: string,
-     *   selection?: { providerId: string, model?: string }, features?: string[] }} who
+     *   selection?: { providerId: string, model?: string }, features?: string[], aiSubject?: string }} who
      *   `selection` is what the user chose in the editor's AI panel (checked by the caller);
-     *   `features` the account's, as the gateway took them from the proxy (never the browser).
+     *   `features` the account's, as the gateway took them from the proxy (never the browser);
+     *   `aiSubject` the account's opaque AI subject, likewise (002.27): kept with the job, so it
+     *   runs as — and is charged to — the user who started it, and sent to ai-service only.
      */
     async post(inputs, who) {
       sweep();
@@ -379,7 +402,7 @@ export function createExtractions({ store, documents, results, ai, limiters, log
         userHash: who.userHash,
         userSource: who.userSource,
         // Kept with the job: it runs later, and it runs as the user who started it (ADR-0114 Rule 14).
-        route: routeOf(who.selection, who.features),
+        route: routeOf(who.selection, who.features, who.aiSubject),
         tags: [tag],
         // 002.23: who is waiting for this job: stopping it is only the last one's to do.
         watchers: new Set([who.userHash]),

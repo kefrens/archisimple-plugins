@@ -18,7 +18,7 @@
 
 import { createHash } from 'node:crypto';
 
-import { AiError } from './ai-client.mjs';
+import { AiError, BUDGET_EXHAUSTED } from './ai-client.mjs';
 import { ServiceError } from './errors.mjs';
 import { allOccurrences, normalisePassage, normaliseText } from './normalise.mjs';
 import { articleAt, pageAt } from './text.mjs';
@@ -38,8 +38,29 @@ export const CONDITION_WINDOW = 1_500;
 export const CONDITION_WINDOW_AFTER = 600;
 /** What ends a job at its first chunk: no provider at all, one the account may not use, or none by that id. */
 const REFUSED = new Set(['no_provider_configured', 'provider_not_permitted', 'unknown_provider']);
-/** 096.7's codes worth one retry; any other ends the chunk at once. */
-const RETRIED = new Set(['output_truncated', 'output_invalid', 'provider_error', 'unreachable', 'malformed']);
+/**
+ * 096.7's codes worth one retry (at once, as for every code here: there is no backoff); any other
+ * ends the chunk at once. Sprint 002.27: `ai_budget_unavailable` (HTTP 503) is ai-service saying its
+ * ledger could not be reached — transient, so retried like `provider_error`.
+ */
+const RETRIED = new Set(['output_truncated', 'output_invalid', 'provider_error', 'unreachable', 'malformed', 'ai_budget_unavailable']);
+
+/**
+ * Sprint 002.27: what a budget stop says, as the job answers it — `{ reason: 'ai-budget',
+ * detailReason?, remainingMicrousd?, budgetMicrousd?, resetsAt? }`, each number only when ai-service
+ * sent it well-formed. `detailReason` is ai-service's own (`exhausted`, `held`, `run-ceiling`,
+ * `floor`, `unavailable`). Never ai-service's message: the panel words the stop in its own language.
+ */
+export function stopOf(error) {
+  const b = error?.budget ?? {};
+  return {
+    reason: 'ai-budget',
+    ...(b.reason === undefined ? {} : { detailReason: b.reason }),
+    ...(b.remainingMicrousd === undefined ? {} : { remainingMicrousd: b.remainingMicrousd }),
+    ...(b.budgetMicrousd === undefined ? {} : { budgetMicrousd: b.budgetMicrousd }),
+    ...(b.resetsAt === undefined ? {} : { resetsAt: b.resetsAt })
+  };
+}
 
 export const RULE_KINDS = [
   'road_setback',
@@ -434,7 +455,10 @@ function ruleKey(rule) {
  *   onAnswer?: () => void   the first model answer, for the job's refund (S7)
  * }} options `onCall` sees each 096.7 request's metadata — chunk, attempt, base, length, and
  *   since 002.9 the text's `textSha256` and `promptVersion` — and its answer (the recording mode)
- * @returns {Promise<{ rules, dropped, chunks: { of, failed }, codes: string[], model }>}
+ * @returns {Promise<{ rules, dropped, chunks: { of, failed, unread? }, codes: string[], model, stopped? }>}
+ *   Sprint 002.27: `stopped` (see {@link stopOf}) and `chunks.unread` — the chunks neither read nor failed,
+ *   because the account's AI budget ran out at one (it and every chunk after it) — are present only then;
+ *   the rules of the chunks read before it are returned like any partial result's.
  */
 export async function extractChapter({ prepared, ai, maxTextLength, maxItems, chunkChars, onChunk, onPart, onCall, onAnswer, signal, memo, memoSalt = '' }) {
   const chunks = splitChunks(
@@ -457,6 +481,8 @@ export async function extractChapter({ prepared, ai, maxTextLength, maxItems, ch
   let failed = 0;
   let model;
   let weakest;
+  let stopped;
+  let unread = 0;
 
   for (const [index, chunk] of chunks.entries()) {
     if (signal?.aborted) throw new ServiceError('cancelled');
@@ -503,6 +529,12 @@ export async function extractChapter({ prepared, ai, maxTextLength, maxItems, ch
         if (signal?.aborted) throw new ServiceError('cancelled');
         onCall?.({ ...sent, attempt, error: code });
         codes.push(code);
+        if (code === BUDGET_EXHAUSTED) {
+          // 002.27: the account cannot pay for another call, so no chunk after this one can be
+          // asked: the job ends here with what it read, and says why. Not retried, not counted as failed.
+          stopped = stopOf(error);
+          break;
+        }
         if (!RETRIED.has(code)) {
           // 002.16: a refusal of the chosen provider is the whole job's, not a chunk's: the next
           // chunk would be refused the same way, so the first one ends it.
@@ -510,6 +542,12 @@ export async function extractChapter({ prepared, ai, maxTextLength, maxItems, ch
           break;
         }
       }
+    }
+    if (stopped !== undefined) {
+      unread = chunks.length - index;
+      // The refused part was announced as running: it was not read.
+      onPart?.({ n: index + 1, of: chunks.length, pages, state: 'waiting', cached: false, rules: 0, total: rules.size });
+      break;
     }
     if (answer === undefined) {
       failed += 1;
@@ -537,8 +575,9 @@ export async function extractChapter({ prepared, ai, maxTextLength, maxItems, ch
   return {
     rules: [...rules.values()].sort((a, b) => a.offset.start - b.offset.start),
     dropped,
-    chunks: { of: chunks.length, failed },
+    chunks: { of: chunks.length, failed, ...(stopped === undefined ? {} : { unread }) },
     codes,
-    model: model === undefined ? undefined : { ...model, constraint: weakest }
+    model: model === undefined ? undefined : { ...model, constraint: weakest },
+    ...(stopped === undefined ? {} : { stopped })
   };
 }

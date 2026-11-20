@@ -15,6 +15,14 @@
  * a trusted proxy — so a provider the account was not granted is refused there
  * with ai-service's own code, `provider_not_permitted`. Nothing else about the
  * user is sent, and never an `Authorization`.
+ *
+ * **Whose budget it is** (002.27; platform ADR-0136 Rule 1): the account gateway stamps an
+ * OPAQUE per-user subject, `X-Authenticated-AI-Subject`, and the gateway of this repository hands it
+ * to the service beside the features. It is forwarded the same way, on the `extract` call only, to
+ * the one address `ARCHISIMPLE_AI_SERVICE_URL` names: ai-service meters the call by it and, when the
+ * account has a monthly budget, answers an `extract` it cannot pay for with `402
+ * ai_budget_exhausted` (or `503 ai_budget_unavailable`). The subject is never the user's id, is
+ * never logged, and a call without one is simply recorded there as unattributed.
  */
 
 export const STRUCTURED_OUTPUT = 'structured-output';
@@ -25,11 +33,27 @@ export const FEATURES_HEADER = 'x-authenticated-features';
 const FEATURE_TOKEN = /^[a-z0-9][a-z0-9-]{0,39}$/u;
 const MAX_FEATURES = 32;
 
-/** The entitlement header for a call: the features as given, cleaned; none when there are none. */
-export function entitlementHeaders(features) {
-  if (!Array.isArray(features)) return {};
+/** The opaque per-user subject ai-service meters a call by (platform 120.0, ADR-0136 Rule 1). */
+export const AI_SUBJECT_HEADER = 'x-authenticated-ai-subject';
+export const MAX_AI_SUBJECT_LENGTH = 128;
+/** Printable ASCII, no space: a UUID is what the account service gives; anything else is dropped, never repaired. */
+const AI_SUBJECT = /^[\x21-\x7e]{1,128}$/u;
+
+/** The subject as given when it is well-formed, else `undefined`. */
+export function cleanAiSubject(value) {
+  return typeof value === 'string' && AI_SUBJECT.test(value) ? value : undefined;
+}
+
+/**
+ * The entitlement headers for a call: the features as given, cleaned (none when there are none),
+ * and — for the one call ai-service meters — the account's subject, cleaned. Never the user.
+ */
+export function entitlementHeaders(features, aiSubject) {
+  const subject = cleanAiSubject(aiSubject);
+  const headers = subject === undefined ? {} : { [AI_SUBJECT_HEADER]: subject };
+  if (!Array.isArray(features)) return headers;
   const clean = [...new Set(features.filter((f) => typeof f === 'string' && FEATURE_TOKEN.test(f)))].slice(0, MAX_FEATURES);
-  return clean.length === 0 ? {} : { [FEATURES_HEADER]: clean.join(',') };
+  return clean.length === 0 ? headers : { [FEATURES_HEADER]: clean.join(','), ...headers };
 }
 const HEALTH_TIMEOUT_MS = 5_000;
 /**
@@ -86,13 +110,49 @@ const MIN_TEXT_LENGTH = 1_000;
 const isObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 
 export class AiError extends Error {
-  /** @param {string} code 096.7's code, or `unreachable` / `malformed` */
-  constructor(code, status) {
+  /**
+   * @param {string} code 096.7's code, or `unreachable` / `malformed`
+   * @param {number} [status]
+   * @param {AiBudget} [budget] what a budget refusal's body said (002.27); absent for every other error
+   */
+  constructor(code, status, budget) {
     super(code);
     this.name = 'AiError';
     this.code = code;
     this.status = status;
+    if (budget !== undefined) this.budget = budget;
   }
+}
+
+/** The codes ai-service answers with when the account's monthly AI budget is in the way (platform ADR-0136 Rule 7). */
+export const BUDGET_EXHAUSTED = 'ai_budget_exhausted';
+export const BUDGET_UNAVAILABLE = 'ai_budget_unavailable';
+const BUDGET_REASONS = new Set(['exhausted', 'held', 'run-ceiling', 'floor', 'unavailable']);
+const MAX_BUDGET_MESSAGE = 300;
+const isCount = (v) => Number.isSafeInteger(v) && v >= 0;
+
+/**
+ * @typedef {{ message?: string, remainingMicrousd?: number, budgetMicrousd?: number | null, resetsAt?: string, reason?: string }} AiBudget
+ *   integer micro-dollars (1e-6 USD), list-price ESTIMATES; each field only when the body gave it well-formed
+ */
+
+/**
+ * What a budget refusal's JSON body says, field by field, each only when well-formed. A body that is
+ * not the documented shape gives `{}` — the error is then the code and the status alone.
+ * @returns {AiBudget}
+ */
+export function budgetOf(json) {
+  const error = json?.error;
+  if (!isObject(error)) return {};
+  const details = isObject(error.details) ? error.details : {};
+  const resets = typeof details.resetsAt === 'string' ? Date.parse(details.resetsAt) : Number.NaN;
+  return {
+    ...(typeof error.message === 'string' && error.message !== '' ? { message: error.message.slice(0, MAX_BUDGET_MESSAGE) } : {}),
+    ...(isCount(details.remainingMicrousd) ? { remainingMicrousd: details.remainingMicrousd } : {}),
+    ...(isCount(details.budgetMicrousd) || details.budgetMicrousd === null ? { budgetMicrousd: details.budgetMicrousd } : {}),
+    ...(Number.isNaN(resets) ? {} : { resetsAt: new Date(resets).toISOString() }),
+    ...(typeof details.reason === 'string' && BUDGET_REASONS.has(details.reason) ? { reason: details.reason } : {})
+  };
 }
 
 /**
@@ -134,6 +194,8 @@ export function createAiClient({
     }
     if (!response.ok) {
       const code = typeof json?.error?.code === 'string' ? json.error.code : 'provider_error';
+      // 002.27: a budget refusal keeps its numbers (the body used to be dropped); any other error, as before.
+      if (code === BUDGET_EXHAUSTED || code === BUDGET_UNAVAILABLE) throw new AiError(code, response.status, budgetOf(json));
       throw new AiError(code, response.status);
     }
     return json;
@@ -168,7 +230,7 @@ export function createAiClient({
 
     /**
      * One `POST /api/ai/extract`; the response DTO, or an {@link AiError}.
-     * `route` is who is asking and what they chose: `{ providerId?, model?, features?, signal? }`. No
+     * `route` is who is asking and what they chose: `{ providerId?, model?, features?, aiSubject?, signal? }`. No
      * `providerId` means ai-service's default for that caller (before 002.16, always).
      */
     async extract({ instructions, text, itemSchema, maxItems }, route = {}) {
@@ -177,7 +239,7 @@ export function createAiClient({
         '/api/ai/extract',
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', ...entitlementHeaders(route.features) },
+          headers: { 'Content-Type': 'application/json', ...entitlementHeaders(route.features, route.aiSubject) },
           body: JSON.stringify({
             ...(named ? { providerId: route.providerId } : {}),
             ...(named && typeof route.model === 'string' && route.model !== '' ? { model: route.model } : {}),

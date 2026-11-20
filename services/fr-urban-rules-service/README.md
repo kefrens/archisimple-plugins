@@ -69,6 +69,7 @@ Errors answer `{ "error": "<code>", …details }`:
 | `busy`                   | 503    | the extraction queue is full; `Retry-After`                                                                                                                             |
 | `extraction_unavailable` | 503    | ai-service lacks `structured-output`, or has no provider                                                                                                                |
 | `extraction_failed`      | 502    | every chunk failed; `codes` lists 096.7's                                                                                                                               |
+| `ai_budget_exhausted`    | 402    | the account's monthly AI budget ran out **before any part was read** (0.7.0, 002.27): the job's `error`, with the figures — see « The AI budget » below                    |
 | `not_configured`         | 503    | `v1/georisques` with no `FR_URBAN_RULES_GEORISQUES_TOKEN` (002.10)                                                                                                      |
 | `internal_error`         | 500    | an unexpected exception; only its name is logged                                                                                                                        |
 
@@ -241,7 +242,8 @@ GET  v1/extractions?partition&idurba&nomfic&zone[&provider[&model]]&cachedOnly=1
 - **Who is asking.** The gateway hands the service `features`, from `X-Authenticated-Features` — the account's features, which
   the deployment's account gateway overwrites on every request and `web` passes on to `/plugins-api/`. Only well-formed ids are
   kept (`^[a-z0-9][a-z0-9-]{0,39}$`, at most 32, header at most 1 024 characters, else none). The service stores them with the
-  job and sends `X-Authenticated-Features` on `extract` and `health` to ai-service — nothing else about the user, never an
+  job and sends `X-Authenticated-Features` on `extract` and `health` to ai-service — nothing else about the user (since 0.7.0
+  an opaque `X-Authenticated-AI-Subject`, on `extract` only: see « The AI budget »), never an
   `Authorization`. **ai-service decides**: a granted provider needs `ai-<id>`.
 - **Refusals** are the job's `error`, with ai-service's own code, at the first chunk and free of charge (the charge is given
   back): `provider_not_permitted` (the account was not granted it), `unknown_provider`. `{ code, providerId }`.
@@ -250,6 +252,45 @@ GET  v1/extractions?partition&idurba&nomfic&zone[&provider[&model]]&cachedOnly=1
 - **Without the header** (`pnpm dev`, a deployment without accounts) no features are sent and ai-service, which believes the
   header only when `AI_SERVICE_TRUST_ACCOUNT_FEATURES` is on, treats the call as anonymous.
 - Logs name `requestedProvider`; never the features.
+
+## The AI budget (0.7.0, Sprint 002.27)
+
+A reading spends the account's money like every other AI feature, and is metered and budgeted by ai-service (platform ADR-0136,
+Sprint 120.2). Nothing here computes a price or holds a ledger; the service **carries who is asking** and **reports a stop**.
+
+- **The subject travels like the features.** The account gateway stamps `X-Authenticated-AI-Subject` — an OPAQUE per-user id,
+  **never the user id** (`X-Authenticated-User` stays the limit key and the log hash, and is never forwarded) — and `web` passes
+  it on. The gateway hands it to `service.handle` as `aiSubject` (one printable-ASCII token of at most 128 characters; a missing,
+  repeated, over-long or malformed header is none, never repaired). `POST v1/extractions` keeps it **with the job**, and the job
+  sends it as `X-Authenticated-AI-Subject` on **every `extract` call** to `ARCHISIMPLE_AI_SERVICE_URL`, and nowhere else: not on
+  `health`, not to any other host, never with an `Authorization`, never in a log or an answer. A job keeps the subject it
+  **started** with, so it still reads as that user after the request that started it has been answered.
+- **A shared job is charged to its starter.** A POST for a reading already running joins it (`cache: 'joined'`): the reading
+  runs as, and is charged to, the user who started it; a joiner is never charged. If the starter's budget runs out, the reading
+  ends for the joiner too, with the same answer — the `stopped` below says why. This is the existing sharing, unchanged.
+- **`402 ai_budget_exhausted` ends the reading.** ai-service answers an `extract` it cannot pay for with
+  `{ error: { code, message, details: { remainingMicrousd, budgetMicrousd, resetsAt, reason } } }`; the client keeps those
+  fields (each only when well-formed; ai-service's `message` is not passed on — the panel words the stop). The code is
+  **terminal for the job**: no further part is started and the code is neither retried nor counted as a part that failed.
+  - Parts already read: the job ends `done`, and its `result` carries what was read plus
+    `stopped: { reason: 'ai-budget', detailReason?, remainingMicrousd?, budgetMicrousd?, resetsAt? }` and
+    `chunks: { of, failed, unread }` (`unread`: the refused part and every part after it; absent otherwise). `detailReason` is
+    ai-service's own (`exhausted`, `held`, `run-ceiling`, `floor`, `unavailable`); amounts are integer **micro-dollars**
+    (1e-6 USD), list-price **estimates**, `budgetMicrousd` may be `null`; `resetsAt` is ISO-8601. `progress.parts` shows the
+    unread parts as `waiting`. The result is **partial: answered to its job and never cached**, so the next POST asks again.
+  - No part read: the job ends `failed` with `error: { code: 'ai_budget_exhausted', detailReason?, remainingMicrousd?,
+    budgetMicrousd?, resetsAt? }`, and its charge is given back.
+  - **There is no resume.** Nothing is promised to continue: a new POST is a new reading. The only thing it can reuse is what the
+    service already holds — the chunks the model answered, in memory for 30 minutes (see « A part read again » above).
+- **`503 ai_budget_unavailable`** (ai-service could not reach its ledger) is transient: it is retried once, at once, like
+  `provider_error` and `unreachable` (there is no backoff for any code here); a part still failing is counted in `chunks.failed`
+  and, if every part failed, the job is `extraction_failed` with the code in `codes`.
+- **Older or newer on either side works.** An ai-service that ignores the header meters nothing; a call with no subject (this
+  service reached without the account gateway, or an older gateway) is recorded there as unattributed and never refused.
+- **What is not tested, and why.** A forged `X-Authenticated-AI-Subject` is not rejected here: this process believes any header
+  it is sent, exactly as it believes `X-Authenticated-Features` and `X-Authenticated-User` — its trust is the network (the
+  Compose `plugin-services` network, the chart's NetworkPolicy), not code. A client that can reach this port can name any
+  subject, which is why the deployment publishes no port.
 
 ## Hosts contacted
 

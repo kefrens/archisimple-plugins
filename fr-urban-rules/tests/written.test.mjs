@@ -10,7 +10,7 @@ import { test, before } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-import { __testing, createReader, readingCardOf } from '../src/index.js';
+import { __testing, createOfferCards, createReader, offerCardOf, readingCardOf } from '../src/index.js';
 import {
   answering,
   docBlocks,
@@ -2595,6 +2595,7 @@ function cardsHost(model = { providerId: 'openai', model: 'gpt-5' }) {
   return {
     ai,
     posted,
+    handlers,
     disposed,
     last: () => posted.at(-1),
     press: (actionId) => handlers.at(-1).onAction({ cardId: posted.at(-1).id, actionId, answers: {} })
@@ -2793,5 +2794,417 @@ test('002.23: the card is taken down when the reader is disposed', async () => {
   await act(context, 'written-extract', actions(report).find((a) => a.id === 'written-extract').target);
   assert.equal(host.disposed.length, 0);
   context.reader.dispose();
-  assert.equal(host.disposed.length, 1);
+  // 002.29: the zone's offer (posted by the read) goes with the reading card.
+  assert.equal(host.disposed.filter((id) => id.startsWith('reading:')).length, 1);
+  assert.equal(host.disposed.filter((id) => id.startsWith('offer:')).length, 1);
+});
+
+// ── Sprint 002.27: the account's AI budget ends a reading ────────────────────────────────────────
+
+const STOPPED = {
+  reason: 'ai-budget',
+  detailReason: 'exhausted',
+  remainingMicrousd: 1_239_999,
+  budgetMicrousd: 5_000_000,
+  resetsAt: '2026-12-01T00:00:00.000Z'
+};
+const stoppedResult = (fields = {}) =>
+  resultWith({ chunks: { of: 5, failed: 0, unread: 3 }, stopped: STOPPED, ...fields });
+/** What the strings say, rendered the way the host's ICU formatter does for the figures that matter here. */
+const sayStop = (strings, key, params, locale) => {
+  const text = strings[key];
+  const amount = new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD' }).format(params.amount);
+  const date = new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(new Date(params.date));
+  return { text, amount, date };
+};
+
+test('002.27: a reading the AI budget stopped is answered with what was read, said in its own words, with a plain "read again"', async () => {
+  const schedule = manualTimers();
+  const service = fakeService({
+    steps: [{ jobId: 'j', state: 'done', progress: { step: 'done', of: 5, parts: [] }, result: stoppedResult() }]
+  });
+  const context = readerFor({ service, schedule });
+  const report = await read(context);
+  await act(context, 'written-extract', actions(report).find((a) => a.id === 'written-extract').target);
+  await schedule.tick();
+  const after = await read(context, 'source');
+
+  // The rules read are kept and shown; the zone is partial, not failed and not "connection".
+  assert.equal(source(after).state, 'ready');
+  assert.equal(source(after).detail.key, 'fr-urban-rules.written.status.stopped');
+  assert.ok(writtenRules(after).length > 0);
+  const notice = rulesView(after).blocks.find((b) => b.kind === 'notice' && b.text.key === 'fr-urban-rules.written.stopped.partial');
+  assert.ok(notice, 'the stop has its own sentence');
+  assert.ok(!noticeKeys(after).includes('fr-urban-rules.written.state.partial'), 'not the "could not be read" one');
+  // Parts read and kept: 5 − 0 failed − 3 unread; the remainder rounded DOWN to the cent; the day it renews.
+  assert.equal(notice.text.params.read, 2);
+  assert.equal(notice.text.params.of, 5);
+  assert.deepEqual(
+    { hasAmount: notice.text.params.hasAmount, amount: notice.text.params.amount, hasDate: notice.text.params.hasDate },
+    { hasAmount: 'yes', amount: 1.23, hasDate: 'yes' }
+  );
+  assert.equal(new Date(notice.text.params.date).getFullYear(), 2026);
+  assert.equal(new Date(notice.text.params.date).getMonth(), 11);
+  assert.equal(new Date(notice.text.params.date).getDate(), 1);
+  // A new reading is a plain read; nothing says it resumes.
+  const again = actions(after).find((a) => a.label.key === 'fr-urban-rules.written.stopped.readAgain');
+  assert.equal(again.id, 'written-try-again');
+  await act(context, 'written-try-again', again.target);
+  assert.equal(service.calls.post.length, 2);
+  assert.ok(!service.calls.post[1].url.includes('refresh'), 'not Extract again, which discards what the service kept');
+});
+
+test('002.27: the strings say the stop in en and fr: dollars "about", to the cent, the renewal date, no connection wording and no resume promise', () => {
+  const params = { read: 2, of: 5, hasAmount: 'yes', amount: 1.23, hasDate: 'yes', date: new Date(2026, 11, 1).getTime() };
+  for (const [strings, locale] of [[en, 'en'], [fr, 'fr']]) {
+    for (const key of ['fr-urban-rules.written.stopped.none', 'fr-urban-rules.written.stopped.partial']) {
+      const { text, amount, date } = sayStop(strings, key, params, locale);
+      assert.match(text, /\{amount, number, ::currency\/USD\}/u, 'dollars, as the host formats them in the locale');
+      assert.match(text, /\{date, date, medium\}/u);
+      assert.match(text, locale === 'en' ? /About \{amount/u : /environ \{amount/u, 'an estimate, said so');
+      assert.match(amount, /1[.,]23/u, 'to the cent');
+      assert.match(date, /2026/u);
+      assert.doesNotMatch(
+        text,
+        /connect|reach|network|reload|refresh|retry|connexion|joindre|réseau|recharg|rafraîch|réessay/iu,
+        `no connection wording (${locale} ${key})`
+      );
+      assert.doesNotMatch(text, /resume|continue where|reprend|reprise/iu, 'no promise to resume');
+    }
+    assert.match(strings['fr-urban-rules.written.stopped.partial'], locale === 'en' ? /What was read is kept/u : /Ce qui a été lu est conservé/u);
+    assert.doesNotMatch(strings['fr-urban-rules.written.code.ai_budget_exhausted'], /connect|connexion|reload|recharg/iu);
+    assert.ok(strings['fr-urban-rules.written.stopped.readAgain']);
+    assert.ok(strings['fr-urban-rules.written.status.stopped']);
+  }
+  // Key parity: every string of the stop is in both languages.
+  for (const key of Object.keys(en).filter((k) => /\.written\.(stopped|code\.ai_budget|status\.stopped)/u.test(k))) {
+    assert.ok(typeof fr[key] === 'string' && fr[key] !== '', key);
+  }
+});
+
+test('002.27: the card for a stopped reading says it in the same words, keeps the open and narrow actions, and offers "Read again" only', () => {
+  const card = readingCardOf({
+    id: 'z',
+    zone: 'UCe1b',
+    state: 'done',
+    progress: { step: 'done', of: 5, parts: [{ n: 3, state: 'waiting' }] },
+    result: { ...stoppedResult(), rules: [] },
+    counts: { auto: 0, project: 0, grouped: 0, left: 4, ask: 0 }
+  });
+  assert.equal(card.status, 'partial');
+  assert.equal(card.notes.length, 1);
+  assert.equal(card.notes[0].tone, 'caution');
+  assert.equal(card.notes[0].text.key, 'fr-urban-rules.written.stopped.partial');
+  assert.equal(card.notes[0].text.params.read, 2);
+  assert.equal(card.notes[0].text.params.amount, 1.23);
+  assert.deepEqual(card.actions.map((a) => a.id), ['open', 'retry', 'keep']);
+  assert.deepEqual(card.actions[1].label, { key: 'fr-urban-rules.card.action.again' }, 'Read again — not "read the missing parts again"');
+  assert.deepEqual(card.steps, [], 'a part left unread is not a failure to list');
+
+  // No numbers given: the sentence is still the stop's, without a figure it was not told.
+  const bare = readingCardOf({
+    id: 'z',
+    zone: 'U',
+    state: 'done',
+    progress: { step: 'done', of: 5 },
+    result: { ...stoppedResult(), stopped: { reason: 'ai-budget' } }
+  });
+  assert.equal(bare.notes[0].text.key, 'fr-urban-rules.written.stopped.partial');
+  assert.equal(bare.notes[0].text.params.hasAmount, 'no');
+  assert.equal(bare.notes[0].text.params.hasDate, 'no');
+});
+
+test('002.27: a reading that stopped before any part was read is a failed card with the figures, a way to try again, and no connection banner', async () => {
+  const failed = readingCardOf({
+    id: 'z',
+    zone: 'UCe1b',
+    state: 'failed',
+    error: { code: 'ai_budget_exhausted', stopped: STOPPED }
+  });
+  assert.equal(failed.status, 'failed');
+  assert.equal(failed.notes[0].text.key, 'fr-urban-rules.written.stopped.none');
+  assert.equal(failed.notes[0].text.params.amount, 1.23);
+  assert.deepEqual(failed.actions.map((a) => a.id), ['retry']);
+
+  // Through the reader: the job's error carries the figures, the panel says them, nothing says "connection".
+  const schedule = manualTimers();
+  const service = fakeService({
+    steps: [
+      {
+        jobId: 'j',
+        state: 'failed',
+        error: {
+          code: 'ai_budget_exhausted',
+          detailReason: 'exhausted',
+          remainingMicrousd: 1_239_999,
+          budgetMicrousd: 5_000_000,
+          resetsAt: '2026-12-01T00:00:00.000Z'
+        }
+      }
+    ]
+  });
+  const context = readerFor({ service, schedule });
+  const report = await read(context);
+  await act(context, 'written-extract', actions(report).find((a) => a.id === 'written-extract').target);
+  await schedule.tick();
+  const after = await read(context, 'source');
+  assert.equal(source(after).state, 'unavailable');
+  const notice = rulesView(after).blocks.find((b) => b.kind === 'notice' && b.text.key === 'fr-urban-rules.written.stopped.none');
+  assert.equal(notice.text.params.amount, 1.23);
+  assert.equal(notice.text.params.hasDate, 'yes');
+  assert.ok(!noticeKeys(after).some((k) => /network|unavailable|timeout/u.test(k)));
+  assert.ok(actions(after).some((a) => a.id === 'written-try-again'), 'a refusal costs nothing: trying again is offered');
+  // A stop that gave no figures is still the stop.
+  const bare = readingCardOf({ id: 'z', zone: 'U', state: 'failed', error: { code: 'ai_budget_exhausted' } });
+  assert.equal(bare.notes[0].text.params.hasAmount, 'no');
+});
+
+test('002.27: a stop the service sent is checked field by field, and survives the project being saved and opened again', async () => {
+  const { checkedResult, storedResultOf } = __testing;
+  const held = checkedResult(stoppedResult());
+  assert.deepEqual(held.stopped, STOPPED);
+  assert.deepEqual(held.chunks, { of: 5, failed: 0, unread: 3 });
+  // The project's snapshot keeps the stop, and a restored reading is the same reading.
+  const restored = checkedResult(JSON.parse(JSON.stringify(storedResultOf(held, 'UCe1b'))));
+  assert.deepEqual(restored.stopped, STOPPED);
+  assert.deepEqual(restored.chunks, held.chunks);
+  // A result with no stop reads as before: no `stopped`, no `unread`.
+  const plain = checkedResult(resultWith({ chunks: { of: 5, failed: 1 } }));
+  assert.equal('stopped' in plain, false);
+  assert.deepEqual(plain.chunks, { of: 5, failed: 1 });
+
+  // A malformed stop keeps only what is well formed: a number that is not a whole count of
+  // micro-dollars, a date that is not one and a reason that is not listed are not said.
+  const sloppy = resultWith({
+    chunks: { of: 5, failed: 0, unread: 3 },
+    stopped: { reason: 'ai-budget', remainingMicrousd: '5', budgetMicrousd: -1, resetsAt: 'soon', detailReason: 'whatever', extra: 1 }
+  });
+  assert.deepEqual(checkedResult(sloppy).stopped, { reason: 'ai-budget' });
+  const report = await read(readerFor({ service: fakeService({ cached: sloppy }) }));
+  const notice = rulesView(report).blocks.find((b) => b.text?.key === 'fr-urban-rules.written.stopped.partial');
+  assert.deepEqual(
+    { hasAmount: notice.text.params.hasAmount, hasDate: notice.text.params.hasDate },
+    { hasAmount: 'no', hasDate: 'no' }
+  );
+  // Not a budget stop at all: dropped whole, and the zone reads as the complete reading it is.
+  assert.equal('stopped' in checkedResult(resultWith({ stopped: { reason: 'other', remainingMicrousd: 1 } })), false);
+  assert.ok(!noticeKeys(await read(readerFor({ service: fakeService({ cached: resultWith({ stopped: { reason: 'other' } }) }) }))).includes('fr-urban-rules.written.stopped.partial'));
+});
+
+// ── 002.28: a reading found ready says so, and the button leads ────────────────
+
+const ALREADY_READ = 'fr-urban-rules.written.state.alreadyRead';
+const blockKinds = (report) => rulesView(report).blocks.map((b) => b.kind);
+
+test('002.28: a zone found already read opens with a notice naming the date and the model, and offers no Extract', async () => {
+  const service = fakeService({ cached: recorded });
+  const context = readerFor({ service });
+  await read(context);
+  await settle();
+  const report = await read(context, 'source');
+  const blocks = rulesView(report).blocks;
+  const notice = blocks.find((b) => b.kind === 'notice' && b.text.key === ALREADY_READ);
+  assert.ok(notice, 'the notice is there');
+  assert.deepEqual(Object.keys(notice.text.params).sort(), ['date', 'model']);
+  assert.ok(notice.text.params.date !== '' && notice.text.params.model !== '');
+  assert.ok(!actions(report).some((a) => a.id === 'written-extract'), 'nothing left to extract');
+  const fields = blocks.findIndex((b) => b.kind === 'fields');
+  assert.ok(blocks.indexOf(notice) < fields, 'the notice comes before the fields');
+  assert.equal(service.calls.post.length, 0, 'no model call');
+});
+
+test('002.28: a zone read in this session does not say it was already read', async () => {
+  const schedule = manualTimers();
+  const service = fakeService({
+    steps: [{ jobId: 'j', state: 'done', progress: { step: 'done' }, result: recorded }]
+  });
+  const context = readerFor({ service, schedule });
+  let report = await read(context);
+  await act(context, 'written-extract', actions(report).find((a) => a.id === 'written-extract').target);
+  await schedule.tick();
+  report = await read(context, 'source');
+  assert.ok(writtenRules(report).length > 0, 'it was read');
+  assert.ok(!noticeKeys(report).includes(ALREADY_READ));
+});
+
+test('002.28: reading again after an already-read zone drops the notice', async () => {
+  const schedule = manualTimers();
+  const service = fakeService({
+    cached: recorded,
+    steps: [{ jobId: 'j', state: 'done', progress: { step: 'done' }, result: recorded }]
+  });
+  const context = readerFor({ service, schedule });
+  await read(context);
+  await settle();
+  let report = await read(context, 'source');
+  assert.ok(noticeKeys(report).includes(ALREADY_READ));
+  const again = actions(report).find((a) => a.id === 'written-extract-again');
+  if (again === undefined) return; // not offered for this fixture: nothing to read again
+  await act(context, 'written-extract-again', again.target);
+  await schedule.tick();
+  report = await read(context, 'source');
+  assert.ok(!noticeKeys(report).includes(ALREADY_READ));
+});
+
+test('002.28: in "not read yet" the Extract action comes before the model row', async () => {
+  const context = readerFor();
+  const report = await read(context);
+  const blocks = rulesView(report).blocks;
+  const action = blocks.findIndex(
+    (b) => b.kind === 'actions' && b.actions.some((a) => a.id === 'written-extract')
+  );
+  const model = blocks.findIndex(
+    (b) => b.kind === 'fields' && b.rows.some((r) => r.label?.key === 'fr-urban-rules.written.field.willRead')
+  );
+  assert.ok(action !== -1 && model !== -1);
+  assert.ok(action < model, `the action (${action}) precedes the model row (${model})`);
+});
+
+test('002.28: the strings exist in en and fr', async () => {
+  const dir = new URL('../resources/i18n/fr-urban-rules/', import.meta.url);
+  const en = JSON.parse(await readFile(new URL('en.json', dir), 'utf8'));
+  const fr = JSON.parse(await readFile(new URL('fr.json', dir), 'utf8'));
+  for (const table of [en, fr]) {
+    assert.match(table[ALREADY_READ], /\{date\}/);
+    assert.match(table[ALREADY_READ], /\{model\}/);
+  }
+  assert.match(fr[ALREADY_READ], /^Cette zone a déjà été lue le \{date\}/);
+});
+
+
+// ── 002.29: the offer to read, as a quiet « ready » card in the AI conversation (SDK 1.43) ──────
+
+test('002.29: offerCardOf is a quiet ready activity with one primary button, the model and the shared-result note', () => {
+  const card = offerCardOf({ id: 'z1', zone: 'UE', model: 'anthropic · claude-sonnet-5-5', document: 'PLUi du Pays d’Aix' });
+  assert.equal(card.kind, 'activity');
+  assert.equal(card.id, 'offer:z1');
+  assert.equal(card.status, 'ready');
+  assert.equal(card.quiet, true);
+  assert.deepEqual(card.title, { key: 'fr-urban-rules.offer.title', params: { zone: 'UE' } });
+  assert.deepEqual(card.subtitle, { text: 'PLUi du Pays d’Aix' });
+  assert.equal(card.progress, undefined);
+  assert.deepEqual(card.actions.map((a) => [a.id, a.emphasis, a.disabled]), [['read', 'primary', undefined]]);
+  const keys = card.notes.map((n) => n.text.key);
+  assert.deepEqual(keys, ['fr-urban-rules.offer.note.model', 'fr-urban-rules.offer.note.shared']);
+  assert.deepEqual(card.notes[0].text.params, { model: 'anthropic · claude-sonnet-5-5' });
+  // No model chosen in the AI panel: the service's own default, said in its own sentence.
+  const noModel = offerCardOf({ id: 'z1', zone: 'UE' });
+  assert.equal(noModel.subtitle, undefined);
+  assert.equal(noModel.notes[0].text.key, 'fr-urban-rules.offer.note.defaultModel');
+});
+
+test('002.29: createOfferCards posts a card per wanted zone, updates it when it changes, takes down the ones no longer wanted', () => {
+  const host = cardsHost();
+  const pressed = [];
+  const offers = createOfferCards({ ai: () => host.ai, act: (record) => pressed.push(record.id) });
+  const a = { id: 'a', zone: 'UE' };
+  const b = { id: 'b', zone: 'UC' };
+  offers.sync([{ record: a }, { record: b }]);
+  assert.deepEqual(host.posted.map((c) => c.id), ['offer:a', 'offer:b']);
+  offers.sync([{ record: a }, { record: b }]);
+  assert.equal(host.posted.length, 2, 'an unchanged card is not posted again');
+  offers.sync([{ record: a, model: 'openai · gpt-5' }, { record: b }]);
+  assert.equal(host.posted.length, 3, 'a changed model updates the card');
+  assert.equal(host.posted.at(-1).notes[0].text.params.model, 'openai · gpt-5');
+  offers.sync([{ record: a }]);
+  assert.deepEqual(host.disposed, ['offer:b'], 'the zone no longer offered is taken down');
+  offers.sync([]);
+  assert.deepEqual(host.disposed, ['offer:b', 'offer:a']);
+  offers.dispose();
+});
+
+test('002.29: a host without ai.cards, or whose post throws, changes nothing', () => {
+  const none = createOfferCards({ ai: () => undefined, act: () => {} });
+  none.sync([{ record: { id: 'a', zone: 'UE' } }]);
+  const throwing = createOfferCards({ ai: () => ({ cards: { post: () => { throw new Error('refused'); } } }), act: () => {} });
+  throwing.sync([{ record: { id: 'a', zone: 'UE' } }]);
+  none.dispose();
+  throwing.dispose();
+});
+
+test('002.29: a read of an unread zone posts one quiet offer; its button starts the same reading as Extract, then the reading card takes over', async () => {
+  const host = cardsHost();
+  const schedule = manualTimers();
+  const service = fakeService({
+    steps: [{ jobId: 'j', state: 'fetching', progress: { step: 'fetching' } }]
+  });
+  const context = readerFor({ service, schedule, ai: host.ai });
+  await read(context);
+  const offers = host.posted.filter((c) => c.id.startsWith('offer:'));
+  assert.equal(offers.length, 1, 'one offer for the one unread zone');
+  assert.equal(offers[0].quiet, true);
+  assert.equal(offers[0].status, 'ready');
+  assert.equal(service.calls.post.length, 0, 'an offer starts nothing');
+  const handlers = host.handlers.find((_, i) => host.posted[i].id === offers[0].id);
+  handlers.onAction({ cardId: offers[0].id, actionId: 'read', answers: {} });
+  await settle();
+  assert.equal(service.calls.post.length, 1, 'the button starts one reading');
+  assert.ok(host.posted.some((c) => c.id.startsWith('reading:')), 'the reading card is posted');
+  await read(context, 'action');
+  assert.ok(host.disposed.some((id) => id.startsWith('offer:')), 'the offer is taken down once the zone is reading');
+});
+
+test('002.29: a zone found already read gets no offer', async () => {
+  const host = cardsHost();
+  const service = fakeService({ cached: recorded });
+  const context = readerFor({ service, ai: host.ai });
+  await read(context);
+  await settle();
+  await read(context, 'source');
+  assert.equal(host.posted.filter((c) => c.id.startsWith('offer:')).length, 0);
+});
+
+test('002.29: the offer follows the model chosen in the AI panel', async () => {
+  const host = cardsHost({ providerId: 'openai', model: 'gpt-5' });
+  const context = readerFor({ ai: host.ai });
+  await read(context);
+  const first = host.posted.filter((c) => c.id.startsWith('offer:')).at(-1);
+  assert.equal(first.notes[0].text.params.model, 'openai · gpt-5');
+});
+
+test('002.29: no passage and no rule reaches the offer card', () => {
+  const card = offerCardOf({ id: 'z', zone: 'UE', model: 'm' });
+  assert.ok(!JSON.stringify(card).includes('passage'));
+});
+
+test('002.29: the offer strings exist in en and fr', async () => {
+  const dir = new URL('../resources/i18n/fr-urban-rules/', import.meta.url);
+  const en = JSON.parse(await readFile(new URL('en.json', dir), 'utf8'));
+  const fr = JSON.parse(await readFile(new URL('fr.json', dir), 'utf8'));
+  for (const key of ['title', 'note.model', 'note.defaultModel', 'note.shared', 'action']) {
+    assert.ok(en[`fr-urban-rules.offer.${key}`], `en ${key}`);
+    assert.ok(fr[`fr-urban-rules.offer.${key}`], `fr ${key}`);
+  }
+  assert.match(en['fr-urban-rules.offer.title'], /\{zone\}/);
+  assert.match(fr['fr-urban-rules.offer.note.model'], /\{model\}/);
+  assert.equal(fr['fr-urban-rules.offer.action'], 'Lire les règles écrites');
+});
+
+test('002.29: after the person cancels a reading the zone is not offered again beside its « Read again » card', async () => {
+  const host = cardsHost();
+  const schedule = manualTimers();
+  const service = fakeService({
+    steps: [{ jobId: 'j', state: 'fetching', progress: { step: 'fetching' } }]
+  });
+  const context = readerFor({ service, schedule, ai: host.ai });
+  let report = await read(context);
+  await act(context, 'written-extract', actions(report).find((a) => a.id === 'written-extract').target);
+  await settle();
+  await read(context, 'action'); // the host reads again once the reading has started: the offer goes
+  assert.ok(host.disposed.some((id) => id.startsWith('offer:')), 'the offer is down while reading');
+  const readingIndex = host.posted.findIndex((c) => c.id.startsWith('reading:'));
+  assert.ok(readingIndex >= 0, 'the reading card is posted');
+  host.handlers[readingIndex].onAction({ cardId: host.posted[readingIndex].id, actionId: 'cancel', answers: {} });
+  await settle();
+  const offersBefore = host.posted.filter((c) => c.id.startsWith('offer:')).length;
+  report = await read(context, 'source');
+  assert.ok(
+    actions(report).some((a) => a.id === 'written-extract'),
+    'the Rules view still offers the button: the zone is not read'
+  );
+  assert.equal(
+    host.posted.filter((c) => c.id.startsWith('offer:')).length,
+    offersBefore,
+    'no second offer beside the cancelled reading card'
+  );
 });

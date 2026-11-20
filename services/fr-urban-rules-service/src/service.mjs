@@ -312,7 +312,8 @@ export async function createService({
         userHash: request.userHash,
         userSource: request.userSource,
         selection,
-        features: request.features
+        features: request.features,
+        aiSubject: request.aiSubject
       });
       return {
         status: answer.status,
@@ -398,6 +399,7 @@ export async function createService({
      *   method: string, segments: string[], query: URLSearchParams, body?: string,
      *   limitKey: string, userHash: string, userSource: 'header' | 'address',
      *   features?: string[]   the account's, from the proxy's header; absent when it sent none
+     *   aiSubject?: string    the account's opaque AI subject, from the proxy's header (002.27); never the user
      * }} request `segments` decoded, after the package id; `body` at most 4 KiB
      * @returns {Promise<{ status: number, headers?: Record<string, string>, body: object }>}
      */

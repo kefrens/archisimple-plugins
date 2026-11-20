@@ -1,5 +1,56 @@
 # Changelog — `fr-urban-rules`
 
+## 0.24.0 — Sprint 002.29, The Reading Offer In The AI Panel
+
+- **SDK 1.43** (was 1.41; needs the platform's Sprint 121.0: a quiet card and the `ready` status). **A host older than 1.43 does not activate this
+  version** — release the platform first. The companion service (0.7.0) is unchanged.
+- **The AI panel offers the reading.** For each zone of the plot on view that the Rules view shows as « not read yet », a **quiet « ready » card**
+  is posted in the AI conversation: « Lire les règles écrites — zone UE », the document, « Lecture avec <model> » (the model chosen in the panel,
+  else the deployment's default), « Le résultat est conservé pour cette zone : la prochaine lecture sera gratuite, pour tout le monde », and one
+  button. **It never opens the panel** (it is `quiet`); it is there when the panel is open. Pressing it starts **exactly the reading the Rules
+  view's button starts** (`runWrittenAction('written-extract')`, one path); the card is taken down and the reading card of 002.23 takes over.
+- **Derived, not stored.** The offers are a function of what each read shows: a zone found already read, being read, or on another plot has none; a
+  service that cannot be reached has none; a changed model updates the card. No price on it (only the AI service knows prices) and no passage, ever.
+- A zone whose reading the person **cancelled** is not offered again beside its own « Read again » card (found by the browser walk).
+- A host without `ai.cards` changes nothing: the Rules view's button (002.28) stays the way in.
+- Strings: `offer.{title,note.model,note.defaultModel,note.shared,action}` (en, fr). Tests: eight in `written.test.mjs`; the 002.23 disposal test now
+  also counts the offer.
+- **Not in this version:** a disabled offer when no model is usable (the extension cannot tell a missing model from the service's own default, which
+  is why the card says « modèle par défaut du déploiement »); a failure arrives as the existing refusal of 002.27.
+
+## 0.23.0 — Sprint 002.28, The Reading Offer Is Always Explained
+
+- **SDK 1.41**, the companion service **0.7.0** and the platform unchanged.
+- **A zone that was already read says so.** A zone whose reading the service already held (the cache is shared across accounts) arrives finished, so
+  « Extract » is correctly not offered — but it looked like a button that had gone missing. The zone's block now opens with a notice: « Cette zone a
+  déjà été lue le {date} avec {model}. C’est une lecture partagée : rien n’a été décompté de votre budget IA. » It is shown only for a reading
+  found by the cache lookup (`record.foundReady`), never for one this session ran, one restored from the project's snapshot (its own dated notice
+  stays), or one read again.
+- **The button leads.** In « not read yet » the « Read the written rules » action now comes before the « Will read with » row.
+- Strings: `written.state.alreadyRead` (en, fr). Tests: five in `written.test.mjs`.
+- **Not in this version** (sprint 002.28, Epics 1 and 2, optional hardening nobody has reported): the section for a reading service that cannot be
+  reached, and next-step sentences for the permanent errors.
+
+## 0.22.0 — Sprint 002.27, The Reading Is Inside The AI Budget
+
+- **SDK 1.41** and the platform's AI service unchanged in what they offer; the companion service **0.7.0** is the other half (it carries the
+  account's opaque AI subject to ai-service and reports a stop). Against a service 0.6.0 the panel behaves exactly as before: it is only ever
+  told of a stop by a service that knows of one.
+- **A reading the account's monthly AI budget stopped keeps what it read.** The service ends the job at the refused part with the parts already
+  read in its answer (`stopped`, `chunks.unread`); the panel shows those rules, the zone's status reads « interrompue : budget IA » / « stopped: AI
+  budget », and a notice says in the person's language **how many parts were read and kept, about how much is left (dollars, to the cent, rounded
+  down, in the locale's format) and the day the budget renews** — « Lecture interrompue : votre budget IA mensuel est épuisé après 2 parties sur
+  5. Ce qui a été lu est conservé. Il reste environ 1,23 $US. Il se renouvelle le 1 déc. 2026. » No « connection » wording, no Reload.
+- **Nothing is promised to resume.** The offer is « Relire le chapitre » / « Read the chapter again » (a plain read: a new reading starts again;
+  not « Extract again », which would also discard what the service still holds). The reading is never counted as complete, so it is not cached,
+  not trusted to say a confirmed rule is « no longer read », and the stop is kept in the project's snapshot beside the rules.
+- **No part read at all** (the budget was already out): the card and the panel say so with the same figures (`written.stopped.none`), and
+  « Try again » is offered — a refusal costs nothing.
+- The card in the AI conversation ends **partial** with the same sentence and « Read again » (no « Read the missing parts »: nothing failed).
+  Figures the service did not give are left out of the sentence, never guessed; every amount is a list-price **estimate**, said « about ».
+- Strings: `written.stopped.{partial,none,readAgain}`, `written.status.stopped`, `written.code.ai_budget_exhausted` (en, fr; ICU `select`
+  for a missing figure, `::currency/USD` and `date, medium` for the host's formatter). Tests: five in `written.test.mjs`.
+
 ## 0.21.0 — Sprint 002.26, What Is Left To Decide, Grouped
 
 - **SDK 1.41**, the companion service **0.6.0** and the platform unchanged; the Rules view's own vocabulary carries everything.

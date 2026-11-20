@@ -19,8 +19,9 @@
  *
  * **Only the deployment's proxy may reach the gateway.** It trusts
  * `X-Authenticated-User` (capped at 128 characters) and, since Sprint 002.16,
- * `X-Authenticated-Features` (ADR-0114 Rule 14) because the account gateway
- * overwrites both and `web` forwards them, and nothing else can connect: the compose service
+ * `X-Authenticated-Features` (ADR-0114 Rule 14) and, since Sprint 002.27, the opaque
+ * `X-Authenticated-AI-Subject` (platform ADR-0136 Rule 1) because the account gateway
+ * overwrites all three and `web` forwards them, and nothing else can connect: the compose service
  * publishes no port, and the gateway binds where the deployment says. Run
  * outside that arrangement, anyone could claim any name. No shared secret
  * between `web` and the gateway for now (owner decision, 2026-10-20).
@@ -52,6 +53,14 @@ export const MAX_USER_LENGTH = 128;
 export const FEATURES_HEADER = 'x-authenticated-features';
 export const MAX_FEATURES_HEADER_LENGTH = 1024;
 export const MAX_FEATURES = 32;
+/**
+ * Sprint 002.27 (platform ADR-0136 Rule 1): the OPAQUE per-user subject the account gateway stamps beside
+ * the features, which ai-service meters a call by. It is not the user (`X-Authenticated-User` stays the
+ * limit key and the hash) and never leaves this process but to ai-service.
+ */
+export const AI_SUBJECT_HEADER = 'x-authenticated-ai-subject';
+export const MAX_AI_SUBJECT_LENGTH = 128;
+const AI_SUBJECT = /^[\x21-\x7e]{1,128}$/u;
 /** A feature id as the account service defines them (`ai-openai`, `plu`); anything else is dropped. */
 const FEATURE_TOKEN = /^[a-z0-9][a-z0-9-]{0,39}$/u;
 export const DEFAULT_PORT = 4500;
@@ -114,6 +123,18 @@ export function parseFeatures(header) {
     .sort()
     .slice(0, MAX_FEATURES);
   return features.length === 0 ? undefined : features;
+}
+
+/**
+ * The AI subject as the proxy stamped it, believed for the reason the features are (the account
+ * gateway overwrites it, `web` passes it, nothing else reaches this port). One printable-ASCII token of
+ * at most {@link MAX_AI_SUBJECT_LENGTH}; a missing, repeated, too long or malformed header yields
+ * `undefined` — unattributed on ai-service's side — and is never repaired. Never logged.
+ *
+ * @returns {string | undefined}
+ */
+export function parseAiSubject(header) {
+  return typeof header === 'string' && AI_SUBJECT.test(header) ? header : undefined;
 }
 
 /** `undefined` when a raw segment must be refused; else its decoded text. */
@@ -260,6 +281,7 @@ export function createGateway({ mounted, env, log }) {
       if (user !== undefined && user.length > MAX_USER_LENGTH) return answer(response, 400, { error: 'invalid_request' });
       const fromHeader = user !== undefined && user !== '';
       const features = parseFeatures(request.headers[FEATURES_HEADER]);
+      const aiSubject = parseAiSubject(request.headers[AI_SUBJECT_HEADER]);
       const address = request.socket.remoteAddress ?? 'unknown';
       const limitKey = fromHeader ? `user:${user}` : `address:${address}`;
       const result = await entry.service.handle({
@@ -269,6 +291,7 @@ export function createGateway({ mounted, env, log }) {
         body: body === '' ? undefined : body,
         // Only what the proxy stamped; never the browser's own claim (the proxy overwrites it).
         ...(features === undefined ? {} : { features }),
+        ...(aiSubject === undefined ? {} : { aiSubject }),
         limitKey,
         // The name itself is what ADR-0114 Rule 10 hashes (the address when there is none).
         userHash: users.hash(fromHeader ? user : address),

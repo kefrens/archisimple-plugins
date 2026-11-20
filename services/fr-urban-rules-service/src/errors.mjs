@@ -28,6 +28,9 @@ export const ERROR_STATUS = Object.freeze({
   // The account was not granted it (`ai-<provider>`), or the id is not a provider there.
   provider_not_permitted: 403,
   unknown_provider: 422,
+  // Sprint 002.27: the account's monthly AI budget stopped the reading before any chunk was read
+  // (ADR-0136). A reading that had read some chunks is a result with `stopped`, not this error.
+  ai_budget_exhausted: 402,
   // Sprint 002.10 DEC-5: the Géorisques proxy has no token on this deployment.
   not_configured: 503,
   // An unexpected exception: its message is never answered or logged.

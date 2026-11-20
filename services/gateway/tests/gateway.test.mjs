@@ -19,12 +19,14 @@ import {
   DEFAULT_HOST,
   listenHost,
   mountServices,
+  parseAiSubject,
   parseFeatures,
   parseTarget
 } from '../src/gateway.mjs';
 import { createParser } from '../../fr-urban-rules-service/src/document.mjs';
 import { createService } from '../../fr-urban-rules-service/src/service.mjs';
-import { buildPdf, capturingLog } from '../../fr-urban-rules-service/tests/helpers.mjs';
+import { buildPdf, capturingLog, loadRegulation } from '../../fr-urban-rules-service/tests/helpers.mjs';
+import { fakeAi, rule } from '../../fr-urban-rules-service/tests/ai-fake.mjs';
 
 const servers = [];
 after(() => Promise.all(servers.map((s) => new Promise((resolve) => s.close(resolve)))));
@@ -194,6 +196,41 @@ test('Sprint 002.16: X-Authenticated-Features reaches the service as a clean lis
   assert.equal(JSON.stringify(stamped).includes('alice'), false);
 });
 
+test('Sprint 002.27: X-Authenticated-AI-Subject reaches the service as `aiSubject`, beside the user\'s hash and never as the user', async () => {
+  const { port, calls } = await stubGateway();
+  const ask = async (headers) => {
+    const before = calls.length;
+    await get(port, '/plugins-api/org.example.ok/v1/x', headers);
+    return calls[before];
+  };
+  const subject = '3f2b8c1e-9d4a-4e0b-8a57-1c2d3e4f5a6b';
+  const stamped = await ask({ 'X-Authenticated-User': 'alice', 'X-Authenticated-AI-Subject': subject });
+  assert.equal(stamped.aiSubject, subject);
+  assert.equal(stamped.userSource, 'header');
+  assert.notEqual(stamped.userHash, subject, 'the hash of the name and the subject are two things');
+  assert.equal(JSON.stringify({ ...stamped, aiSubject: undefined }).includes(subject), false, 'the subject is in no other field');
+  assert.equal('aiSubject' in (await ask({ 'X-Authenticated-User': 'alice' })), false, 'no header: unattributed, nothing invented');
+  for (const bad of ['', ' ', 'a b', 'ünï', 'x'.repeat(129), 'ctl\u0001']) {
+    // Node refuses some of these on the wire; what arrives is judged, never repaired.
+    try {
+      assert.equal('aiSubject' in (await ask({ 'X-Authenticated-AI-Subject': bad })), false, JSON.stringify(bad));
+    } catch (error) {
+      if (!/Invalid character|ERR_INVALID_CHAR/u.test(String(error?.message ?? error) + String(error?.code))) throw error;
+    }
+  }
+  assert.equal((await ask({ 'X-Authenticated-AI-Subject': 'x'.repeat(128) })).aiSubject, 'x'.repeat(128));
+});
+
+test('parseAiSubject: one printable-ASCII token, else nothing; a repeated header is ambiguous and is nothing', () => {
+  assert.equal(parseAiSubject(undefined), undefined);
+  assert.equal(parseAiSubject(''), undefined);
+  assert.equal(parseAiSubject('abc-123_DEF.ghi'), 'abc-123_DEF.ghi');
+  assert.equal(parseAiSubject(['a', 'b']), undefined);
+  assert.equal(parseAiSubject(' a'), undefined, 'not trimmed into another claim');
+  assert.equal(parseAiSubject('a'.repeat(129)), undefined);
+  assert.equal(parseAiSubject('é'), undefined);
+});
+
 test('parseFeatures: least privilege', () => {
   assert.equal(parseFeatures(undefined), undefined);
   assert.equal(parseFeatures(''), undefined);
@@ -259,6 +296,75 @@ test('a parse child that dies is document_unreadable, and the gateway keeps answ
   const health = await get(port, '/plugins-api/com.archisimple.fr-urban-rules/health');
   assert.equal(health.status, 200);
   assert.equal(health.body.status, 'ok');
+});
+
+test('Sprint 002.27, end to end: the stamp the gateway reads is what ai-service receives on the reading\'s extract calls, and the user name is not', async () => {
+  const gordes = loadRegulation('gordes');
+  const subject = '3f2b8c1e-9d4a-4e0b-8a57-1c2d3e4f5a6b';
+  const fake = fakeAi({ plan: () => [{ value: rule({ kind: 'other', statement: 'described' }), passage: 'Les occupations et utilisations du sol non mentionnées à l’article A 2 sont interdites.' }] });
+  const seen = [];
+  const aiServer = http.createServer((req, res) => {
+    const chunks = [];
+    req.on('data', (c) => chunks.push(c));
+    req.on('end', async () => {
+      seen.push({ url: req.url, headers: req.headers });
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(
+        JSON.stringify(
+          req.url === '/api/ai/health'
+            ? { capabilities: ['structured-output'], structuredOutput: { maxTextLength: 200000, maxItems: 200 }, defaultProviderId: 'lmstudio' }
+            : await fake.extract(JSON.parse(Buffer.concat(chunks).toString('utf8')), {})
+        )
+      );
+    });
+  });
+  const aiPort = await listen(aiServer);
+  const dataDir = mkdtempSync(join(tmpdir(), 'plugin-services-budget-'));
+  const capture = capturingLog();
+  const service = await createService({
+    env: { FR_URBAN_RULES_EXTRACT_CHUNK_CHARS: '4000' },
+    log: capture.log,
+    dataDir,
+    aiServiceUrl: `http://127.0.0.1:${aiPort}`,
+    parse: async () => ({ pageCount: gordes.meta.pages, outline: [], pages: gordes.pages }),
+    fetcher: {
+      listDocuments: async () => [{ id: 'doc1', originalName: 'IDU_1' }],
+      listFiles: async () => [{ name: 'reglement.pdf' }],
+      downloadPdf: async () => {
+        const path = join(dataDir, 'dl.pdf');
+        writeFileSync(path, '%PDF-1.7 fake');
+        return { path, bytes: 13, sha256: 'a'.repeat(64), etag: '"e"' };
+      }
+    }
+  });
+  const mounted = new Map([[service.packageId, { service, version: service.version }]]);
+  const port = await listen(createGateway({ mounted, env: { PLUGIN_SERVICES_LOG_KEY: 'k' }, log: capture.log }));
+  const body = JSON.stringify({ partition: 'DU_00001', idurba: 'IDU_1', nomfic: 'reglement.pdf', zone: 'A' });
+  const started = await get(
+    port,
+    '/plugins-api/com.archisimple.fr-urban-rules/v1/extractions',
+    {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(body),
+      'X-Authenticated-User': 'alice-the-signed-in',
+      'X-Authenticated-AI-Subject': subject,
+      'X-Authenticated-Features': 'plu'
+    },
+    'POST',
+    body
+  );
+  assert.equal(started.status, 202);
+  await service.idle();
+  const extracts = seen.filter((r) => r.url === '/api/ai/extract');
+  assert.ok(extracts.length >= 2);
+  for (const r of extracts) {
+    assert.equal(r.headers['x-authenticated-ai-subject'], subject);
+    assert.equal(r.headers['x-authenticated-features'], 'plu');
+    assert.equal(r.headers['x-authenticated-user'], undefined, 'the user is the plugin gateway\'s alone (ADR-0114 Rule 10)');
+    assert.equal(r.headers.authorization, undefined);
+  }
+  const text = capture.text();
+  assert.ok(!text.includes(subject) && !text.includes('alice-the-signed-in'), 'neither is logged');
 });
 
 // archisimple pentest F-03: the gateway believes the user name and features it is sent, so a
