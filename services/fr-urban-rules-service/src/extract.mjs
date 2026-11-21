@@ -567,6 +567,13 @@ export function placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes,
     return undefined;
   }
   let confidence = ['high', 'medium', 'low'].includes(value.confidence) ? value.confidence : 'low';
+  // Sprint 002.46: why the reading is not fully trusted, in the order the checks run. `confidence` stays the label a
+  // person reads; a consumer that must tell a placement doubt from a doubt about the reading reads the causes.
+  const doubts = confidence === 'high' ? [] : [`model-${confidence}`];
+  const doubt = (cause) => {
+    confidence = 'low';
+    if (!doubts.includes(cause)) doubts.push(cause);
+  };
   // Sprint 002.21: a strip is a claim about the text, checked like a limit's value.
   let strip = null;
 
@@ -590,7 +597,7 @@ export function placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes,
       chosen = matching[0];
       chosenBy = 'sector-heading';
     } else {
-      confidence = 'low';
+      doubt('sentence-repeated');
     }
   }
   const start = chunk.base + chosen.start;
@@ -622,7 +629,7 @@ export function placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes,
   if (conditions.length < askedConditions.length || exceptions.length < askedExceptions.length) {
     // A rule that lost a condition may now read wider than it is (S4).
     dropped.droppedConditions += 1;
-    confidence = 'low';
+    doubt('condition-not-found');
   }
 
   // Sprint 002.35: the depth may be written in the passage or in a condition verified above (« Dans une bande de
@@ -635,7 +642,7 @@ export function placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes,
       dropped.stripNotInPassage = (dropped.stripNotInPassage ?? 0) + 1;
       value.statement = 'described';
       value.limit = null;
-      confidence = 'low';
+      doubt('strip-not-in-text');
     }
   }
 
@@ -653,14 +660,14 @@ export function placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes,
     dropped.formulaReadAsFixed = (dropped.formulaReadAsFixed ?? 0) + 1;
     value.statement = 'described';
     value.limit = null;
-    confidence = 'low';
+    doubt('formula-read-as-fixed');
   }
 
   if (!valueInPassage(value.limit, prepared.text.slice(start, end))) {
     dropped.valueNotInPassage += 1;
-    confidence = 'low';
+    doubt('figure-not-in-text');
   }
-  if (!comparisonAgrees(value)) confidence = 'low';
+  if (!comparisonAgrees(value)) doubt('comparison-disagrees');
   const sectorUnplaced =
     value.sector !== null && ![...sectorCodes].some((code) => sameCode(code, value.sector));
   const article = articleAt(prepared, start);
@@ -680,7 +687,8 @@ export function placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes,
     conditions,
     exceptions,
     sectorUnplaced,
-    confidence
+    confidence,
+    doubts
   };
 }
 

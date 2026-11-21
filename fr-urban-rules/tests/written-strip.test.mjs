@@ -104,7 +104,8 @@ function store(initial) {
   return {
     held: () => held,
     service: {
-      read: () => (held === undefined ? undefined : structuredClone(held)),
+      // Sprint 002.46: these tests are about deciding by hand, so an empty project reads with the switch off.
+      read: () => (held === undefined ? { schema: 1, autoApply: false } : structuredClone(held)),
       write: (next) => {
         held = structuredClone(next);
         return true;

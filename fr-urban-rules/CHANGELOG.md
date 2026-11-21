@@ -1,5 +1,27 @@
 # Changelog — `fr-urban-rules`
 
+## 0.25.0 — Sprint 002.46, Verified Readings Apply Automatically
+
+- **New behaviour: some rules are applied without a click.** A written reading whose figure is written in its own quoted text, with no strip, no
+  exception and only conditions this panel reads (the « Lectures vérifiées » of 002.26), and a rule that applies to the project without shaping the
+  area (parking, connections to the networks), are now **`confirmed` on their own**, with a reason on the card (« Appliquée automatiquement : … »).
+  They count in the checks and the buildable area at once. **Revises 002.22 DEC-2 (« never confirmed ») for these two groups only**; ruled-out and
+  informational decisions are unchanged. Nothing is stored for them: it is recomputed on every read.
+- **What keeps a reading for a person: what the service doubts.** The service now lists the causes of a doubt (`doubts`, below). A reading is applied
+  only when it has none, or only `sentence-repeated` (a placement doubt: no wrong value in 93 readings measured). `model-medium`, `model-low`,
+  `condition-not-found`, `figure-not-in-text`, `comparison-disagrees`, `strip-not-in-text` and `formula-read-as-fixed` keep it. A result read before
+  `doubts` existed has none and is gated by `confidence: high` as before, until it is read again. **Measured on 1,031 saved readings** (replayed, $0):
+  129 applied — the 118 verified readings and 11 rules that apply without shaping the area — with **0 wrong values and 0 wrong sectors**, 6 extras (4.7%);
+  the other 56 rules of the second group were hedged by the model and wait for a person.
+- **Visible and reversible.** The applied rules are folded in « Appliquées automatiquement (n) », with a notice saying how many were applied and how
+  many are left, **« Rétablir »** on each and **« Tout rétablir »** (one write, one undo step; a list that changed since is « read again »).
+  A rule brought back is looked at one by one and not applied again; a decision the user took stands over. **A project can turn the application off**
+  (« Ne plus appliquer automatiquement », `autoApply: false` in the project section) and the groups wait for a person as before.
+- **Nothing is applied that cannot be brought back:** with no writable project section, nothing is applied.
+- **The reading card** gains « Appliquées automatiquement », so what was read still adds up.
+- Strings: `auto.applied.{checked,applies,heading,summary,notice,explain,bringAll}`, `auto.{turnOff,turnOn}`, `auto.off.notice`, `card.stat.applied`,
+  `undo.{bringBackAll,autoApply}` (en, fr). No SDK change; the service (0.7.0, unreleased) gains the optional `doubts` field (no schema or prompt bump).
+
 ## 0.24.0 — Sprint 002.29, The Reading Offer In The AI Panel
 
 - **SDK 1.43** (was 1.41; needs the platform's Sprint 121.0: a quiet card and the `ready` status). **A host older than 1.43 does not activate this

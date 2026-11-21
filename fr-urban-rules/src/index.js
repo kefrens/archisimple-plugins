@@ -1044,6 +1044,30 @@ const STRIP_WORDS = [
   /\b(?:dans|sur)\s+les\s+\d+(?:[.,]\d+)?\s*(?:premiers?\s+)?m[èe]tres?/iu,
   /\bà\s+moins\s+de\s+\d+(?:[.,]\d+)?\s*(?:m\b|m[èe]tres?)\s+(?:de|des)\s+(?:la\s+|les\s+)?limites?/iu
 ];
+/** Sprint 002.46: the project's switch: automatic application is on unless the section says `autoApply: false`. */
+const autoApplyOn = (section) => section?.autoApply !== false;
+/** The section with the switch turned off (`autoApply: false`) or on (the member removed). */
+function withAutoApply(section, on) {
+  const { autoApply: _off, ...rest } = section ?? {};
+  return { ...rest, schema: SECTION_SCHEMA, ...(on ? {} : { autoApply: false }) };
+}
+/** Sprint 002.46: why a rule was applied without a click, by the group that held it. */
+const AUTO_APPLIED_REASON = {
+  checked: 'fr-urban-rules.auto.applied.checked',
+  applies: 'fr-urban-rules.auto.applied.applies'
+};
+/** A cause the service lists for a doubt: lower-case words and hyphens (`model-medium`, `condition-not-found`). */
+const DOUBT_CAUSE = /^[a-z]+(?:-[a-z]+){0,4}$/u;
+/** Sprint 002.46: the one doubt that does not keep a reading from being applied: where the sentence was placed, not what it says. */
+const AUTO_APPLY_DOUBTS = new Set(['sentence-repeated']);
+/**
+ * Whether what the service doubts about a reading leaves it free to be applied without a click. A result read
+ * before `doubts` existed has none: the label is all there is, and only `high` passes.
+ */
+function autoApplyAllowed(item) {
+  if (!Array.isArray(item.doubts)) return item.confidence === 'high';
+  return item.doubts.every((cause) => AUTO_APPLY_DOUBTS.has(cause));
+}
 const mentionsStrip = (text) => STRIP_WORDS.some((re) => re.test(String(text).normalize('NFKC')));
 
 /** One service rule, checked field by field; `undefined` when it is not 002.5b's shape. */
@@ -1124,6 +1148,10 @@ function checkedServiceRule(item, documentPages) {
     exceptions: strings(item.exceptions),
     sectorUnplaced: item.sectorUnplaced === true,
     confidence: CONFIDENCES.has(item.confidence) ? item.confidence : 'low',
+    // Sprint 002.46: why the reading is not fully trusted, as the service lists it (absent in a result read before it).
+    ...(Array.isArray(item.doubts)
+      ? { doubts: item.doubts.filter((d) => typeof d === 'string' && DOUBT_CAUSE.test(d)).slice(0, 8) }
+      : {}),
     // Sprint 002.11 DEC-5: a key stored with a restored rule, reused as computed
     // (a passage shortened to fit the project file never moves it). The
     // service never sends one.
@@ -1468,6 +1496,10 @@ export function readingCardOf(view) {
             ? []
             : [
                 { label: cardKey('fr-urban-rules.card.stat.auto'), value: counts.auto },
+                // Sprint 002.46: the rules applied without a click, so that read = decided + applied + the rest.
+                ...(counts.applied > 0
+                  ? [{ label: cardKey('fr-urban-rules.card.stat.applied'), value: counts.applied }]
+                  : []),
                 ...(counts.project > 0
                   ? [{ label: cardKey('fr-urban-rules.card.stat.project'), value: counts.project }]
                   : []),
@@ -6952,6 +6984,8 @@ function sectionOf(raw) {
   // Sprint 002.24: the project's nature is one record, never overwritten in a shape not recognised.
   if (raw.projectNature !== undefined && !isProjectNature(raw.projectNature))
     return { section: raw, readOnly: true };
+  // Sprint 002.46: the switch is `false` or absent; any other shape is not this sprint's.
+  if (raw.autoApply !== undefined && raw.autoApply !== false) return { section: raw, readOnly: true };
   return { section: raw, readOnly: false };
 }
 
@@ -8764,6 +8798,9 @@ const UNDO_KEYS = {
   'hide-exclusions': 'fr-urban-rules.undo.exclusion',
   'set-project-nature': 'fr-urban-rules.undo.projectNature',
   'bring-back': 'fr-urban-rules.undo.bringBack',
+  'bring-back-all': 'fr-urban-rules.undo.bringBackAll',
+  'turn-auto-apply-off': 'fr-urban-rules.undo.autoApply',
+  'turn-auto-apply-on': 'fr-urban-rules.undo.autoApply',
   'confirm-batch': 'fr-urban-rules.undo.confirmBatch'
 };
 
@@ -10900,9 +10937,11 @@ function createRnu({
     // Sprint 002.22: the rules decided automatically are folded under their own heading, and what is
     // left to decide is listed with what shapes the area first.
     const auto = planned.autoDecided ?? new Map();
+    // Sprint 002.46: the rules applied without a click are listed apart, not among what is left to decide.
+    const applied = planned.autoApplied ?? new Map();
     const stillOpen = planned.rules
       .map((rule, index) => ({ rule, index, rank: ruleRank(rule, planned.meta.get(rule.id)) }))
-      .filter(({ rule }) => !auto.has(rule.id))
+      .filter(({ rule }) => !auto.has(rule.id) && !applied.has(rule.id))
       .sort((a, b) => a.rank - b.rank || a.index - b.index)
       .map(({ rule }) => rule);
     // Sprint 002.26: two groups are listed apart, still to confirm by a person: the readings that can be
@@ -10982,6 +11021,80 @@ function createRnu({
       ...(checked.length === 0 ? [] : [batchSection('checked', checked)]),
       ...(applies.length === 0 ? [] : [batchSection('applies', applies)])
     ];
+    // Sprint 002.46: the rules applied without a click — why, how many, and how to take them back.
+    const appliedRules = planned.rules.filter((rule) => applied.has(rule.id));
+    const appliedBlocks =
+      appliedRules.length === 0
+        ? []
+        : (() => {
+            const count = appliedRules.length;
+            const subject = `${subjectFor(planned.current)}|b=applied|h=${cyrb53(
+              appliedRules
+                .map((rule) => rule.id)
+                .sort()
+                .join('\n')
+            )}`;
+            return [
+              {
+                kind: 'notice',
+                tone: 'info',
+                text: { key: 'fr-urban-rules.auto.applied.notice', params: { count, left: leftOf.length } }
+              },
+              {
+                kind: 'section',
+                id: 'applied-automatically',
+                title: { key: 'fr-urban-rules.auto.applied.heading', params: { count } },
+                icon: 'rules',
+                summary: {
+                  value: {
+                    key: 'fr-urban-rules.auto.applied.summary',
+                    params: {
+                      checked: [...applied.values()].filter((group) => group === 'checked').length,
+                      applies: [...applied.values()].filter((group) => group === 'applies').length
+                    }
+                  }
+                },
+                blocks: [
+                  { kind: 'notice', tone: 'info', text: { key: 'fr-urban-rules.auto.applied.explain' } },
+                  { kind: 'rules', ids: appliedRules.map((rule) => rule.id) },
+                  ...(readOnly
+                    ? []
+                    : [
+                        {
+                          kind: 'actions',
+                          actions: [
+                            ...appliedRules.flatMap((rule) => planned.actionsFor(rule)).slice(0, MAX_ACTIONS - 1),
+                            {
+                              id: 'bring-back-all',
+                              label: { key: 'fr-urban-rules.auto.applied.bringAll', params: { count } },
+                              target: { subjectId: subject }
+                            },
+                            {
+                              id: 'turn-auto-apply-off',
+                              label: { key: 'fr-urban-rules.auto.turnOff' }
+                            }
+                          ]
+                        }
+                      ])
+                ]
+              }
+            ];
+          })();
+    // Sprint 002.46: with the switch off, the groups wait for a person again; one line says so and turns it back on.
+    const offBlocks =
+      planned.autoOn !== false
+        ? []
+        : [
+            { kind: 'notice', tone: 'info', text: { key: 'fr-urban-rules.auto.off.notice' } },
+            ...(readOnly
+              ? []
+              : [
+                  {
+                    kind: 'actions',
+                    actions: [{ id: 'turn-auto-apply-on', label: { key: 'fr-urban-rules.auto.turnOn' } }]
+                  }
+                ])
+          ];
     // Sprint 002.24: the questions the candidates ask about the project, and what the answers decide.
     const offer = projectOfferOf(planned, stillOpen.length);
     // Sprint 002.23: what the reading's card says it came to, from the very numbers this view shows.
@@ -10991,6 +11104,7 @@ function createRnu({
           read: planned.rules.length,
           auto: auto.size,
           left: leftOf.length,
+          applied: appliedRules.length,
           grouped,
           project: offer.decided,
           ask: offer.unanswered
@@ -10999,11 +11113,12 @@ function createRnu({
         offer
       );
     if (auto.size === 0) {
-      if (grouped > 0) {
+      if (grouped > 0 || appliedRules.length > 0) {
         if (mainOpen.length > 0)
           blocks.push({ kind: 'rules', ids: mainOpen.map((rule) => rule.id) });
-        blocks.push(...groupBlocks);
+        blocks.push(...groupBlocks, ...appliedBlocks);
       } else if (planned.rules.length > 0) blocks.push({ kind: 'rules' });
+      blocks.push(...offBlocks);
       if (offer.questions.length > 0 || offer.known)
         blocks.push(projectNatureSection(planned, offer, readOnly, projectLabel));
     } else {
@@ -11024,7 +11139,7 @@ function createRnu({
               }
       });
       if (mainOpen.length > 0) blocks.push({ kind: 'rules', ids: mainOpen.map((rule) => rule.id) });
-      blocks.push(...groupBlocks);
+      blocks.push(...groupBlocks, ...appliedBlocks, ...offBlocks);
       // Sprint 002.24: the decided ones by what decided them, when more than one thing did.
       const groupOf = (rule) => {
         const decision = auto.get(rule.id);
@@ -11506,6 +11621,9 @@ const edgeLetter = (number) => {
         request.actionId === 'show-exclusions',
         now().toISOString()
       );
+    } else if (request.actionId === 'turn-auto-apply-off' || request.actionId === 'turn-auto-apply-on') {
+      // Sprint 002.46: the project's switch for applying verified readings without a click.
+      next = withAutoApply(section, request.actionId === 'turn-auto-apply-on');
     } else if (request.actionId === 'set-project-nature') {
       // Sprint 002.24: the project's nature, from the panel's form (the card's chips write the same member).
       next = withProjectNature(
@@ -11555,6 +11673,8 @@ const edgeLetter = (number) => {
       request.actionId === 'forget-exclusion' ||
       request.actionId === 'show-exclusions' ||
       request.actionId === 'hide-exclusions' ||
+      request.actionId === 'turn-auto-apply-off' ||
+      request.actionId === 'turn-auto-apply-on' ||
       request.actionId === 'set-project-nature';
     const label = cut(
       translate(
@@ -12372,6 +12492,8 @@ const edgeLetter = (number) => {
             // Sprint 002.26: the groups an open rule can be listed in (the project's answers add to the second).
             ...(noDrawingOf(item) ? { noDrawing: true } : {}),
             ...(checkedReadingOf({ item, zone }) ? { checked: true } : {}),
+            // Sprint 002.46: the doubts of the reading leave it free to be applied without a click.
+            ...(autoApplyAllowed(item) ? { autoApply: true } : {}),
             // Sprint 002.24: what it is about — the uses, an extension, floor-area thresholds — for the
             // answers about the project to speak of.
             ...(() => {
@@ -12879,6 +13001,10 @@ const edgeLetter = (number) => {
         keep: new Set(confirmations.filter((c) => onPlot(c, plot)).map((c) => c.ruleKey))
       }
     );
+    // Sprint 002.46: the project's switch — and a section that can be written: a rule applied without a click must be
+    // one the user can bring back, so with no section to write nothing is applied.
+    const sectionData = packageData();
+    const autoOn = autoApplyOn(section) && typeof sectionData?.write === 'function';
     const broughtBack = Array.isArray(section?.broughtBack)
       ? section.broughtBack.filter(isBroughtBack)
       : [];
@@ -13153,6 +13279,8 @@ const edgeLetter = (number) => {
         (entry.ruleKey.startsWith('written:') ? staleWritten : stale).push(entry);
     }
     const autoDecided = new Map();
+    /** Sprint 002.46: the rules applied without a click, by the group that held them (`checked` or `applies`). */
+    const autoApplied = new Map();
     // Sprint 002.24: the candidates the project's answers could speak of — open whatever they say.
     const projectEntries = [];
     const decided = rules.map((rule) => {
@@ -13209,6 +13337,21 @@ const edgeLetter = (number) => {
                   ),
                   ...project.needs.map((fact) => projectWords(fact, 'needs', nature, projectLabel))
                 ];
+          // Sprint 002.46: a reading that checks out, and a rule that applies without shaping the area, apply without
+          // a click when the service doubts nothing of the reading: confirmed, with the reason, brought back by one
+          // click. Computed on every read, never stored; a decision of the user stands over it (an entry is found
+          // above) and so does a bring-back (the group is skipped for `backAgain`).
+          if (info.batch !== undefined && info.autoApply === true && autoOn) {
+            autoApplied.set(rule.id, info.batch);
+            info.autoApplied = true;
+            const group = info.batch;
+            delete info.batch;
+            return {
+              ...rule,
+              status: 'confirmed',
+              conditions: [...(rule.conditions ?? []), { key: AUTO_APPLIED_REASON[group] }]
+            };
+          }
           return lines.length === 0
             ? rule
             : { ...rule, conditions: [...(rule.conditions ?? []), ...lines] };
@@ -13358,6 +13501,11 @@ const edgeLetter = (number) => {
       const found = writtenSessionNext.get(rule.id);
       if (found !== undefined) found.batch = batch;
     }
+    // Sprint 002.46: « Bring all back » acts on exactly the rules the view listed as applied.
+    for (const id of autoApplied.keys()) {
+      const found = writtenSessionNext.get(id);
+      if (found !== undefined) found.applied = true;
+    }
 
     const actionsFor = (rule) => {
       const info = meta.get(rule.id);
@@ -13374,7 +13522,7 @@ const edgeLetter = (number) => {
             );
       const target = { ruleId: rule.id, subjectId: subject };
       // Sprint 002.22: a rule decided automatically offers one thing — to bring it back.
-      if (info.autoDecided === true)
+      if (info.autoDecided === true || info.autoApplied === true)
         return [{ id: 'bring-back', label: { key: 'fr-urban-rules.action.bringBack' }, target }];
       const decidedHere = confirmations.some(
         (c) => c.ruleKey === rule.id && onPlot(c, plot) && sameVersion(c, info.version)
@@ -13469,6 +13617,8 @@ const edgeLetter = (number) => {
       writtenSession: writtenSessionNext,
       batches,
       autoDecided,
+      autoApplied,
+      autoOn,
       nature,
       projectEntries,
       projectAsked: projectAskedFor(section),
@@ -17181,6 +17331,28 @@ const edgeLetter = (number) => {
     return { next: { ...base, confirmations: [...confirmations, ...entries] } };
   }
 
+  /**
+   * Sprint 002.46: every rule applied without a click is brought back in one write — exactly the ones the view
+   * listed (the subject carries their digest, so a list that changed since is « read again »).
+   */
+  function nextBringAll(base, section, request, version, plot, refuse) {
+    const fields = subjectFields(request.target?.subjectId);
+    if (fields.b !== 'applied') return refuse('fr-urban-rules.edges.changed');
+    const members = [...writtenSession].filter(
+      ([, found]) => found.applied === true && sameVersion(version, found.version)
+    );
+    const ids = members.map(([id]) => id).sort();
+    if (ids.length === 0 || cyrb53(ids.join('\n')) !== fields.h)
+      return refuse('fr-urban-rules.written.readAgain');
+    const at = now().toISOString();
+    const kept = (Array.isArray(section?.broughtBack) ? section.broughtBack : []).filter(
+      (entry) => isBroughtBack(entry) && !(ids.includes(entry.ruleKey) && onPlot(entry, plot))
+    );
+    return {
+      next: { ...base, broughtBack: [...kept, ...ids.map((ruleKey) => ({ ruleKey, plot, ...version, at }))] }
+    };
+  }
+
   /** DEC-5's section builders: the next section from the one read and the act; `{ next }` or `{ refused }`. */
   function nextSection(section, request, plot) {
     const base = { ...(section ?? {}), schema: SECTION_SCHEMA };
@@ -17201,6 +17373,7 @@ const edgeLetter = (number) => {
       return refuse('fr-urban-rules.edges.changed');
     }
     if (request.actionId === 'confirm-batch') return nextBatch(base, confirmations, request, version, plot, refuse);
+    if (request.actionId === 'bring-back-all') return nextBringAll(base, section, request, version, plot, refuse);
     // Sprint 002.22: a rule decided automatically is brought back — one entry per rule and plot,
     // against the document version read, which a new version lets expire.
     if (request.actionId === 'bring-back') {
@@ -19415,6 +19588,7 @@ export const __testing = {
   triageOf,
   noDrawingOf,
   checkedReadingOf,
+  autoApplyAllowed,
   conditionReadable,
   quantityIn,
   sentenceOf,

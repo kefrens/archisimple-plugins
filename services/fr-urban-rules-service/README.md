@@ -283,6 +283,8 @@ GET  v1/extractions?partition&idurba&nomfic&zone[&provider[&model]]&cachedOnly=1
 
 **One more placement check in the same re-read (Sprint 002.45).** A fixed metre distance on a setback or building distance whose passage says it equals « la différence de niveau (H) » (a formula whose 4 m is a floor, as « L = H-4, minimum 4 m ») is kept as a statement in words, never a plot-measuring number. Replayed on every saved reading (5,825 rules) it changed only the 3 rules of the defect. No schema or prompt change.
 
+**Why a reading is doubted (Sprint 002.46).** Every placed rule carries `doubts`: the causes, in the order the checks run, that lowered its confidence or that the model itself hedged — `model-medium`, `model-low`, `sentence-repeated` (the sentence repeats and no sector heading places it), `condition-not-found`, `strip-not-in-text`, `formula-read-as-fixed`, `figure-not-in-text`, `comparison-disagrees`; an empty list when nothing is in doubt. `confidence` is unchanged. A consumer that must tell a placement doubt from a doubt about the reading uses it (the extension applies a reading without a click only with none, or only `sentence-repeated`). No schema or prompt change, so cached results keep working; they lack `doubts` until read again, and a consumer treats that as « unknown ».
+
 **For tests and tools.** `extractChapter` keeps its own default without the guidance (`guidance = false`, as for `sectorsInCode`); the service passes `guidance: GUIDANCE_IN_PROMPT` (true). The harness runs the shipped reading by default, `--variant unguided` is the reading of prompt 4, `--variant previous` the one before sectors in code.
 
 ## The AI budget (0.7.0, Sprint 002.27)

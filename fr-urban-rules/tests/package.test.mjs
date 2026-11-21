@@ -32,7 +32,7 @@ const SDK_CATEGORIES = [
 test('criterion 1: the manifest declares an SDK 1.43 extension (002.29: quiet `ready` cards in the AI conversation; 002.23: cards in the AI conversation, `ai.cards`; 002.16: the model chosen in the AI panel, `ai.selectedModel()`; 002.15: the `stat`, `choice` and `section` blocks; 002.14: a flag’s icon, group, title, code and level; 002.13: the plot view, the edge list, the height section, an assumption’s figure) needing `regulations` and, since 002.1a, `document`', () => {
   assert.equal(manifest.id, 'com.archisimple.fr-urban-rules');
   assert.equal(manifest.type, 'extension');
-  assert.equal(manifest.version, '0.24.0');
+  assert.equal(manifest.version, '0.25.0');
   // 1.43 since 002.29: a card's `quiet` flag and the `ready` status, the offer to read in the AI panel (platform 121.0).
   // 1.41 since 002.23: `ai.cards`, the reading's progress as a card in the AI conversation (platform 102.12).
   // 1.40 since 002.16: `ai.selectedModel()`, the provider and model chosen in the AI panel (platform

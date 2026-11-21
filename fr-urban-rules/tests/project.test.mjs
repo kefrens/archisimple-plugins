@@ -400,8 +400,8 @@ test('002.24: the answers are one record of the section, per project; a shape no
   assert.equal(isProjectNature({ area: { from: 500, to: 250 } }), false);
   assert.equal(isProjectNature({ area: { from: 10, to: 10, exact: true } }), true);
   assert.equal(isProjectNature([]), false);
-  assert.equal(sectionOf({ schema: 1, projectNature: { works: 'demolition' } }).readOnly, true);
-  assert.equal(sectionOf({ schema: 1, projectNature: { works: 'new' } }).readOnly, false);
+  assert.equal(sectionOf({ schema: 1, autoApply: false, projectNature: { works: 'demolition' } }).readOnly, true);
+  assert.equal(sectionOf({ schema: 1, autoApply: false, projectNature: { works: 'new' } }).readOnly, false);
   assert.deepEqual(projectNatureOf({ projectNature: { works: 'demolition' } }), {});
   const next = withProjectNature(
     { schema: 1, confirmations: [] },
@@ -727,7 +727,8 @@ function store(initial) {
   return {
     held: () => held,
     service: {
-      read: () => (held === undefined ? undefined : structuredClone(held)),
+      // Sprint 002.46: these tests are about deciding by hand, so an empty project reads with the switch off.
+      read: () => (held === undefined ? { schema: 1, autoApply: false } : structuredClone(held)),
       write: (next, label) => {
         held = structuredClone(next);
         store.labels.push(label);
@@ -806,6 +807,7 @@ test('002.25: without answers the rules are what they were — each scoped one s
   );
   const section = {
     schema: 1,
+    autoApply: false, // Sprint 002.46: these are about deciding by hand
     projectNature: { works: 'new', use: 'logement', area: { from: 320, to: 320, exact: true } }
   };
   const report = await read(
@@ -851,7 +853,7 @@ test('002.25: without answers the rules are what they were — each scoped one s
 });
 
 test('002.25: « Bring back » keeps a rule despite the answers; a decision the user took stands; a new document version asks again', async () => {
-  const section = { schema: 1, projectNature: { use: 'logement' } };
+  const section = { schema: 1, autoApply: false, projectNature: { use: 'logement' } };
   const c = context({ rules: [RESTAURANT, SETBACK], section });
   let report = await read(c);
   const rule = byPassage(report, 'Les constructions de la sous-destination');
@@ -873,6 +875,7 @@ test('002.25: « Bring back » keeps a rule despite the answers; a decision the 
   // A stored confirmation stands over the project's answer.
   const confirmed = {
     schema: 1,
+    autoApply: false, // Sprint 002.46: these are about deciding by hand
     projectNature: { use: 'logement' },
     confirmations: [
       {
@@ -893,7 +896,7 @@ test('002.25: « Bring back » keeps a rule despite the answers; a decision the 
 });
 
 test('002.25: answers persist across a document update — recomputed on the new reading’s candidates, whatever they are', async () => {
-  const section = { schema: 1, projectNature: { use: 'industrie', askedFor: ['OLD-DOC'] } };
+  const section = { schema: 1, autoApply: false, projectNature: { use: 'industrie', askedFor: ['OLD-DOC'] } };
   const first = await read(context({ rules: [RESTAURANT, INDUSTRY, SETBACK], section }));
   assert.equal(
     byPassage(first, 'Les constructions de la sous-destination').status,
@@ -958,7 +961,7 @@ test('002.25: the « Project nature » section shows the answers and what they d
   // A section of a shape not recognised is read-only: the form refuses and the view offers none.
   const odd = context({
     rules: [INDUSTRY],
-    section: { schema: 1, projectNature: { use: 'chenil' } }
+    section: { schema: 1, autoApply: false, projectNature: { use: 'chenil' } }
   });
   const oddReport = await read(odd);
   assert.equal(

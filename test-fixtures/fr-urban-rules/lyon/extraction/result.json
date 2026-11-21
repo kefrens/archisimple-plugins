@@ -44,7 +44,10 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": false,
-   "confidence": "low"
+   "confidence": "low",
+   "doubts": [
+    "comparison-disagrees"
+   ]
   },
   {
    "kind": "boundary_setback",
@@ -71,7 +74,8 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": false,
-   "confidence": "high"
+   "confidence": "high",
+   "doubts": []
   },
   {
    "kind": "boundary_setback",
@@ -97,7 +101,8 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": false,
-   "confidence": "high"
+   "confidence": "high",
+   "doubts": []
   },
   {
    "kind": "annex_max",
@@ -118,7 +123,8 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": false,
-   "confidence": "high"
+   "confidence": "high",
+   "doubts": []
   },
   {
    "kind": "other",
@@ -139,7 +145,8 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": false,
-   "confidence": "high"
+   "confidence": "high",
+   "doubts": []
   },
   {
    "kind": "footprint_ratio",
@@ -160,7 +167,8 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": false,
-   "confidence": "high"
+   "confidence": "high",
+   "doubts": []
   },
   {
    "kind": "footprint_ratio",
@@ -181,7 +189,8 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": false,
-   "confidence": "high"
+   "confidence": "high",
+   "doubts": []
   },
   {
    "kind": "green_ratio",
@@ -207,7 +216,8 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": false,
-   "confidence": "high"
+   "confidence": "high",
+   "doubts": []
   },
   {
    "kind": "green_ratio",
@@ -233,7 +243,10 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": false,
-   "confidence": "low"
+   "confidence": "low",
+   "doubts": [
+    "figure-not-in-text"
+   ]
   },
   {
    "kind": "parking",
@@ -259,7 +272,10 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": false,
-   "confidence": "low"
+   "confidence": "low",
+   "doubts": [
+    "figure-not-in-text"
+   ]
   },
   {
    "kind": "parking",
@@ -285,7 +301,10 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": false,
-   "confidence": "low"
+   "confidence": "low",
+   "doubts": [
+    "figure-not-in-text"
+   ]
   },
   {
    "kind": "parking",
@@ -311,7 +330,10 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": false,
-   "confidence": "low"
+   "confidence": "low",
+   "doubts": [
+    "figure-not-in-text"
+   ]
   },
   {
    "kind": "parking",
@@ -339,7 +361,10 @@
    ],
    "exceptions": [],
    "sectorUnplaced": true,
-   "confidence": "low"
+   "confidence": "low",
+   "doubts": [
+    "figure-not-in-text"
+   ]
   },
   {
    "kind": "parking",
@@ -367,7 +392,10 @@
    ],
    "exceptions": [],
    "sectorUnplaced": true,
-   "confidence": "low"
+   "confidence": "low",
+   "doubts": [
+    "figure-not-in-text"
+   ]
   },
   {
    "kind": "parking",
@@ -395,7 +423,10 @@
    ],
    "exceptions": [],
    "sectorUnplaced": true,
-   "confidence": "low"
+   "confidence": "low",
+   "doubts": [
+    "figure-not-in-text"
+   ]
   },
   {
    "kind": "parking",
@@ -423,7 +454,10 @@
    ],
    "exceptions": [],
    "sectorUnplaced": true,
-   "confidence": "low"
+   "confidence": "low",
+   "doubts": [
+    "figure-not-in-text"
+   ]
   },
   {
    "kind": "parking",
@@ -451,7 +485,10 @@
    ],
    "exceptions": [],
    "sectorUnplaced": true,
-   "confidence": "low"
+   "confidence": "low",
+   "doubts": [
+    "figure-not-in-text"
+   ]
   },
   {
    "kind": "parking",
@@ -481,7 +518,10 @@
     "soit de\ncontraintes techniques ou liées aux caractéristiques de l'opération\net de la configuration de son terrain d'assiette (terrain de faible\nsuperficie...), soit d'une insertion urbaine complexe, soit du respect\nde caractéristiques patrimoniales"
    ],
    "sectorUnplaced": true,
-   "confidence": "low"
+   "confidence": "low",
+   "doubts": [
+    "figure-not-in-text"
+   ]
   },
   {
    "kind": "parking",
@@ -511,7 +551,10 @@
     "soit de\ncontraintes techniques ou liées aux caractéristiques de l'opération\net de la configuration de son terrain d'assiette (terrain de faible\nsuperficie...), soit d'une insertion urbaine complexe, soit du respect\nde caractéristiques patrimoniales"
    ],
    "sectorUnplaced": true,
-   "confidence": "low"
+   "confidence": "low",
+   "doubts": [
+    "figure-not-in-text"
+   ]
   },
   {
    "kind": "parking",
@@ -541,7 +584,10 @@
     "soit de\ncontraintes techniques ou liées aux caractéristiques de l'opération\net de la configuration de son terrain d'assiette (terrain de faible\nsuperficie...), soit d'une insertion urbaine complexe, soit du respect\nde caractéristiques patrimoniales"
    ],
    "sectorUnplaced": true,
-   "confidence": "low"
+   "confidence": "low",
+   "doubts": [
+    "figure-not-in-text"
+   ]
   },
   {
    "kind": "parking",
@@ -571,7 +617,10 @@
     "soit de\ncontraintes techniques ou liées aux caractéristiques de l'opération\net de la configuration de son terrain d'assiette (terrain de faible\nsuperficie...), soit d'une insertion urbaine complexe, soit du respect\nde caractéristiques patrimoniales"
    ],
    "sectorUnplaced": true,
-   "confidence": "low"
+   "confidence": "low",
+   "doubts": [
+    "figure-not-in-text"
+   ]
   },
   {
    "kind": "parking",
@@ -599,7 +648,10 @@
    ],
    "exceptions": [],
    "sectorUnplaced": true,
-   "confidence": "low"
+   "confidence": "low",
+   "doubts": [
+    "figure-not-in-text"
+   ]
   },
   {
    "kind": "parking",
@@ -620,7 +672,8 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": true,
-   "confidence": "high"
+   "confidence": "high",
+   "doubts": []
   },
   {
    "kind": "parking",
@@ -641,7 +694,8 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": true,
-   "confidence": "high"
+   "confidence": "high",
+   "doubts": []
   },
   {
    "kind": "parking",
@@ -662,7 +716,8 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": true,
-   "confidence": "high"
+   "confidence": "high",
+   "doubts": []
   },
   {
    "kind": "parking",
@@ -683,7 +738,8 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": true,
-   "confidence": "high"
+   "confidence": "high",
+   "doubts": []
   },
   {
    "kind": "parking",
@@ -704,7 +760,8 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": true,
-   "confidence": "high"
+   "confidence": "high",
+   "doubts": []
   },
   {
    "kind": "parking",
@@ -725,7 +782,8 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": true,
-   "confidence": "high"
+   "confidence": "high",
+   "doubts": []
   },
   {
    "kind": "parking",
@@ -746,7 +804,8 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": true,
-   "confidence": "high"
+   "confidence": "high",
+   "doubts": []
   },
   {
    "kind": "parking",
@@ -767,7 +826,8 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": true,
-   "confidence": "high"
+   "confidence": "high",
+   "doubts": []
   },
   {
    "kind": "parking",
@@ -788,7 +848,8 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": true,
-   "confidence": "high"
+   "confidence": "high",
+   "doubts": []
   },
   {
    "kind": "parking",
@@ -809,7 +870,8 @@
    "conditions": [],
    "exceptions": [],
    "sectorUnplaced": true,
-   "confidence": "high"
+   "confidence": "high",
+   "doubts": []
   }
  ],
  "dropped": {

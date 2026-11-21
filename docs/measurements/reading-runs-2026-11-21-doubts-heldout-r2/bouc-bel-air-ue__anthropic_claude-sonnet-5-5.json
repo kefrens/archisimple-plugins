@@ -1,0 +1,5203 @@
+{
+  "zoneId": "bouc-bel-air-ue",
+  "model": "anthropic:claude-sonnet-5-5",
+  "variant": "shipped",
+  "result": {
+    "rules": [
+      {
+        "kind": "extension_max",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 40,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "Une seule extension* sur une même unité foncière dès lors que l’extension n’excède pas 40 m2 de\nsurface de plancher* et d’emprise au sol*",
+        "offset": {
+          "start": 4723,
+          "end": 4860
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la zone UE, hormis en secteur UEp1"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "extension_max",
+        "sector": "UEm",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 40,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "Une seule extension* sur une même unité foncière dès lors que l’extension n’excède pas 40 m2 de\nsurface de plancher* et d’emprise au sol*",
+        "offset": {
+          "start": 4723,
+          "end": 4860
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la zone UE, hormis en secteur UEp1"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "extension_max",
+        "sector": "UEa",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 40,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "Une seule extension* sur une même unité foncière dès lors que l’extension n’excède pas 40 m2 de\nsurface de plancher* et d’emprise au sol*",
+        "offset": {
+          "start": 4723,
+          "end": 4860
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la zone UE, hormis en secteur UEp1"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "extension_max",
+        "sector": "UEa1",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 40,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "Une seule extension* sur une même unité foncière dès lors que l’extension n’excède pas 40 m2 de\nsurface de plancher* et d’emprise au sol*",
+        "offset": {
+          "start": 4723,
+          "end": 4860
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la zone UE, hormis en secteur UEp1"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "extension_max",
+        "sector": "UEa2",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 40,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "Une seule extension* sur une même unité foncière dès lors que l’extension n’excède pas 40 m2 de\nsurface de plancher* et d’emprise au sol*",
+        "offset": {
+          "start": 4723,
+          "end": 4860
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la zone UE, hormis en secteur UEp1"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "extension_max",
+        "sector": "UEb",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 40,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "Une seule extension* sur une même unité foncière dès lors que l’extension n’excède pas 40 m2 de\nsurface de plancher* et d’emprise au sol*",
+        "offset": {
+          "start": 4723,
+          "end": 4860
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la zone UE, hormis en secteur UEp1"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "extension_max",
+        "sector": "UEc",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 40,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "Une seule extension* sur une même unité foncière dès lors que l’extension n’excède pas 40 m2 de\nsurface de plancher* et d’emprise au sol*",
+        "offset": {
+          "start": 4723,
+          "end": 4860
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la zone UE, hormis en secteur UEp1"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "extension_max",
+        "sector": "UEp",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 40,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "Une seule extension* sur une même unité foncière dès lors que l’extension n’excède pas 40 m2 de\nsurface de plancher* et d’emprise au sol*",
+        "offset": {
+          "start": 4723,
+          "end": 4860
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la zone UE, hormis en secteur UEp1"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "floor_area_max",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 200,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "et dans la limite de 200 m2 de surface de plancher* totale par unité foncière sans création de\nnouveau logement",
+        "offset": {
+          "start": 4865,
+          "end": 4976
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la zone UE, hormis en secteur UEp1"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "floor_area_max",
+        "sector": "UEm",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 200,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "et dans la limite de 200 m2 de surface de plancher* totale par unité foncière sans création de\nnouveau logement",
+        "offset": {
+          "start": 4865,
+          "end": 4976
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la zone UE, hormis en secteur UEp1"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "floor_area_max",
+        "sector": "UEa",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 200,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "et dans la limite de 200 m2 de surface de plancher* totale par unité foncière sans création de\nnouveau logement",
+        "offset": {
+          "start": 4865,
+          "end": 4976
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la zone UE, hormis en secteur UEp1"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "floor_area_max",
+        "sector": "UEa1",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 200,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "et dans la limite de 200 m2 de surface de plancher* totale par unité foncière sans création de\nnouveau logement",
+        "offset": {
+          "start": 4865,
+          "end": 4976
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la zone UE, hormis en secteur UEp1"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "floor_area_max",
+        "sector": "UEa2",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 200,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "et dans la limite de 200 m2 de surface de plancher* totale par unité foncière sans création de\nnouveau logement",
+        "offset": {
+          "start": 4865,
+          "end": 4976
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la zone UE, hormis en secteur UEp1"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "floor_area_max",
+        "sector": "UEb",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 200,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "et dans la limite de 200 m2 de surface de plancher* totale par unité foncière sans création de\nnouveau logement",
+        "offset": {
+          "start": 4865,
+          "end": 4976
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la zone UE, hormis en secteur UEp1"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "floor_area_max",
+        "sector": "UEc",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 200,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "et dans la limite de 200 m2 de surface de plancher* totale par unité foncière sans création de\nnouveau logement",
+        "offset": {
+          "start": 4865,
+          "end": 4976
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la zone UE, hormis en secteur UEp1"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "floor_area_max",
+        "sector": "UEp",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 200,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "et dans la limite de 200 m2 de surface de plancher* totale par unité foncière sans création de\nnouveau logement",
+        "offset": {
+          "start": 4865,
+          "end": 4976
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la zone UE, hormis en secteur UEp1"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "annex_max",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 30,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "que son\nemprise au sol* n’excède pas 30 m2",
+        "offset": {
+          "start": 5167,
+          "end": 5209
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Une seule construction* à usage d’annexe*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "annex_max",
+        "sector": "UEm",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 30,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "que son\nemprise au sol* n’excède pas 30 m2",
+        "offset": {
+          "start": 5167,
+          "end": 5209
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Une seule construction* à usage d’annexe*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "annex_max",
+        "sector": "UEa",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 30,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "que son\nemprise au sol* n’excède pas 30 m2",
+        "offset": {
+          "start": 5167,
+          "end": 5209
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Une seule construction* à usage d’annexe*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "annex_max",
+        "sector": "UEa1",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 30,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "que son\nemprise au sol* n’excède pas 30 m2",
+        "offset": {
+          "start": 5167,
+          "end": 5209
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Une seule construction* à usage d’annexe*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "annex_max",
+        "sector": "UEa2",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 30,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "que son\nemprise au sol* n’excède pas 30 m2",
+        "offset": {
+          "start": 5167,
+          "end": 5209
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Une seule construction* à usage d’annexe*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "annex_max",
+        "sector": "UEb",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 30,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "que son\nemprise au sol* n’excède pas 30 m2",
+        "offset": {
+          "start": 5167,
+          "end": 5209
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Une seule construction* à usage d’annexe*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "annex_max",
+        "sector": "UEc",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 30,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "que son\nemprise au sol* n’excède pas 30 m2",
+        "offset": {
+          "start": 5167,
+          "end": 5209
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Une seule construction* à usage d’annexe*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "annex_max",
+        "sector": "UEp",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 30,
+          "unit": "m2"
+        },
+        "page": 199,
+        "article": "1154.1",
+        "passage": "que son\nemprise au sol* n’excède pas 30 m2",
+        "offset": {
+          "start": 5167,
+          "end": 5209
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Une seule construction* à usage d’annexe*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "floor_area_max",
+        "sector": "UEa",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 150,
+          "unit": "m2"
+        },
+        "page": 200,
+        "article": "1164.1",
+        "passage": "dans la limite de 150 m2 de surface de plancher*",
+        "offset": {
+          "start": 6345,
+          "end": 6393
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [
+          "sous-destination « artisanat et commerce de détail »"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "model-medium",
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "floor_area_max",
+        "sector": "UEb",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 150,
+          "unit": "m2"
+        },
+        "page": 200,
+        "article": "1164.1",
+        "passage": "dans la limite de 150 m2 de surface de plancher*",
+        "offset": {
+          "start": 6345,
+          "end": 6393
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [
+          "sous-destination « artisanat et commerce de détail »"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "model-medium",
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "extension_max",
+        "sector": "UEa1",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "max",
+          "percent": 15,
+          "base": "surface_de_plancher"
+        },
+        "page": 200,
+        "article": "1164.1",
+        "passage": "dans la limite de 15% de la surface de plancher* existante",
+        "offset": {
+          "start": 7026,
+          "end": 7084
+        },
+        "occurrence": {
+          "of": 3,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "model-medium",
+          "sentence-repeated",
+          "condition-not-found"
+        ]
+      },
+      {
+        "kind": "extension_max",
+        "sector": "UEa2",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "max",
+          "percent": 15,
+          "base": "surface_de_plancher"
+        },
+        "page": 200,
+        "article": "1164.1",
+        "passage": "dans la limite de 15% de la surface de plancher* existante",
+        "offset": {
+          "start": 7026,
+          "end": 7084
+        },
+        "occurrence": {
+          "of": 3,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low",
+        "doubts": [
+          "model-medium",
+          "sentence-repeated",
+          "condition-not-found"
+        ]
+      },
+      {
+        "kind": "extension_max",
+        "sector": "UEp",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "max",
+          "percent": 15,
+          "base": "surface_de_plancher"
+        },
+        "page": 200,
+        "article": "1164.1",
+        "passage": "dans la limite de 15% de la surface de plancher* existante",
+        "offset": {
+          "start": 7026,
+          "end": 7084
+        },
+        "occurrence": {
+          "of": 3,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "model-medium",
+          "sentence-repeated",
+          "condition-not-found"
+        ]
+      },
+      {
+        "kind": "extension_max",
+        "sector": "UEp1",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "max",
+          "percent": 15,
+          "base": "surface_de_plancher"
+        },
+        "page": 200,
+        "article": "1164.1",
+        "passage": "dans la limite de 15% de la surface de plancher* existante",
+        "offset": {
+          "start": 7026,
+          "end": 7084
+        },
+        "occurrence": {
+          "of": 3,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "model-medium",
+          "sentence-repeated",
+          "condition-not-found"
+        ]
+      },
+      {
+        "kind": "floor_area_max",
+        "sector": "UEp",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 400,
+          "unit": "m2"
+        },
+        "page": 201,
+        "article": "1174.1",
+        "passage": "n’excède pas 400 m2 pour chacune des sousdestinations autorisées",
+        "offset": {
+          "start": 10419,
+          "end": 10483
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "lorsque le pôle de vie est délimité sur le règlement graphique"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium",
+        "doubts": [
+          "model-medium"
+        ]
+      },
+      {
+        "kind": "floor_area_max",
+        "sector": "UEp",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 4000,
+          "unit": "m2"
+        },
+        "page": 201,
+        "article": "1174.1",
+        "passage": "ne pourra pas dépasser 4 000 m2",
+        "offset": {
+          "start": 10860,
+          "end": 10891
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "lorsque le pôle de vie est localisé dans une OAP sectorielle"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium",
+        "doubts": [
+          "model-medium"
+        ]
+      },
+      {
+        "kind": "building_distance",
+        "sector": null,
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 202,
+        "article": "1184.1",
+        "passage": "Non réglementée",
+        "offset": {
+          "start": 14610,
+          "end": 14625
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "building_distance",
+        "sector": "UEa",
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 202,
+        "article": "1184.1",
+        "passage": "Non réglementée",
+        "offset": {
+          "start": 14610,
+          "end": 14625
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "building_distance",
+        "sector": "UEa1",
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 202,
+        "article": "1184.1",
+        "passage": "Non réglementée",
+        "offset": {
+          "start": 14610,
+          "end": 14625
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "building_distance",
+        "sector": "UEp",
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 202,
+        "article": "1184.1",
+        "passage": "Non réglementée",
+        "offset": {
+          "start": 14610,
+          "end": 14625
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "building_distance",
+        "sector": "UEp1",
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 202,
+        "article": "1184.1",
+        "passage": "Non réglementée",
+        "offset": {
+          "start": 14610,
+          "end": 14625
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "building_distance",
+        "sector": "UEm",
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 202,
+        "article": "1184.1",
+        "passage": "Non réglementée",
+        "offset": {
+          "start": 14610,
+          "end": 14625
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "building_distance",
+        "sector": "UEb",
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 202,
+        "article": "1184.1",
+        "passage": "Non réglementée",
+        "offset": {
+          "start": 14610,
+          "end": 14625
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "building_distance",
+        "sector": "UEc",
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 202,
+        "article": "1184.1",
+        "passage": "Non réglementée",
+        "offset": {
+          "start": 14610,
+          "end": 14625
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "building_distance",
+        "sector": "UEa2",
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 202,
+        "article": "1184.1",
+        "passage": "Non réglementée",
+        "offset": {
+          "start": 14610,
+          "end": 14625
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 5,
+          "unit": "m"
+        },
+        "page": 202,
+        "article": "1184.1",
+        "passage": "recul minimum de 5 mètres par rapport à l’alignement*\nactuel ou futur des voies*",
+        "offset": {
+          "start": 15156,
+          "end": 15236
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "en l’absence de linéaires de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "road_setback",
+        "sector": "UEa",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 5,
+          "unit": "m"
+        },
+        "page": 202,
+        "article": "1184.1",
+        "passage": "recul minimum de 5 mètres par rapport à l’alignement*\nactuel ou futur des voies*",
+        "offset": {
+          "start": 15156,
+          "end": 15236
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "en l’absence de linéaires de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "road_setback",
+        "sector": "UEa1",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 5,
+          "unit": "m"
+        },
+        "page": 202,
+        "article": "1184.1",
+        "passage": "recul minimum de 5 mètres par rapport à l’alignement*\nactuel ou futur des voies*",
+        "offset": {
+          "start": 15156,
+          "end": 15236
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "en l’absence de linéaires de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "road_setback",
+        "sector": "UEp",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 5,
+          "unit": "m"
+        },
+        "page": 202,
+        "article": "1184.1",
+        "passage": "recul minimum de 5 mètres par rapport à l’alignement*\nactuel ou futur des voies*",
+        "offset": {
+          "start": 15156,
+          "end": 15236
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "en l’absence de linéaires de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "road_setback",
+        "sector": "UEp1",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 5,
+          "unit": "m"
+        },
+        "page": 202,
+        "article": "1184.1",
+        "passage": "recul minimum de 5 mètres par rapport à l’alignement*\nactuel ou futur des voies*",
+        "offset": {
+          "start": 15156,
+          "end": 15236
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "en l’absence de linéaires de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "road_setback",
+        "sector": "UEm",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 5,
+          "unit": "m"
+        },
+        "page": 202,
+        "article": "1184.1",
+        "passage": "recul minimum de 5 mètres par rapport à l’alignement*\nactuel ou futur des voies*",
+        "offset": {
+          "start": 15156,
+          "end": 15236
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "en l’absence de linéaires de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "road_setback",
+        "sector": "UEb",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 5,
+          "unit": "m"
+        },
+        "page": 202,
+        "article": "1184.1",
+        "passage": "recul minimum de 5 mètres par rapport à l’alignement*\nactuel ou futur des voies*",
+        "offset": {
+          "start": 15156,
+          "end": 15236
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "en l’absence de linéaires de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "road_setback",
+        "sector": "UEc",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 5,
+          "unit": "m"
+        },
+        "page": 202,
+        "article": "1184.1",
+        "passage": "recul minimum de 5 mètres par rapport à l’alignement*\nactuel ou futur des voies*",
+        "offset": {
+          "start": 15156,
+          "end": 15236
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "en l’absence de linéaires de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "road_setback",
+        "sector": "UEa2",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 5,
+          "unit": "m"
+        },
+        "page": 202,
+        "article": "1184.1",
+        "passage": "recul minimum de 5 mètres par rapport à l’alignement*\nactuel ou futur des voies*",
+        "offset": {
+          "start": 15156,
+          "end": 15236
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "en l’absence de linéaires de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "road_setback",
+        "sector": "UEc",
+        "statement": "described",
+        "limit": null,
+        "page": 203,
+        "article": "1194.1",
+        "passage": "Le long des linéaires de gabarit* figurant sur le règlement graphique, les constructions doivent être",
+        "offset": {
+          "start": 16337,
+          "end": 16438
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "le long des linéaires de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 3,
+          "unit": "m"
+        },
+        "page": 203,
+        "article": "1194.1",
+        "passage": "Les constructions doivent être implantées contre les limites séparatives*, ou en retrait minimum de 3",
+        "offset": {
+          "start": 17445,
+          "end": 17546
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [
+          "contre les limites séparatives*"
+        ],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UEa",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 3,
+          "unit": "m"
+        },
+        "page": 203,
+        "article": "1194.1",
+        "passage": "Les constructions doivent être implantées contre les limites séparatives*, ou en retrait minimum de 3",
+        "offset": {
+          "start": 17445,
+          "end": 17546
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [
+          "contre les limites séparatives*"
+        ],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UEa1",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 3,
+          "unit": "m"
+        },
+        "page": 203,
+        "article": "1194.1",
+        "passage": "Les constructions doivent être implantées contre les limites séparatives*, ou en retrait minimum de 3",
+        "offset": {
+          "start": 17445,
+          "end": 17546
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [
+          "contre les limites séparatives*"
+        ],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UEa2",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 3,
+          "unit": "m"
+        },
+        "page": 203,
+        "article": "1194.1",
+        "passage": "Les constructions doivent être implantées contre les limites séparatives*, ou en retrait minimum de 3",
+        "offset": {
+          "start": 17445,
+          "end": 17546
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [
+          "contre les limites séparatives*"
+        ],
+        "sectorUnplaced": true,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UEb",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 3,
+          "unit": "m"
+        },
+        "page": 203,
+        "article": "1194.1",
+        "passage": "Les constructions doivent être implantées contre les limites séparatives*, ou en retrait minimum de 3",
+        "offset": {
+          "start": 17445,
+          "end": 17546
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [
+          "contre les limites séparatives*"
+        ],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UEc",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 3,
+          "unit": "m"
+        },
+        "page": 203,
+        "article": "1194.1",
+        "passage": "Les constructions doivent être implantées contre les limites séparatives*, ou en retrait minimum de 3",
+        "offset": {
+          "start": 17445,
+          "end": 17546
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [
+          "contre les limites séparatives*"
+        ],
+        "sectorUnplaced": true,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "height_total",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 203,
+        "article": "1194.1",
+        "passage": "la\nhauteur totale de l’extension soit inférieure ou égale à 4 mètres",
+        "offset": {
+          "start": 18108,
+          "end": 18176
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "model-medium",
+          "sentence-repeated",
+          "condition-not-found",
+          "strip-not-in-text"
+        ]
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEa",
+        "statement": "described",
+        "limit": null,
+        "page": 203,
+        "article": "1194.1",
+        "passage": "la\nhauteur totale de l’extension soit inférieure ou égale à 4 mètres",
+        "offset": {
+          "start": 18108,
+          "end": 18176
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "model-medium",
+          "sentence-repeated",
+          "condition-not-found",
+          "strip-not-in-text"
+        ]
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEa1",
+        "statement": "described",
+        "limit": null,
+        "page": 203,
+        "article": "1194.1",
+        "passage": "la\nhauteur totale de l’extension soit inférieure ou égale à 4 mètres",
+        "offset": {
+          "start": 18108,
+          "end": 18176
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "model-medium",
+          "sentence-repeated",
+          "condition-not-found",
+          "strip-not-in-text"
+        ]
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEa2",
+        "statement": "described",
+        "limit": null,
+        "page": 203,
+        "article": "1194.1",
+        "passage": "la\nhauteur totale de l’extension soit inférieure ou égale à 4 mètres",
+        "offset": {
+          "start": 18108,
+          "end": 18176
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low",
+        "doubts": [
+          "model-medium",
+          "sentence-repeated",
+          "condition-not-found",
+          "strip-not-in-text"
+        ]
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEb",
+        "statement": "described",
+        "limit": null,
+        "page": 203,
+        "article": "1194.1",
+        "passage": "la\nhauteur totale de l’extension soit inférieure ou égale à 4 mètres",
+        "offset": {
+          "start": 18108,
+          "end": 18176
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "model-medium",
+          "sentence-repeated",
+          "condition-not-found",
+          "strip-not-in-text"
+        ]
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEc",
+        "statement": "described",
+        "limit": null,
+        "page": 203,
+        "article": "1194.1",
+        "passage": "la\nhauteur totale de l’extension soit inférieure ou égale à 4 mètres",
+        "offset": {
+          "start": 18108,
+          "end": 18176
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low",
+        "doubts": [
+          "model-medium",
+          "sentence-repeated",
+          "condition-not-found",
+          "strip-not-in-text"
+        ]
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEm",
+        "statement": "described",
+        "limit": null,
+        "page": 203,
+        "article": "1194.1",
+        "passage": "la\nhauteur totale de l’extension soit inférieure ou égale à 4 mètres",
+        "offset": {
+          "start": 18108,
+          "end": 18176
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "model-low",
+          "sentence-repeated",
+          "condition-not-found",
+          "strip-not-in-text"
+        ]
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UEm",
+        "statement": "limit",
+        "limit": {
+          "kind": "height_relative",
+          "reference": "altitude_difference",
+          "factor": 0.5,
+          "offsetMetres": null,
+          "minimumMetres": 5
+        },
+        "page": 204,
+        "article": "1204.1",
+        "passage": "au moins égale à la moitié de la différence de hauteur entre ces deux points,",
+        "offset": {
+          "start": 18754,
+          "end": 18831
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated",
+          "figure-not-in-text"
+        ]
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UEp",
+        "statement": "limit",
+        "limit": {
+          "kind": "height_relative",
+          "reference": "altitude_difference",
+          "factor": 0.5,
+          "offsetMetres": null,
+          "minimumMetres": 5
+        },
+        "page": 204,
+        "article": "1204.1",
+        "passage": "au moins égale à la moitié de la différence de hauteur entre ces deux points,",
+        "offset": {
+          "start": 18754,
+          "end": 18831
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated",
+          "figure-not-in-text"
+        ]
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UEp1",
+        "statement": "limit",
+        "limit": {
+          "kind": "height_relative",
+          "reference": "altitude_difference",
+          "factor": 0.5,
+          "offsetMetres": null,
+          "minimumMetres": 5
+        },
+        "page": 204,
+        "article": "1204.1",
+        "passage": "au moins égale à la moitié de la différence de hauteur entre ces deux points,",
+        "offset": {
+          "start": 18754,
+          "end": 18831
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated",
+          "figure-not-in-text"
+        ]
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEp",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 4,
+          "unit": "m"
+        },
+        "strip": {
+          "depthMetres": 5,
+          "edges": "side_rear",
+          "permits": true
+        },
+        "page": 204,
+        "article": "1204.1",
+        "passage": "Les constructions dont la hauteur totale n’excède pas 4 mètres pourront être implantées dans une bande de 0 à 5",
+        "offset": {
+          "start": 20027,
+          "end": 20138
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEp1",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 4,
+          "unit": "m"
+        },
+        "strip": {
+          "depthMetres": 5,
+          "edges": "side_rear",
+          "permits": true
+        },
+        "page": 204,
+        "article": "1204.1",
+        "passage": "Les constructions dont la hauteur totale n’excède pas 4 mètres pourront être implantées dans une bande de 0 à 5",
+        "offset": {
+          "start": 20027,
+          "end": 20138
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "footprint_ratio",
+        "sector": null,
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+        "offset": {
+          "start": 20316,
+          "end": 20440
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "footprint_ratio",
+        "sector": "UEa",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+        "offset": {
+          "start": 20316,
+          "end": 20440
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "footprint_ratio",
+        "sector": "UEa1",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+        "offset": {
+          "start": 20316,
+          "end": 20440
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "footprint_ratio",
+        "sector": "UEp",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+        "offset": {
+          "start": 20316,
+          "end": 20440
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "footprint_ratio",
+        "sector": "UEp1",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+        "offset": {
+          "start": 20316,
+          "end": 20440
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "footprint_ratio",
+        "sector": "UEm",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+        "offset": {
+          "start": 20316,
+          "end": 20440
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "footprint_ratio",
+        "sector": "UEb",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+        "offset": {
+          "start": 20316,
+          "end": 20440
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "footprint_ratio",
+        "sector": "UEc",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+        "offset": {
+          "start": 20316,
+          "end": 20440
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "footprint_ratio",
+        "sector": "UEa2",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+        "offset": {
+          "start": 20316,
+          "end": 20440
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "height_total",
+        "sector": null,
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle\nexiste.",
+        "offset": {
+          "start": 20533,
+          "end": 20643
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [
+          "en l’absence de linéaire de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEa",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle\nexiste.",
+        "offset": {
+          "start": 20533,
+          "end": 20643
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [
+          "en l’absence de linéaire de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEa1",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle\nexiste.",
+        "offset": {
+          "start": 20533,
+          "end": 20643
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [
+          "en l’absence de linéaire de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEp",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle\nexiste.",
+        "offset": {
+          "start": 20533,
+          "end": 20643
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [
+          "en l’absence de linéaire de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEp1",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle\nexiste.",
+        "offset": {
+          "start": 20533,
+          "end": 20643
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [
+          "en l’absence de linéaire de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEm",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle\nexiste.",
+        "offset": {
+          "start": 20533,
+          "end": 20643
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [
+          "en l’absence de linéaire de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEb",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle\nexiste.",
+        "offset": {
+          "start": 20533,
+          "end": 20643
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [
+          "en l’absence de linéaire de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEc",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle\nexiste.",
+        "offset": {
+          "start": 20533,
+          "end": 20643
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [
+          "en l’absence de linéaire de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEa2",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle\nexiste.",
+        "offset": {
+          "start": 20533,
+          "end": 20643
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [
+          "en l’absence de linéaire de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low",
+        "doubts": [
+          "sentence-repeated"
+        ]
+      },
+      {
+        "kind": "height_facade",
+        "sector": "UEc",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "La hauteur des constructions* ne peut excéder une hauteur de façade* indiquée par le linéaire de gabarit*",
+        "offset": {
+          "start": 20722,
+          "end": 20827
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "dans la bande définie par le linéaire de gabarit"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEp",
+        "statement": "described",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "La hauteur des constructions* pourra excéder la hauteur indiquée au règlement graphique en cas de nécessités techniques",
+        "offset": {
+          "start": 21069,
+          "end": 21188
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "en cas de nécessités techniques\nd’exploitation des bâtiments*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium",
+        "doubts": [
+          "model-medium"
+        ]
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEp1",
+        "statement": "described",
+        "limit": null,
+        "page": 204,
+        "article": "1204.1",
+        "passage": "La hauteur des constructions* pourra excéder la hauteur indiquée au règlement graphique en cas de nécessités techniques",
+        "offset": {
+          "start": 21069,
+          "end": 21188
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "en cas de nécessités techniques\nd’exploitation des bâtiments*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium",
+        "doubts": [
+          "model-medium"
+        ]
+      },
+      {
+        "kind": "green_ratio",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 15,
+          "base": "plot_area"
+        },
+        "page": 206,
+        "article": "1224.1",
+        "passage": "UE, UEa, UEa1, UEa2, UEp, UEm, UEp1 Au moins 15 % du terrain d'assiette* du projet",
+        "offset": {
+          "start": 26234,
+          "end": 26316
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "green_ratio",
+        "sector": "UEa",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 15,
+          "base": "plot_area"
+        },
+        "page": 206,
+        "article": "1224.1",
+        "passage": "UE, UEa, UEa1, UEa2, UEp, UEm, UEp1 Au moins 15 % du terrain d'assiette* du projet",
+        "offset": {
+          "start": 26234,
+          "end": 26316
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "green_ratio",
+        "sector": "UEa1",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 15,
+          "base": "plot_area"
+        },
+        "page": 206,
+        "article": "1224.1",
+        "passage": "UE, UEa, UEa1, UEa2, UEp, UEm, UEp1 Au moins 15 % du terrain d'assiette* du projet",
+        "offset": {
+          "start": 26234,
+          "end": 26316
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "green_ratio",
+        "sector": "UEa2",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 15,
+          "base": "plot_area"
+        },
+        "page": 206,
+        "article": "1224.1",
+        "passage": "UE, UEa, UEa1, UEa2, UEp, UEm, UEp1 Au moins 15 % du terrain d'assiette* du projet",
+        "offset": {
+          "start": 26234,
+          "end": 26316
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "green_ratio",
+        "sector": "UEp",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 15,
+          "base": "plot_area"
+        },
+        "page": 206,
+        "article": "1224.1",
+        "passage": "UE, UEa, UEa1, UEa2, UEp, UEm, UEp1 Au moins 15 % du terrain d'assiette* du projet",
+        "offset": {
+          "start": 26234,
+          "end": 26316
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "green_ratio",
+        "sector": "UEm",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 15,
+          "base": "plot_area"
+        },
+        "page": 206,
+        "article": "1224.1",
+        "passage": "UE, UEa, UEa1, UEa2, UEp, UEm, UEp1 Au moins 15 % du terrain d'assiette* du projet",
+        "offset": {
+          "start": 26234,
+          "end": 26316
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "green_ratio",
+        "sector": "UEp1",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 15,
+          "base": "plot_area"
+        },
+        "page": 206,
+        "article": "1224.1",
+        "passage": "UE, UEa, UEa1, UEa2, UEp, UEm, UEp1 Au moins 15 % du terrain d'assiette* du projet",
+        "offset": {
+          "start": 26234,
+          "end": 26316
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "green_ratio",
+        "sector": "UEb",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 20,
+          "base": "plot_area"
+        },
+        "page": 206,
+        "article": "1224.1",
+        "passage": "UEb Au moins 20% du terrain d'assiette* du projet",
+        "offset": {
+          "start": 26317,
+          "end": 26366
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "green_ratio",
+        "sector": "UEc",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 15,
+          "base": "plot_area"
+        },
+        "page": 206,
+        "article": "1224.1",
+        "passage": "UEc en l’absence de linéaire de gabarit* Au moins 15 % du terrain d'assiette* du projet",
+        "offset": {
+          "start": 26367,
+          "end": 26454
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "UEc en l’absence de linéaire de gabarit*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high",
+        "doubts": []
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 207,
+        "article": "1234.1",
+        "passage": "Artisanat et commerces de détail 1 place pour 50 m2 de SDP*",
+        "offset": {
+          "start": 27917,
+          "end": 27976
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Artisanat et commerces de détail",
+          "par tranche entamée"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium",
+        "doubts": [
+          "model-medium"
+        ]
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 207,
+        "article": "1234.1",
+        "passage": "1 place pour 30 m2 de SDP*",
+        "offset": {
+          "start": 28065,
+          "end": 28091
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Activités de services où s’effectue\nl’accueil d’une clientèle",
+          "par tranche entamée"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium",
+        "doubts": [
+          "model-medium"
+        ]
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 207,
+        "article": "1234.1",
+        "passage": "Hôtels 1 place pour 1 chambre",
+        "offset": {
+          "start": 28131,
+          "end": 28160
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Hôtels"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium",
+        "doubts": [
+          "model-medium"
+        ]
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 207,
+        "article": "1234.1",
+        "passage": "Bureaux 1 place pour 50 m2 de SDP*",
+        "offset": {
+          "start": 28210,
+          "end": 28244
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Bureaux",
+          "par tranche entamée"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium",
+        "doubts": [
+          "model-medium"
+        ]
+      }
+    ],
+    "dropped": {
+      "passageNotFound": 0,
+      "schemaInvalid": 0,
+      "overLimit": 0,
+      "conditionNotVerbatim": 11,
+      "incoherent": 0,
+      "valueNotInPassage": 3,
+      "droppedConditions": 11,
+      "stripNotInPassage": 7
+    },
+    "chunks": {
+      "of": 1,
+      "failed": 0
+    },
+    "model": {
+      "providerId": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "constraint": "schema"
+    }
+  },
+  "incomplete": false,
+  "raw": [
+    {
+      "items": [
+        {
+          "value": {
+            "kind": "extension_max",
+            "appliesTo": [
+              "UE",
+              "UEm",
+              "UEa",
+              "UEa1",
+              "UEa2",
+              "UEb",
+              "UEc",
+              "UEp"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 40,
+              "unit": "m2"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans la zone UE, hormis en secteur UEp1"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Une seule extension* sur une même unité foncière dès lors que l’extension n’excède pas 40 m2 de surface de plancher* et d’emprise au sol*"
+        },
+        {
+          "value": {
+            "kind": "floor_area_max",
+            "appliesTo": [
+              "UE",
+              "UEm",
+              "UEa",
+              "UEa1",
+              "UEa2",
+              "UEb",
+              "UEc",
+              "UEp"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 200,
+              "unit": "m2"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans la zone UE, hormis en secteur UEp1"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "et dans la limite de 200 m2 de surface de plancher* totale par unité foncière sans création de nouveau logement"
+        },
+        {
+          "value": {
+            "kind": "annex_max",
+            "appliesTo": [
+              "UE",
+              "UEm",
+              "UEa",
+              "UEa1",
+              "UEa2",
+              "UEb",
+              "UEc",
+              "UEp"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 30,
+              "unit": "m2"
+            },
+            "strip": null,
+            "conditions": [
+              "Une seule construction* à usage d’annexe*"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "que son emprise au sol* n’excède pas 30 m2"
+        },
+        {
+          "value": {
+            "kind": "floor_area_max",
+            "appliesTo": [
+              "UEa",
+              "UEb"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 150,
+              "unit": "m2"
+            },
+            "strip": null,
+            "conditions": [
+              "sous-destination « artisanat et commerce de détail »"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "dans la limite de 150 m2 de surface de plancher*"
+        },
+        {
+          "value": {
+            "kind": "extension_max",
+            "appliesTo": [
+              "UEa1",
+              "UEa2",
+              "UEp",
+              "UEp1"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "ratio",
+              "comparison": "max",
+              "percent": 15,
+              "base": "surface_de_plancher"
+            },
+            "strip": null,
+            "conditions": [
+              "une seule extension"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "dans la limite de 15% de la surface de plancher* existante"
+        },
+        {
+          "value": {
+            "kind": "floor_area_max",
+            "appliesTo": [
+              "UEp"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 400,
+              "unit": "m2"
+            },
+            "strip": null,
+            "conditions": [
+              "lorsque le pôle de vie est délimité sur le règlement graphique"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "n’excède pas 400 m2 pour chacune des sousdestinations autorisées"
+        },
+        {
+          "value": {
+            "kind": "floor_area_max",
+            "appliesTo": [
+              "UEp"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 4000,
+              "unit": "m2"
+            },
+            "strip": null,
+            "conditions": [
+              "lorsque le pôle de vie est localisé dans une OAP sectorielle"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "ne pourra pas dépasser 4 000 m2"
+        },
+        {
+          "value": {
+            "kind": "road_setback",
+            "appliesTo": "all",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 5,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "en l’absence de linéaires de gabarit*"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "recul minimum de 5 mètres par rapport à l’alignement* actuel ou futur des voies*"
+        },
+        {
+          "value": {
+            "kind": "road_setback",
+            "appliesTo": [
+              "UEc"
+            ],
+            "statement": "described",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "le long des linéaires de gabarit*"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Le long des linéaires de gabarit* figurant sur le règlement graphique, les constructions doivent être"
+        },
+        {
+          "value": {
+            "kind": "boundary_setback",
+            "appliesTo": [
+              "UE",
+              "UEa",
+              "UEa1",
+              "UEa2",
+              "UEb",
+              "UEc"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 3,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [],
+            "exceptions": [
+              "contre les limites séparatives*"
+            ],
+            "confidence": "high"
+          },
+          "passage": "Les constructions doivent être implantées contre les limites séparatives*, ou en retrait minimum de 3"
+        },
+        {
+          "value": {
+            "kind": "boundary_setback",
+            "appliesTo": [
+              "UEm",
+              "UEp",
+              "UEp1"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "height_relative",
+              "reference": "altitude_difference",
+              "factor": 0.5,
+              "offsetMetres": null,
+              "minimumMetres": 5
+            },
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "au moins égale à la moitié de la différence de hauteur entre ces deux points,"
+        },
+        {
+          "value": {
+            "kind": "height_total",
+            "appliesTo": [
+              "UEp",
+              "UEp1"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 4,
+              "unit": "m"
+            },
+            "strip": {
+              "depthMetres": 5,
+              "edges": "side_rear",
+              "permits": true
+            },
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Les constructions dont la hauteur totale n’excède pas 4 mètres pourront être implantées dans une bande de 0 à 5"
+        },
+        {
+          "value": {
+            "kind": "height_total",
+            "appliesTo": [
+              "UE",
+              "UEa",
+              "UEa1",
+              "UEa2",
+              "UEb",
+              "UEc"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 4,
+              "unit": "m"
+            },
+            "strip": {
+              "depthMetres": 3,
+              "edges": "side_rear",
+              "permits": true
+            },
+            "conditions": [
+              "extensions de constructions existantes non conformes aux règles d’implantation"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "la hauteur totale de l’extension soit inférieure ou égale à 4 mètres"
+        },
+        {
+          "value": {
+            "kind": "height_total",
+            "appliesTo": [
+              "UEm"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 4,
+              "unit": "m"
+            },
+            "strip": {
+              "depthMetres": 5,
+              "edges": "side_rear",
+              "permits": true
+            },
+            "conditions": [
+              "extensions de constructions existantes non conformes aux règles d’implantation"
+            ],
+            "exceptions": [],
+            "confidence": "low"
+          },
+          "passage": "la hauteur totale de l’extension soit inférieure ou égale à 4 mètres"
+        },
+        {
+          "value": {
+            "kind": "building_distance",
+            "appliesTo": "all",
+            "statement": "not_regulated",
+            "limit": null,
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Non réglementée"
+        },
+        {
+          "value": {
+            "kind": "footprint_ratio",
+            "appliesTo": "all",
+            "statement": "see_graphic",
+            "limit": null,
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement graphique lorsqu’elle existe."
+        },
+        {
+          "value": {
+            "kind": "height_total",
+            "appliesTo": "all",
+            "statement": "see_graphic",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "en l’absence de linéaire de gabarit*"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle existe."
+        },
+        {
+          "value": {
+            "kind": "height_facade",
+            "appliesTo": [
+              "UEc"
+            ],
+            "statement": "see_graphic",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "dans la bande définie par le linéaire de gabarit"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "La hauteur des constructions* ne peut excéder une hauteur de façade* indiquée par le linéaire de gabarit*"
+        },
+        {
+          "value": {
+            "kind": "height_total",
+            "appliesTo": [
+              "UEp",
+              "UEp1"
+            ],
+            "statement": "described",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "en cas de nécessités techniques d’exploitation des bâtiments*"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "La hauteur des constructions* pourra excéder la hauteur indiquée au règlement graphique en cas de nécessités techniques"
+        },
+        {
+          "value": {
+            "kind": "green_ratio",
+            "appliesTo": [
+              "UE",
+              "UEa",
+              "UEa1",
+              "UEa2",
+              "UEp",
+              "UEm",
+              "UEp1"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "ratio",
+              "comparison": "min",
+              "percent": 15,
+              "base": "plot_area"
+            },
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "UE, UEa, UEa1, UEa2, UEp, UEm, UEp1 Au moins 15 % du terrain d'assiette* du projet"
+        },
+        {
+          "value": {
+            "kind": "green_ratio",
+            "appliesTo": [
+              "UEb"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "ratio",
+              "comparison": "min",
+              "percent": 20,
+              "base": "plot_area"
+            },
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "UEb Au moins 20% du terrain d'assiette* du projet"
+        },
+        {
+          "value": {
+            "kind": "green_ratio",
+            "appliesTo": [
+              "UEc"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "ratio",
+              "comparison": "min",
+              "percent": 15,
+              "base": "plot_area"
+            },
+            "strip": null,
+            "conditions": [
+              "UEc en l’absence de linéaire de gabarit*"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "UEc en l’absence de linéaire de gabarit* Au moins 15 % du terrain d'assiette* du projet"
+        },
+        {
+          "value": {
+            "kind": "parking",
+            "appliesTo": "all",
+            "statement": "described",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "Artisanat et commerces de détail",
+              "par tranche entamée"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "Artisanat et commerces de détail 1 place pour 50 m2 de SDP*"
+        },
+        {
+          "value": {
+            "kind": "parking",
+            "appliesTo": "all",
+            "statement": "described",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "Activités de services où s’effectue l’accueil d’une clientèle",
+              "par tranche entamée"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "1 place pour 30 m2 de SDP*"
+        },
+        {
+          "value": {
+            "kind": "parking",
+            "appliesTo": "all",
+            "statement": "described",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "Hôtels"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "Hôtels 1 place pour 1 chambre"
+        },
+        {
+          "value": {
+            "kind": "parking",
+            "appliesTo": "all",
+            "statement": "described",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "Bureaux",
+              "par tranche entamée"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "Bureaux 1 place pour 50 m2 de SDP*"
+        }
+      ],
+      "rejected": []
+    }
+  ],
+  "usage": {
+    "calls": 0,
+    "replayedChunks": 1,
+    "settled": 0,
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cacheReadTokens": 0,
+    "costMicrousd": 0,
+    "estimated": false,
+    "unlisted": false
+  },
+  "seconds": 0,
+  "finishedAt": "2026-11-21T09:22:06.182Z",
+  "validated": true,
+  "validatedBy": "independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",
+  "score": {
+    "counts": {
+      "truth": 41,
+      "read": 87,
+      "exact": 40,
+      "sectorError": 0,
+      "found": 40,
+      "wrongValue": 0,
+      "missed": 1,
+      "extra": 0,
+      "accepted": 1,
+      "duplicates": 46,
+      "outOfScope": 16
+    },
+    "recall": 0.975609756097561,
+    "wrongValueRate": 0,
+    "sectorAttribution": 1,
+    "verified": 0.9540229885057471,
+    "verifiedCount": 83,
+    "droppedTotal": 32,
+    "figureCoverage": {
+      "covered": 11,
+      "total": 19,
+      "uncovered": [
+        "0.6|m",
+        "1.2|m",
+        "1.6|m",
+        "1.8|m",
+        "100|m2",
+        "2|m",
+        "30|m",
+        "35|percent"
+      ]
+    },
+    "repeats": {
+      "acrossSectors": 70,
+      "exact": 0
+    },
+    "details": {
+      "missed": [
+        {
+          "id": "e35",
+          "kind": "green_ratio",
+          "sector": "UEc",
+          "statement": "limit",
+          "limit": {
+            "kind": "ratio",
+            "comparison": "min",
+            "percent": 15,
+            "base": "plot_area"
+          },
+          "page": 206,
+          "quote": "définie par le linéaire de gabarit Au moins 15 % du terrain d'assiette* du projet",
+          "note": "UEc beyond the band built along the gabarit line (a second row, the same figure)."
+        }
+      ],
+      "wrongValue": [],
+      "sectorError": [],
+      "extra": [],
+      "accepted": [
+        {
+          "kind": "road_setback",
+          "sector": "UEc",
+          "statement": "described",
+          "limit": null,
+          "page": 203,
+          "article": "1194.1",
+          "passage": "Le long des linéaires de gabarit* figurant sur le règlement graphique, les constructions doivent être",
+          "offset": {
+            "start": 16337,
+            "end": 16438
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "le long des linéaires de gabarit*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "high",
+          "doubts": []
+        }
+      ],
+      "duplicates": [
+        {
+          "kind": "extension_max",
+          "sector": "UEm",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 40,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "Une seule extension* sur une même unité foncière dès lors que l’extension n’excède pas 40 m2 de\nsurface de plancher* et d’emprise au sol*",
+          "offset": {
+            "start": 4723,
+            "end": 4860
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans la zone UE, hormis en secteur UEp1"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "extension_max",
+          "sector": "UEa",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 40,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "Une seule extension* sur une même unité foncière dès lors que l’extension n’excède pas 40 m2 de\nsurface de plancher* et d’emprise au sol*",
+          "offset": {
+            "start": 4723,
+            "end": 4860
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans la zone UE, hormis en secteur UEp1"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "extension_max",
+          "sector": "UEa1",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 40,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "Une seule extension* sur une même unité foncière dès lors que l’extension n’excède pas 40 m2 de\nsurface de plancher* et d’emprise au sol*",
+          "offset": {
+            "start": 4723,
+            "end": 4860
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans la zone UE, hormis en secteur UEp1"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "extension_max",
+          "sector": "UEa2",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 40,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "Une seule extension* sur une même unité foncière dès lors que l’extension n’excède pas 40 m2 de\nsurface de plancher* et d’emprise au sol*",
+          "offset": {
+            "start": 4723,
+            "end": 4860
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans la zone UE, hormis en secteur UEp1"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "extension_max",
+          "sector": "UEb",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 40,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "Une seule extension* sur une même unité foncière dès lors que l’extension n’excède pas 40 m2 de\nsurface de plancher* et d’emprise au sol*",
+          "offset": {
+            "start": 4723,
+            "end": 4860
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans la zone UE, hormis en secteur UEp1"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "extension_max",
+          "sector": "UEc",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 40,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "Une seule extension* sur une même unité foncière dès lors que l’extension n’excède pas 40 m2 de\nsurface de plancher* et d’emprise au sol*",
+          "offset": {
+            "start": 4723,
+            "end": 4860
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans la zone UE, hormis en secteur UEp1"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "extension_max",
+          "sector": "UEp",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 40,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "Une seule extension* sur une même unité foncière dès lors que l’extension n’excède pas 40 m2 de\nsurface de plancher* et d’emprise au sol*",
+          "offset": {
+            "start": 4723,
+            "end": 4860
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans la zone UE, hormis en secteur UEp1"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "annex_max",
+          "sector": "UEm",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 30,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "que son\nemprise au sol* n’excède pas 30 m2",
+          "offset": {
+            "start": 5167,
+            "end": 5209
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Une seule construction* à usage d’annexe*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "annex_max",
+          "sector": "UEa",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 30,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "que son\nemprise au sol* n’excède pas 30 m2",
+          "offset": {
+            "start": 5167,
+            "end": 5209
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Une seule construction* à usage d’annexe*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "annex_max",
+          "sector": "UEa1",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 30,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "que son\nemprise au sol* n’excède pas 30 m2",
+          "offset": {
+            "start": 5167,
+            "end": 5209
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Une seule construction* à usage d’annexe*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "annex_max",
+          "sector": "UEa2",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 30,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "que son\nemprise au sol* n’excède pas 30 m2",
+          "offset": {
+            "start": 5167,
+            "end": 5209
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Une seule construction* à usage d’annexe*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "annex_max",
+          "sector": "UEb",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 30,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "que son\nemprise au sol* n’excède pas 30 m2",
+          "offset": {
+            "start": 5167,
+            "end": 5209
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Une seule construction* à usage d’annexe*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "annex_max",
+          "sector": "UEc",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 30,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "que son\nemprise au sol* n’excède pas 30 m2",
+          "offset": {
+            "start": 5167,
+            "end": 5209
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Une seule construction* à usage d’annexe*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "annex_max",
+          "sector": "UEp",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 30,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "que son\nemprise au sol* n’excède pas 30 m2",
+          "offset": {
+            "start": 5167,
+            "end": 5209
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Une seule construction* à usage d’annexe*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "building_distance",
+          "sector": "UEa",
+          "statement": "not_regulated",
+          "limit": null,
+          "page": 202,
+          "article": "1184.1",
+          "passage": "Non réglementée",
+          "offset": {
+            "start": 14610,
+            "end": 14625
+          },
+          "occurrence": {
+            "of": 2,
+            "chosenBy": "first"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low",
+          "doubts": [
+            "sentence-repeated"
+          ]
+        },
+        {
+          "kind": "building_distance",
+          "sector": "UEa1",
+          "statement": "not_regulated",
+          "limit": null,
+          "page": 202,
+          "article": "1184.1",
+          "passage": "Non réglementée",
+          "offset": {
+            "start": 14610,
+            "end": 14625
+          },
+          "occurrence": {
+            "of": 2,
+            "chosenBy": "first"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low",
+          "doubts": [
+            "sentence-repeated"
+          ]
+        },
+        {
+          "kind": "building_distance",
+          "sector": "UEp",
+          "statement": "not_regulated",
+          "limit": null,
+          "page": 202,
+          "article": "1184.1",
+          "passage": "Non réglementée",
+          "offset": {
+            "start": 14610,
+            "end": 14625
+          },
+          "occurrence": {
+            "of": 2,
+            "chosenBy": "first"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low",
+          "doubts": [
+            "sentence-repeated"
+          ]
+        },
+        {
+          "kind": "building_distance",
+          "sector": "UEp1",
+          "statement": "not_regulated",
+          "limit": null,
+          "page": 202,
+          "article": "1184.1",
+          "passage": "Non réglementée",
+          "offset": {
+            "start": 14610,
+            "end": 14625
+          },
+          "occurrence": {
+            "of": 2,
+            "chosenBy": "first"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low",
+          "doubts": [
+            "sentence-repeated"
+          ]
+        },
+        {
+          "kind": "building_distance",
+          "sector": "UEm",
+          "statement": "not_regulated",
+          "limit": null,
+          "page": 202,
+          "article": "1184.1",
+          "passage": "Non réglementée",
+          "offset": {
+            "start": 14610,
+            "end": 14625
+          },
+          "occurrence": {
+            "of": 2,
+            "chosenBy": "first"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low",
+          "doubts": [
+            "sentence-repeated"
+          ]
+        },
+        {
+          "kind": "building_distance",
+          "sector": "UEb",
+          "statement": "not_regulated",
+          "limit": null,
+          "page": 202,
+          "article": "1184.1",
+          "passage": "Non réglementée",
+          "offset": {
+            "start": 14610,
+            "end": 14625
+          },
+          "occurrence": {
+            "of": 2,
+            "chosenBy": "first"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low",
+          "doubts": [
+            "sentence-repeated"
+          ]
+        },
+        {
+          "kind": "building_distance",
+          "sector": "UEc",
+          "statement": "not_regulated",
+          "limit": null,
+          "page": 202,
+          "article": "1184.1",
+          "passage": "Non réglementée",
+          "offset": {
+            "start": 14610,
+            "end": 14625
+          },
+          "occurrence": {
+            "of": 2,
+            "chosenBy": "first"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "low",
+          "doubts": [
+            "sentence-repeated"
+          ]
+        },
+        {
+          "kind": "building_distance",
+          "sector": "UEa2",
+          "statement": "not_regulated",
+          "limit": null,
+          "page": 202,
+          "article": "1184.1",
+          "passage": "Non réglementée",
+          "offset": {
+            "start": 14610,
+            "end": 14625
+          },
+          "occurrence": {
+            "of": 2,
+            "chosenBy": "first"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "low",
+          "doubts": [
+            "sentence-repeated"
+          ]
+        },
+        {
+          "kind": "road_setback",
+          "sector": "UEa",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 5,
+            "unit": "m"
+          },
+          "page": 202,
+          "article": "1184.1",
+          "passage": "recul minimum de 5 mètres par rapport à l’alignement*\nactuel ou futur des voies*",
+          "offset": {
+            "start": 15156,
+            "end": 15236
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "en l’absence de linéaires de gabarit*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "road_setback",
+          "sector": "UEa1",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 5,
+            "unit": "m"
+          },
+          "page": 202,
+          "article": "1184.1",
+          "passage": "recul minimum de 5 mètres par rapport à l’alignement*\nactuel ou futur des voies*",
+          "offset": {
+            "start": 15156,
+            "end": 15236
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "en l’absence de linéaires de gabarit*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "road_setback",
+          "sector": "UEp",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 5,
+            "unit": "m"
+          },
+          "page": 202,
+          "article": "1184.1",
+          "passage": "recul minimum de 5 mètres par rapport à l’alignement*\nactuel ou futur des voies*",
+          "offset": {
+            "start": 15156,
+            "end": 15236
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "en l’absence de linéaires de gabarit*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "road_setback",
+          "sector": "UEp1",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 5,
+            "unit": "m"
+          },
+          "page": 202,
+          "article": "1184.1",
+          "passage": "recul minimum de 5 mètres par rapport à l’alignement*\nactuel ou futur des voies*",
+          "offset": {
+            "start": 15156,
+            "end": 15236
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "en l’absence de linéaires de gabarit*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "road_setback",
+          "sector": "UEm",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 5,
+            "unit": "m"
+          },
+          "page": 202,
+          "article": "1184.1",
+          "passage": "recul minimum de 5 mètres par rapport à l’alignement*\nactuel ou futur des voies*",
+          "offset": {
+            "start": 15156,
+            "end": 15236
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "en l’absence de linéaires de gabarit*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "road_setback",
+          "sector": "UEb",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 5,
+            "unit": "m"
+          },
+          "page": 202,
+          "article": "1184.1",
+          "passage": "recul minimum de 5 mètres par rapport à l’alignement*\nactuel ou futur des voies*",
+          "offset": {
+            "start": 15156,
+            "end": 15236
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "en l’absence de linéaires de gabarit*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "road_setback",
+          "sector": "UEc",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 5,
+            "unit": "m"
+          },
+          "page": 202,
+          "article": "1184.1",
+          "passage": "recul minimum de 5 mètres par rapport à l’alignement*\nactuel ou futur des voies*",
+          "offset": {
+            "start": 15156,
+            "end": 15236
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "en l’absence de linéaires de gabarit*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "road_setback",
+          "sector": "UEa2",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 5,
+            "unit": "m"
+          },
+          "page": 202,
+          "article": "1184.1",
+          "passage": "recul minimum de 5 mètres par rapport à l’alignement*\nactuel ou futur des voies*",
+          "offset": {
+            "start": 15156,
+            "end": 15236
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "en l’absence de linéaires de gabarit*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "footprint_ratio",
+          "sector": "UEa",
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 204,
+          "article": "1204.1",
+          "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+          "offset": {
+            "start": 20316,
+            "end": 20440
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "footprint_ratio",
+          "sector": "UEa1",
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 204,
+          "article": "1204.1",
+          "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+          "offset": {
+            "start": 20316,
+            "end": 20440
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "footprint_ratio",
+          "sector": "UEp",
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 204,
+          "article": "1204.1",
+          "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+          "offset": {
+            "start": 20316,
+            "end": 20440
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "footprint_ratio",
+          "sector": "UEp1",
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 204,
+          "article": "1204.1",
+          "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+          "offset": {
+            "start": 20316,
+            "end": 20440
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "footprint_ratio",
+          "sector": "UEm",
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 204,
+          "article": "1204.1",
+          "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+          "offset": {
+            "start": 20316,
+            "end": 20440
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "footprint_ratio",
+          "sector": "UEb",
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 204,
+          "article": "1204.1",
+          "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+          "offset": {
+            "start": 20316,
+            "end": 20440
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "footprint_ratio",
+          "sector": "UEc",
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 204,
+          "article": "1204.1",
+          "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+          "offset": {
+            "start": 20316,
+            "end": 20440
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "footprint_ratio",
+          "sector": "UEa2",
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 204,
+          "article": "1204.1",
+          "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+          "offset": {
+            "start": 20316,
+            "end": 20440
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "height_total",
+          "sector": "UEa",
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 204,
+          "article": "1204.1",
+          "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle\nexiste.",
+          "offset": {
+            "start": 20533,
+            "end": 20643
+          },
+          "occurrence": {
+            "of": 2,
+            "chosenBy": "first"
+          },
+          "conditions": [
+            "en l’absence de linéaire de gabarit*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low",
+          "doubts": [
+            "sentence-repeated"
+          ]
+        },
+        {
+          "kind": "height_total",
+          "sector": "UEa1",
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 204,
+          "article": "1204.1",
+          "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle\nexiste.",
+          "offset": {
+            "start": 20533,
+            "end": 20643
+          },
+          "occurrence": {
+            "of": 2,
+            "chosenBy": "first"
+          },
+          "conditions": [
+            "en l’absence de linéaire de gabarit*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low",
+          "doubts": [
+            "sentence-repeated"
+          ]
+        },
+        {
+          "kind": "height_total",
+          "sector": "UEm",
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 204,
+          "article": "1204.1",
+          "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle\nexiste.",
+          "offset": {
+            "start": 20533,
+            "end": 20643
+          },
+          "occurrence": {
+            "of": 2,
+            "chosenBy": "first"
+          },
+          "conditions": [
+            "en l’absence de linéaire de gabarit*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low",
+          "doubts": [
+            "sentence-repeated"
+          ]
+        },
+        {
+          "kind": "height_total",
+          "sector": "UEb",
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 204,
+          "article": "1204.1",
+          "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle\nexiste.",
+          "offset": {
+            "start": 20533,
+            "end": 20643
+          },
+          "occurrence": {
+            "of": 2,
+            "chosenBy": "first"
+          },
+          "conditions": [
+            "en l’absence de linéaire de gabarit*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low",
+          "doubts": [
+            "sentence-repeated"
+          ]
+        },
+        {
+          "kind": "height_total",
+          "sector": "UEc",
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 204,
+          "article": "1204.1",
+          "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle\nexiste.",
+          "offset": {
+            "start": 20533,
+            "end": 20643
+          },
+          "occurrence": {
+            "of": 2,
+            "chosenBy": "first"
+          },
+          "conditions": [
+            "en l’absence de linéaire de gabarit*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "low",
+          "doubts": [
+            "sentence-repeated"
+          ]
+        },
+        {
+          "kind": "height_total",
+          "sector": "UEa2",
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 204,
+          "article": "1204.1",
+          "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle\nexiste.",
+          "offset": {
+            "start": 20533,
+            "end": 20643
+          },
+          "occurrence": {
+            "of": 2,
+            "chosenBy": "first"
+          },
+          "conditions": [
+            "en l’absence de linéaire de gabarit*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "low",
+          "doubts": [
+            "sentence-repeated"
+          ]
+        },
+        {
+          "kind": "height_total",
+          "sector": "UEp",
+          "statement": "described",
+          "limit": null,
+          "page": 204,
+          "article": "1204.1",
+          "passage": "La hauteur des constructions* pourra excéder la hauteur indiquée au règlement graphique en cas de nécessités techniques",
+          "offset": {
+            "start": 21069,
+            "end": 21188
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "en cas de nécessités techniques\nd’exploitation des bâtiments*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium",
+          "doubts": [
+            "model-medium"
+          ]
+        },
+        {
+          "kind": "height_total",
+          "sector": "UEp1",
+          "statement": "described",
+          "limit": null,
+          "page": 204,
+          "article": "1204.1",
+          "passage": "La hauteur des constructions* pourra excéder la hauteur indiquée au règlement graphique en cas de nécessités techniques",
+          "offset": {
+            "start": 21069,
+            "end": 21188
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "en cas de nécessités techniques\nd’exploitation des bâtiments*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium",
+          "doubts": [
+            "model-medium"
+          ]
+        }
+      ],
+      "outOfScope": [
+        {
+          "kind": "floor_area_max",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 200,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "et dans la limite de 200 m2 de surface de plancher* totale par unité foncière sans création de\nnouveau logement",
+          "offset": {
+            "start": 4865,
+            "end": 4976
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans la zone UE, hormis en secteur UEp1"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "floor_area_max",
+          "sector": "UEm",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 200,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "et dans la limite de 200 m2 de surface de plancher* totale par unité foncière sans création de\nnouveau logement",
+          "offset": {
+            "start": 4865,
+            "end": 4976
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans la zone UE, hormis en secteur UEp1"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "floor_area_max",
+          "sector": "UEa",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 200,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "et dans la limite de 200 m2 de surface de plancher* totale par unité foncière sans création de\nnouveau logement",
+          "offset": {
+            "start": 4865,
+            "end": 4976
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans la zone UE, hormis en secteur UEp1"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "floor_area_max",
+          "sector": "UEa1",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 200,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "et dans la limite de 200 m2 de surface de plancher* totale par unité foncière sans création de\nnouveau logement",
+          "offset": {
+            "start": 4865,
+            "end": 4976
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans la zone UE, hormis en secteur UEp1"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "floor_area_max",
+          "sector": "UEa2",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 200,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "et dans la limite de 200 m2 de surface de plancher* totale par unité foncière sans création de\nnouveau logement",
+          "offset": {
+            "start": 4865,
+            "end": 4976
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans la zone UE, hormis en secteur UEp1"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "floor_area_max",
+          "sector": "UEb",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 200,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "et dans la limite de 200 m2 de surface de plancher* totale par unité foncière sans création de\nnouveau logement",
+          "offset": {
+            "start": 4865,
+            "end": 4976
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans la zone UE, hormis en secteur UEp1"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "floor_area_max",
+          "sector": "UEc",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 200,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "et dans la limite de 200 m2 de surface de plancher* totale par unité foncière sans création de\nnouveau logement",
+          "offset": {
+            "start": 4865,
+            "end": 4976
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans la zone UE, hormis en secteur UEp1"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "floor_area_max",
+          "sector": "UEp",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 200,
+            "unit": "m2"
+          },
+          "page": 199,
+          "article": "1154.1",
+          "passage": "et dans la limite de 200 m2 de surface de plancher* totale par unité foncière sans création de\nnouveau logement",
+          "offset": {
+            "start": 4865,
+            "end": 4976
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans la zone UE, hormis en secteur UEp1"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high",
+          "doubts": []
+        },
+        {
+          "kind": "floor_area_max",
+          "sector": "UEa",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 150,
+            "unit": "m2"
+          },
+          "page": 200,
+          "article": "1164.1",
+          "passage": "dans la limite de 150 m2 de surface de plancher*",
+          "offset": {
+            "start": 6345,
+            "end": 6393
+          },
+          "occurrence": {
+            "of": 2,
+            "chosenBy": "first"
+          },
+          "conditions": [
+            "sous-destination « artisanat et commerce de détail »"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low",
+          "doubts": [
+            "model-medium",
+            "sentence-repeated"
+          ]
+        },
+        {
+          "kind": "floor_area_max",
+          "sector": "UEb",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 150,
+            "unit": "m2"
+          },
+          "page": 200,
+          "article": "1164.1",
+          "passage": "dans la limite de 150 m2 de surface de plancher*",
+          "offset": {
+            "start": 6345,
+            "end": 6393
+          },
+          "occurrence": {
+            "of": 2,
+            "chosenBy": "first"
+          },
+          "conditions": [
+            "sous-destination « artisanat et commerce de détail »"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low",
+          "doubts": [
+            "model-medium",
+            "sentence-repeated"
+          ]
+        },
+        {
+          "kind": "floor_area_max",
+          "sector": "UEp",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 400,
+            "unit": "m2"
+          },
+          "page": 201,
+          "article": "1174.1",
+          "passage": "n’excède pas 400 m2 pour chacune des sousdestinations autorisées",
+          "offset": {
+            "start": 10419,
+            "end": 10483
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "lorsque le pôle de vie est délimité sur le règlement graphique"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium",
+          "doubts": [
+            "model-medium"
+          ]
+        },
+        {
+          "kind": "floor_area_max",
+          "sector": "UEp",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 4000,
+            "unit": "m2"
+          },
+          "page": 201,
+          "article": "1174.1",
+          "passage": "ne pourra pas dépasser 4 000 m2",
+          "offset": {
+            "start": 10860,
+            "end": 10891
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "lorsque le pôle de vie est localisé dans une OAP sectorielle"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium",
+          "doubts": [
+            "model-medium"
+          ]
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 207,
+          "article": "1234.1",
+          "passage": "Artisanat et commerces de détail 1 place pour 50 m2 de SDP*",
+          "offset": {
+            "start": 27917,
+            "end": 27976
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Artisanat et commerces de détail",
+            "par tranche entamée"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium",
+          "doubts": [
+            "model-medium"
+          ]
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 207,
+          "article": "1234.1",
+          "passage": "1 place pour 30 m2 de SDP*",
+          "offset": {
+            "start": 28065,
+            "end": 28091
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Activités de services où s’effectue\nl’accueil d’une clientèle",
+            "par tranche entamée"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium",
+          "doubts": [
+            "model-medium"
+          ]
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 207,
+          "article": "1234.1",
+          "passage": "Hôtels 1 place pour 1 chambre",
+          "offset": {
+            "start": 28131,
+            "end": 28160
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Hôtels"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium",
+          "doubts": [
+            "model-medium"
+          ]
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 207,
+          "article": "1234.1",
+          "passage": "Bureaux 1 place pour 50 m2 de SDP*",
+          "offset": {
+            "start": 28210,
+            "end": 28244
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Bureaux",
+            "par tranche entamée"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium",
+          "doubts": [
+            "model-medium"
+          ]
+        }
+      ]
+    }
+  }
+}
