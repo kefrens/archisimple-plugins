@@ -6,19 +6,23 @@
 // 002.9 criterion 2: no network but loopback, before anything else is loaded.
 import '../../test-support/no-network.mjs';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { scoreReading } from '../../../tools/evaluate-reading/score.mjs';
 import {
   createLedgerStub,
+  createReplayCache,
   estimateRun,
   formatPlan,
   loadZone,
   parseModel,
+  runFileName,
   runPair,
   runPlan
 } from '../../../tools/evaluate-reading/run.mjs';
+import { AiError } from '../src/ai-client.mjs';
 import { fakeAi } from './ai-fake.mjs';
 import { FIXTURES } from './helpers.mjs';
 
@@ -331,4 +335,126 @@ test('the variation table shows each repetition, the mean and the range of the r
     table,
     /\| z \| anthropic:m \| 8, 6, 7 \/ 10 \| 7\.0 \(70%\) \| 2 \| 0, 0, 0 \| 0, 2, 0 \| 1, 1, 1 \|/
   );
+});
+
+// ── Sprint 002.34, Epic 2: what the model said is kept, and can be replayed ───────────────────
+
+test("a run keeps the model's raw answers (each item and its passage text), so a miss can be explained", async () => {
+  const zone = loadZone(join(EVAL, 'pays-d-aix-uc'));
+  const ledger = createLedgerStub({ token: 't' });
+  const ai = answeringTruth(zone, ledger);
+  const run = await runPair({ zone, model: parseModel('anthropic:scripted'), ai, ledger });
+  assert.equal(run.raw.length, ai.calls.length, 'one entry per answered chunk');
+  const items = run.raw.flatMap((answer) => answer.items);
+  assert.ok(items.length > 0);
+  assert.ok(items.every((i) => typeof i.passage === 'string' && i.value.kind !== undefined));
+  assert.ok(
+    items.every((i) => i.value.appliesTo !== undefined),
+    'the items as the shipped reading asks them'
+  );
+  assert.ok(Array.isArray(run.raw[0].rejected));
+});
+
+test('with a replay cache the second run asks the model nothing, gives the same rules, and says it was replayed', async () => {
+  const zone = loadZone(join(EVAL, 'pays-d-aix-uc'));
+  const ledger = createLedgerStub({ token: 't' });
+  const cache = createReplayCache();
+  const first = await runPair({
+    zone,
+    model: parseModel('anthropic:scripted'),
+    ai: answeringTruth(zone, ledger),
+    ledger,
+    waitMs: 0,
+    cache
+  });
+  assert.equal(first.usage.replayedChunks, 0);
+  const again = answeringTruth(zone, ledger);
+  const second = await runPair({
+    zone,
+    model: parseModel('anthropic:scripted'),
+    ai: again,
+    ledger,
+    waitMs: 0,
+    cache
+  });
+  assert.equal(again.calls.length, 0, 'every chunk came from the cache');
+  assert.deepEqual(second.result.rules, first.result.rules);
+  assert.equal(second.usage.replayedChunks, first.usage.calls);
+  assert.equal(second.usage.costMicrousd, 0, 'a replay costs nothing and says so');
+  assert.deepEqual(second.raw, first.raw, 'the replay keeps the raw answers too');
+});
+
+test('the cache is keyed by the model, the variant and the instructions: another one is asked again', async () => {
+  const zone = loadZone(join(EVAL, 'pays-d-aix-uc'));
+  const ledger = createLedgerStub({ token: 't' });
+  const cache = createReplayCache();
+  const run = (model, variant) => {
+    const ai = fakeAi({ plan: () => [] });
+    return runPair({ zone, model: parseModel(model), ai, ledger, waitMs: 0, cache, variant }).then(
+      () => ai.calls.length
+    );
+  };
+  assert.ok((await run('anthropic:a')) > 0);
+  assert.equal(await run('anthropic:a'), 0, 'the same model and variant is replayed');
+  assert.ok((await run('anthropic:b')) > 0, 'another model is asked');
+  assert.ok((await run('anthropic:a', 'previous')) > 0, 'the earlier reading is asked');
+  assert.ok((await run('anthropic:a@low')) > 0, 'another effort is asked');
+});
+
+test('a cache in a folder survives the process: a second cache over the same folder replays', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'replay-'));
+  const zone = loadZone(join(EVAL, 'pays-d-aix-uc'));
+  const ledger = createLedgerStub({ token: 't' });
+  await runPair({
+    zone,
+    model: parseModel('anthropic:a'),
+    ai: fakeAi({ plan: () => [] }),
+    ledger,
+    waitMs: 0,
+    cache: createReplayCache(dir)
+  });
+  const ai = fakeAi({ plan: () => [] });
+  await runPair({
+    zone,
+    model: parseModel('anthropic:a'),
+    ai,
+    ledger,
+    waitMs: 0,
+    cache: createReplayCache(dir)
+  });
+  assert.equal(ai.calls.length, 0);
+});
+
+// ── Sprint 002.40: a pair whose chunk failed is not a reading ───────────────────────────────────
+
+test('a pair whose call failed is incomplete: it says so and is filed apart, never as a finished reading', async () => {
+  const zone = loadZone(join(EVAL, 'pays-d-aix-uc'));
+  const ledger = createLedgerStub({ token: 't' });
+  const failing = fakeAi({
+    plan: () => {
+      throw new AiError('provider_error', 502);
+    }
+  });
+  const run = await runPair({
+    zone,
+    model: parseModel('anthropic:scripted'),
+    ai: failing,
+    ledger,
+    waitMs: 0
+  });
+  assert.equal(run.incomplete, true);
+  assert.ok(run.result.chunks.failed > 0);
+  assert.equal(run.result.rules.length, 0);
+  const pair = { zoneId: zone.id, model: parseModel('anthropic:scripted') };
+  assert.equal(runFileName(pair, run), 'pays-d-aix-uc__anthropic_scripted.incomplete.json');
+
+  const fine = await runPair({
+    zone,
+    model: parseModel('anthropic:scripted'),
+    ai: answeringTruth(zone, ledger),
+    ledger,
+    waitMs: 0
+  });
+  assert.equal(fine.incomplete, false);
+  assert.equal(runFileName(pair, fine), 'pays-d-aix-uc__anthropic_scripted.json');
 });

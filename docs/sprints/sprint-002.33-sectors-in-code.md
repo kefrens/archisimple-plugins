@@ -6,7 +6,7 @@
 >
 > **Milestone:** [Extra Documents for a Plot](../../../archisimple/docs/milestones/extra-documents/README.md), the reading-quality track. Follows [002.32 Measuring The Reading](sprint-002.32-measuring-the-reading.md).
 >
-> **Previous Sprint:** 002.32. **Next:** 002.34 (tables and a look-back), decided after this one's measurement.
+> **Previous Sprint:** 002.32. **Next:** 002.34 (harness tools: miss triage, replay), then the tables / look-back work, numbered when drafted.
 
 ## Goal
 
@@ -14,7 +14,7 @@ Make a sentence that applies to several sectors give **every one of its sectors*
 
 ## Out of scope
 
-- Tables, a look-back with page images, an agent loop (002.34 and later; see the milestone's ledger).
+- Tables, a look-back with page images, an agent loop (later sprints; see the milestone's ledger).
 - Changing what the extension shows: the service's result still holds one rule per sector.
 - Any change to the verification (the quote, the figure, the conditions), to the kinds, or to the chunking.
 - A different default model (the report suggests keeping Sonnet).

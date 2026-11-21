@@ -27,11 +27,15 @@ import { articleAt, pageAt } from './text.mjs';
  * Sprint 002.33 raises both: 2 and 4. The result's shape is unchanged (one rule per sector) but the answer the model
  * is asked for is not (`appliesTo`, not `sector`), so every reading made by the earlier prompt is read again once:
  * the schema bump empties the cache at the service's start, the prompt bump changes every result's key.
+ * Sprint 002.37 raises the prompt to 5 (the reading guidance); the schema stays 2, the result's shape is unchanged.
+ * (Sprint 002.43 tried a version 6 with one more guidance line and did not ship it: see its sprint.)
  */
 export const SCHEMA_VERSION = 2;
-export const PROMPT_VERSION = 4;
+export const PROMPT_VERSION = 5;
 /** What the service reads with since 002.33: the sectors expanded by the code. `extractChapter`'s own default stays the earlier reading, which the recorded fixtures replay. */
 export const SECTORS_IN_CODE = true;
+/** What the service reads with since 002.37: the reading guidance after the instructions. `extractChapter`'s own default stays without it. */
+export const GUIDANCE_IN_PROMPT = true;
 export const MAX_CHUNK_CHARS = 40_000;
 export const MAX_ITEMS_PER_CHUNK = 120;
 export const CONDITION_WINDOW = 1_500;
@@ -105,6 +109,11 @@ export const MINIMUM_KINDS = new Set([
 export const STRIP_EDGES = ['all', 'street', 'side', 'rear', 'side_rear'];
 /** The kinds a strip may qualify: a height, in metres. */
 const STRIP_KINDS = new Set(['height_total', 'height_facade']);
+/** Sprint 002.45: the kinds that are a distance to a limit or a building, the ones a level-difference formula sets. */
+const DISTANCE_KINDS = new Set(['road_setback', 'boundary_setback', 'building_distance']);
+/** « … au moins égal à la différence de niveau (H) … » or « L = H … »: the distance is a function of a height. */
+const DEPENDS_ON_LEVEL_DIFFERENCE =
+  /(?:[ée]gal|[ée]gale|[ée]gaux|sup[ée]rieure?s?)\s+(?:[àa]\s+)?la\s+diff[ée]rence\s+(?:de\s+niveau|d['’]altitude)|\bL\s*=\s*H\b/iu;
 
 /** DEC-6, `schemaVersion: 1` (Sprint 002.21 adds the optional `strip`; a result without it reads as no strip). */
 export const ITEM_SCHEMA = Object.freeze({
@@ -217,6 +226,30 @@ export const INSTRUCTIONS_SECTORS_IN_CODE = INSTRUCTIONS.replace(
   /^sector — .*$/mu,
   'applies — where the rule applies: "zone" when it is the zone\'s own rule and the text names no sector; "all" when the text states it for the zone and every one of its sectors; otherwise an array of the sector codes it names, spelled as the text spells them (« UDa », « UCe1b »), the zone\'s own code standing for the zone itself. One item per rule: never repeat an item for each sector, list the sectors in appliesTo.'
 );
+
+// Reading guidance (Sprint 002.37) ----------------------------------------------------------------
+
+/**
+ * Sprint 002.37. Cases the model skips, found by the triage of 2026-11-20 and a read of the pages: a cap inside a
+ * list of permitted uses, two limits in one sentence, a table row, a graphic value that replaces the written one,
+ * a strip's depth outside the quoted passage, and sectors left out of an enumeration. Behind `extractChapter`'s
+ * `guidance` option and the harness's `--variant guidance`; the reading as it ships does not hold it.
+ */
+export const GUIDANCE = [
+  'Read these cases with care, they are easy to skip.',
+  'limits — a sentence that sets two limits (a share and an area, a percentage and a ceiling in m2) is two items, one per limit, with the same passage.',
+  'permitted uses — a cap on an extension or an annex written inside a list of permitted uses or conditions (« occupations et utilisations du sol admises sous conditions », « une seule extension … dans la limite de 15 % de la surface de plancher existante ») is an item (extension_max or annex_max), for the sectors the list sits under.',
+  "tables — a row of a table is a rule: the row's label (a sector, an initial floor area) is its condition, the cell is its limit.",
+  "strip — quote in the passage the clause that gives the strip's depth together with the height (« dans une bande de 0 à 4 mètres … n'excède pas 3,5 mètres »).",
+  'graphic — when the text says a value on the graphic documents replaces the written value (« sa valeur se substitue »), add a see_graphic item of the same kind.',
+  'sectors — list every sector the sentence names: read the whole enumeration (« dans la zone UD et les secteurs UDa, UDa1 et UDa2 ») before answering.'
+].join('\n');
+
+/** The instructions of a reading, with the guidance after them when asked (the zone's own line is added by `extractChapter`). */
+export function instructionsFor({ sectorsInCode = false, guidance = false } = {}) {
+  const base = sectorsInCode ? INSTRUCTIONS_SECTORS_IN_CODE : INSTRUCTIONS;
+  return guidance ? `${base}\n${GUIDANCE}` : base;
+}
 
 /** The item schema with `appliesTo` in place of `sector`. */
 export const ITEM_SCHEMA_SECTORS_IN_CODE = Object.freeze({
@@ -371,6 +404,11 @@ export function coherent(value) {
     case 'annex_max':
       return (limit.kind === 'value' && limit.unit === 'm2') || limit.kind === 'ratio';
     case 'footprint_ratio':
+      // Sprint 002.36: a cap on the footprint is a share or an area (lotissement rules state either, or both).
+      return (
+        (limit.kind === 'value' && (limit.unit === 'percent' || limit.unit === 'm2')) ||
+        limit.kind === 'ratio'
+      );
     case 'green_ratio':
       return (limit.kind === 'value' && limit.unit === 'percent') || limit.kind === 'ratio';
     case 'extension_max':
@@ -441,6 +479,18 @@ export function statementInPassage(statement, passage) {
   return true;
 }
 
+/**
+ * Sprint 002.38: the rest of the sentence a passage ends in, from `end` to the next full stop or semicolon (at most
+ * 200 characters). A model that cuts its quotation just before « graphique » or « réglementée » has still quoted the
+ * sentence that says it; the statement's words are looked for there too, never further.
+ */
+export function restOfSentence(text, end) {
+  if (!Number.isInteger(end) || end < 0 || end >= text.length) return '';
+  const tail = text.slice(end, end + 200);
+  const stop = tail.search(/[.;]/u);
+  return stop === -1 ? tail : tail.slice(0, stop);
+}
+
 const NO_SECTOR = new Set(['', 'null', 'none', 'aucun', 'aucune', 'n/a', 'na', '-']);
 
 /** A sector the model wrote as a word for "none" is null (S3). */
@@ -491,7 +541,11 @@ export function verifiedStrip(value, passage) {
   )
     return null;
   const written = numbersIn(passage);
-  if (!written.some((w) => Math.abs(w - strip.depthMetres) < 1e-9)) return null;
+  const depthWritten = written.filter((w) => Math.abs(w - strip.depthMetres) < 1e-9).length;
+  // Sprint 002.42: a depth that is the height's own figure (« inférieure ou égale à 4 mètres » in a strip of unstated
+  // depth) is not grounded by that figure: it must be written once more, as the depth.
+  const needed = Math.abs(value.limit.value - strip.depthMetres) < 1e-9 ? 2 : 1;
+  if (depthWritten < needed) return null;
   return { depthMetres: strip.depthMetres, edges: strip.edges, permits: strip.permits };
 }
 
@@ -502,24 +556,19 @@ export function verifiedStrip(value, passage) {
  */
 export function placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes, dropped }) {
   const value = { ...item.value, sector: sectorOf(item.value.sector) };
-  if (!coherent(value) || !statementInPassage(value.statement, item.passage.text)) {
+  if (
+    !coherent(value) ||
+    !statementInPassage(
+      value.statement,
+      `${item.passage.text} ${restOfSentence(chunk.text, item.passage.end)}`
+    )
+  ) {
     dropped.incoherent += 1;
     return undefined;
   }
   let confidence = ['high', 'medium', 'low'].includes(value.confidence) ? value.confidence : 'low';
   // Sprint 002.21: a strip is a claim about the text, checked like a limit's value.
   let strip = null;
-  if (value.strip !== undefined && value.strip !== null) {
-    strip = verifiedStrip(value, item.passage.text);
-    if (strip === null) {
-      // A height the text holds to a strip, read without it, would be a limit on the whole
-      // building: it stays a statement in words, never a number the plot is measured by.
-      dropped.stripNotInPassage = (dropped.stripNotInPassage ?? 0) + 1;
-      value.statement = 'described';
-      value.limit = null;
-      confidence = 'low';
-    }
-  }
 
   // DEC-5: the occurrence.
   let occurrences = [{ start: item.passage.start, end: item.passage.end }];
@@ -576,6 +625,37 @@ export function placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes,
     confidence = 'low';
   }
 
+  // Sprint 002.35: the depth may be written in the passage or in a condition verified above (« Dans une bande de
+  // 0 à 4 mètres … » is the clause before the sentence that gives the height); the conditions are the text's own words.
+  if (value.strip !== undefined && value.strip !== null) {
+    strip = verifiedStrip(value, [item.passage.text, ...conditions].join('\n'));
+    if (strip === null) {
+      // A height the text holds to a strip, read without it, would be a limit on the whole
+      // building: it stays a statement in words, never a number the plot is measured by.
+      dropped.stripNotInPassage = (dropped.stripNotInPassage ?? 0) + 1;
+      value.statement = 'described';
+      value.limit = null;
+      confidence = 'low';
+    }
+  }
+
+  // Sprint 002.45: « au moins égal à la différence de niveau (H) …, diminuée de 4 mètres, avec un minimum de 4 mètres »
+  // is a formula whose 4 m is a floor; read as a plain « minimum 4 m » it would be a distance the plot is measured by,
+  // wrongly. It stays a statement in words (the model's other reading, `height_relative`, passes untouched).
+  if (
+    value.statement === 'limit' &&
+    value.limit?.kind === 'value' &&
+    DISTANCE_KINDS.has(value.kind) &&
+    DEPENDS_ON_LEVEL_DIFFERENCE.test(
+      `${item.passage.text} ${restOfSentence(chunk.text, item.passage.end)}`
+    )
+  ) {
+    dropped.formulaReadAsFixed = (dropped.formulaReadAsFixed ?? 0) + 1;
+    value.statement = 'described';
+    value.limit = null;
+    confidence = 'low';
+  }
+
   if (!valueInPassage(value.limit, prepared.text.slice(start, end))) {
     dropped.valueNotInPassage += 1;
     confidence = 'low';
@@ -606,7 +686,12 @@ export function placeItem({ prepared, chunk, normalisedChunk, item, sectorCodes,
 
 /** One answer item as one item per sector, each then checked and placed like any other; none if it names no usable sector. */
 function expandedItems(item, sectorInfo, dropped) {
-  const { sectors, unknown = [] } = expandAppliesTo(item.value.appliesTo, sectorInfo);
+  // Sprint 002.42: a sentence with no figure that holds for « all » says the same in every sector: one rule of the zone.
+  const everywhere = item.value.appliesTo === 'all' && item.value.statement === 'described';
+  const { sectors, unknown = [] } = expandAppliesTo(
+    everywhere ? 'zone' : item.value.appliesTo,
+    sectorInfo
+  );
   if (unknown.length > 0) dropped.unknownSector = (dropped.unknownSector ?? 0) + 1;
   else if (sectors.length === 0) dropped.schemaInvalid += 1;
   const { appliesTo: _appliesTo, ...value } = item.value;
@@ -655,7 +740,8 @@ export async function extractChapter({
   signal,
   memo,
   memoSalt = '',
-  sectorsInCode = false
+  sectorsInCode = false,
+  guidance = false
 }) {
   const chunks = splitChunks(
     prepared,
@@ -664,12 +750,13 @@ export async function extractChapter({
   const sectorCodes = new Set(prepared.sectors.filter((s) => s.heading).map((s) => s.code));
   // Sprint 002.33: the sectors expanded by the code. The model is told the zone and its sectors, as found in the text.
   const sectorInfo = sectorsInCode ? sectorsOfChapter(prepared) : undefined;
-  const instructions =
+  const base =
     sectorInfo === undefined
       ? INSTRUCTIONS
       : sectorInfo.zone === undefined
         ? INSTRUCTIONS_SECTORS_IN_CODE
         : `${INSTRUCTIONS_SECTORS_IN_CODE}\nZone: ${sectorInfo.zone}. ${sectorInfo.sectors.length === 0 ? 'This zone has no sector.' : `Sectors of this zone: ${sectorInfo.sectors.join(', ')}.`}`;
+  const instructions = guidance ? `${base}\n${GUIDANCE}` : base;
   // `valueNotInPassage` and `droppedConditions` count rules kept at low confidence.
   const dropped = {
     passageNotFound: 0,
@@ -702,7 +789,7 @@ export async function extractChapter({
         ? undefined
         : createHash('sha1')
             .update(
-              `${memoSalt}\0${PROMPT_VERSION}${sectorsInCode ? '\0sectors-in-code' : ''}\0${chunk.text}`
+              `${memoSalt}\0${PROMPT_VERSION}${sectorsInCode ? '\0sectors-in-code' : ''}${guidance ? '\0guidance' : ''}\0${chunk.text}`
             )
             .digest('hex');
     let answer = memoKey === undefined ? undefined : memo.get(memoKey);

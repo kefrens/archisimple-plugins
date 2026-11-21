@@ -1,3 +1,6 @@
 dist/
 node_modules/
 .data/
+
+# Replayed model answers of the reading evaluation (Sprint 002.34)
+.cache/

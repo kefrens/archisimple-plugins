@@ -19,6 +19,12 @@
   now shows a notice (« Relire remplace la lecture partagée du … (…) pour tous les utilisateurs de ce serveur ») and opens a required « Remplacer la
   lecture partagée » choice; the action is refused without it. A partial or stopped reading has no form (nothing shared is replaced).
 - Strings: `written.again.{replaces,field,option,notConfirmed}`, `written.state.alreadyReadNoVersion` (en, fr); `written.state.alreadyRead` gains `{version}`.
+- **A cap on the footprint written as an area (Sprint 002.36).** Lotissement and hameau rules often cap the emprise au sol in m², alone or beside a
+  share. A written or entered `footprint_ratio` whose limit is a **maximum in m²** is now checked against the measured footprint (a check of its own, no
+  plot area needed), and **the stricter of the share and the area is the budget** (the bar, the headline's gauge and verdict, « how much is left »,
+  the programme's line); both rules show, the area under « Plafond d’emprise (surface) ». A new entry kind « Emprise au sol, plafond de surface » in
+  the add-area form. No SDK change (the kind is the same; the limit is a value in m²). Needs the service's `coherent()` widening (0.7.0).
+  Strings: `entered.kind.footprint_area`, `surfaces.budget.{capOnly,areaCap}`, `question.area.allowedByArea`, `programme.footprintArea` (en, fr).
 - A host without `ai.cards` changes nothing: the Rules view's button (002.28) stays the way in.
 - Strings: `offer.{title,note.model,note.defaultModel,note.shared,action}` (en, fr). Tests: eight in `written.test.mjs`; the 002.23 disposal test now
   also counts the offer.

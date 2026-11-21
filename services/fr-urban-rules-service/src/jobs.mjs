@@ -41,7 +41,13 @@ import { cacheKey } from './cache.mjs';
 import { findChapter } from './chapter.mjs';
 import { ServiceError } from './errors.mjs';
 import { AiError } from './ai-client.mjs';
-import { PROMPT_VERSION, SCHEMA_VERSION, SECTORS_IN_CODE, extractChapter } from './extract.mjs';
+import {
+  GUIDANCE_IN_PROMPT,
+  PROMPT_VERSION,
+  SCHEMA_VERSION,
+  SECTORS_IN_CODE,
+  extractChapter
+} from './extract.mjs';
 import { prepareChapter } from './text.mjs';
 
 export const QUEUE_MAX = 10;
@@ -253,6 +259,7 @@ export function createExtractions({ store, documents, results, ai, limiters, log
           prepared,
           // 002.33: the model says where a rule applies, the code gives one item per sector.
           sectorsInCode: SECTORS_IN_CODE,
+          guidance: GUIDANCE_IN_PROMPT,
           // Every model call carries the provider the user chose and the account's entitlement.
           ai: { ...ai, extract: (request) => ai.extract(request, { ...job.route, signal: job.controller.signal }) },
           maxTextLength: health.maxTextLength,

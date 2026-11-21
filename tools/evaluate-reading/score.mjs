@@ -186,6 +186,24 @@ function distance(a, b) {
   return 0;
 }
 
+/**
+ * Sprint 002.35: a share of the plot is one limit however it is written. The extension reads a footprint cap in
+ * percent and a green minimum in percent either as `value … percent` or as a `ratio` **of the plot area**
+ * (`footprintPercentOf`, `greenPercentOf`), so the scorer does too, for those two kinds and those two directions
+ * only. Any other base, direction or kind keeps its own spelling.
+ */
+function sameSharedLimit(rule) {
+  const l = rule.limit;
+  const wanted =
+    rule.kind === 'footprint_ratio' ? 'max' : rule.kind === 'green_ratio' ? 'min' : undefined;
+  if (l?.kind !== 'ratio' || wanted === undefined) return rule;
+  if (l.base !== 'plot_area' || l.comparison !== wanted) return rule;
+  return {
+    ...rule,
+    limit: { kind: 'value', comparison: l.comparison, value: l.percent, unit: 'percent' }
+  };
+}
+
 // ── Matching ───────────────────────────────────────────────────────────────────
 
 /**
@@ -196,8 +214,8 @@ export function matchRules(truthRules, readRules, { zone } = {}) {
   // A sector that is the zone's own name is the whole zone (a table row labelled « UC » in zone UC).
   const wholeZone = (r) =>
     zone !== undefined && sectorKey(r.sector) === sectorKey(zone) ? { ...r, sector: null } : r;
-  const tn = truthRules.map(wholeZone);
-  const rn = readRules.map(wholeZone);
+  const tn = truthRules.map((r) => sameSharedLimit(wholeZone(r)));
+  const rn = readRules.map((r) => sameSharedLimit(wholeZone(r)));
   const freeT = new Set(truthRules.keys());
   const freeR = new Set(readRules.keys());
   const found = [];
@@ -244,7 +262,7 @@ export function matchRules(truthRules, readRules, { zone } = {}) {
 
   // 4. Duplicates: a further read rule saying what a matched one says, whatever its sector.
   const said = new Set(
-    [...found, ...sectorError].map(({ read }) => sectorFreeKey(wholeZone(read)))
+    [...found, ...sectorError].map(({ read }) => sectorFreeKey(sameSharedLimit(wholeZone(read))))
   );
   for (const ri of [...freeR]) {
     if (said.has(sectorFreeKey(rn[ri]))) {
@@ -279,6 +297,23 @@ export function figuresIn(text) {
   });
 }
 
+/**
+ * Whether a read rule is on a sentence the truth considered and left out: same page, and the passage and the
+ * recorded quote share their first 40 characters (whitespace and case aside), either way round.
+ */
+function isAccepted(read, notAdopted) {
+  if (!Array.isArray(notAdopted)) return false;
+  const flat = (t) => squash(t).toLowerCase();
+  const passage = flat(read.passage ?? '');
+  if (passage.length < 20) return false;
+  return notAdopted.some((n) => {
+    if (n.page !== read.page || typeof n.quote !== 'string') return false;
+    const quote = flat(n.quote);
+    const head = Math.min(40, quote.length, passage.length);
+    return quote.includes(passage.slice(0, head)) || passage.includes(quote.slice(0, head));
+  });
+}
+
 // ── Scoring a reading ──────────────────────────────────────────────────────────
 
 function droppedOf(dropped) {
@@ -297,7 +332,11 @@ export function scoreReading({ truth, result, chapterText = '' }) {
   const scope = Array.isArray(truth.scopeKinds) ? new Set(truth.scopeKinds) : undefined;
   const read = scope === undefined ? allRead : allRead.filter((r) => scope.has(r.kind));
   const outOfScope = scope === undefined ? [] : allRead.filter((r) => !scope.has(r.kind));
-  const m = matchRules(truth.rules, read, { zone: truth.zone });
+  const matched = matchRules(truth.rules, read, { zone: truth.zone });
+  // Sprint 002.43: a read rule on a sentence the truth recorded as « not adopted » (the cross-check weighed it and
+  // left it out) is **accepted**, reported apart, never an extra.
+  const accepted = matched.extra.filter((r) => isAccepted(r, truth.crossCheck?.notAdopted));
+  const m = { ...matched, extra: matched.extra.filter((r) => !accepted.includes(r)) };
   const counts = {
     truth: truth.rules.length,
     read: read.length,
@@ -307,6 +346,7 @@ export function scoreReading({ truth, result, chapterText = '' }) {
     wrongValue: m.wrongValue.length,
     missed: m.missed.length,
     extra: m.extra.length,
+    accepted: accepted.length,
     duplicates: m.duplicates.length,
     outOfScope: outOfScope.length
   };
@@ -356,6 +396,7 @@ export function scoreReading({ truth, result, chapterText = '' }) {
       wrongValue: m.wrongValue,
       sectorError: m.sectorError,
       extra: m.extra,
+      accepted,
       duplicates: m.duplicates,
       outOfScope
     }

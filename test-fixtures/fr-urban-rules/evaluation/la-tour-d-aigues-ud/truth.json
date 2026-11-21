@@ -1,0 +1,246 @@
+{
+  "format": "archisimple-reading-truth",
+  "version": 1,
+  "zone": "UD",
+  "document": {
+    "idurba": "84133_PLU_20181012",
+    "nomfic": "84133_reglement_20181012.pdf",
+    "partition": "DU_84133"
+  },
+  "chapter": {
+    "pages": [
+      57,
+      65
+    ]
+  },
+  "scopeKinds": [
+    "road_setback",
+    "boundary_setback",
+    "building_distance",
+    "footprint_ratio",
+    "extension_max",
+    "annex_max",
+    "height_total",
+    "height_facade",
+    "green_ratio"
+  ],
+  "scopeNote": "Left out on purpose: art. 1-2 use rules and flood-risk reference; art. 3 access and road widths (5 m, 6 m) and the 5 m gate (portail) setback from the alignment (fences/gates, not a building setback); art. 4 networks and the stormwater volume formula (60 mm/h x 0,70); art. 5 'Non règlementé' (lot characteristics, no in-scope kind); the art. 6 setbacks from watercourse banks (20 m from the berges de l'Eze, 10 m from other watercourses and canals), which are not distances from roads or public spaces; the art. 6 and 7 'Dispositions particulières' exempting extensions of non-compliant buildings and public technical works (described exceptions); art. 10 roof pitch 25-35 %; art. 11 aspect rules (roof pitch, 0,50 m fence base, 1,5 m awning depth, 30 x 30 cm pillars, window proportions); art. 12 parking (25 m2 per space, 2,30 m width, 1 space per 50 m2 of floor area); art. 13 qualitative planting rules; art. 14-15 energy and fibre recommendations. The zone sets no extension_max or annex_max (area) figure and names no sub-sector.",
+  "provenance": {
+    "source": "Géoportail de l'urbanisme (GPU)",
+    "licence": "Licence Ouverte v2.0 (Etalab)",
+    "retrievedAt": "2026-11-20",
+    "text": "test-fixtures/fr-urban-rules/evaluation/la-tour-d-aigues-ud/pages.json"
+  },
+  "draftedBy": "Claude Opus 5.5 (a subagent), from the written conventions of the evaluation set",
+  "draftedAt": "2026-11-20",
+  "draftNote": "Drafted from the chapter's text before any model's reading of it, by a model that saw only the chapter, the conventions and the product's definitions (never another truth, never a reading). Held-out zone of another document and layout. Judgement calls of the drafter: Art. 6 river-bank setbacks (20 m Eze, 10 m other watercourses) left out as not road_setback; a reader mapping all of art. 6 to road_setback would add two rules. | Art. 10 8 m ridge over 25% of the roof listed as a separate height_total limit though it is a partial allowance above the 5 m rule. | Art. 10 surélévation of existing buildings up to 8 m at the ridge listed as a height_total limit (figure-bearing existing-building allowance) rather than dropped as an exception. | Art. 10 annexes 3,5 m ridge height listed as height_total, not annex_max (annex_max requires an area figure). | Art. 7 annexes and pools 4 m from boundaries listed as boundary_setback (it is a distance to the plot limits, not a distance from the dwelling). | Art. 3 gate setback of 5 m from the alignment left out as a fence/gate rule rather than a building road_setback.",
+  "validatedBy": "independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",
+  "validatedAt": "2026-11-20",
+  "rules": [
+    {
+      "id": "td01",
+      "kind": "road_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 10,
+        "unit": "m"
+      },
+      "page": 60,
+      "quote": "10 mètres par rapport à l’axe de la RD956,",
+      "note": "Art. 6: minimum 10 m setback from the axis of the RD956 (annexes included)."
+    },
+    {
+      "id": "td02",
+      "kind": "road_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 10,
+        "unit": "m"
+      },
+      "page": 60,
+      "quote": "10 mètres par rapport à l’axe des voies et emprises publiques ou privées existantes, modifiées ou à créer,",
+      "note": "Art. 6: minimum 10 m setback from the axis of the other public or private roads and spaces."
+    },
+    {
+      "id": "td03",
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 7,
+        "unit": "m"
+      },
+      "page": 60,
+      "quote": "Les constructions doivent s’implanter en respectant un recul minimum de 7 mètres de chacune des limites séparatives.",
+      "note": "Art. 7: minimum 7 m from each side and rear boundary."
+    },
+    {
+      "id": "td04",
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 60,
+      "quote": "Les annexes et piscines doivent s’implanter en respectant un recul minimum de 4 mètres des limites séparatives.",
+      "note": "Art. 7: annexes and pools at least 4 m from the boundaries."
+    },
+    {
+      "id": "td05",
+      "kind": "building_distance",
+      "sector": null,
+      "statement": "not_regulated",
+      "limit": null,
+      "page": 61,
+      "quote": "aux autres sur une même propriété Non règlementé.",
+      "note": "Art. 8: not regulated."
+    },
+    {
+      "id": "td06",
+      "kind": "footprint_ratio",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 20,
+        "base": "plot_area"
+      },
+      "page": 61,
+      "quote": "L’emprise au sol totale des constructions ne peut excéder 20% de la surface de l’unité foncière.",
+      "note": "Art. 9: footprint at most 20% of the plot."
+    },
+    {
+      "id": "td07",
+      "kind": "height_facade",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 3.5,
+        "unit": "m"
+      },
+      "page": 61,
+      "quote": "La hauteur des constructions ne peut excéder 3,5 mètres à l’égout du toit (ou acrotère) et 5 mètres au faîtage.",
+      "note": "Art. 10: at most 3.5 m at the eaves (or parapet)."
+    },
+    {
+      "id": "td08",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 5,
+        "unit": "m"
+      },
+      "page": 61,
+      "quote": "La hauteur des constructions ne peut excéder 3,5 mètres à l’égout du toit (ou acrotère) et 5 mètres au faîtage.",
+      "note": "Art. 10: at most 5 m at the ridge (same sentence as the eaves height)."
+    },
+    {
+      "id": "td09",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 8,
+        "unit": "m"
+      },
+      "page": 61,
+      "quote": "La hauteur au faîtage peut être portée à 8 mètres sur 25% maximum de la surface de la toiture, avec une pente de toiture comprise entre 25 et 35 %.",
+      "note": "Art. 10: ridge may reach 8 m over at most 25% of the roof area."
+    },
+    {
+      "id": "td10",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 8,
+        "unit": "m"
+      },
+      "page": 61,
+      "quote": "Dans le cas de constructions existantes, une surélévation est autorisée jusqu’à 8 mètres au faîtage sur le volume existant,",
+      "note": "Art. 10: raising an existing building allowed up to 8 m at the ridge over the existing volume."
+    },
+    {
+      "id": "td11",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 3.5,
+        "unit": "m"
+      },
+      "page": 61,
+      "quote": "Les annexes à l’habitation ne pourront excéder une hauteur au faîtage égale à 3,5 mètres.",
+      "note": "Art. 10: annexes at most 3.5 m at the ridge (a height, not an area, so height_total not annex_max)."
+    },
+    {
+      "id": "td12",
+      "kind": "green_ratio",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 60,
+        "base": "plot_area"
+      },
+      "page": 64,
+      "quote": "Sur l’ensemble de la zone et pour chaque unité foncière, au minimum 60 % de la surface totale du terrain sera traitée en pleine terre.",
+      "note": "Art. 13: at least 60% of the plot in pleine terre."
+    }
+  ],
+  "crossCheck": {
+    "by": "a second model (Fable 5.2) given only the chapter text and the product's rule definitions, never this truth; the draft itself was written by another model (Opus 5.5) from the written conventions",
+    "at": "2026-11-20",
+    "blindRules": 14,
+    "draftersRulesFoundExactly": "12 of 12 (wrong values 0, other sectors 0, not found 0)",
+    "adopted": {
+      "reason": "nothing to add: every rule of the draft was found by the blind reader with the same kind, sector, figure and statement; the 2 other items are alternative rules with no figure.",
+      "ids": []
+    },
+    "notAdopted": [
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 60,
+        "quote": "Les dispositions générales ne s’appliquent pas à l’extension, l’aménagement ou la surélévation d’une construction existante ne respectant pas les règles ci-dess",
+        "why": "An alternative rule or exception with no figure of its own (the existing non-conforming building may be extended if the non-conformity is not worsened; annexes may stand on the boundary): not listed, as in every truth of this set."
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 61,
+        "quote": "à l’extension, l’aménagement ou la surélévation d’une construction existante ne respectant pas les règles ci-dessus, dans la mesure où ce non respect n’est pas ",
+        "why": "An alternative rule or exception with no figure of its own (the existing non-conforming building may be extended if the non-conformity is not worsened; annexes may stand on the boundary): not listed, as in every truth of this set."
+      }
+    ]
+  }
+}

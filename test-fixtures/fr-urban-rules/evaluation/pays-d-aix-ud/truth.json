@@ -97,16 +97,11 @@
       "id": "d05",
       "kind": "height_total",
       "sector": null,
-      "statement": "limit",
-      "limit": {
-        "kind": "value",
-        "comparison": "max",
-        "value": 4,
-        "unit": "m"
-      },
+      "statement": "described",
+      "limit": null,
       "page": 174,
       "quote": "la hauteur totale de l’extension soit inférieure ou égale à 4 mètres",
-      "note": "The alternative rule for an extension in the strip closer than the setback."
+      "note": "The alternative rule for an extension in the strip closer than the setback. REVISED: described, not a 4 m limit (the strip has no stated depth)."
     },
     {
       "id": "d06",
@@ -678,5 +673,15 @@
       }
     ],
     "notAdoptedNote": "Judgment calls the two readers differ on (what a kind covers, or a rule stated with no figure). They are left out of this truth, so a model that reads them is reported as an extra to classify, and the owner decides whether any belongs here."
-  }
+  },
+  "revisions": [
+    {
+      "at": "2026-11-20",
+      "sprint": "002.42",
+      "ids": [
+        "d05"
+      ],
+      "why": "Revised 2026-11-20 (Sprint 002.42), on the owner's decision after the held-out zones: the text sets a height of 4 m for an extension in a strip whose depth it does not state (« dans une bande … inférieure au retrait défini par la règle générale »), so it is a statement in words, not a plain limit on the whole building (Sprint 002.21). It was a plain 4 m limit in the draft, a convention taken from UD d05 and wrong. Applied to the baseline and the new readings alike."
+    }
+  ]
 }

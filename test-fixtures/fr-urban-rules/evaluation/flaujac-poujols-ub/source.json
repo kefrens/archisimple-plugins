@@ -1,0 +1,21 @@
+{
+  "zone": "UB",
+  "chapter": {
+    "pages": [
+      12,
+      16
+    ]
+  },
+  "provenance": {
+    "source": "Géoportail de l'urbanisme (GPU)",
+    "licence": "Licence Ouverte v2.0 (Etalab)",
+    "retrievedAt": "2026-11-20T22:54:40.112Z",
+    "documentId": "f367890bd084bd93c7895a348f101f21",
+    "partition": "DU_46105",
+    "idurba": "46105_PLU_20130325",
+    "nomfic": "46105_reglement_20130325.pdf",
+    "sha256": "9af36eb5152e7cb5a71addd13667cc55ce8ca786671960650b63f6516ab55ed6",
+    "title": "PLU de Flaujac-Poujols, règlement écrit"
+  },
+  "note": "Only the zone's chapter, as the service's parser reads it (public document). Held-out zone of another document and layout (an older article-by-article PLU): no prompt line, check or fixture was written for it."
+}

@@ -930,6 +930,33 @@ function footprintPercentOf(rule) {
 }
 
 /**
+ * Sprint 002.36: the footprint cap a rule states as an area, in m² — a maximum. A règlement (a lotissement's above
+ * all) may state it alone or beside a share; both apply and the stricter binds.
+ */
+function footprintAreaOf(rule) {
+  const limit = rule?.limit;
+  if (limit?.kind === 'value' && limit.quantity.unit === 'm2' && limit.comparison === 'max')
+    return limit.quantity.value;
+  return undefined;
+}
+
+/**
+ * Sprint 002.36: what the confirmed footprint rules allow — the stricter of the share of the plot (needs the plot's
+ * area) and the area cap (does not). `{ allowed, by: 'share' | 'area', rule }`, or undefined.
+ */
+function footprintAllowance(limits, plotArea) {
+  const byShare =
+    limits.ces !== undefined && plotArea !== undefined
+      ? (limits.ces.percent / 100) * plotArea
+      : undefined;
+  const byArea = limits.cap?.area;
+  if (byShare === undefined && byArea === undefined) return undefined;
+  if (byArea !== undefined && (byShare === undefined || byArea < byShare))
+    return { allowed: byArea, by: 'area', rule: limits.cap.rule };
+  return { allowed: byShare, by: 'share', rule: limits.ces.rule };
+}
+
+/**
  * 002.9 (a defect of 002.6b): the pleine terre share a green rule states, in
  * percent — a value in percent, or a written minimum ratio **of the plot area**
  * (the form « au minimum de 15 % » of a terrain takes as often). Any other base
@@ -7352,6 +7379,12 @@ const ENTERED_KINDS = {
     unit: 'percent',
     kind: 'footprint_ratio',
     label: 'fr-urban-rules.entered.kind.footprint_ratio'
+  },
+  // Sprint 002.36: a cap on the footprint written as an area (lotissement rules), beside or instead of a share.
+  footprint_area: {
+    unit: 'm2',
+    kind: 'footprint_ratio',
+    label: 'fr-urban-rules.entered.kind.footprint_area'
   },
   green_ratio: {
     unit: 'percent',
@@ -15088,10 +15121,16 @@ const edgeLetter = (number) => {
       footprints.length === 0
         ? undefined
         : footprints.reduce((a, b) => (b.percent < a.percent ? b : a));
+    // Sprint 002.36: the smallest confirmed cap written as an area.
+    const caps = confirmed
+      .filter((r) => r.kind === 'footprint_ratio')
+      .map((rule) => ({ rule, area: footprintAreaOf(rule) }))
+      .filter((f) => f.area !== undefined);
+    const cap = caps.length === 0 ? undefined : caps.reduce((a, b) => (b.area < a.area ? b : a));
     const notRegulated = confirmed.some(
       (r) => r.kind === 'footprint_ratio' && r.statement === 'not_regulated'
     );
-    return { heights, ces, notRegulated };
+    return { heights, ces, cap, notRegulated };
   }
 
   /** DEC-5: storeys from the confirmed heights, a range when the façade and total heights differ. */
@@ -15251,11 +15290,18 @@ const edgeLetter = (number) => {
     const governingLimits = confirmedLimits(planned);
     if (plu.area !== undefined && plotArea !== undefined) {
       const share = Math.round((plu.area / plotArea) * 1000) / 10;
-      const cesPercent = governingLimits.ces?.percent;
+      // Sprint 002.36: the stricter of the share and the area cap; the gauge's limit is that, as a share of the plot.
+      const allowance = footprintAllowance(governingLimits, plotArea);
+      const cesPercent =
+        allowance === undefined
+          ? undefined
+          : allowance.by === 'share'
+            ? governingLimits.ces.percent
+            : Math.round((allowance.allowed / plotArea) * 1000) / 10;
       // A verdict only on a confirmed limit: a rule still to confirm gives none (the host's own
       // rule for a check, ADR-0111 Rule 4).
       const within =
-        cesPercent === undefined ? undefined : plu.area <= (cesPercent / 100) * plotArea + RESOLUTION_HALF;
+        allowance === undefined ? undefined : plu.area <= allowance.allowed + RESOLUTION_HALF;
       blocks.push({
         kind: 'stat',
         label: { key: 'fr-urban-rules.surfaces.heading.emprise' },
@@ -15443,13 +15489,11 @@ const edgeLetter = (number) => {
     const footprintRules = planned.rules.filter(
       (r) =>
         r.kind === 'footprint_ratio' &&
-        footprintPercentOf(r) !== undefined &&
+        (footprintPercentOf(r) !== undefined || footprintAreaOf(r) !== undefined) &&
         (r.status === 'confirmed' || r.status === 'to_confirm')
     );
-    const allowed =
-      limits.ces !== undefined && plotArea !== undefined
-        ? (limits.ces.percent / 100) * plotArea
-        : undefined;
+    const allowance = footprintAllowance(limits, plotArea);
+    const allowed = allowance?.allowed;
     // Sprint 002.15: the budget is the host's used / remaining / allowed bar; the basis it rests on
     // is folded beneath. Without the bar (no allowance, or nothing measured) the rows say it all.
     const barDrawn = allowed !== undefined && allowed > 0 && plu.area !== undefined;
@@ -15470,11 +15514,22 @@ const edgeLetter = (number) => {
                 key: 'fr-urban-rules.surfaces.budget.ces',
                 params: { percent: limits.ces.percent }
               }
-            : limits.notRegulated
-              ? { key: 'fr-urban-rules.surfaces.budget.notRegulated' }
-              : { key: 'fr-urban-rules.surfaces.budget.noRule' },
+            : limits.cap !== undefined
+              ? { key: 'fr-urban-rules.surfaces.budget.capOnly' }
+              : limits.notRegulated
+                ? { key: 'fr-urban-rules.surfaces.budget.notRegulated' }
+                : { key: 'fr-urban-rules.surfaces.budget.noRule' },
         ...(limits.ces === undefined ? {} : { detail: limits.ces.rule.label })
       },
+      ...(limits.cap === undefined
+        ? []
+        : [
+            {
+              label: { key: 'fr-urban-rules.surfaces.budget.areaCap' },
+              value: m2(limits.cap.area),
+              detail: limits.cap.rule.label
+            }
+          ]),
       {
         label: { key: 'fr-urban-rules.surfaces.budget.plotArea' },
         value: plotArea === undefined ? { key: 'fr-urban-rules.value.none' } : m2(plotArea),
@@ -15523,8 +15578,10 @@ const edgeLetter = (number) => {
       blocks: [{ kind: 'fields', rows: budgetRows }]
     });
     for (const rule of footprintRules) {
+      // Sprint 002.36: a cap written as an area needs no plot area; a share does.
       const limit =
-        plotArea === undefined ? undefined : (footprintPercentOf(rule) / 100) * plotArea;
+        footprintAreaOf(rule) ??
+        (plotArea === undefined ? undefined : (footprintPercentOf(rule) / 100) * plotArea);
       const subject = { kind: 'plot', label: { key: 'fr-urban-rules.check.subject.plot' } };
       if (plu.area === undefined || limit === undefined) {
         checks.push({
@@ -16036,6 +16093,9 @@ const edgeLetter = (number) => {
           limits.ces === undefined
             ? undefined
             : { percent: limits.ces.percent, ruleId: limits.ces.rule.id },
+        // Sprint 002.36: set when the allowance is an area cap (the stricter, or the only one).
+        areaCap:
+          allowance?.by === 'area' ? { area: allowance.allowed, ruleId: allowance.rule.id } : undefined,
         notRegulatedRuleId: limits.notRegulated
           ? planned.rules.find(
               (r) =>
@@ -16947,10 +17007,8 @@ const edgeLetter = (number) => {
     const limits = confirmedLimits(planned);
     const plotArea =
       typeof site.plotArea === 'number' && site.plotArea > 0 ? site.plotArea : undefined;
-    const allowed =
-      limits.ces !== undefined && plotArea !== undefined
-        ? (limits.ces.percent / 100) * plotArea
-        : undefined;
+    const allowance = footprintAllowance(limits, plotArea);
+    const allowed = allowance?.allowed;
     let envelopeArea;
     const edges = boundaryEdges(site);
     const gate = envelopeRegime(regime, reportFacts);
@@ -17003,6 +17061,8 @@ const edgeLetter = (number) => {
       plotArea,
       allowed,
       ces: limits.ces?.percent,
+      // Sprint 002.36: set when the allowance is an area cap (it is the stricter, or the only one).
+      areaCap: allowance?.by === 'area' ? { area: allowance.allowed, ruleId: allowance.rule.id } : undefined,
       notRegulated: limits.notRegulated,
       heights: limits.heights,
       storeysAllowed,
@@ -17020,6 +17080,7 @@ const edgeLetter = (number) => {
       anyConfirmed:
         limits.heights.length > 0 ||
         limits.ces !== undefined ||
+        limits.cap !== undefined ||
         limits.notRegulated ||
         governing !== undefined
     };
@@ -18332,15 +18393,32 @@ const edgeLetter = (number) => {
     }
     let summary;
     let values;
-    if (figures.ces !== undefined && figures.allowed !== undefined) {
+    // Sprint 002.36: the allowance is the stricter of a share and an area cap; the claim says which one binds.
+    const allowanceClaim =
+      figures.allowed === undefined
+        ? undefined
+        : figures.areaCap !== undefined
+          ? {
+              text: { key: 'fr-urban-rules.question.area.allowedByArea' },
+              values: { allowed: squareMetres(figures.allowed) },
+              ruleId: figures.areaCap.ruleId
+            }
+          : figures.ces !== undefined
+            ? {
+                text: { key: 'fr-urban-rules.question.area.allowed' },
+                values: {
+                  allowed: squareMetres(figures.allowed),
+                  percent: { value: figures.ces.percent, unit: 'percent' }
+                },
+                ruleId: figures.ces.ruleId
+              }
+            : undefined;
+    if (allowanceClaim !== undefined) {
       claims.push({
-        text: { key: 'fr-urban-rules.question.area.allowed' },
-        values: {
-          allowed: squareMetres(figures.allowed),
-          percent: { value: figures.ces.percent, unit: 'percent' }
-        },
+        text: allowanceClaim.text,
+        values: allowanceClaim.values,
         basis: 'rule',
-        ruleId: figures.ces.ruleId
+        ruleId: allowanceClaim.ruleId
       });
       if (used !== undefined) {
         const remaining = figures.allowed - used;
@@ -18348,7 +18426,7 @@ const edgeLetter = (number) => {
           text: { key: 'fr-urban-rules.question.area.remaining' },
           values: { remaining: squareMetres(remaining) },
           basis: 'rule',
-          ruleId: figures.ces.ruleId
+          ruleId: allowanceClaim.ruleId
         });
         summary =
           remaining < -RESOLUTION_HALF
@@ -18836,7 +18914,11 @@ function createProgrammeStage({ facts, site, translate = () => undefined }) {
       } else if (!read.anyConfirmed) {
         assumptions.push(say('fr-urban-rules.programme.noRule'));
       } else {
-        if (read.ces !== undefined && read.allowed !== undefined) {
+        if (read.areaCap !== undefined && read.allowed !== undefined) {
+          assumptions.push(
+            say('fr-urban-rules.programme.footprintArea', { allowed: round(read.allowed) })
+          );
+        } else if (read.ces !== undefined && read.allowed !== undefined) {
           assumptions.push(
             say('fr-urban-rules.programme.footprint', {
               percent: read.ces,

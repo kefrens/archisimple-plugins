@@ -1,0 +1,21 @@
+{
+  "zone": "UD",
+  "chapter": {
+    "pages": [
+      57,
+      65
+    ]
+  },
+  "provenance": {
+    "source": "Géoportail de l'urbanisme (GPU)",
+    "licence": "Licence Ouverte v2.0 (Etalab)",
+    "retrievedAt": "2026-11-20T22:54:40.019Z",
+    "documentId": "da1dd747eeb4083afc3bac1826aa6eb1",
+    "partition": "DU_84133",
+    "idurba": "84133_PLU_20181012",
+    "nomfic": "84133_reglement_20181012.pdf",
+    "sha256": "f219948501c6e70023003f91915d5e4a76768dfca480fca8123f5b542f7b166f",
+    "title": "PLU de La Tour-d'Aigues, règlement écrit (tome 5)"
+  },
+  "note": "Only the zone's chapter, as the service's parser reads it (public document). Held-out zone of another document and layout (an older article-by-article PLU): no prompt line, check or fixture was written for it."
+}

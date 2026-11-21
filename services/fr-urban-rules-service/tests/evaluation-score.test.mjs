@@ -541,3 +541,96 @@ test("the headline says who validated each zone it counts, so an owner's validat
   });
   assert.deepEqual(h.byModel.m.validators, h.headline.validators);
 });
+
+// ── Sprint 002.35: a share of the plot is one thing, however it is written ─────────────────────
+
+test('for the footprint and the green ratio, « 15 % » and « 15 % of the plot area » are the same limit, as the extension reads them', () => {
+  const percent = (comparison, n) => ({ kind: 'value', comparison, value: n, unit: 'percent' });
+  const ofPlot = (comparison, n) => ({ kind: 'ratio', comparison, percent: n, base: 'plot_area' });
+  const green = matchRules(
+    [rule('green_ratio', null, ofPlot('min', 15))],
+    [rule('green_ratio', null, percent('min', 15))]
+  );
+  assert.equal(green.found.length, 1);
+  assert.equal(green.wrongValue.length, 0);
+  const footprint = matchRules(
+    [rule('footprint_ratio', 'UDa', percent('max', 30))],
+    [rule('footprint_ratio', 'UDa', ofPlot('max', 30))]
+  );
+  assert.equal(footprint.found.length, 1);
+  // The numbers still count: 15 % is not 20 %, in either spelling.
+  const wrong = matchRules(
+    [rule('green_ratio', null, ofPlot('min', 15))],
+    [rule('green_ratio', null, percent('min', 20))]
+  );
+  assert.equal(wrong.found.length, 0);
+  assert.equal(wrong.wrongValue.length, 1);
+});
+
+test('the equivalence stops where the extension stops: another base, another comparison, another kind', () => {
+  const percent = (comparison, n) => ({ kind: 'value', comparison, value: n, unit: 'percent' });
+  const of = (base, comparison, n) => ({ kind: 'ratio', comparison, percent: n, base });
+  // A share of the existing footprint is not a share of the plot.
+  assert.equal(
+    matchRules(
+      [rule('footprint_ratio', null, of('existing_emprise', 'max', 30))],
+      [rule('footprint_ratio', null, percent('max', 30))]
+    ).found.length,
+    0
+  );
+  // An extension cap is a share of something else: the two spellings are not interchanged.
+  assert.equal(
+    matchRules(
+      [rule('extension_max', null, of('plot_area', 'max', 30))],
+      [rule('extension_max', null, percent('max', 30))]
+    ).found.length,
+    0
+  );
+  // A minimum footprint is not a footprint cap.
+  assert.equal(
+    matchRules(
+      [rule('footprint_ratio', null, of('plot_area', 'min', 30))],
+      [rule('footprint_ratio', null, percent('max', 30))]
+    ).found.length,
+    0
+  );
+});
+
+// ── Sprint 002.43: what the truth has considered and left out is not an extra ──────────────────
+
+test('a read rule the truth recorded as « not adopted » (same page, its sentence) is accepted, not an extra; any other is still an extra', () => {
+  const quote = 'Les piscines visées à l’article A2 sont limitées à 80 m2 de surface de bassin.';
+  const t = truth([rule('annex_max', null, value('max', 30, 'm2'), { page: 10, quote: 'Les annexes sont limitées à 30 m2.' })]);
+  t.crossCheck = {
+    notAdopted: [
+      { kind: 'annex_max', sector: null, statement: 'limit', limit: value('max', 80, 'm2'), page: 10, quote, why: 'a pool basin: out of scope' }
+    ]
+  };
+  const result = {
+    rules: [
+      withPassage(rule('annex_max', null, value('max', 30, 'm2')), 'Les annexes sont limitées à 30 m2.'),
+      // The same sentence, quoted a little differently, typed under another kind.
+      withPassage(rule('other', null, value('max', 80, 'm2')), 'Les piscines visées à l’article A2 sont limitées à 80 m2 de surface de bassin'),
+      // Another sentence, on the same page: a real extra.
+      withPassage(rule('green_ratio', null, { kind: 'ratio', comparison: 'min', percent: 20, base: 'plot_area' }), 'Au moins 20 % du terrain.')
+    ],
+    dropped: 0
+  };
+  const s = scoreReading({ truth: { ...t, scopeKinds: ['annex_max', 'green_ratio', 'other'] }, result, chapterText: '' });
+  assert.equal(s.counts.found, 1);
+  assert.equal(s.counts.accepted, 1);
+  assert.equal(s.counts.extra, 1, 'only the green ratio is unknown to the truth');
+  assert.equal(s.details.accepted.length, 1);
+  assert.equal(s.details.extra[0].kind, 'green_ratio');
+});
+
+test('a truth with no cross-check, or a not-adopted sentence on another page, accepts nothing', () => {
+  const t = truth([rule('annex_max', null, value('max', 30, 'm2'))]);
+  const read = withPassage(rule('other', null, value('max', 80, 'm2')), 'Les piscines sont limitées à 80 m2 de surface de bassin.', 12);
+  const none = scoreReading({ truth: t, result: { rules: [read], dropped: 0 }, chapterText: '' });
+  assert.equal(none.counts.accepted, 0);
+  assert.equal(none.counts.extra, 1);
+  t.crossCheck = { notAdopted: [{ kind: 'annex_max', page: 10, quote: 'Les piscines sont limitées à 80 m2 de surface de bassin.' }] };
+  const otherPage = scoreReading({ truth: t, result: { rules: [read], dropped: 0 }, chapterText: '' });
+  assert.equal(otherPage.counts.accepted, 0, 'page 10 is not page 12');
+});

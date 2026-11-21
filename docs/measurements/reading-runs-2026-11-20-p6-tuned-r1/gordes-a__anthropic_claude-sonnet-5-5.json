@@ -1,0 +1,1371 @@
+{
+  "zoneId": "gordes-a",
+  "model": "anthropic:claude-sonnet-5-5",
+  "variant": "shipped",
+  "result": {
+    "rules": [
+      {
+        "kind": "floor_area_max",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 250,
+          "unit": "m2"
+        },
+        "page": 44,
+        "article": "A 2",
+        "passage": "les constructions à usage d’habitation dans la limite de 250 m2 de surface de plancher,",
+        "offset": {
+          "start": 2051,
+          "end": 2138
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "A condition qu’elles soient nécessaires à l’exploitation agricole"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "annex_max",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 30,
+          "unit": "m2"
+        },
+        "page": 44,
+        "article": "A 2",
+        "passage": "les annexes à l’habitation dans la limite de 30 m2 d’emprise au sol par annexe et de 60 m2 de",
+        "offset": {
+          "start": 2141,
+          "end": 2234
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "A condition qu’elles soient nécessaires à l’exploitation agricole"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "extension_max",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 50,
+          "unit": "m2"
+        },
+        "page": 44,
+        "article": "A 2",
+        "passage": "réalisées\nen extension dans la limite de 50 m2 de surface de plancher formant un ensemble bâti",
+        "offset": {
+          "start": 2642,
+          "end": 2736
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "A condition qu’elles soient nécessaires à l’exploitation agricole"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium"
+      },
+      {
+        "kind": "extension_max",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "max",
+          "percent": 30,
+          "base": "surface_de_plancher"
+        },
+        "page": 45,
+        "article": "A 2",
+        "passage": "à 30% de la surface de plancher de la construction à usage d'habitation existante à la\ndate d'approbation du PLU dans la limite de 250 m2 de surface de plancher (existant +\nextension)",
+        "offset": {
+          "start": 4015,
+          "end": 4198
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans l’ensemble de la zone A à l’exception des secteurs concernés par la zone rouge du PPRIF"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "floor_area_max",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 250,
+          "unit": "m2"
+        },
+        "page": 45,
+        "article": "A 2",
+        "passage": "à 30% de la surface de plancher de la construction à usage d'habitation existante à la\ndate d'approbation du PLU dans la limite de 250 m2 de surface de plancher (existant +\nextension)",
+        "offset": {
+          "start": 4015,
+          "end": 4198
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans l’ensemble de la zone A à l’exception des secteurs concernés par la zone rouge du PPRIF"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "annex_max",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 30,
+          "unit": "m2"
+        },
+        "page": 45,
+        "article": "A 2",
+        "passage": "que les annexes soient implantées dans un rayon de 20 mètres de la construction à usage\nd'habitation auquel elle se rattache et dans la limite de 30 m2 de surface de plancher par\nannexe.",
+        "offset": {
+          "start": 4830,
+          "end": 5016
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Pour les constructions à usage d’habitation existantes à la date d’approbation du PLU"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 75,
+          "unit": "m"
+        },
+        "page": 47,
+        "article": "A 6",
+        "passage": "Route départementale D900 : 75 mètres de l’axe de la voie.",
+        "offset": {
+          "start": 10687,
+          "end": 10745
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Route départementale D900"
+        ],
+        "exceptions": [
+          "aux bâtiments\net logements liés à une exploitation agricole"
+        ],
+        "sectorUnplaced": false,
+        "confidence": "medium"
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 25,
+          "unit": "m"
+        },
+        "page": 47,
+        "article": "A 6",
+        "passage": "Route départementale D2 : 25 mètres de l’axe de la voie",
+        "offset": {
+          "start": 11045,
+          "end": 11100
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Route départementale D2"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 15,
+          "unit": "m"
+        },
+        "page": 47,
+        "article": "A 6",
+        "passage": "Autres routes départementales : 15 mètres de l’axe de la voie",
+        "offset": {
+          "start": 11104,
+          "end": 11165
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Autres routes départementales"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 10,
+          "unit": "m"
+        },
+        "page": 47,
+        "article": "A 6",
+        "passage": "Voies communales : 10 mètres de l’axe de la voie.",
+        "offset": {
+          "start": 11169,
+          "end": 11218
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Voies communales"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 10,
+          "unit": "m"
+        },
+        "page": 47,
+        "article": "A 6",
+        "passage": "Le long des rivières ou des canaux, les constructions devront être implantées à au moins 10 mètres\nde la limite du domaine public ou des berges.",
+        "offset": {
+          "start": 11219,
+          "end": 11363
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Le long des rivières ou des canaux"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 4,
+          "unit": "m"
+        },
+        "page": 48,
+        "article": "A 7",
+        "passage": "Lorsque la construction ne jouxte pas la limite séparative, la distance comptée horizontalement de tout\npoint de ce bâtiment au point de la limite séparative qui en est le plus rapproché, doit être au moins\négale à 4 mètres.",
+        "offset": {
+          "start": 11445,
+          "end": 11669
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Lorsque la construction ne jouxte pas la limite séparative"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "building_distance",
+        "sector": null,
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 48,
+        "article": "A 8",
+        "passage": "Non réglementé",
+        "offset": {
+          "start": 11770,
+          "end": 11784
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "footprint_ratio",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 250,
+          "unit": "m2"
+        },
+        "page": 48,
+        "article": "A 9",
+        "passage": "L’emprise au sol des constructions à usage d’habitations visées à l’article A2 est limitée à 250 m2.",
+        "offset": {
+          "start": 11910,
+          "end": 12010
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "constructions à usage d’habitations visées à l’article A2"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "annex_max",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 30,
+          "unit": "m2"
+        },
+        "page": 48,
+        "article": "A 9",
+        "passage": "Les annexes visées à l’article A2 sont limitées à 30 m2 d’emprise au sol par annexe.",
+        "offset": {
+          "start": 12011,
+          "end": 12095
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Les annexes visées à l’article A2"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 80,
+          "unit": "m2"
+        },
+        "page": 48,
+        "article": "A 9",
+        "passage": "Les piscines visées à l’article A2 sont limitées à 80 m2 de surface de bassin.",
+        "offset": {
+          "start": 12096,
+          "end": 12174
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Les piscines visées à l’article A2"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "height_facade",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 7,
+          "unit": "m"
+        },
+        "page": 48,
+        "article": "A 10",
+        "passage": "7 mètres à l’égout du toit et 8,50 mètres au faîtage pour les constructions à usage\nd’habitation,",
+        "offset": {
+          "start": 12335,
+          "end": 12432
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "pour les constructions à usage\nd’habitation"
+        ],
+        "exceptions": [
+          "constructions et installations d’intérêt\ncollectif ou de services publics lorsque leurs caractéristiques techniques l’imposent"
+        ],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "height_total",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 8.5,
+          "unit": "m"
+        },
+        "page": 48,
+        "article": "A 10",
+        "passage": "7 mètres à l’égout du toit et 8,50 mètres au faîtage pour les constructions à usage\nd’habitation,",
+        "offset": {
+          "start": 12335,
+          "end": 12432
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "pour les constructions à usage\nd’habitation"
+        ],
+        "exceptions": [
+          "constructions et installations d’intérêt\ncollectif ou de services publics lorsque leurs caractéristiques techniques l’imposent"
+        ],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "height_total",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 4.5,
+          "unit": "m"
+        },
+        "page": 48,
+        "article": "A 10",
+        "passage": "4,50 mètres au faîtage pour les annexes à l’habitation,",
+        "offset": {
+          "start": 12435,
+          "end": 12490
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "pour les annexes à l’habitation"
+        ],
+        "exceptions": [
+          "constructions et installations d’intérêt\ncollectif ou de services publics lorsque leurs caractéristiques techniques l’imposent"
+        ],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "height_total",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 10,
+          "unit": "m"
+        },
+        "page": 48,
+        "article": "A 10",
+        "passage": "10 mètres au faîtage pour les autres constructions.",
+        "offset": {
+          "start": 12493,
+          "end": 12544
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "pour les autres constructions"
+        ],
+        "exceptions": [
+          "constructions et installations d’intérêt\ncollectif ou de services publics lorsque leurs caractéristiques techniques l’imposent"
+        ],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 50,
+        "article": "A 12",
+        "passage": "Le stationnement des véhicules correspondant aux besoins des constructions et des installations doit\nêtre assuré en dehors des voies publiques ou privées.",
+        "offset": {
+          "start": 18716,
+          "end": 18870
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      }
+    ],
+    "dropped": {
+      "passageNotFound": 0,
+      "schemaInvalid": 0,
+      "overLimit": 0,
+      "conditionNotVerbatim": 0,
+      "incoherent": 0,
+      "valueNotInPassage": 0,
+      "droppedConditions": 0
+    },
+    "chunks": {
+      "of": 1,
+      "failed": 0
+    },
+    "model": {
+      "providerId": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "constraint": "schema"
+    }
+  },
+  "incomplete": false,
+  "raw": [
+    {
+      "items": [
+        {
+          "value": {
+            "kind": "floor_area_max",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 250,
+              "unit": "m2"
+            },
+            "strip": null,
+            "conditions": [
+              "A condition qu’elles soient nécessaires à l’exploitation agricole"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "les constructions à usage d’habitation dans la limite de 250 m2 de surface de plancher,"
+        },
+        {
+          "value": {
+            "kind": "annex_max",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 30,
+              "unit": "m2"
+            },
+            "strip": null,
+            "conditions": [
+              "A condition qu’elles soient nécessaires à l’exploitation agricole"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "les annexes à l’habitation dans la limite de 30 m2 d’emprise au sol par annexe et de 60 m2 de"
+        },
+        {
+          "value": {
+            "kind": "extension_max",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 50,
+              "unit": "m2"
+            },
+            "strip": null,
+            "conditions": [
+              "A condition qu’elles soient nécessaires à l’exploitation agricole"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "réalisées\n  en extension dans la limite de 50 m2 de surface de plancher formant un ensemble bâti"
+        },
+        {
+          "value": {
+            "kind": "extension_max",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "ratio",
+              "comparison": "max",
+              "percent": 30,
+              "base": "surface_de_plancher"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans l’ensemble de la zone A à l’exception des secteurs concernés par la zone rouge du PPRIF"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "à 30% de la surface de plancher de la construction à usage d'habitation existante à la\n  date d'approbation du PLU dans la limite de 250 m2 de surface de plancher (existant +\n  extension)"
+        },
+        {
+          "value": {
+            "kind": "floor_area_max",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 250,
+              "unit": "m2"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans l’ensemble de la zone A à l’exception des secteurs concernés par la zone rouge du PPRIF"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "à 30% de la surface de plancher de la construction à usage d'habitation existante à la\n  date d'approbation du PLU dans la limite de 250 m2 de surface de plancher (existant +\n  extension)"
+        },
+        {
+          "value": {
+            "kind": "annex_max",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 30,
+              "unit": "m2"
+            },
+            "strip": null,
+            "conditions": [
+              "Pour les constructions à usage d’habitation existantes à la date d’approbation du PLU"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "que les annexes soient implantées dans un rayon de 20 mètres de la construction à usage\n  d'habitation auquel elle se rattache et dans la limite de 30 m2 de surface de plancher par\n  annexe."
+        },
+        {
+          "value": {
+            "kind": "road_setback",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 75,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Route départementale D900"
+            ],
+            "exceptions": [
+              "aux bâtiments et logements liés à une exploitation agricole"
+            ],
+            "confidence": "medium"
+          },
+          "passage": "Route départementale D900 : 75 mètres de l’axe de la voie."
+        },
+        {
+          "value": {
+            "kind": "road_setback",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 25,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Route départementale D2"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Route départementale D2 : 25 mètres de l’axe de la voie"
+        },
+        {
+          "value": {
+            "kind": "road_setback",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 15,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Autres routes départementales"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Autres routes départementales : 15 mètres de l’axe de la voie"
+        },
+        {
+          "value": {
+            "kind": "road_setback",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 10,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Voies communales"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Voies communales : 10 mètres de l’axe de la voie."
+        },
+        {
+          "value": {
+            "kind": "road_setback",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 10,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Le long des rivières ou des canaux"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Le long des rivières ou des canaux, les constructions devront être implantées à au moins 10 mètres\nde la limite du domaine public ou des berges."
+        },
+        {
+          "value": {
+            "kind": "boundary_setback",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 4,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Lorsque la construction ne jouxte pas la limite séparative"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Lorsque la construction ne jouxte pas la limite séparative, la distance comptée horizontalement de tout\npoint de ce bâtiment au point de la limite séparative qui en est le plus rapproché, doit être au moins\négale à 4 mètres."
+        },
+        {
+          "value": {
+            "kind": "building_distance",
+            "appliesTo": "zone",
+            "statement": "not_regulated",
+            "limit": null,
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Non réglementé"
+        },
+        {
+          "value": {
+            "kind": "footprint_ratio",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 250,
+              "unit": "m2"
+            },
+            "strip": null,
+            "conditions": [
+              "constructions à usage d’habitations visées à l’article A2"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "L’emprise au sol des constructions à usage d’habitations visées à l’article A2 est limitée à 250 m2."
+        },
+        {
+          "value": {
+            "kind": "annex_max",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 30,
+              "unit": "m2"
+            },
+            "strip": null,
+            "conditions": [
+              "Les annexes visées à l’article A2"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Les annexes visées à l’article A2 sont limitées à 30 m2 d’emprise au sol par annexe."
+        },
+        {
+          "value": {
+            "kind": "other",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 80,
+              "unit": "m2"
+            },
+            "strip": null,
+            "conditions": [
+              "Les piscines visées à l’article A2"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Les piscines visées à l’article A2 sont limitées à 80 m2 de surface de bassin."
+        },
+        {
+          "value": {
+            "kind": "height_facade",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 7,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "pour les constructions à usage d’habitation"
+            ],
+            "exceptions": [
+              "constructions et installations d’intérêt collectif ou de services publics lorsque leurs caractéristiques techniques l’imposent"
+            ],
+            "confidence": "high"
+          },
+          "passage": "7 mètres à l’égout du toit et 8,50 mètres au faîtage pour les constructions à usage\n  d’habitation,"
+        },
+        {
+          "value": {
+            "kind": "height_total",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 8.5,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "pour les constructions à usage d’habitation"
+            ],
+            "exceptions": [
+              "constructions et installations d’intérêt collectif ou de services publics lorsque leurs caractéristiques techniques l’imposent"
+            ],
+            "confidence": "high"
+          },
+          "passage": "7 mètres à l’égout du toit et 8,50 mètres au faîtage pour les constructions à usage\n  d’habitation,"
+        },
+        {
+          "value": {
+            "kind": "height_total",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 4.5,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "pour les annexes à l’habitation"
+            ],
+            "exceptions": [
+              "constructions et installations d’intérêt collectif ou de services publics lorsque leurs caractéristiques techniques l’imposent"
+            ],
+            "confidence": "high"
+          },
+          "passage": "4,50 mètres au faîtage pour les annexes à l’habitation,"
+        },
+        {
+          "value": {
+            "kind": "height_total",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 10,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "pour les autres constructions"
+            ],
+            "exceptions": [
+              "constructions et installations d’intérêt collectif ou de services publics lorsque leurs caractéristiques techniques l’imposent"
+            ],
+            "confidence": "high"
+          },
+          "passage": "10 mètres au faîtage pour les autres constructions."
+        },
+        {
+          "value": {
+            "kind": "parking",
+            "appliesTo": "zone",
+            "statement": "described",
+            "limit": null,
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Le stationnement des véhicules correspondant aux besoins des constructions et des installations doit\nêtre assuré en dehors des voies publiques ou privées."
+        }
+      ],
+      "rejected": []
+    }
+  ],
+  "usage": {
+    "calls": 1,
+    "replayedChunks": 0,
+    "settled": 1,
+    "inputTokens": 13469,
+    "outputTokens": 3475,
+    "cacheReadTokens": 0,
+    "costMicrousd": 61688,
+    "estimated": false,
+    "unlisted": false
+  },
+  "seconds": 16.4,
+  "finishedAt": "2026-11-20T22:43:44.669Z",
+  "validated": true,
+  "validatedBy": "independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",
+  "score": {
+    "counts": {
+      "truth": 19,
+      "read": 17,
+      "exact": 14,
+      "sectorError": 0,
+      "found": 14,
+      "wrongValue": 1,
+      "missed": 4,
+      "extra": 0,
+      "accepted": 0,
+      "duplicates": 2,
+      "outOfScope": 4
+    },
+    "recall": 0.7368421052631579,
+    "wrongValueRate": 0.05263157894736842,
+    "sectorAttribution": 1,
+    "verified": 1,
+    "verifiedCount": 17,
+    "droppedTotal": 0,
+    "figureCoverage": {
+      "covered": 15,
+      "total": 26,
+      "uncovered": [
+        "0.6|m",
+        "1.8|m",
+        "10|percent",
+        "120|m2",
+        "121|m2",
+        "140|m2",
+        "200|m2",
+        "201|m2",
+        "20|m2",
+        "35|percent",
+        "70|m2"
+      ]
+    },
+    "repeats": {
+      "acrossSectors": 0,
+      "exact": 0
+    },
+    "details": {
+      "missed": [
+        {
+          "id": "g14",
+          "kind": "extension_max",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 20,
+            "unit": "m2"
+          },
+          "page": 45,
+          "quote": "+ 20 m2 de surface de plancher",
+          "note": "PPRIF red zone, initial floor area 121 to 200 m²: an absolute allowance."
+        },
+        {
+          "id": "g15",
+          "kind": "extension_max",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "ratio",
+            "comparison": "max",
+            "percent": 10,
+            "base": "surface_de_plancher"
+          },
+          "page": 45,
+          "quote": "+ 10% de surface de plancher existante à la date",
+          "note": "PPRIF red zone, initial floor area from 201 m², within 250 m² in all."
+        },
+        {
+          "id": "g17",
+          "kind": "extension_max",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 250,
+            "unit": "m2"
+          },
+          "page": 45,
+          "quote": "à 30% de la surface de plancher de la construction à usage d'habitation existante à la date d'approbation du PLU dans la limite de 250 m2 de surface de plancher (existant + extension),",
+          "note": "Added after the independent cross-check. Hesitation: cap on total floor area after extension (existing + extension); could be read as a floor-area maximum, kept as extension_max because it bounds the extension. Also applies in the red-zone row 'A partir de 201 m2'."
+        },
+        {
+          "id": "g18",
+          "kind": "extension_max",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 140,
+            "unit": "m2"
+          },
+          "page": 45,
+          "quote": "30% de la surface de plancher existante à la date d’approbation du PLU dans la limite de 140 m2 de surface de plancher au total (existant + extension)",
+          "note": "Added after the independent cross-check. PPRIF red zone, initial floor area 70 to 120 m2: total (existing + extension) capped at 140 m2. Not a zoning sector, so sector null."
+        }
+      ],
+      "wrongValue": [
+        {
+          "truth": {
+            "id": "g16",
+            "kind": "annex_max",
+            "sector": null,
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 60,
+              "unit": "m2"
+            },
+            "page": 44,
+            "quote": "les annexes à l’habitation dans la limite de 30 m2 d’emprise au sol par annexe et de 60 m2 de surface de bassin pour les piscines.",
+            "note": "Added after the independent cross-check. Hesitation: pool basin area, for dwellings necessary to a farm (A 2-1). Kept as annex_max because this sentence places pools under annexes."
+          },
+          "read": {
+            "kind": "annex_max",
+            "sector": null,
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 30,
+              "unit": "m2"
+            },
+            "page": 45,
+            "article": "A 2",
+            "passage": "que les annexes soient implantées dans un rayon de 20 mètres de la construction à usage\nd'habitation auquel elle se rattache et dans la limite de 30 m2 de surface de plancher par\nannexe.",
+            "offset": {
+              "start": 4830,
+              "end": 5016
+            },
+            "occurrence": {
+              "of": 1,
+              "chosenBy": "only"
+            },
+            "conditions": [
+              "Pour les constructions à usage d’habitation existantes à la date d’approbation du PLU"
+            ],
+            "exceptions": [],
+            "sectorUnplaced": false,
+            "confidence": "high"
+          }
+        }
+      ],
+      "sectorError": [],
+      "extra": [],
+      "accepted": [],
+      "duplicates": [
+        {
+          "kind": "road_setback",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 10,
+            "unit": "m"
+          },
+          "page": 47,
+          "article": "A 6",
+          "passage": "Le long des rivières ou des canaux, les constructions devront être implantées à au moins 10 mètres\nde la limite du domaine public ou des berges.",
+          "offset": {
+            "start": 11219,
+            "end": 11363
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Le long des rivières ou des canaux"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        },
+        {
+          "kind": "annex_max",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 30,
+            "unit": "m2"
+          },
+          "page": 48,
+          "article": "A 9",
+          "passage": "Les annexes visées à l’article A2 sont limitées à 30 m2 d’emprise au sol par annexe.",
+          "offset": {
+            "start": 12011,
+            "end": 12095
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Les annexes visées à l’article A2"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        }
+      ],
+      "outOfScope": [
+        {
+          "kind": "floor_area_max",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 250,
+            "unit": "m2"
+          },
+          "page": 44,
+          "article": "A 2",
+          "passage": "les constructions à usage d’habitation dans la limite de 250 m2 de surface de plancher,",
+          "offset": {
+            "start": 2051,
+            "end": 2138
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "A condition qu’elles soient nécessaires à l’exploitation agricole"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        },
+        {
+          "kind": "floor_area_max",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 250,
+            "unit": "m2"
+          },
+          "page": 45,
+          "article": "A 2",
+          "passage": "à 30% de la surface de plancher de la construction à usage d'habitation existante à la\ndate d'approbation du PLU dans la limite de 250 m2 de surface de plancher (existant +\nextension)",
+          "offset": {
+            "start": 4015,
+            "end": 4198
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans l’ensemble de la zone A à l’exception des secteurs concernés par la zone rouge du PPRIF"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        },
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 80,
+            "unit": "m2"
+          },
+          "page": 48,
+          "article": "A 9",
+          "passage": "Les piscines visées à l’article A2 sont limitées à 80 m2 de surface de bassin.",
+          "offset": {
+            "start": 12096,
+            "end": 12174
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Les piscines visées à l’article A2"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 50,
+          "article": "A 12",
+          "passage": "Le stationnement des véhicules correspondant aux besoins des constructions et des installations doit\nêtre assuré en dehors des voies publiques ou privées.",
+          "offset": {
+            "start": 18716,
+            "end": 18870
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        }
+      ]
+    }
+  }
+}

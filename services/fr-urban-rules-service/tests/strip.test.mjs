@@ -65,8 +65,8 @@ const setback = (fields = {}) =>
 const STRIP = { depthMetres: 5, edges: 'side_rear', permits: true };
 
 test('002.21: this version of the prompt and the schema — a strip, nothing else changed in the result’s shape', () => {
-  // 002.33 raised both (4 and 2): the answer asked for changed (`appliesTo`), the strip did not.
-  assert.equal(PROMPT_VERSION, 4);
+  // 002.33 raised both (4 and 2): the answer asked for changed (`appliesTo`), the strip did not. 002.37 raised the prompt to 5.
+  assert.equal(PROMPT_VERSION, 5);
   assert.equal(SCHEMA_VERSION, 2);
   assert.ok(ITEM_SCHEMA.required.includes('strip'));
   const object = ITEM_SCHEMA.properties.strip.anyOf.find((s) => s.type === 'object');

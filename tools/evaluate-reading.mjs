@@ -4,7 +4,7 @@
  *
  *     node tools/evaluate-reading.mjs [--zones lyon-uce1,pays-d-aix-uc] \
  *         [--models anthropic:claude-sonnet-5-5,anthropic:claude-haiku-5-5@low] \
- *         [--variant previous] [--max-spend 3] [--platform ../archisimple] [--out docs/measurements/reading-runs] [--confirm] [--again]
+ *         [--variant previous|unguided] [--cache <folder>] [--max-spend 3] [--platform ../archisimple] [--out docs/measurements/reading-runs] [--confirm] [--again]
  *
  * Without `--confirm` it prints the plan (the chunks, the tokens, the estimated cost) and calls nothing. With it,
  * the tool starts a stand-in for the account service's usage endpoint, starts the platform's AI service
@@ -12,6 +12,10 @@
  * the real extraction, scores each result against the zone's truth and writes `<out>/<zone>__<model>.json`. A pair
  * already written is skipped, so an interrupted run resumes (`--again` runs it anew). It stops before a pair once
  * the **measured** spend has reached `--max-spend` (dollars, default 3).
+ *
+ * `--cache <folder>` keeps each chunk's answer and replays it when the same model is asked the same thing (the same
+ * text, instructions and schema): for re-measuring a change that does not alter what the model is asked. **Never
+ * with the repeat runs that measure noise**: a replay measures nothing. A replayed pair costs nothing and says so.
  *
  * What is sent to a model is the public text of a PLU chapter and the product's own instructions; no user,
  * account, project or parcel is named, and no AI subject is sent.
@@ -25,10 +29,12 @@ import { fileURLToPath } from 'node:url';
 import { createAiClient } from '../services/fr-urban-rules-service/src/ai-client.mjs';
 import {
   createLedgerStub,
+  createReplayCache,
   estimateRun,
   formatPlan,
   loadZone,
   parseModel,
+  runFileName,
   runPlan
 } from './evaluate-reading/run.mjs';
 import { scoreReading, validateTruth } from './evaluate-reading/score.mjs';
@@ -70,8 +76,10 @@ for (const z of zones) {
 }
 const models = (options.models ?? DEFAULT_MODELS).split(',').map(parseModel);
 const variant = options.variant;
-if (variant !== undefined && variant !== 'previous')
-  throw new Error(`unknown --variant ${variant}: the shipped reading (no flag) or previous`);
+if (variant !== undefined && variant !== 'previous' && variant !== 'unguided')
+  throw new Error(
+    `unknown --variant ${variant}: the shipped reading (no flag), unguided or previous`
+  );
 const maxSpendMicrousd = Math.round(Number(options['max-spend'] ?? 3) * 1_000_000);
 const plan = estimateRun({ zones, models });
 
@@ -146,7 +154,9 @@ async function serviceFor(effort) {
 
 const finished = new Map();
 if (options.again !== true) {
-  for (const file of readdirSync(out).filter((n) => n.endsWith('.json'))) {
+  for (const file of readdirSync(out).filter(
+    (n) => n.endsWith('.json') && !n.endsWith('.incomplete.json')
+  )) {
     const run = JSON.parse(readFileSync(join(out, file), 'utf8'));
     finished.set(`${run.zoneId}|${run.model}`, run);
   }
@@ -156,8 +166,6 @@ for (const m of models) clients.set(m.label, (await serviceFor(m.effort)).client
 
 console.log(formatPlan(plan, { maxSpendMicrousd }));
 console.log('\nRunning...');
-const fileName = (pair) =>
-  `${pair.zoneId}__${pair.model.label.replace(/[^a-z0-9._-]/gi, '_')}.json`;
 let outcome;
 try {
   outcome = await runPlan({
@@ -167,6 +175,8 @@ try {
     maxSpendMicrousd,
     finished,
     variant,
+    cache:
+      options.cache === undefined ? undefined : createReplayCache(resolve(ROOT, options.cache)),
     onPair: (pair, run) => {
       const score = scoreReading({
         truth: pair.zone.truth,
@@ -179,8 +189,15 @@ try {
         validatedBy: pair.zone.truth.validatedBy ?? null,
         score
       };
-      writeFileSync(join(out, fileName(pair)), JSON.stringify(saved, null, 2));
+      writeFileSync(join(out, runFileName(pair, run)), JSON.stringify(saved, null, 2));
       const cost = (run.usage.costMicrousd / 1e6).toFixed(3);
+      if (run.incomplete) {
+        const why = run.result.stopped === undefined ? '' : ', stopped on the budget';
+        console.log(
+          `${pair.zoneId} x ${pair.model.label}: INCOMPLETE (${run.result.chunks.failed} chunk(s) failed${why}), $${cost}, ${run.seconds}s: filed as .incomplete.json, not a reading; run it again`
+        );
+        return;
+      }
       console.log(
         `${pair.zoneId} x ${pair.model.label}: recall ${score.recall?.toFixed(2)}, wrong ${score.counts.wrongValue}, extra ${score.counts.extra}, ${run.usage.calls} calls, $${cost}, ${run.seconds}s`
       );

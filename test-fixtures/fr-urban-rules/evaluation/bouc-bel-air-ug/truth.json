@@ -1,0 +1,239 @@
+{
+  "format": "archisimple-reading-truth",
+  "version": 1,
+  "zone": "UG",
+  "document": {
+    "idurba": "200054807_PLUi_20260306_B",
+    "nomfic": "200054807_reglement_20260306_B.pdf",
+    "partition": "DU_200054807_B"
+  },
+  "chapter": {
+    "pages": [
+      181,
+      188
+    ]
+  },
+  "scopeKinds": [
+    "road_setback",
+    "boundary_setback",
+    "building_distance",
+    "footprint_ratio",
+    "extension_max",
+    "annex_max",
+    "height_total",
+    "height_facade",
+    "green_ratio"
+  ],
+  "scopeNote": "The kinds the buildable area uses. Not covered (never counted as an extra): the 300 m² floor-area cap on a dwelling in UGa (note [5], floor_area_max), the 25 m length limit of a building in UGa (article 5.2, kind 'other'), the extension of existing farm buildings (note [1], no figure), fences (2 m, 1.20 m), parking, the 20 % share of a flag lot's access strip, stormwater figures; the figure coverage still watches them.",
+  "provenance": {
+    "source": "Géoportail de l'urbanisme (GPU)",
+    "licence": "Licence Ouverte v2.0 (Etalab)",
+    "retrievedAt": "2026-11-20",
+    "text": "test-fixtures/fr-urban-rules/evaluation/bouc-bel-air-ug/pages.json"
+  },
+  "draftedBy": "Claude Code",
+  "draftedAt": "2026-11-20",
+  "draftNote": "Drafted from the chapter's text (pages 181 to 188) before any model's reading of it, on the conventions of the UD truth (a sentence naming no sector is the zone's, sector null; a sentence naming sectors is one rule per sector; the alternative rules for existing buildings that carry no figure are not listed). Held-out zone: nothing in the prompt, the code or the fixtures was written for it. The drafter is itself a model.",
+  "validatedBy": "independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",
+  "validatedAt": "2026-11-20",
+  "rules": [
+    {
+      "id": "u01",
+      "kind": "road_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 5,
+        "unit": "m"
+      },
+      "page": 184,
+      "quote": "Les constructions doivent être implantées en recul minimum de 5 mètres de l’alignement* existant ou futur des voies* publiques et privées* ouvertes à la circulation publique et des emprises publiques*.",
+      "note": "Article 4.1: the zone and its sectors (no sector is named)."
+    },
+    {
+      "id": "u02",
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 5,
+        "unit": "m"
+      },
+      "page": 184,
+      "quote": "Les constructions doivent être implantées en retrait minimum de 5 mètres des limites séparatives*.",
+      "note": "Article 4.2: the zone and its sectors."
+    },
+    {
+      "id": "u03",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 184,
+      "quote": "la hauteur totale de l’extension soit inférieure ou égale à 4 mètres dans la bande de 0 à 5 mètres depuis la limite séparative",
+      "note": "The alternative rule for an extension closer than the setback (as UD d05)."
+    },
+    {
+      "id": "u04",
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 2,
+        "unit": "m"
+      },
+      "page": 184,
+      "quote": "Le bassin de piscine non couvert peut être implanté à une distance minimale de 2 mètres par rapport aux limites séparatives*.",
+      "note": "An uncovered pool only."
+    },
+    {
+      "id": "u05",
+      "kind": "building_distance",
+      "sector": null,
+      "statement": "not_regulated",
+      "limit": null,
+      "page": 184,
+      "quote": "4.3 / Implantation des constructions les unes par rapport aux autres sur une même unité foncière Non réglementée",
+      "note": "One sentence for the zone and its sectors."
+    },
+    {
+      "id": "u06",
+      "kind": "footprint_ratio",
+      "sector": null,
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 184,
+      "quote": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement graphique lorsqu’elle existe.",
+      "note": ""
+    },
+    {
+      "id": "u07",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 184,
+      "quote": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle",
+      "note": "The sentence runs over the page break (« existe. » is on page 185)."
+    },
+    {
+      "id": "u08",
+      "kind": "green_ratio",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 50,
+        "base": "plot_area"
+      },
+      "page": 186,
+      "quote": "UG et UGb Au moins 50 % du terrain d'assiette* du projet",
+      "note": "The table's row « UG et UGb »: the zone itself."
+    },
+    {
+      "id": "u09",
+      "kind": "green_ratio",
+      "sector": "UGb",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 50,
+        "base": "plot_area"
+      },
+      "page": 186,
+      "quote": "UG et UGb Au moins 50 % du terrain d'assiette* du projet",
+      "note": "The same row, for the sector UGb."
+    },
+    {
+      "id": "u10",
+      "kind": "green_ratio",
+      "sector": "UGa",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 80,
+        "base": "plot_area"
+      },
+      "page": 186,
+      "quote": "UGa Au moins 80 % du terrain d'assiette* du projet",
+      "note": ""
+    },
+    {
+      "id": "u11",
+      "kind": "extension_max",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 15,
+        "base": "surface_de_plancher"
+      },
+      "page": 182,
+      "quote": "dans la limite de 15% de la surface de plancher* existante",
+      "note": "Article UG1 note [4], inside the table of destinations: a single extension of an existing craft shop or service. The table cell spans the zone and UGa as far as the text layer shows: JUDGEMENT CALL (whole zone, not UGa alone)."
+    }
+  ],
+  "crossCheck": {
+    "by": "a second model (Fable 5.2) given only the chapter text and the product's rule definitions, never this truth",
+    "at": "2026-11-20",
+    "blindRules": 15,
+    "draftersRulesFoundExactly": "11 of 11 (wrong values 0, other sectors 0, not found 0)",
+    "adopted": {
+      "reason": "nothing to add: every rule of the draft was found by the blind reader with the same kind, sector, figure and statement.",
+      "ids": []
+    },
+    "notAdopted": [
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 184,
+        "quote": "du présent PLUi peuvent être implantées à une distance inférieure de la règle générale, à condition : • qu’elles soient réalisées dans le prolongement de la con",
+        "why": "An alternative rule with no figure (extensions of a non-conforming building may stand closer): not listed, as in the UD truth (the same sentence was left out there); the figure of the strip (4 m) is listed (u03)."
+      },
+      {
+        "kind": "height_facade",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 184,
+        "quote": "que sa hauteur de façade* respecte la hauteur autorisée dans la zone sans excéder celle de la construction* existante",
+        "why": "An alternative rule with no figure (extensions of a non-conforming building may stand closer): not listed, as in the UD truth (the same sentence was left out there); the figure of the strip (4 m) is listed (u03)."
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 184,
+        "quote": "• qu’elles soient réalisées dans le prolongement de la construction* existante, à la même distance de la limite séparative* que celle du rez-de-chaussée existan",
+        "why": "An alternative rule with no figure (extensions of a non-conforming building may stand closer): not listed, as in the UD truth (the same sentence was left out there); the figure of the strip (4 m) is listed (u03)."
+      },
+      {
+        "kind": "green_ratio",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 186,
+        "quote": "Lorsqu’un terrain d'assiette* est non conforme à la règle générale du présent article, la création et l’extension d’annexes ainsi que l’extension* des construct",
+        "why": "An alternative rule with no figure (extensions of a non-conforming building may stand closer): not listed, as in the UD truth (the same sentence was left out there); the figure of the strip (4 m) is listed (u03)."
+      }
+    ]
+  }
+}

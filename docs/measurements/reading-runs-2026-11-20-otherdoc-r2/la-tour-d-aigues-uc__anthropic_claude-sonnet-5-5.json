@@ -1,0 +1,1714 @@
+{
+  "zoneId": "la-tour-d-aigues-uc",
+  "model": "anthropic:claude-sonnet-5-5",
+  "variant": "shipped",
+  "result": {
+    "rules": [
+      {
+        "kind": "floor_area_max",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 75,
+          "unit": "m2"
+        },
+        "page": 45,
+        "article": "2",
+        "passage": "plancher n’excède pas 75m2.",
+        "offset": {
+          "start": 2176,
+          "end": 2203
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "les constructions à destination de bureaux"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium"
+      },
+      {
+        "kind": "floor_area_max",
+        "sector": "UCa",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 75,
+          "unit": "m2"
+        },
+        "page": 45,
+        "article": "2",
+        "passage": "plancher n’excède pas 75m2.",
+        "offset": {
+          "start": 2176,
+          "end": 2203
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "les constructions à destination de bureaux"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "medium"
+      },
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 46,
+        "article": "2",
+        "passage": "Tout programme de construction à usage d’habitation de plus de 3 logements",
+        "offset": {
+          "start": 2239,
+          "end": 2313
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Sur une même unité foncière"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 5,
+          "unit": "m"
+        },
+        "page": 47,
+        "article": "3",
+        "passage": "En bordure des voies, les portails doivent être implantés avec un retrait de 5 mètres par",
+        "offset": {
+          "start": 5350,
+          "end": 5439
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "En bordure des voies"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium"
+      },
+      {
+        "kind": "building_distance",
+        "sector": null,
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 49,
+        "article": "5",
+        "passage": "Non règlementé.",
+        "offset": {
+          "start": 9433,
+          "end": 9448
+        },
+        "occurrence": {
+          "of": 2,
+          "chosenBy": "first"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 10,
+          "unit": "m"
+        },
+        "page": 49,
+        "article": "6",
+        "passage": "10 mètres de l’axe de la RD956,",
+        "offset": {
+          "start": 9692,
+          "end": 9723
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans l’ensemble de la zone UC"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 10,
+          "unit": "m"
+        },
+        "page": 49,
+        "article": "6",
+        "passage": "10 mètres de l’axe des autres voies et emprises publiques ou privées existantes,",
+        "offset": {
+          "start": 9726,
+          "end": 9806
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans l’ensemble de la zone UC"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 20,
+          "unit": "m"
+        },
+        "page": 49,
+        "article": "6",
+        "passage": "20 mètres des berges de l’Eze,",
+        "offset": {
+          "start": 9831,
+          "end": 9861
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans l’ensemble de la zone UC"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 20,
+          "unit": "m"
+        },
+        "page": 49,
+        "article": "6",
+        "passage": "20 mètres des berges de l’Ourgouse,",
+        "offset": {
+          "start": 9864,
+          "end": 9899
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans l’ensemble de la zone UC"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 10,
+          "unit": "m"
+        },
+        "page": 49,
+        "article": "6",
+        "passage": "10 mètres des berges des autres cours d’eau ou canaux.",
+        "offset": {
+          "start": 9902,
+          "end": 9956
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans l’ensemble de la zone UC"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "road_setback",
+        "sector": "UCa",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 10,
+          "unit": "m"
+        },
+        "page": 49,
+        "article": "6",
+        "passage": "10 mètres de l’axe de la RD 165,",
+        "offset": {
+          "start": 10085,
+          "end": 10117
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans les sous-secteurs UCa"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high"
+      },
+      {
+        "kind": "road_setback",
+        "sector": "UCa",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 6,
+          "unit": "m"
+        },
+        "page": 49,
+        "article": "6",
+        "passage": "6 mètres de l’axe des autres voies publiques ou privées, existantes, modifiées ou",
+        "offset": {
+          "start": 10120,
+          "end": 10201
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans les sous-secteurs UCa"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high"
+      },
+      {
+        "kind": "road_setback",
+        "sector": "UCa",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 20,
+          "unit": "m"
+        },
+        "page": 49,
+        "article": "6",
+        "passage": "20 mètres des berges de l’Eze.",
+        "offset": {
+          "start": 10213,
+          "end": 10243
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans les sous-secteurs UCa"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UCa",
+        "statement": "limit",
+        "limit": {
+          "kind": "height_relative",
+          "reference": "altitude_difference",
+          "factor": 1,
+          "offsetMetres": -4,
+          "minimumMetres": 4
+        },
+        "page": 49,
+        "article": "7",
+        "passage": "Soit sur une des limites séparatives latérales en respectant un recul (L) par",
+        "offset": {
+          "start": 10774,
+          "end": 10851
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans le sous-secteur UCa",
+          "Soit sur une des limites séparatives latérales"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UCa",
+        "statement": "limit",
+        "limit": {
+          "kind": "height_relative",
+          "reference": "altitude_difference",
+          "factor": 1,
+          "offsetMetres": -4,
+          "minimumMetres": 4
+        },
+        "page": 50,
+        "article": "7",
+        "passage": "Soit en respectant un recul (L) au moins égal à la différence de niveau (H) entre",
+        "offset": {
+          "start": 11110,
+          "end": 11191
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans le sous-secteur UCa"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "low"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "height_relative",
+          "reference": "altitude_difference",
+          "factor": 1,
+          "offsetMetres": -4,
+          "minimumMetres": 4
+        },
+        "page": 50,
+        "article": "7",
+        "passage": "Dans le reste de la zone UC, les constructions et piscines doivent s’implanter en",
+        "offset": {
+          "start": 11356,
+          "end": 11437
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans le reste de la zone UC"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 50,
+        "article": "7",
+        "passage": "Dans l’ensemble de la zone UC, l’implantation des annexes est possible sur les limites",
+        "offset": {
+          "start": 11667,
+          "end": 11753
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans l’ensemble de la zone UC"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "footprint_ratio",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "max",
+          "percent": 30,
+          "base": "plot_area"
+        },
+        "page": 50,
+        "article": "9",
+        "passage": "Dans la zone UC, l’emprise au sol totale des constructions ne peut excéder 30% de la",
+        "offset": {
+          "start": 12266,
+          "end": 12350
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la zone UC"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "footprint_ratio",
+        "sector": "UCa",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "max",
+          "percent": 40,
+          "base": "plot_area"
+        },
+        "page": 51,
+        "article": "9",
+        "passage": "Dans le sous-secteur UCa, l’emprise au sol totale des constructions ne peut excéder 40%",
+        "offset": {
+          "start": 12383,
+          "end": 12470
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans le sous-secteur UCa"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high"
+      },
+      {
+        "kind": "height_facade",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 6.5,
+          "unit": "m"
+        },
+        "page": 51,
+        "article": "10",
+        "passage": "La hauteur des constructions ne peut excéder 6,50 mètres à l’égout du toit (ou acrotère)",
+        "offset": {
+          "start": 12554,
+          "end": 12642
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "height_total",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 8,
+          "unit": "m"
+        },
+        "page": 51,
+        "article": "10",
+        "passage": "et 8 mètres au faîtage.",
+        "offset": {
+          "start": 12643,
+          "end": 12666
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "height_total",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 3.5,
+          "unit": "m"
+        },
+        "strip": {
+          "depthMetres": 4,
+          "edges": "side_rear",
+          "permits": true
+        },
+        "page": 51,
+        "article": "10",
+        "passage": "3,5 mètres dans le cas d’une implantation en limite séparative, et sur une\nprofondeur de 4 mètres,",
+        "offset": {
+          "start": 12749,
+          "end": 12847
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Les annexes à l’habitation",
+          "dans le cas d’une implantation en limite séparative"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "height_total",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 4,
+          "unit": "m"
+        },
+        "page": 51,
+        "article": "10",
+        "passage": "4 mètres dans le cas d’une implantation à minimum 4 mètres de la limite",
+        "offset": {
+          "start": 12850,
+          "end": 12921
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Les annexes à l’habitation",
+          "dans le cas d’une implantation à minimum 4 mètres de la limite\nséparative"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 2.3,
+          "unit": "m"
+        },
+        "page": 54,
+        "article": "12",
+        "passage": "Les places ont une largeur minimale de 2,30 mètres.",
+        "offset": {
+          "start": 22778,
+          "end": 22829
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 54,
+        "article": "12",
+        "passage": "Pour les constructions à usage d’habitation, il est exigé l’aménagement d’une place de",
+        "offset": {
+          "start": 22830,
+          "end": 22916
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Pour les constructions à usage d’habitation"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium"
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 54,
+        "article": "12",
+        "passage": "Pour les constructions à usage de bureaux, il est exigé l’aménagement d’une place de",
+        "offset": {
+          "start": 22984,
+          "end": 23068
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Pour les constructions à usage de bureaux"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium"
+      },
+      {
+        "kind": "green_ratio",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 50,
+          "base": "plot_area"
+        },
+        "page": 54,
+        "article": "13",
+        "passage": "Dans la zone UC, au minimum 50 % de la surface totale du terrain sera traitée en",
+        "offset": {
+          "start": 24090,
+          "end": 24170
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la zone UC"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "green_ratio",
+        "sector": "UCa",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 40,
+          "base": "plot_area"
+        },
+        "page": 54,
+        "article": "13",
+        "passage": "Dans le sous-secteur UCa, au minimum 40 % de la surface totale du terrain sera traitée en",
+        "offset": {
+          "start": 24185,
+          "end": 24274
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans le sous-secteur UCa"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high"
+      }
+    ],
+    "dropped": {
+      "passageNotFound": 0,
+      "schemaInvalid": 0,
+      "overLimit": 0,
+      "conditionNotVerbatim": 0,
+      "incoherent": 0,
+      "valueNotInPassage": 3,
+      "droppedConditions": 0
+    },
+    "chunks": {
+      "of": 1,
+      "failed": 0
+    },
+    "model": {
+      "providerId": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "constraint": "schema"
+    }
+  },
+  "incomplete": false,
+  "raw": [
+    {
+      "items": [
+        {
+          "value": {
+            "kind": "road_setback",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 10,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans l’ensemble de la zone UC"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "10 mètres de l’axe de la RD956,"
+        },
+        {
+          "value": {
+            "kind": "road_setback",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 10,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans l’ensemble de la zone UC"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "10 mètres de l’axe des autres voies et emprises publiques ou privées existantes,"
+        },
+        {
+          "value": {
+            "kind": "road_setback",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 20,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans l’ensemble de la zone UC"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "20 mètres des berges de l’Eze,"
+        },
+        {
+          "value": {
+            "kind": "road_setback",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 20,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans l’ensemble de la zone UC"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "20 mètres des berges de l’Ourgouse,"
+        },
+        {
+          "value": {
+            "kind": "road_setback",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 10,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans l’ensemble de la zone UC"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "10 mètres des berges des autres cours d’eau ou canaux."
+        },
+        {
+          "value": {
+            "kind": "road_setback",
+            "appliesTo": [
+              "UCa"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 10,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans les sous-secteurs UCa"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "10 mètres de l’axe de la RD 165,"
+        },
+        {
+          "value": {
+            "kind": "road_setback",
+            "appliesTo": [
+              "UCa"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 6,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans les sous-secteurs UCa"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "6 mètres de l’axe des autres voies publiques ou privées, existantes, modifiées ou"
+        },
+        {
+          "value": {
+            "kind": "road_setback",
+            "appliesTo": [
+              "UCa"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 20,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans les sous-secteurs UCa"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "20 mètres des berges de l’Eze."
+        },
+        {
+          "value": {
+            "kind": "road_setback",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 5,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "En bordure des voies"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "En bordure des voies, les portails doivent être implantés avec un retrait de 5 mètres par"
+        },
+        {
+          "value": {
+            "kind": "boundary_setback",
+            "appliesTo": [
+              "UCa"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "height_relative",
+              "reference": "altitude_difference",
+              "factor": 1,
+              "offsetMetres": -4,
+              "minimumMetres": 4
+            },
+            "strip": null,
+            "conditions": [
+              "Dans le sous-secteur UCa",
+              "Soit sur une des limites séparatives latérales"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Soit sur une des limites séparatives latérales en respectant un recul (L) par"
+        },
+        {
+          "value": {
+            "kind": "boundary_setback",
+            "appliesTo": [
+              "UCa"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "height_relative",
+              "reference": "altitude_difference",
+              "factor": 1,
+              "offsetMetres": -4,
+              "minimumMetres": 4
+            },
+            "strip": null,
+            "conditions": [
+              "Dans le sous-secteur UCa"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Soit en respectant un recul (L) au moins égal à la différence de niveau (H) entre"
+        },
+        {
+          "value": {
+            "kind": "boundary_setback",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "height_relative",
+              "reference": "altitude_difference",
+              "factor": 1,
+              "offsetMetres": -4,
+              "minimumMetres": 4
+            },
+            "strip": null,
+            "conditions": [
+              "Dans le reste de la zone UC"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Dans le reste de la zone UC, les constructions et piscines doivent s’implanter en"
+        },
+        {
+          "value": {
+            "kind": "boundary_setback",
+            "appliesTo": "all",
+            "statement": "described",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "Dans l’ensemble de la zone UC"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Dans l’ensemble de la zone UC, l’implantation des annexes est possible sur les limites"
+        },
+        {
+          "value": {
+            "kind": "building_distance",
+            "appliesTo": "zone",
+            "statement": "not_regulated",
+            "limit": null,
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "Non règlementé."
+        },
+        {
+          "value": {
+            "kind": "footprint_ratio",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "ratio",
+              "comparison": "max",
+              "percent": 30,
+              "base": "plot_area"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans la zone UC"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Dans la zone UC, l’emprise au sol totale des constructions ne peut excéder 30% de la"
+        },
+        {
+          "value": {
+            "kind": "footprint_ratio",
+            "appliesTo": [
+              "UCa"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "ratio",
+              "comparison": "max",
+              "percent": 40,
+              "base": "plot_area"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans le sous-secteur UCa"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Dans le sous-secteur UCa, l’emprise au sol totale des constructions ne peut excéder 40%"
+        },
+        {
+          "value": {
+            "kind": "height_facade",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 6.5,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "La hauteur des constructions ne peut excéder 6,50 mètres à l’égout du toit (ou acrotère)"
+        },
+        {
+          "value": {
+            "kind": "height_total",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 8,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "et 8 mètres au faîtage."
+        },
+        {
+          "value": {
+            "kind": "height_total",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 3.5,
+              "unit": "m"
+            },
+            "strip": {
+              "depthMetres": 4,
+              "edges": "side_rear",
+              "permits": true
+            },
+            "conditions": [
+              "Les annexes à l’habitation",
+              "dans le cas d’une implantation en limite séparative"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "3,5 mètres dans le cas d’une implantation en limite séparative, et sur une profondeur de 4 mètres,"
+        },
+        {
+          "value": {
+            "kind": "height_total",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 4,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Les annexes à l’habitation",
+              "dans le cas d’une implantation à minimum 4 mètres de la limite séparative"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "4 mètres dans le cas d’une implantation à minimum 4 mètres de la limite"
+        },
+        {
+          "value": {
+            "kind": "green_ratio",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "ratio",
+              "comparison": "min",
+              "percent": 50,
+              "base": "plot_area"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans la zone UC"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Dans la zone UC, au minimum 50 % de la surface totale du terrain sera traitée en"
+        },
+        {
+          "value": {
+            "kind": "green_ratio",
+            "appliesTo": [
+              "UCa"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "ratio",
+              "comparison": "min",
+              "percent": 40,
+              "base": "plot_area"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans le sous-secteur UCa"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Dans le sous-secteur UCa, au minimum 40 % de la surface totale du terrain sera traitée en"
+        },
+        {
+          "value": {
+            "kind": "parking",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 2.3,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Les places ont une largeur minimale de 2,30 mètres."
+        },
+        {
+          "value": {
+            "kind": "parking",
+            "appliesTo": "zone",
+            "statement": "described",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "Pour les constructions à usage d’habitation"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "Pour les constructions à usage d’habitation, il est exigé l’aménagement d’une place de"
+        },
+        {
+          "value": {
+            "kind": "parking",
+            "appliesTo": "zone",
+            "statement": "described",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "Pour les constructions à usage de bureaux"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "Pour les constructions à usage de bureaux, il est exigé l’aménagement d’une place de"
+        },
+        {
+          "value": {
+            "kind": "floor_area_max",
+            "appliesTo": "all",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 75,
+              "unit": "m2"
+            },
+            "strip": null,
+            "conditions": [
+              "les constructions à destination de bureaux"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "plancher n’excède pas 75m2."
+        },
+        {
+          "value": {
+            "kind": "other",
+            "appliesTo": "zone",
+            "statement": "described",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "Sur une même unité foncière"
+            ],
+            "exceptions": [],
+            "confidence": "low"
+          },
+          "passage": "Tout programme de construction à usage d’habitation de plus de 3 logements"
+        }
+      ],
+      "rejected": []
+    }
+  ],
+  "usage": {
+    "calls": 1,
+    "replayedChunks": 0,
+    "settled": 1,
+    "inputTokens": 15698,
+    "outputTokens": 6991,
+    "cacheReadTokens": 0,
+    "costMicrousd": 101306,
+    "estimated": false,
+    "unlisted": false
+  },
+  "seconds": 40.2,
+  "finishedAt": "2026-11-20T22:59:26.578Z",
+  "validated": true,
+  "validatedBy": "independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",
+  "score": {
+    "counts": {
+      "truth": 16,
+      "read": 22,
+      "exact": 16,
+      "sectorError": 0,
+      "found": 16,
+      "wrongValue": 0,
+      "missed": 0,
+      "extra": 1,
+      "accepted": 4,
+      "duplicates": 1,
+      "outOfScope": 6
+    },
+    "recall": 1,
+    "wrongValueRate": 0,
+    "sectorAttribution": 1,
+    "verified": 0.8636363636363636,
+    "verifiedCount": 19,
+    "droppedTotal": 3,
+    "figureCoverage": {
+      "covered": 13,
+      "total": 26,
+      "uncovered": [
+        "0.5|m",
+        "0.75|m2",
+        "0.8|m",
+        "1.5|m",
+        "1.5|m2",
+        "1.5|percent",
+        "1.8|m",
+        "1|m",
+        "25|m2",
+        "25|percent",
+        "35|percent",
+        "3|m2",
+        "50|m2"
+      ]
+    },
+    "repeats": {
+      "acrossSectors": 0,
+      "exact": 0
+    },
+    "details": {
+      "missed": [],
+      "wrongValue": [],
+      "sectorError": [],
+      "extra": [
+        {
+          "kind": "road_setback",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 5,
+            "unit": "m"
+          },
+          "page": 47,
+          "article": "3",
+          "passage": "En bordure des voies, les portails doivent être implantés avec un retrait de 5 mètres par",
+          "offset": {
+            "start": 5350,
+            "end": 5439
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "En bordure des voies"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium"
+        }
+      ],
+      "accepted": [
+        {
+          "kind": "road_setback",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 20,
+            "unit": "m"
+          },
+          "page": 49,
+          "article": "6",
+          "passage": "20 mètres des berges de l’Eze,",
+          "offset": {
+            "start": 9831,
+            "end": 9861
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans l’ensemble de la zone UC"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        },
+        {
+          "kind": "road_setback",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 20,
+            "unit": "m"
+          },
+          "page": 49,
+          "article": "6",
+          "passage": "20 mètres des berges de l’Ourgouse,",
+          "offset": {
+            "start": 9864,
+            "end": 9899
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans l’ensemble de la zone UC"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        },
+        {
+          "kind": "road_setback",
+          "sector": "UCa",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 20,
+            "unit": "m"
+          },
+          "page": 49,
+          "article": "6",
+          "passage": "20 mètres des berges de l’Eze.",
+          "offset": {
+            "start": 10213,
+            "end": 10243
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans les sous-secteurs UCa"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "high"
+        },
+        {
+          "kind": "boundary_setback",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 50,
+          "article": "7",
+          "passage": "Dans l’ensemble de la zone UC, l’implantation des annexes est possible sur les limites",
+          "offset": {
+            "start": 11667,
+            "end": 11753
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans l’ensemble de la zone UC"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        }
+      ],
+      "duplicates": [
+        {
+          "kind": "road_setback",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 10,
+            "unit": "m"
+          },
+          "page": 49,
+          "article": "6",
+          "passage": "10 mètres des berges des autres cours d’eau ou canaux.",
+          "offset": {
+            "start": 9902,
+            "end": 9956
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans l’ensemble de la zone UC"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        }
+      ],
+      "outOfScope": [
+        {
+          "kind": "floor_area_max",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 75,
+            "unit": "m2"
+          },
+          "page": 45,
+          "article": "2",
+          "passage": "plancher n’excède pas 75m2.",
+          "offset": {
+            "start": 2176,
+            "end": 2203
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "les constructions à destination de bureaux"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium"
+        },
+        {
+          "kind": "floor_area_max",
+          "sector": "UCa",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 75,
+            "unit": "m2"
+          },
+          "page": 45,
+          "article": "2",
+          "passage": "plancher n’excède pas 75m2.",
+          "offset": {
+            "start": 2176,
+            "end": 2203
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "les constructions à destination de bureaux"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": true,
+          "confidence": "medium"
+        },
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 46,
+          "article": "2",
+          "passage": "Tout programme de construction à usage d’habitation de plus de 3 logements",
+          "offset": {
+            "start": 2239,
+            "end": 2313
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Sur une même unité foncière"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 2.3,
+            "unit": "m"
+          },
+          "page": 54,
+          "article": "12",
+          "passage": "Les places ont une largeur minimale de 2,30 mètres.",
+          "offset": {
+            "start": 22778,
+            "end": 22829
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 54,
+          "article": "12",
+          "passage": "Pour les constructions à usage d’habitation, il est exigé l’aménagement d’une place de",
+          "offset": {
+            "start": 22830,
+            "end": 22916
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Pour les constructions à usage d’habitation"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium"
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 54,
+          "article": "12",
+          "passage": "Pour les constructions à usage de bureaux, il est exigé l’aménagement d’une place de",
+          "offset": {
+            "start": 22984,
+            "end": 23068
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Pour les constructions à usage de bureaux"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium"
+        }
+      ]
+    }
+  }
+}

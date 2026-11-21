@@ -559,3 +559,10 @@ services/
   imports, no build step. If two packages need the same helper, copy it — a
   package that cannot be zipped and installed on its own is not a package.
 - Conventional Commits, scoped by package: `feat(fr-urban-rules): …`.
+
+## Agent skills
+
+- [`archisimple-evaluate-reading`](.agents/skills/archisimple-evaluate-reading/SKILL.md):
+  measure and judge any change to the PLU reading (adding a zone's truth, the blind
+  cross-check, the harness, the acceptance rule). Read it before touching the
+  extraction's prompt, schema, chunking, placement or default model.

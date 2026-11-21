@@ -13,15 +13,20 @@
  * not estimated here.
  */
 
+import { createHash } from 'node:crypto';
 import { createServer } from 'node:http';
-import { readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, isAbsolute, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   extractChapter,
+  instructionsFor,
+  ITEM_SCHEMA,
+  ITEM_SCHEMA_SECTORS_IN_CODE,
   MAX_CHUNK_CHARS,
   splitChunks,
-  SECTORS_IN_CODE
+  SECTORS_IN_CODE,
+  GUIDANCE_IN_PROMPT
 } from '../../services/fr-urban-rules-service/src/extract.mjs';
 import { prepareChapter } from '../../services/fr-urban-rules-service/src/text.mjs';
 
@@ -194,18 +199,90 @@ export function createLedgerStub({ token }) {
   };
 }
 
+// ── What the model said: kept, and replayable (Sprint 002.34, Epic 2) ─────────────────────────
+
+/** The part of an extract answer worth keeping: each item as the model gave it, its passage's text, what was rejected. */
+const rawOf = (answer) => ({
+  items: (answer.items ?? []).map((item) => ({
+    value: item.value,
+    passage: item.passage?.text ?? item.passage
+  })),
+  rejected: answer.rejected ?? []
+});
+
+/**
+ * A replay cache for the extraction's chunk answers: what a model answered to a chunk is kept (in memory, or one
+ * file per answer in `dir`), so a change that does not touch what the model is asked (scoring, expansion, placement,
+ * verification) is re-measured for nothing. **Never for measuring noise**: a repeat run that replays measures nothing.
+ * The extraction keys an answer by the chunk's text, the prompt version and the variant; `replaySalt` adds the model
+ * and the exact instructions and schema, so an edited prompt never meets a stale answer.
+ */
+export function createReplayCache(dir) {
+  const memory = new Map();
+  if (dir !== undefined) mkdirSync(dir, { recursive: true });
+  const file = (key) => join(dir, `${key}.json`);
+  return {
+    get(key) {
+      if (memory.has(key)) return memory.get(key);
+      if (dir !== undefined && existsSync(file(key))) {
+        const answer = JSON.parse(readFileSync(file(key), 'utf8'));
+        memory.set(key, answer);
+        return answer;
+      }
+      return undefined;
+    },
+    set(key, answer) {
+      memory.set(key, answer);
+      if (dir !== undefined) writeFileSync(file(key), JSON.stringify(answer));
+    }
+  };
+}
+
+/** What makes two asks of a model the same ask, beyond the chunk's text: who, and exactly what it was told. */
+function replaySalt(model, sectorsInCode, guidance) {
+  return createHash('sha256')
+    .update(
+      JSON.stringify([
+        model.label,
+        instructionsFor({ sectorsInCode, guidance }),
+        sectorsInCode ? ITEM_SCHEMA_SECTORS_IN_CODE : ITEM_SCHEMA
+      ])
+    )
+    .digest('hex');
+}
+
 // ── Running ────────────────────────────────────────────────────────────────────
 
 const sleep = (ms) => new Promise((ok) => setTimeout(ok, ms));
 
 /** One zone with one model, through the real extraction. `ai` is an AI client (`health`, `extract`). */
-export async function runPair({ zone, model, ai, ledger, waitMs = 8_000, variant }) {
+export async function runPair({ zone, model, ai, ledger, waitMs = 8_000, variant, cache }) {
   const prepared = prepareChapter(zone.pages);
   const before = ledger.entries().length;
   const started = Date.now();
   const health = await ai.health({});
   const route = { providerId: model.providerId, model: model.model };
   let answered = 0;
+  let replayed = 0;
+  const raw = [];
+  const sectorsInCode = variant === 'previous' ? false : SECTORS_IN_CODE;
+  // Sprint 002.37: the shipped reading carries the guidance block; `variant: 'unguided'` is the reading of prompt
+  // version 4 (sectors in code, no guidance); `'previous'` is the one before 002.33.
+  const guidance = variant === 'previous' || variant === 'unguided' ? false : GUIDANCE_IN_PROMPT;
+  const memo =
+    cache === undefined
+      ? undefined
+      : {
+          get: (key) => {
+            const answer = cache.get(key);
+            if (answer !== undefined) {
+              replayed += 1;
+              raw.push(rawOf(answer));
+            }
+            return answer;
+          },
+          set: (key, answer) => cache.set(key, answer)
+        };
   const extracted = await extractChapter({
     prepared,
     ai: { ...ai, extract: (request) => ai.extract(request, route) },
@@ -213,9 +290,15 @@ export async function runPair({ zone, model, ai, ledger, waitMs = 8_000, variant
     maxItems: health.maxItems,
     // Sprint 002.33: by default the reading the service ships (the code expands the sectors);
     // `variant: 'previous'` is the reading before it (the model repeats each item for each sector).
-    sectorsInCode: variant === 'previous' ? false : SECTORS_IN_CODE,
+    sectorsInCode,
+    memo,
+    guidance,
+    memoSalt: replaySalt(model, sectorsInCode, guidance),
     onCall: (record) => {
-      if (record.answer !== undefined) answered += 1;
+      if (record.answer !== undefined) {
+        answered += 1;
+        raw.push(rawOf(record.answer));
+      }
     }
   });
   // The meter delivers in the background: wait for the settlements of the calls that answered.
@@ -226,7 +309,7 @@ export async function runPair({ zone, model, ai, ledger, waitMs = 8_000, variant
   return {
     zoneId: zone.id,
     model: model.label,
-    variant: variant === 'previous' ? 'previous' : 'shipped',
+    variant: variant === 'previous' || variant === 'unguided' ? variant : 'shipped',
     result: {
       rules: extracted.rules,
       dropped: extracted.dropped,
@@ -234,8 +317,14 @@ export async function runPair({ zone, model, ai, ledger, waitMs = 8_000, variant
       model: extracted.model,
       ...(extracted.stopped === undefined ? {} : { stopped: extracted.stopped })
     },
+    // Sprint 002.40: a pair whose chunk failed (no answer) or that stopped on the budget is not a reading: its 0
+    // rules would count as a miss. It says so, and the CLI files it apart.
+    incomplete: extracted.chunks.failed > 0 || extracted.stopped !== undefined,
+    // What the model said, item by item: the triage reads it to say why a rule was missed.
+    raw,
     usage: {
       calls: answered,
+      replayedChunks: replayed,
       settled: entries.length,
       inputTokens: sum('inputTokens'),
       outputTokens: sum('outputTokens'),
@@ -247,6 +336,12 @@ export async function runPair({ zone, model, ai, ledger, waitMs = 8_000, variant
     seconds: Math.round((Date.now() - started) / 100) / 10,
     finishedAt: new Date().toISOString()
   };
+}
+
+/** The file a pair's run is written to: `.incomplete.json` for a run that is not a reading, so it is never read as one. */
+export function runFileName(pair, run) {
+  const base = `${pair.zoneId}__${pair.model.label.replace(/[^a-z0-9._-]/gi, '_')}`;
+  return run.incomplete === true ? `${base}.incomplete.json` : `${base}.json`;
 }
 
 /**
@@ -262,7 +357,8 @@ export async function runPlan({
   finished = new Map(),
   onPair = () => {},
   waitMs,
-  variant
+  variant,
+  cache
 }) {
   const runs = [];
   let spent = 0;
@@ -290,7 +386,8 @@ export async function runPlan({
       ai: aiFor(pair.zone, pair.model),
       ledger,
       waitMs,
-      variant
+      variant,
+      cache
     });
     spent += run.usage.costMicrousd;
     runs.push(run);

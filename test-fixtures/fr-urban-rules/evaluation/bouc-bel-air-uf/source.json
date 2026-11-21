@@ -1,0 +1,21 @@
+{
+  "zone": "UF",
+  "chapter": {
+    "pages": [
+      189,
+      196
+    ]
+  },
+  "provenance": {
+    "source": "Géoportail de l'urbanisme (GPU)",
+    "licence": "Licence Ouverte v2.0 (Etalab)",
+    "retrievedAt": "2026-11-20T15:41:18.080Z",
+    "documentId": "e8f6b5b1a8c6ca2e5caec8cd5334d2f3",
+    "partition": "DU_200054807_B",
+    "idurba": "200054807_PLUi_20260306_B",
+    "nomfic": "200054807_reglement_20260306_B.pdf",
+    "sha256": "b8db816197e9f991c4dd6bd05a517aed9deafd7333907ff14c8c7d03195d37bb",
+    "title": "PLUi du Pays d'Aix, règlement écrit partie B (modification n° 1)"
+  },
+  "note": "Only the zone's chapter, as the service read it (public document). Commune of the owner's choice: Bouc-Bel-Air (INSEE 13015). Held-out zone: no prompt line, check or fixture was written for it."
+}

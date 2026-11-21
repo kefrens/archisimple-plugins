@@ -1507,6 +1507,45 @@ test('decision Q3: a confirmed written « ≤ 40 % of the plot area » feeds the
   assert.equal(await budget(ratio('plot_area', 'min')), undefined);
 });
 
+test('002.36: a confirmed written footprint cap of 250 m² (a lotissement’s) is the budget, alone and beside a share: the stricter binds', async () => {
+  const cap = (value, comparison = 'max') =>
+    serviceRule({
+      kind: 'footprint_ratio',
+      limit: { kind: 'value', comparison, value, unit: 'm2' },
+      page: 48,
+      passage: `L'emprise au sol des constructions est limitée à ${value} m2.`
+    });
+  const share = serviceRule({
+    kind: 'footprint_ratio',
+    limit: { kind: 'ratio', comparison: 'max', percent: 40, base: 'plot_area' },
+    page: 128,
+    passage: "L'emprise au sol est au plus de 40 % (plot_area)."
+  });
+  const budget = async (...rules) => {
+    const section = store(undefined);
+    const context = readerFor({
+      service: fakeService({ cached: resultWith({ rules }) }),
+      section,
+      measures: {
+        ...facadeMeasures([]),
+        plotCoverage: () => ({ available: false, reason: 'no-rooms' })
+      },
+      siteExtra: { plotArea: 1178 }
+    });
+    let report = await read(context);
+    await confirmAll(context, report, (r) => r?.kind === 'footprint_ratio');
+    report = await read(context, 'action');
+    const rows = flattenBlocks(report.views.find((v) => v.id === 'surfaces').blocks)
+      .filter((b) => b.kind === 'fields')
+      .flatMap((b) => b.rows);
+    return rows.find((r) => r.label.key === 'fr-urban-rules.surfaces.budget.allowed')?.value;
+  };
+  assert.deepEqual(await budget(cap(250)), { value: 250, unit: 'm2' });
+  assert.deepEqual(await budget(cap(250), share), { value: 250, unit: 'm2' }, '471.2 m² by the share, 250 m² by the cap');
+  assert.deepEqual(await budget(cap(900), share), { value: 471.2, unit: 'm2' });
+  assert.equal(await budget(cap(250, 'min')), undefined, 'a minimum is never a footprint cap');
+});
+
 test('review S1: polls that keep failing honour Retry-After and fail the zone after five; 40 × 429 never polls at 3 s', async () => {
   const schedule = manualTimers();
   const busy = () => json(429, { retryAfterSeconds: 30, error: 'rate_limited' });

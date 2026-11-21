@@ -1,0 +1,796 @@
+{
+  "zoneId": "bouc-bel-air-ug",
+  "model": "anthropic:claude-sonnet-5-5",
+  "variant": "shipped",
+  "result": {
+    "rules": [
+      {
+        "kind": "extension_max",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "max",
+          "percent": 15,
+          "base": "surface_de_plancher"
+        },
+        "page": 182,
+        "article": "984.1",
+        "passage": "Est admise l’extension*, en une seule fois, des constructions ayant une existence légale des sousdestination « artisanat et commerces de détail » et « activités de service où s’effectue l’accueil d’une\nclientèle » dans la limite de 15% de la surface de plancher* existante",
+        "offset": {
+          "start": 3760,
+          "end": 4032
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "en une seule fois"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium"
+      },
+      {
+        "kind": "floor_area_max",
+        "sector": "UGa",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 300,
+          "unit": "m2"
+        },
+        "page": 183,
+        "article": "994.1",
+        "passage": "Sont admises les constructions de la destination « habitation » à condition d’un seul bâtiment* par\nunité foncière, et dans la limite de 300 m2 de surface de plancher*.",
+        "offset": {
+          "start": 4223,
+          "end": 4391
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "à condition d’un seul bâtiment* par\nunité foncière"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "medium"
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 5,
+          "unit": "m"
+        },
+        "page": 184,
+        "article": "1004.1",
+        "passage": "Les constructions doivent être implantées en recul minimum de 5 mètres de l’alignement* existant ou\nfutur des voies* publiques et privées* ouvertes à la circulation publique et des emprises publiques*.",
+        "offset": {
+          "start": 7055,
+          "end": 7256
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 5,
+          "unit": "m"
+        },
+        "page": 184,
+        "article": "1004.1",
+        "passage": "Les constructions doivent être implantées en retrait minimum de 5 mètres des limites séparatives*.",
+        "offset": {
+          "start": 8070,
+          "end": 8168
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "height_total",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 4,
+          "unit": "m"
+        },
+        "strip": {
+          "depthMetres": 5,
+          "edges": "side_rear",
+          "permits": true
+        },
+        "page": 184,
+        "article": "1004.1",
+        "passage": "la hauteur totale de l’extension soit inférieure ou\négale à 4 mètres dans la bande de 0 à 5 mètres depuis la limite séparative",
+        "offset": {
+          "start": 8591,
+          "end": 8717
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "dans le prolongement de la construction* existante"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 2,
+          "unit": "m"
+        },
+        "page": 184,
+        "article": "1004.1",
+        "passage": "Le bassin de piscine non couvert peut être implanté à une distance minimale de 2 mètres par rapport aux limites\nséparatives*.",
+        "offset": {
+          "start": 8943,
+          "end": 9068
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "bassin de piscine non couvert"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "building_distance",
+        "sector": null,
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 184,
+        "article": "1004.1",
+        "passage": "Non réglementée",
+        "offset": {
+          "start": 9166,
+          "end": 9181
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "footprint_ratio",
+        "sector": null,
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 184,
+        "article": "1004.1",
+        "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement\ngraphique lorsqu’elle existe.",
+        "offset": {
+          "start": 9203,
+          "end": 9327
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "height_total",
+        "sector": null,
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 184,
+        "article": "1004.1",
+        "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle",
+        "offset": {
+          "start": 9342,
+          "end": 9444
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "other",
+        "sector": "UGa",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 25,
+          "unit": "m"
+        },
+        "page": 185,
+        "article": "1014.1",
+        "passage": "En secteur UGa, la longueur des constructions est limitée à 25 m de long pour une meilleure intégration\npaysagère.",
+        "offset": {
+          "start": 10150,
+          "end": 10264
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "En secteur UGa"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "green_ratio",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 50,
+          "base": "plot_area"
+        },
+        "page": 186,
+        "article": "1024.1",
+        "passage": "UG et UGb Au moins 50 % du terrain d'assiette* du projet",
+        "offset": {
+          "start": 12729,
+          "end": 12785
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "green_ratio",
+        "sector": "UGb",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 50,
+          "base": "plot_area"
+        },
+        "page": 186,
+        "article": "1024.1",
+        "passage": "UG et UGb Au moins 50 % du terrain d'assiette* du projet",
+        "offset": {
+          "start": 12729,
+          "end": 12785
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": true,
+        "confidence": "high"
+      },
+      {
+        "kind": "green_ratio",
+        "sector": "UGa",
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 80,
+          "base": "plot_area"
+        },
+        "page": 186,
+        "article": "1024.1",
+        "passage": "UGa Au moins 80 % du terrain d'assiette* du projet",
+        "offset": {
+          "start": 12786,
+          "end": 12836
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 2,
+          "unit": "m2"
+        },
+        "page": 186,
+        "article": "1024.1",
+        "passage": "1 place pour 60 m2 de\nSDP* créée par tranche\nentamée avec un minimum\nde 2 places par logement",
+        "offset": {
+          "start": 13935,
+          "end": 14028
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Logement",
+          "1 place pour 60 m2 de\nSDP* créée par tranche\nentamée"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      }
+    ],
+    "dropped": {
+      "passageNotFound": 0,
+      "schemaInvalid": 0,
+      "overLimit": 0,
+      "conditionNotVerbatim": 1,
+      "incoherent": 0,
+      "valueNotInPassage": 0,
+      "droppedConditions": 1
+    },
+    "chunks": {
+      "of": 1,
+      "failed": 0
+    },
+    "model": {
+      "providerId": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "constraint": "schema"
+    }
+  },
+  "incomplete": false,
+  "raw": [
+    {
+      "items": [
+        {
+          "value": {
+            "kind": "extension_max",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "ratio",
+              "comparison": "max",
+              "percent": 15,
+              "base": "surface_de_plancher"
+            },
+            "strip": null,
+            "conditions": [
+              "en une seule fois"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "Est admise l’extension*, en une seule fois, des constructions ayant une existence légale des sousdestination « artisanat et commerces de détail » et « activités de service où s’effectue l’accueil d’une clientèle » dans la limite de 15% de la surface de plancher* existante"
+        },
+        {
+          "value": {
+            "kind": "floor_area_max",
+            "appliesTo": [
+              "UGa"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 300,
+              "unit": "m2"
+            },
+            "strip": null,
+            "conditions": [
+              "à condition d’un seul bâtiment* par unité foncière"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "Sont admises les constructions de la destination « habitation » à condition d’un seul bâtiment* par unité foncière, et dans la limite de 300 m2 de surface de plancher*."
+        },
+        {
+          "value": {
+            "kind": "road_setback",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 5,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Les constructions doivent être implantées en recul minimum de 5 mètres de l’alignement* existant ou futur des voies* publiques et privées* ouvertes à la circulation publique et des emprises publiques*."
+        },
+        {
+          "value": {
+            "kind": "boundary_setback",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 5,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Les constructions doivent être implantées en retrait minimum de 5 mètres des limites séparatives*."
+        },
+        {
+          "value": {
+            "kind": "height_total",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 4,
+              "unit": "m"
+            },
+            "strip": {
+              "depthMetres": 5,
+              "edges": "side_rear",
+              "permits": true
+            },
+            "conditions": [
+              "extensions de constructions existantes non conformes aux règles d’implantation",
+              "dans le prolongement de la construction* existante"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "la hauteur totale de l’extension soit inférieure ou égale à 4 mètres dans la bande de 0 à 5 mètres depuis la limite séparative"
+        },
+        {
+          "value": {
+            "kind": "boundary_setback",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 2,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "bassin de piscine non couvert"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Le bassin de piscine non couvert peut être implanté à une distance minimale de 2 mètres par rapport aux limites séparatives*."
+        },
+        {
+          "value": {
+            "kind": "building_distance",
+            "appliesTo": "zone",
+            "statement": "not_regulated",
+            "limit": null,
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Non réglementée"
+        },
+        {
+          "value": {
+            "kind": "footprint_ratio",
+            "appliesTo": "zone",
+            "statement": "see_graphic",
+            "limit": null,
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement graphique lorsqu’elle existe."
+        },
+        {
+          "value": {
+            "kind": "height_total",
+            "appliesTo": "zone",
+            "statement": "see_graphic",
+            "limit": null,
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle"
+        },
+        {
+          "value": {
+            "kind": "other",
+            "appliesTo": [
+              "UGa"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 25,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "En secteur UGa"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "En secteur UGa, la longueur des constructions est limitée à 25 m de long pour une meilleure intégration paysagère."
+        },
+        {
+          "value": {
+            "kind": "green_ratio",
+            "appliesTo": [
+              "UG",
+              "UGb"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "ratio",
+              "comparison": "min",
+              "percent": 50,
+              "base": "plot_area"
+            },
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "UG et UGb Au moins 50 % du terrain d'assiette* du projet"
+        },
+        {
+          "value": {
+            "kind": "green_ratio",
+            "appliesTo": [
+              "UGa"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "ratio",
+              "comparison": "min",
+              "percent": 80,
+              "base": "plot_area"
+            },
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "UGa Au moins 80 % du terrain d'assiette* du projet"
+        },
+        {
+          "value": {
+            "kind": "parking",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 2,
+              "unit": "m2"
+            },
+            "strip": null,
+            "conditions": [
+              "Logement",
+              "1 place pour 60 m2 de SDP* créée par tranche entamée"
+            ],
+            "exceptions": [],
+            "confidence": "low"
+          },
+          "passage": "1 place pour 60 m2 de\nSDP* créée par tranche entamée avec un minimum\nde 2 places par logement"
+        }
+      ],
+      "rejected": []
+    }
+  ],
+  "usage": {
+    "calls": 1,
+    "replayedChunks": 0,
+    "settled": 1,
+    "inputTokens": 12981,
+    "outputTokens": 2003,
+    "cacheReadTokens": 0,
+    "costMicrousd": 45992,
+    "estimated": false,
+    "unlisted": false
+  },
+  "seconds": 9.7,
+  "finishedAt": "2026-11-20T22:46:17.441Z",
+  "validated": true,
+  "validatedBy": "independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",
+  "score": {
+    "counts": {
+      "truth": 11,
+      "read": 11,
+      "exact": 11,
+      "sectorError": 0,
+      "found": 11,
+      "wrongValue": 0,
+      "missed": 0,
+      "extra": 0,
+      "accepted": 0,
+      "duplicates": 0,
+      "outOfScope": 3
+    },
+    "recall": 1,
+    "wrongValueRate": 0,
+    "sectorAttribution": 1,
+    "verified": 1,
+    "verifiedCount": 11,
+    "droppedTotal": 2,
+    "figureCoverage": {
+      "covered": 9,
+      "total": 16,
+      "uncovered": [
+        "0.6|m",
+        "1.2|m",
+        "1.8|m",
+        "100|m2",
+        "20|percent",
+        "30|m2",
+        "50|m2"
+      ]
+    },
+    "repeats": {
+      "acrossSectors": 1,
+      "exact": 0
+    },
+    "details": {
+      "missed": [],
+      "wrongValue": [],
+      "sectorError": [],
+      "extra": [],
+      "accepted": [],
+      "duplicates": [],
+      "outOfScope": [
+        {
+          "kind": "floor_area_max",
+          "sector": "UGa",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 300,
+            "unit": "m2"
+          },
+          "page": 183,
+          "article": "994.1",
+          "passage": "Sont admises les constructions de la destination « habitation » à condition d’un seul bâtiment* par\nunité foncière, et dans la limite de 300 m2 de surface de plancher*.",
+          "offset": {
+            "start": 4223,
+            "end": 4391
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "à condition d’un seul bâtiment* par\nunité foncière"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "medium"
+        },
+        {
+          "kind": "other",
+          "sector": "UGa",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 25,
+            "unit": "m"
+          },
+          "page": 185,
+          "article": "1014.1",
+          "passage": "En secteur UGa, la longueur des constructions est limitée à 25 m de long pour une meilleure intégration\npaysagère.",
+          "offset": {
+            "start": 10150,
+            "end": 10264
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "En secteur UGa"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 2,
+            "unit": "m2"
+          },
+          "page": 186,
+          "article": "1024.1",
+          "passage": "1 place pour 60 m2 de\nSDP* créée par tranche\nentamée avec un minimum\nde 2 places par logement",
+          "offset": {
+            "start": 13935,
+            "end": 14028
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Logement",
+            "1 place pour 60 m2 de\nSDP* créée par tranche\nentamée"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,1871 @@
+{
+  "zoneId": "lyon-uce1",
+  "model": "anthropic:claude-haiku-5-5",
+  "variant": "shipped",
+  "result": {
+    "rules": [
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 100,
+          "unit": "m2"
+        },
+        "page": 122,
+        "article": "1.2.1",
+        "passage": "dès lors que leur surface\nde plancher est, par unité de commerce, au plus égale soit à 100 m2, soit au\nplafond indiqué dans les périmètres de polarité commerciale* figurant aux\ndocuments graphiques du règlement.",
+        "offset": {
+          "start": 2893,
+          "end": 3104
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "constructions à destination de commerce de détail et d’artisanat"
+        ],
+        "exceptions": [
+          "Ce seuil n’est pas applicable aux commerces liés aux deux-roues et à\nl’automobile"
+        ],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 4,
+          "unit": "m"
+        },
+        "page": 123,
+        "article": "1.2.1",
+        "passage": "Le stockage et le dépôt\ndoivent être limités à une hauteur maximale de 4 mètres à compter du terrain\nnaturel",
+        "offset": {
+          "start": 5116,
+          "end": 5224
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "other",
+        "sector": "UCe1a",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 17,
+          "unit": "m"
+        },
+        "page": 123,
+        "article": "1.2.2.1",
+        "passage": "17 mètres dans le secteur UCe1a",
+        "offset": {
+          "start": 5760,
+          "end": 5791
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "other",
+        "sector": "UCe1b",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 30,
+          "unit": "m"
+        },
+        "page": 123,
+        "article": "1.2.2.1",
+        "passage": "30 mètres dans le secteur UCe1b",
+        "offset": {
+          "start": 5794,
+          "end": 5825
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 124,
+        "article": "2.1.1",
+        "passage": "Les constructions sont implantées en limite de référence* ou en limite de la marge de\nrecul*.",
+        "offset": {
+          "start": 6804,
+          "end": 6897
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "constructions de premier\nrang"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 125,
+        "article": "2.2.1.1",
+        "passage": "Les constructions sont implantées sur les deux limites séparatives latérales*.",
+        "offset": {
+          "start": 11538,
+          "end": 11616
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la bande de constructibilité principale"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UCe1a",
+        "statement": "limit",
+        "limit": {
+          "kind": "height_relative",
+          "reference": "facade_height",
+          "factor": 1,
+          "offsetMetres": -4,
+          "minimumMetres": 2
+        },
+        "page": 126,
+        "article": "2.2.1.2",
+        "passage": "En cas de retrait*, ce dernier est au moins égal à la hauteur de façade* de la\nconstruction moins 4 mètres (R ≥ Hf - 4 m), avec un minimum de 2 mètres.",
+        "offset": {
+          "start": 12178,
+          "end": 12329
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans le secteur UCe1a"
+        ],
+        "exceptions": [
+          "Les constructions peuvent être implantées sur les limites séparatives* ou en retrait* de\nces dernières."
+        ],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UCe1b",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 4,
+          "unit": "m"
+        },
+        "page": 126,
+        "article": "2.2.1.2",
+        "passage": "Le retrait* est au moins égal à 4 mètres.",
+        "offset": {
+          "start": 12427,
+          "end": 12468
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans le secteur UCe1b"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "building_distance",
+        "sector": "UCe1a",
+        "statement": "limit",
+        "limit": {
+          "kind": "height_relative",
+          "reference": "facade_height",
+          "factor": 0.5,
+          "offsetMetres": null,
+          "minimumMetres": null
+        },
+        "page": 127,
+        "article": "2.3.1",
+        "passage": "dans le secteur UCe1a, à la moitié de la hauteur de façade* la plus\nélevée (D ≥ Hf/2)",
+        "offset": {
+          "start": 16716,
+          "end": 16801
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "building_distance",
+        "sector": "UCe1b",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 4,
+          "unit": "m"
+        },
+        "page": 127,
+        "article": "2.3.1",
+        "passage": "dans le secteur UCe1b, à 4 mètres.",
+        "offset": {
+          "start": 16806,
+          "end": 16840
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "building_distance",
+        "sector": null,
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 127,
+        "article": "2.3.1",
+        "passage": "La distance* entre une annexe* et une autre construction n'est pas réglementée.",
+        "offset": {
+          "start": 16841,
+          "end": 16920
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "footprint_ratio",
+        "sector": null,
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 128,
+        "article": "2.4.1",
+        "passage": "L'emprise au sol* des constructions n'est pas réglementée.",
+        "offset": {
+          "start": 18462,
+          "end": 18520
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "extension_max",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "max",
+          "percent": 5,
+          "base": "existing_emprise"
+        },
+        "page": 128,
+        "article": "2.4.3",
+        "passage": "dès lors qu'elle est limitée à une augmentation de 5% de l'emprise au sol*\nexistante, à la date d'approbation du PLU-H.",
+        "offset": {
+          "start": 19202,
+          "end": 19321
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "height_facade",
+        "sector": null,
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 129,
+        "article": "2.5.1.1",
+        "passage": "La hauteur de façade* maximale des constructions figure aux documents graphiques\ndu règlement (plan des hauteurs, plan de zonage ou plan masse).",
+        "offset": {
+          "start": 20575,
+          "end": 20719
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 3.5,
+          "unit": "m"
+        },
+        "page": 129,
+        "article": "2.5.1.1",
+        "passage": "présente une hauteur minimale de 3,50 mètres sur une profondeur minimale de\n7 mètres à compter du nu général de la façade*.",
+        "offset": {
+          "start": 21245,
+          "end": 21368
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "height_facade",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 129,
+        "article": "2.5.1.1",
+        "passage": "Ce gabarit s'applique sur une profondeur de 5 mètres comptés perpendiculairement par\nrapport à la limite séparative*.",
+        "offset": {
+          "start": 21897,
+          "end": 22014
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans la bande de constructibilité secondaire*"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "green_ratio",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "ratio",
+          "comparison": "min",
+          "percent": 15,
+          "base": "plot_area"
+        },
+        "page": 133,
+        "article": "3.2.1",
+        "passage": "Le coefficient de pleine terre* est au minimum de 15%.",
+        "offset": {
+          "start": 28606,
+          "end": 28660
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [
+          "constructions à\ndestination d'équipements d'intérêt collectif et services publics"
+        ],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 133,
+        "article": "3.3.2",
+        "passage": "Sur les nouvelles aires de stationnement en surface et les aires de\nstationnement en surface existantes, d'une superficie inférieure ou égale à\n1 500 m2, il est exigé la plantation d'au moins un arbre pour quatre places de\nstationnement.",
+        "offset": {
+          "start": 31347,
+          "end": 31584
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Sur les nouvelles aires de stationnement en surface et les aires de\nstationnement en surface existantes, d'une superficie inférieure ou égale à\n1 500 m2"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 4.3,
+          "unit": "m"
+        },
+        "page": 138,
+        "article": "4.2.3",
+        "passage": "au-dessus d’une hauteur de 4,30 mètres, à l’exception :",
+        "offset": {
+          "start": 42511,
+          "end": 42566
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Tout débord de construction en saillie sur le domaine public"
+        ],
+        "exceptions": [
+          "des terrasses des commerces en rez-de-chaussée",
+          "des vitrines, des éléments décoratifs et autres saillies à caractère\nornemental",
+          "des dispositifs de protection contre le rayonnement solaire, de\nvégétalisation et d’isolation thermique par l’extérieur sur\nconstruction existante"
+        ],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 0.6,
+          "unit": "m"
+        },
+        "page": 138,
+        "article": "4.2.3",
+        "passage": "Dans les cas visés aux deux alinéas précédents, le porte-à-faux maximum de\nces volumes habitables, balcons ou surfaces extérieures non closes est limité\nà : 0,60 mètre si la largeur de la voie est inférieure ou égale à 12 mètres et\n0,80 mètre si la largeur de la voie est supérieure à 12 mètres.",
+        "offset": {
+          "start": 43854,
+          "end": 44149
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans les cas visés aux deux alinéas précédents",
+          "si la largeur de la voie est inférieure ou égale à 12 mètres"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 0.8,
+          "unit": "m"
+        },
+        "page": 138,
+        "article": "4.2.3",
+        "passage": "0,80 mètre si la largeur de la voie est supérieure à 12 mètres.",
+        "offset": {
+          "start": 44086,
+          "end": 44149
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Dans les cas visés aux deux alinéas précédents",
+          "si la largeur de la voie est supérieure à 12 mètres"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      },
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 1,
+          "unit": "m"
+        },
+        "page": 140,
+        "article": "4.3.2",
+        "passage": "1 mètre, sans pouvoir excéder 2 mètres.",
+        "offset": {
+          "start": 49169,
+          "end": 49208
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 2,
+          "unit": "m"
+        },
+        "page": 140,
+        "article": "4.3.2",
+        "passage": "1 mètre, sans pouvoir excéder 2 mètres.",
+        "offset": {
+          "start": 49169,
+          "end": 49208
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [
+          "Pour les constructions autres que celles destinées à l’habitation, des clôtures\nprésentant des caractéristiques différentes peuvent être réalisées"
+        ],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "other",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 2,
+          "unit": "m"
+        },
+        "page": 140,
+        "article": "4.3.3",
+        "passage": "Les clôtures s’élèvent à une hauteur maximale de 2 mètres.",
+        "offset": {
+          "start": 50170,
+          "end": 50228
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [],
+        "exceptions": [
+          "Pour les constructions autres que celles destinées à l’habitation, des clôtures\nprésentant des caractéristiques différentes peuvent être réalisées"
+        ],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 142,
+        "article": "5.2.2.1",
+        "passage": "de stationnement sont réalisées en sous-sol ;",
+        "offset": {
+          "start": 53959,
+          "end": 54004
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "dans les secteurs de stationnement Aa, Ab, B, C et Cbis"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 142,
+        "article": "5.2.2.1",
+        "passage": "les places\nde stationnement sont réalisées en sous-sol, sauf en cas soit de",
+        "offset": {
+          "start": 54063,
+          "end": 54138
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "dans les secteurs de stationnement Da, Dab, Db, et Dc"
+        ],
+        "exceptions": [
+          "en cas soit de\ncontraintes techniques ou liées aux caractéristiques de l'opération\net de la configuration de son terrain d'assiette",
+          "soit d'une insertion urbaine complexe",
+          "soit du respect\nde caractéristiques patrimoniales"
+        ],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 142,
+        "article": "5.2.2.1",
+        "passage": "les places de stationnement\npeuvent être réalisées soit en sous-sol, soit dans le volume de la\nconstruction, soit en surface.",
+        "offset": {
+          "start": 54421,
+          "end": 54546
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "dans le secteur de stationnement E"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "low"
+      },
+      {
+        "kind": "parking",
+        "sector": null,
+        "statement": "not_regulated",
+        "limit": null,
+        "page": 142,
+        "article": "5.2.2.1",
+        "passage": "les modalités de réalisation des places de\nstationnement ne sont pas règlementées.",
+        "offset": {
+          "start": 55034,
+          "end": 55116
+        },
+        "occurrence": {
+          "of": 1,
+          "chosenBy": "only"
+        },
+        "conditions": [
+          "Pour les constructions ayant une autre destination que celles définies aux\nparagraphes \"a\" et \"b\" ci-avant"
+        ],
+        "exceptions": [],
+        "sectorUnplaced": false,
+        "confidence": "high"
+      }
+    ],
+    "dropped": {
+      "passageNotFound": 0,
+      "schemaInvalid": 0,
+      "overLimit": 0,
+      "conditionNotVerbatim": 22,
+      "incoherent": 0,
+      "valueNotInPassage": 0,
+      "droppedConditions": 19,
+      "stripNotInPassage": 1
+    },
+    "chunks": {
+      "of": 2,
+      "failed": 0
+    },
+    "model": {
+      "providerId": "anthropic",
+      "model": "claude-haiku-5-5",
+      "constraint": "schema"
+    }
+  },
+  "raw": [
+    {
+      "items": [
+        {
+          "value": {
+            "kind": "other",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 100,
+              "unit": "m2"
+            },
+            "strip": null,
+            "conditions": [
+              "constructions à destination de commerce de détail et d'artisanat"
+            ],
+            "exceptions": [
+              "Ce seuil n'est pas applicable aux commerces liés aux deux-roues et à l'automobile"
+            ],
+            "confidence": "high"
+          },
+          "passage": "dès lors que leur surface de plancher est, par unité de commerce, au plus égale soit à 100 m2, soit au plafond indiqué dans les périmètres de polarité commerciale* figurant aux documents graphiques du règlement."
+        },
+        {
+          "value": {
+            "kind": "other",
+            "appliesTo": [
+              "UCe1a"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 17,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "profondeur de la bande de constructibilité principale"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "17 mètres dans le secteur UCe1a"
+        },
+        {
+          "value": {
+            "kind": "other",
+            "appliesTo": [
+              "UCe1b"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 30,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "profondeur de la bande de constructibilité principale"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "30 mètres dans le secteur UCe1b"
+        },
+        {
+          "value": {
+            "kind": "road_setback",
+            "appliesTo": "zone",
+            "statement": "described",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "constructions de premier rang"
+            ],
+            "exceptions": [
+              "reculs ponctuels de la façade pour motifs de composition architecturale ou façades végétalisées"
+            ],
+            "confidence": "high"
+          },
+          "passage": "Les constructions sont implantées en limite de référence* ou en limite de la marge de recul*."
+        },
+        {
+          "value": {
+            "kind": "boundary_setback",
+            "appliesTo": "zone",
+            "statement": "described",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "Dans la bande de constructibilité principale"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Les constructions sont implantées sur les deux limites séparatives latérales*."
+        },
+        {
+          "value": {
+            "kind": "boundary_setback",
+            "appliesTo": [
+              "UCe1a"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "height_relative",
+              "reference": "facade_height",
+              "factor": 1,
+              "offsetMetres": -4,
+              "minimumMetres": 2
+            },
+            "strip": null,
+            "conditions": [
+              "Dans la bande de constructibilité secondaire*",
+              "Dans le secteur UCe1a"
+            ],
+            "exceptions": [
+              "Les constructions peuvent être implantées sur les limites séparatives* ou en retrait* de ces dernières."
+            ],
+            "confidence": "high"
+          },
+          "passage": "En cas de retrait*, ce dernier est au moins égal à la hauteur de façade* de la construction moins 4 mètres (R ≥ Hf - 4 m), avec un minimum de 2 mètres."
+        },
+        {
+          "value": {
+            "kind": "boundary_setback",
+            "appliesTo": [
+              "UCe1b"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 4,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans la bande de constructibilité secondaire*",
+              "Dans le secteur UCe1b"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Le retrait* est au moins égal à 4 mètres."
+        },
+        {
+          "value": {
+            "kind": "building_distance",
+            "appliesTo": [
+              "UCe1a"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "height_relative",
+              "reference": "facade_height",
+              "factor": 0.5,
+              "offsetMetres": null,
+              "minimumMetres": null
+            },
+            "strip": null,
+            "conditions": [
+              "Dans le secteur UCe1a"
+            ],
+            "exceptions": [
+              "hors césures* et fractionnements*"
+            ],
+            "confidence": "high"
+          },
+          "passage": "dans le secteur UCe1a, à la moitié de la hauteur de façade* la plus élevée (D ≥ Hf/2)"
+        },
+        {
+          "value": {
+            "kind": "building_distance",
+            "appliesTo": [
+              "UCe1b"
+            ],
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 4,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans le secteur UCe1b"
+            ],
+            "exceptions": [
+              "hors césures* et fractionnements*"
+            ],
+            "confidence": "high"
+          },
+          "passage": "dans le secteur UCe1b, à 4 mètres."
+        },
+        {
+          "value": {
+            "kind": "building_distance",
+            "appliesTo": "zone",
+            "statement": "not_regulated",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "distance entre une annexe* et une autre construction"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "La distance* entre une annexe* et une autre construction n'est pas réglementée."
+        },
+        {
+          "value": {
+            "kind": "footprint_ratio",
+            "appliesTo": "zone",
+            "statement": "not_regulated",
+            "limit": null,
+            "strip": null,
+            "conditions": [],
+            "exceptions": [
+              "sauf si un coefficient d'emprise au sol figure aux documents graphiques"
+            ],
+            "confidence": "high"
+          },
+          "passage": "L'emprise au sol* des constructions n'est pas réglementée."
+        },
+        {
+          "value": {
+            "kind": "extension_max",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "ratio",
+              "comparison": "max",
+              "percent": 5,
+              "base": "existing_emprise"
+            },
+            "strip": null,
+            "conditions": [
+              "extension d'une construction existante à la date d'approbation du PLU-H présentant une emprise au sol supérieure à celle exigée"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "dès lors qu'elle est limitée à une augmentation de 5% de l'emprise au sol* existante, à la date d'approbation du PLU-H."
+        },
+        {
+          "value": {
+            "kind": "height_facade",
+            "appliesTo": "zone",
+            "statement": "see_graphic",
+            "limit": null,
+            "strip": null,
+            "conditions": [],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "La hauteur de façade* maximale des constructions figure aux documents graphiques du règlement (plan des hauteurs, plan de zonage ou plan masse)."
+        },
+        {
+          "value": {
+            "kind": "height_facade",
+            "appliesTo": "zone",
+            "statement": "described",
+            "limit": null,
+            "strip": {
+              "depthMetres": 5,
+              "edges": "side_rear",
+              "permits": false
+            },
+            "conditions": [
+              "Dans la bande de constructibilité secondaire*",
+              "dès qu'une limite séparative* du terrain correspond à la limite d'une zone URi1, URi2, AURi1, et AURi2"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "Ce gabarit s'applique sur une profondeur de 5 mètres comptés perpendiculairement par rapport à la limite séparative*."
+        },
+        {
+          "value": {
+            "kind": "green_ratio",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "ratio",
+              "comparison": "min",
+              "percent": 15,
+              "base": "plot_area"
+            },
+            "strip": null,
+            "conditions": [],
+            "exceptions": [
+              "constructions à destination d'équipements d'intérêt collectif et services publics"
+            ],
+            "confidence": "high"
+          },
+          "passage": "Le coefficient de pleine terre* est au minimum de 15%."
+        },
+        {
+          "value": {
+            "kind": "parking",
+            "appliesTo": "zone",
+            "statement": "described",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "Sur les nouvelles aires de stationnement en surface et les aires de stationnement en surface existantes, d'une superficie inférieure ou égale à 1 500 m2"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Sur les nouvelles aires de stationnement en surface et les aires de stationnement en surface existantes, d'une superficie inférieure ou égale à 1 500 m2, il est exigé la plantation d'au moins un arbre pour quatre places de stationnement."
+        },
+        {
+          "value": {
+            "kind": "other",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 3.5,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "constructions implantées en limite de référence ou en limite de la marge de recul qui ont une destination autre que l'habitation ou une hauteur de façade supérieure ou égale à 16 mètres"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "présente une hauteur minimale de 3,50 mètres sur une profondeur minimale de 7 mètres à compter du nu général de la façade*."
+        },
+        {
+          "value": {
+            "kind": "other",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 4,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "stockage et dépôt à l'air libre de terres excavées"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Le stockage et le dépôt doivent être limités à une hauteur maximale de 4 mètres à compter du terrain naturel"
+        }
+      ],
+      "rejected": []
+    },
+    {
+      "items": [
+        {
+          "value": {
+            "kind": "other",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 0.6,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans les cas visés aux deux alinéas précédents",
+              "si la largeur de la voie est inférieure ou égale à 12 mètres"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "Dans les cas visés aux deux alinéas précédents, le porte-à-faux maximum de ces volumes habitables, balcons ou surfaces extérieures non closes est limité à : 0,60 mètre si la largeur de la voie est inférieure ou égale à 12 mètres et 0,80 mètre si la largeur de la voie est supérieure à 12 mètres."
+        },
+        {
+          "value": {
+            "kind": "other",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 0.8,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Dans les cas visés aux deux alinéas précédents",
+              "si la largeur de la voie est supérieure à 12 mètres"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "0,80 mètre si la largeur de la voie est supérieure à 12 mètres."
+        },
+        {
+          "value": {
+            "kind": "other",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "min",
+              "value": 4.3,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Tout débord de construction en saillie sur le domaine public"
+            ],
+            "exceptions": [
+              "des terrasses des commerces en rez-de-chaussée",
+              "des vitrines, des éléments décoratifs et autres saillies à caractère ornemental",
+              "des dispositifs de protection contre le rayonnement solaire, de végétalisation et d’isolation thermique par l’extérieur sur construction existante"
+            ],
+            "confidence": "high"
+          },
+          "passage": "au-dessus d’une hauteur de 4,30 mètres, à l’exception :"
+        },
+        {
+          "value": {
+            "kind": "other",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 1,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Clôtures implantées le long de la limite de référence",
+              "dispositif rigide à claire voie surmontant un mur bahut"
+            ],
+            "exceptions": [],
+            "confidence": "medium"
+          },
+          "passage": "1 mètre, sans pouvoir excéder 2 mètres."
+        },
+        {
+          "value": {
+            "kind": "other",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 2,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Clôtures implantées le long de la limite de référence"
+            ],
+            "exceptions": [
+              "Pour les constructions autres que celles destinées à l’habitation, des clôtures présentant des caractéristiques différentes peuvent être réalisées"
+            ],
+            "confidence": "medium"
+          },
+          "passage": "1 mètre, sans pouvoir excéder 2 mètres."
+        },
+        {
+          "value": {
+            "kind": "other",
+            "appliesTo": "zone",
+            "statement": "limit",
+            "limit": {
+              "kind": "value",
+              "comparison": "max",
+              "value": 2,
+              "unit": "m"
+            },
+            "strip": null,
+            "conditions": [
+              "Clôtures implantées en limites séparatives"
+            ],
+            "exceptions": [
+              "Pour les constructions autres que celles destinées à l’habitation, des clôtures présentant des caractéristiques différentes peuvent être réalisées"
+            ],
+            "confidence": "high"
+          },
+          "passage": "Les clôtures s’élèvent à une hauteur maximale de 2 mètres."
+        },
+        {
+          "value": {
+            "kind": "parking",
+            "appliesTo": "zone",
+            "statement": "not_regulated",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "Pour les constructions ayant une autre destination que celles définies aux paragraphes \"a\" et \"b\" ci-avant"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "les modalités de réalisation des places de stationnement ne sont pas règlementées."
+        },
+        {
+          "value": {
+            "kind": "parking",
+            "appliesTo": "zone",
+            "statement": "described",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "Pour les constructions à destination d’habitation, bureau, commerce de détail, artisanat, restauration et activités de service avec l’accueil d’une clientèle et d'hébergement hôtelier et touristique",
+              "dans les secteurs de stationnement Aa, Ab, B, C et Cbis"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "de stationnement sont réalisées en sous-sol ;"
+        },
+        {
+          "value": {
+            "kind": "parking",
+            "appliesTo": "zone",
+            "statement": "described",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "Pour les constructions à destination d’habitation, bureau, commerce de détail, artisanat, restauration et activités de service avec l’accueil d’une clientèle et d'hébergement hôtelier et touristique",
+              "dans les secteurs de stationnement Da, Dab, Db, et Dc"
+            ],
+            "exceptions": [
+              "en cas soit de contraintes techniques ou liées aux caractéristiques de l'opération et de la configuration de son terrain d'assiette",
+              "soit d'une insertion urbaine complexe",
+              "soit du respect de caractéristiques patrimoniales"
+            ],
+            "confidence": "high"
+          },
+          "passage": "les places de stationnement sont réalisées en sous-sol, sauf en cas soit de"
+        },
+        {
+          "value": {
+            "kind": "parking",
+            "appliesTo": "zone",
+            "statement": "described",
+            "limit": null,
+            "strip": null,
+            "conditions": [
+              "Pour les constructions à destination d’habitation, bureau, commerce de détail, artisanat, restauration et activités de service avec l’accueil d’une clientèle et d'hébergement hôtelier et touristique",
+              "dans le secteur de stationnement E"
+            ],
+            "exceptions": [],
+            "confidence": "high"
+          },
+          "passage": "les places de stationnement peuvent être réalisées soit en sous-sol, soit dans le volume de la construction, soit en surface."
+        }
+      ],
+      "rejected": []
+    }
+  ],
+  "usage": {
+    "calls": 2,
+    "replayedChunks": 0,
+    "settled": 2,
+    "inputTokens": 31696,
+    "outputTokens": 11481,
+    "cacheReadTokens": 0,
+    "costMicrousd": 8911,
+    "estimated": false,
+    "unlisted": false
+  },
+  "seconds": 90.9,
+  "finishedAt": "2026-11-20T20:09:14.266Z",
+  "validated": true,
+  "validatedBy": "owner",
+  "score": {
+    "counts": {
+      "truth": 15,
+      "read": 12,
+      "exact": 11,
+      "sectorError": 0,
+      "found": 11,
+      "wrongValue": 0,
+      "missed": 4,
+      "extra": 1,
+      "duplicates": 0,
+      "outOfScope": 16
+    },
+    "recall": 0.7333333333333333,
+    "wrongValueRate": 0,
+    "sectorAttribution": 1,
+    "verified": 1,
+    "verifiedCount": 12,
+    "droppedTotal": 42,
+    "figureCoverage": {
+      "covered": 16,
+      "total": 25,
+      "uncovered": [
+        "1.2|m",
+        "1.5|m",
+        "10|percent",
+        "15|m",
+        "16|m",
+        "20|percent",
+        "30|percent",
+        "5000|m2",
+        "50|m2"
+      ]
+    },
+    "repeats": {
+      "acrossSectors": 0,
+      "exact": 0
+    },
+    "details": {
+      "missed": [
+        {
+          "id": "r08",
+          "kind": "building_distance",
+          "sector": null,
+          "statement": "not_regulated",
+          "limit": null,
+          "page": 127,
+          "quote": "La distance* entre une construction à destination d'équipements d'intérêt collectif et services publics et une autre construction n'est pas réglementée.",
+          "note": "The second « not regulated » sentence."
+        },
+        {
+          "id": "r10",
+          "kind": "footprint_ratio",
+          "sector": null,
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 128,
+          "quote": "Dès lors que figure aux documents graphiques du règlement un coefficient d'emprise au sol*, sa valeur se substitue aux dispositions du paragraphe 2.4.1"
+        },
+        {
+          "id": "r13",
+          "kind": "height_facade",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 3.5,
+            "unit": "m"
+          },
+          "page": 129,
+          "quote": "une verticale élevée à l'aplomb de la limite séparative d'une hauteur de 3,50 mètres ;",
+          "note": "A gabarit in the secondary band along a boundary with a URi or AURi zone, over a depth of 5 m: a height limited to 3.50 m at the boundary."
+        },
+        {
+          "id": "r15",
+          "kind": "green_ratio",
+          "sector": null,
+          "statement": "see_graphic",
+          "limit": null,
+          "page": 133,
+          "quote": "Dès lors que figure aux documents graphiques du règlement un coefficient de pleine terre* graphique, sa valeur se substitue aux dispositions du paragraphe 3.2.1"
+        }
+      ],
+      "wrongValue": [],
+      "sectorError": [],
+      "extra": [
+        {
+          "kind": "height_facade",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 129,
+          "article": "2.5.1.1",
+          "passage": "Ce gabarit s'applique sur une profondeur de 5 mètres comptés perpendiculairement par\nrapport à la limite séparative*.",
+          "offset": {
+            "start": 21897,
+            "end": 22014
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans la bande de constructibilité secondaire*"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        }
+      ],
+      "duplicates": [],
+      "outOfScope": [
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 100,
+            "unit": "m2"
+          },
+          "page": 122,
+          "article": "1.2.1",
+          "passage": "dès lors que leur surface\nde plancher est, par unité de commerce, au plus égale soit à 100 m2, soit au\nplafond indiqué dans les périmètres de polarité commerciale* figurant aux\ndocuments graphiques du règlement.",
+          "offset": {
+            "start": 2893,
+            "end": 3104
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "constructions à destination de commerce de détail et d’artisanat"
+          ],
+          "exceptions": [
+            "Ce seuil n’est pas applicable aux commerces liés aux deux-roues et à\nl’automobile"
+          ],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        },
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 4,
+            "unit": "m"
+          },
+          "page": 123,
+          "article": "1.2.1",
+          "passage": "Le stockage et le dépôt\ndoivent être limités à une hauteur maximale de 4 mètres à compter du terrain\nnaturel",
+          "offset": {
+            "start": 5116,
+            "end": 5224
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        },
+        {
+          "kind": "other",
+          "sector": "UCe1a",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 17,
+            "unit": "m"
+          },
+          "page": 123,
+          "article": "1.2.2.1",
+          "passage": "17 mètres dans le secteur UCe1a",
+          "offset": {
+            "start": 5760,
+            "end": 5791
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        },
+        {
+          "kind": "other",
+          "sector": "UCe1b",
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 30,
+            "unit": "m"
+          },
+          "page": 123,
+          "article": "1.2.2.1",
+          "passage": "30 mètres dans le secteur UCe1b",
+          "offset": {
+            "start": 5794,
+            "end": 5825
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        },
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 3.5,
+            "unit": "m"
+          },
+          "page": 129,
+          "article": "2.5.1.1",
+          "passage": "présente une hauteur minimale de 3,50 mètres sur une profondeur minimale de\n7 mètres à compter du nu général de la façade*.",
+          "offset": {
+            "start": 21245,
+            "end": 21368
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 133,
+          "article": "3.3.2",
+          "passage": "Sur les nouvelles aires de stationnement en surface et les aires de\nstationnement en surface existantes, d'une superficie inférieure ou égale à\n1 500 m2, il est exigé la plantation d'au moins un arbre pour quatre places de\nstationnement.",
+          "offset": {
+            "start": 31347,
+            "end": 31584
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Sur les nouvelles aires de stationnement en surface et les aires de\nstationnement en surface existantes, d'une superficie inférieure ou égale à\n1 500 m2"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        },
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "min",
+            "value": 4.3,
+            "unit": "m"
+          },
+          "page": 138,
+          "article": "4.2.3",
+          "passage": "au-dessus d’une hauteur de 4,30 mètres, à l’exception :",
+          "offset": {
+            "start": 42511,
+            "end": 42566
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Tout débord de construction en saillie sur le domaine public"
+          ],
+          "exceptions": [
+            "des terrasses des commerces en rez-de-chaussée",
+            "des vitrines, des éléments décoratifs et autres saillies à caractère\nornemental",
+            "des dispositifs de protection contre le rayonnement solaire, de\nvégétalisation et d’isolation thermique par l’extérieur sur\nconstruction existante"
+          ],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        },
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 0.6,
+            "unit": "m"
+          },
+          "page": 138,
+          "article": "4.2.3",
+          "passage": "Dans les cas visés aux deux alinéas précédents, le porte-à-faux maximum de\nces volumes habitables, balcons ou surfaces extérieures non closes est limité\nà : 0,60 mètre si la largeur de la voie est inférieure ou égale à 12 mètres et\n0,80 mètre si la largeur de la voie est supérieure à 12 mètres.",
+          "offset": {
+            "start": 43854,
+            "end": 44149
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans les cas visés aux deux alinéas précédents",
+            "si la largeur de la voie est inférieure ou égale à 12 mètres"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        },
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 0.8,
+            "unit": "m"
+          },
+          "page": 138,
+          "article": "4.2.3",
+          "passage": "0,80 mètre si la largeur de la voie est supérieure à 12 mètres.",
+          "offset": {
+            "start": 44086,
+            "end": 44149
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Dans les cas visés aux deux alinéas précédents",
+            "si la largeur de la voie est supérieure à 12 mètres"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        },
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 1,
+            "unit": "m"
+          },
+          "page": 140,
+          "article": "4.3.2",
+          "passage": "1 mètre, sans pouvoir excéder 2 mètres.",
+          "offset": {
+            "start": 49169,
+            "end": 49208
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        },
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 2,
+            "unit": "m"
+          },
+          "page": 140,
+          "article": "4.3.2",
+          "passage": "1 mètre, sans pouvoir excéder 2 mètres.",
+          "offset": {
+            "start": 49169,
+            "end": 49208
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [
+            "Pour les constructions autres que celles destinées à l’habitation, des clôtures\nprésentant des caractéristiques différentes peuvent être réalisées"
+          ],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        },
+        {
+          "kind": "other",
+          "sector": null,
+          "statement": "limit",
+          "limit": {
+            "kind": "value",
+            "comparison": "max",
+            "value": 2,
+            "unit": "m"
+          },
+          "page": 140,
+          "article": "4.3.3",
+          "passage": "Les clôtures s’élèvent à une hauteur maximale de 2 mètres.",
+          "offset": {
+            "start": 50170,
+            "end": 50228
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [],
+          "exceptions": [
+            "Pour les constructions autres que celles destinées à l’habitation, des clôtures\nprésentant des caractéristiques différentes peuvent être réalisées"
+          ],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 142,
+          "article": "5.2.2.1",
+          "passage": "de stationnement sont réalisées en sous-sol ;",
+          "offset": {
+            "start": 53959,
+            "end": 54004
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "dans les secteurs de stationnement Aa, Ab, B, C et Cbis"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 142,
+          "article": "5.2.2.1",
+          "passage": "les places\nde stationnement sont réalisées en sous-sol, sauf en cas soit de",
+          "offset": {
+            "start": 54063,
+            "end": 54138
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "dans les secteurs de stationnement Da, Dab, Db, et Dc"
+          ],
+          "exceptions": [
+            "en cas soit de\ncontraintes techniques ou liées aux caractéristiques de l'opération\net de la configuration de son terrain d'assiette",
+            "soit d'une insertion urbaine complexe",
+            "soit du respect\nde caractéristiques patrimoniales"
+          ],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "described",
+          "limit": null,
+          "page": 142,
+          "article": "5.2.2.1",
+          "passage": "les places de stationnement\npeuvent être réalisées soit en sous-sol, soit dans le volume de la\nconstruction, soit en surface.",
+          "offset": {
+            "start": 54421,
+            "end": 54546
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "dans le secteur de stationnement E"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "low"
+        },
+        {
+          "kind": "parking",
+          "sector": null,
+          "statement": "not_regulated",
+          "limit": null,
+          "page": 142,
+          "article": "5.2.2.1",
+          "passage": "les modalités de réalisation des places de\nstationnement ne sont pas règlementées.",
+          "offset": {
+            "start": 55034,
+            "end": 55116
+          },
+          "occurrence": {
+            "of": 1,
+            "chosenBy": "only"
+          },
+          "conditions": [
+            "Pour les constructions ayant une autre destination que celles définies aux\nparagraphes \"a\" et \"b\" ci-avant"
+          ],
+          "exceptions": [],
+          "sectorUnplaced": false,
+          "confidence": "high"
+        }
+      ]
+    }
+  }
+}

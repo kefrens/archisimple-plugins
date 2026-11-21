@@ -1,0 +1,228 @@
+{
+  "format": "archisimple-reading-truth",
+  "version": 1,
+  "zone": "UB",
+  "document": {
+    "idurba": "46105_PLU_20130325",
+    "nomfic": "46105_reglement_20130325.pdf",
+    "partition": "DU_46105"
+  },
+  "chapter": {
+    "pages": [
+      12,
+      16
+    ]
+  },
+  "scopeKinds": [
+    "road_setback",
+    "boundary_setback",
+    "building_distance",
+    "footprint_ratio",
+    "extension_max",
+    "annex_max",
+    "height_total",
+    "height_facade",
+    "green_ratio"
+  ],
+  "scopeNote": "Left out on purpose: art. UB6 portail set back at least 3 m and the 4 m parking space before it (fences/parking); the list of cases allowing different road setbacks (annexes, pools, extensions, double rideau, RD, general-interest installations); art. UB8 sentence on extensions of existing buildings (only refers to UB6); art. UB10 R+1+comble storey count (not a metric figure), the general integration sentence, and the pigeonnier exception (ridge at most 3.5 m above the main building's ridge); art. UB11 roof slopes 30-35 % and 200 %, fences 1 m / 2 m; art. UB12 parking; art. UB13 planting rules with no figure (no green share set, no non-regulated statement); art. UB14 COS sans objet (floor area, out of scope); débroussaillement 50 m / 10 m in the preamble. No extension_max, annex_max or height_total figure is set.",
+  "provenance": {
+    "source": "Géoportail de l'urbanisme (GPU)",
+    "licence": "Licence Ouverte v2.0 (Etalab)",
+    "retrievedAt": "2026-11-20",
+    "text": "test-fixtures/fr-urban-rules/evaluation/flaujac-poujols-ub/pages.json"
+  },
+  "draftedBy": "Claude Opus 5.5 (a subagent), from the written conventions of the evaluation set",
+  "draftedAt": "2026-11-20",
+  "draftNote": "Drafted from the chapter's text before any model's reading of it, by a model that saw only the chapter, the conventions and the product's definitions (never another truth, never a reading). Held-out zone of another document and layout. Judgement calls of the drafter: UB6, UB7 and UB8 each set a minimum and a maximum in one sentence; following one-rule-per-sentence I recorded only the minimum (5 m, 3 m, 4 m) and named the maxima (15 m, 10 m, 20 m) in the notes; a second reader could list the maxima as separate rules. | UBa road setback 'soit à l'alignement, soit à 3m minimum' recorded as limit min 3 m although alignment is also allowed; could be read as described. | UBa: the zone's 5-15 m road rule not repeated for UBa since the UBa paragraph replaces it; UBa inherits the other articles (UB7, UB8, UB9, UB10) but those sentences name no sector, so only sector null rules are listed. | UB10 pigeonnier ridge limit '3.5 m du faîtage de la construction principale' treated as an exception relative to another building, not a height_total limit. | UB10 7 m 'à l'égout du toit' classed height_facade; no total/ridge height is set. | UB9 'SANS OBJET .' listed as footprint_ratio not_regulated.",
+  "validatedBy": "independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",
+  "validatedAt": "2026-11-20",
+  "rules": [
+    {
+      "id": "fb01",
+      "kind": "road_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 5,
+        "unit": "m"
+      },
+      "page": 13,
+      "quote": "La façade des constructions principales sera comprise entre un retrait minimal de 5 m et un maximum de 15m des limites de l’emprise de la voie existante ou à créer, privée ou publique.",
+      "note": "Art. UB6: façade of main buildings between 5 m minimum and 15 m maximum from the road; minimum recorded (max 15 m in the same sentence)."
+    },
+    {
+      "id": "fb02",
+      "kind": "road_setback",
+      "sector": "UBa",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 3,
+        "unit": "m"
+      },
+      "page": 13,
+      "quote": "soit à l’alignement, soit à 3m minimum de l’emprise de la voie existante ou à créer, privée ou publique.",
+      "note": "Art. UB6, secteur UBa: on the alignment or at least 3 m from the road."
+    },
+    {
+      "id": "fb03",
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 3,
+        "unit": "m"
+      },
+      "page": 14,
+      "quote": "ne pourra être inférieure à 3 m, sans toutefois excéder 10 mètres.",
+      "note": "Art. UB7: unless on the boundary, at least 3 m (and at most 10 m) from the boundary."
+    },
+    {
+      "id": "fb04",
+      "kind": "building_distance",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 14,
+      "quote": "la distance entre deux constructions non contigües sur un même terrain doit être au minium de 4m, sans toutefois excéder 20 mètres, sauf impossibilité technique.",
+      "note": "Art. UB8: at least 4 m (and at most 20 m) between non-contiguous buildings, annexes and 'mas' excepted."
+    },
+    {
+      "id": "fb05",
+      "kind": "footprint_ratio",
+      "sector": null,
+      "statement": "not_regulated",
+      "limit": null,
+      "page": 14,
+      "quote": "SANS OBJET .",
+      "note": "Art. UB9 emprise au sol: sans objet."
+    },
+    {
+      "id": "fb06",
+      "kind": "height_facade",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 7,
+        "unit": "m"
+      },
+      "page": 14,
+      "quote": "ne doit pas excéder 7m à l'égout du toit par rapport au côté haut du terrain naturel.",
+      "note": "Art. UB10: at most 7 m at the eaves (R+1+comble)."
+    },
+    {
+      "id": "fb07",
+      "kind": "road_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 15,
+        "unit": "m"
+      },
+      "page": 13,
+      "quote": "La façade des constructions principales sera comprise entre un retrait minimal de 5 m et un maximum de 15m des limites de l’emprise de la voie existante ou à créer, privée ou publique.",
+      "note": "Added after the independent cross-check: the same sentence sets a minimum and a maximum distance (« entre un retrait minimal de 5 m et un maximum de 15 m »); a minimum and a maximum are two rules."
+    },
+    {
+      "id": "fb08",
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 10,
+        "unit": "m"
+      },
+      "page": 14,
+      "quote": "A moins que la construction ne jouxte la limite parcellaire, la distance au sol comptée horizontalement de tout point de ce bâtiment au point de la limite parcellaire qui en est le plus rapproché, ne pourra être inférieure à 3 m, sans toutefois excéder 10 mètres.",
+      "note": "Added after the independent cross-check: the same sentence sets a minimum and a maximum distance (« entre un retrait minimal de 5 m et un maximum de 15 m »); a minimum and a maximum are two rules."
+    },
+    {
+      "id": "fb09",
+      "kind": "building_distance",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 20,
+        "unit": "m"
+      },
+      "page": 14,
+      "quote": "la distance entre deux constructions non contigües sur un même terrain doit être au minium de 4m, sans toutefois excéder 20 mètres, sauf impossibilité technique.",
+      "note": "Added after the independent cross-check: the same sentence sets a minimum and a maximum distance (« entre un retrait minimal de 5 m et un maximum de 15 m »); a minimum and a maximum are two rules."
+    }
+  ],
+  "crossCheck": {
+    "by": "a second model (Fable 5.2) given only the chapter text and the product's rule definitions, never this truth; the draft itself was written by another model (Opus 5.5) from the written conventions",
+    "at": "2026-11-20",
+    "blindRules": 13,
+    "draftersRulesFoundExactly": "6 of 6 (wrong values 0, other sectors 0, not found 0)",
+    "adopted": {
+      "reason": "The three sentences of articles 6, 7 and 8 that set a minimum AND a maximum distance (5 m and 15 m from the road, 3 m and 10 m from the boundary, 4 m and 20 m between buildings): the draft listed the minimum only; a maximum is a limit of its own (comparison max), so three rules are added.",
+      "ids": [
+        "fb07",
+        "fb08",
+        "fb09"
+      ]
+    },
+    "notAdopted": [
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 13,
+        "quote": "Toutefois des implantations différentes de celles définies ci-dessus peuvent être admises :",
+        "why": "An alternative rule or exception with no figure of its own (the existing non-conforming building may be extended if the non-conformity is not worsened; annexes may stand on the boundary): not listed, as in every truth of this set."
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 14,
+        "quote": "Pour les constructions existantes, les aménagements et agrandissements seront autorisés à condition que cela ne diminue pas les retraits imposés aux articles UB",
+        "why": "An alternative rule or exception with no figure of its own (the existing non-conforming building may be extended if the non-conformity is not worsened; annexes may stand on the boundary): not listed, as in every truth of this set."
+      },
+      {
+        "kind": "height_total",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 14,
+        "quote": "la hauteur des constructions doit être fonction de leur intégration dans l’environnement immédiat.",
+        "why": "A general rule in words (« fonction de leur intégration dans l'environnement ») with no figure: not listed."
+      },
+      {
+        "kind": "height_total",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 3.5,
+          "unit": "m"
+        },
+        "page": 14,
+        "quote": "Toutefois, une exception sera faite pour la réalisation de bâtiment type pigeonnier dont la hauteur du faîtage ne pourra excéder 3.5 m du faîtage de la construc",
+        "why": "The pigeonnier's 3.5 m is measured from the ridge of the main building, not from the ground: not an absolute height, so not listed as a limit (and the drafter treated it as an exception)."
+      }
+    ]
+  }
+}

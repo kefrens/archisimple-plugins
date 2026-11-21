@@ -1433,3 +1433,141 @@ test('review NITs: a storey under no ceiling leaves the base and the total stays
   assert.deepEqual(section.held().sdp.open, { parking: ['garage'] });
   assert.deepEqual(section.held().sdp['doc-a'].none, ['2', '4']);
 });
+
+// ── Sprint 002.36: a cap on the footprint written as an area ────────────────────────────────────
+
+/** A plot of 1 178 m² on which 179.4 m² is built, and the footprint rules entered by hand. */
+async function withFootprintRules(...rules) {
+  const context = surfacesReader('lyon', {
+    measured: measures({ coverage: LYON }),
+    site: { plotArea: 1178 },
+    section: store(balconies(6.4)),
+    buildings: [annexEntity]
+  });
+  const first = await read(context);
+  for (const [action, input] of rules) {
+    await act(context, action, { statement: 'limit', source: 'Règlement', ...input }, addTarget(first, action));
+  }
+  return read(context);
+}
+const footprintChecks = (report) =>
+  report.rules
+    .filter((r) => r.kind === 'footprint_ratio' && r.provenance === 'entered')
+    .map((r) => report.checks.find((c) => c.ruleId === r.id));
+
+test('002.36: a footprint cap of 250 m² alone is the budget: 250 m² allowed, 179.4 m² used, one check against it', async () => {
+  const report = await withFootprintRules(['add-area', { kind: 'footprint_area', value: 250 }]);
+  const meter = surfaces(report).blocks.find((b) => b.kind === 'meter');
+  assert.deepEqual([meter.used, meter.allowed], [
+    { value: 179.4, unit: 'm2' },
+    { value: 250, unit: 'm2' }
+  ]);
+  const [check] = footprintChecks(report);
+  assert.deepEqual(
+    [check.result, check.measured.value, check.limit.value, check.subject.kind],
+    ['no_issue', 179.4, 250, 'plot']
+  );
+  assert.deepEqual(row(report, 'fr-urban-rules.surfaces.budget.areaCap').value, {
+    value: 250,
+    unit: 'm2'
+  });
+  assert.deepEqual(headline(report).verdict, { result: 'no_issue' });
+});
+
+test('002.36: a cap the footprint exceeds is a potential issue', async () => {
+  const report = await withFootprintRules(['add-area', { kind: 'footprint_area', value: 150 }]);
+  const [check] = footprintChecks(report);
+  assert.equal(check.result, 'potential_issue');
+  assert.deepEqual(headline(report).verdict, { result: 'potential_issue' });
+});
+
+test('002.36: a share and an area together: both are checked and the stricter one is the budget', async () => {
+  // 40 % of 1 178 m² is 471.2 m²: the 250 m² cap binds.
+  const strict = await withFootprintRules(
+    ['add-ratio', { kind: 'footprint_ratio', value: 40 }],
+    ['add-area', { kind: 'footprint_area', value: 250 }]
+  );
+  assert.equal(footprintChecks(strict).length, 2);
+  assert.equal(surfaces(strict).blocks.find((b) => b.kind === 'meter').allowed.value, 250);
+  assert.deepEqual(headline(strict).gauge.limit, { value: 21.2, unit: 'percent' }, 'the cap, as a share of the plot');
+  // A cap of 600 m² is looser than the 471.2 m² the share gives: the share binds.
+  const loose = await withFootprintRules(
+    ['add-ratio', { kind: 'footprint_ratio', value: 40 }],
+    ['add-area', { kind: 'footprint_area', value: 600 }]
+  );
+  assert.equal(surfaces(loose).blocks.find((b) => b.kind === 'meter').allowed.value, 471.2);
+  assert.deepEqual(row(loose, 'fr-urban-rules.surfaces.budget.rule').value, {
+    key: 'fr-urban-rules.surfaces.budget.ces',
+    params: { percent: 40 }
+  });
+  assert.deepEqual(row(loose, 'fr-urban-rules.surfaces.budget.areaCap').value, { value: 600, unit: 'm2' });
+  assert.deepEqual(headline(loose).gauge.limit, { value: 40, unit: 'percent' });
+});
+
+test('002.36: with an area cap and no plot area the cap is still checked', async () => {
+  const context = surfacesReader('lyon', {
+    measured: measures({ coverage: LYON }),
+    site: {},
+    section: store(balconies(6.4)),
+    buildings: [annexEntity]
+  });
+  const first = await read(context);
+  await act(
+    context,
+    'add-area',
+    { kind: 'footprint_area', statement: 'limit', value: 250, source: 'Règlement' },
+    addTarget(first, 'add-area')
+  );
+  const report = await read(context);
+  const [check] = footprintChecks(report);
+  assert.deepEqual([check.result, check.limit.value], ['no_issue', 250]);
+});
+
+test('002.36: the question « how much footprint is left » says the area cap, with its rule, when it is the allowance', async () => {
+  const context = surfacesReader('lyon', {
+    measured: measures({ coverage: LYON }),
+    site: { plotArea: 1178 },
+    section: store(balconies(6.4)),
+    buildings: [annexEntity]
+  });
+  const first = await read(context);
+  await act(
+    context,
+    'add-area',
+    { kind: 'footprint_area', statement: 'limit', value: 250, source: 'Règlement' },
+    addTarget(first, 'add-area')
+  );
+  const report = await read(context);
+  const ask = context.reader.questions.find((q) => q.id === 'remaining_area');
+  const answer = ask.answer(
+    structuredClone({
+      args: {},
+      report,
+      site: context.site,
+      variationId: 'open',
+      sectionData: context.data.held()
+    })
+  );
+  assert.equal(answer.status, 'answered');
+  const rule = report.rules.find((r) => r.kind === 'footprint_ratio' && r.provenance === 'entered');
+  const allowed = answer.claims.find((c) => c.text.key === 'fr-urban-rules.question.area.allowedByArea');
+  assert.deepEqual(allowed.values.allowed, { value: 250, unit: 'm2' });
+  assert.equal(allowed.ruleId, rule.id);
+  const remaining = answer.claims.find((c) => c.text.key === 'fr-urban-rules.question.area.remaining');
+  assert.equal(Math.round(remaining.values.remaining.value * 10) / 10, 70.6);
+  assert.equal(remaining.ruleId, rule.id);
+});
+
+test('002.36: the programme enricher says the footprint is capped at an area when that is the allowance, not a share it did not use', () => {
+  const capped = stage(
+    facts({ ces: undefined, areaCap: { area: 250, ruleId: 'entered:cap' }, allowed: 250, plotArea: undefined })
+  ).enrich(programme());
+  assert.ok(
+    capped.assumptions.includes('fr-urban-rules.programme.footprintArea:{"allowed":250}'),
+    [...capped.assumptions].join(' | ')
+  );
+  assert.ok(![...capped.assumptions].some((a) => a.startsWith('fr-urban-rules.programme.footprint:')));
+  // With the share binding, the sentence is the share's, as before.
+  const share = stage(facts()).enrich(programme());
+  assert.ok([...share.assumptions].some((a) => a.startsWith('fr-urban-rules.programme.footprint:')));
+});

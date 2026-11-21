@@ -1,0 +1,762 @@
+{
+  "format": "archisimple-reading-truth",
+  "version": 1,
+  "zone": "UE",
+  "document": {
+    "idurba": "200054807_PLUi_20260306_B",
+    "nomfic": "200054807_reglement_20260306_B.pdf",
+    "partition": "DU_200054807_B"
+  },
+  "chapter": {
+    "pages": [
+      197,
+      209
+    ]
+  },
+  "scopeKinds": [
+    "road_setback",
+    "boundary_setback",
+    "building_distance",
+    "footprint_ratio",
+    "extension_max",
+    "annex_max",
+    "height_total",
+    "height_facade",
+    "green_ratio"
+  ],
+  "scopeNote": "The kinds the buildable area uses. Not covered (never counted as an extra): the floor-area caps and thresholds of article UE1 (50 m² for the existing dwelling, 200 m² in total per dwelling plot, 150 m² for a craft shop in UEa and UEb, 400 m² and 4 000 m² of a pôle de vie in UEp: floor_area_max), the distance of 30 m from an annex or a pool to the dwelling, the pitch of roofs (2 to 35 %), the alignment on the gabarit line of UEc (article 4.1.2, a sentence with no figure), the technical-need exception of 4.5.3, fences (2 m, 1.20 m), parking (1 place per 50 m² or 30 m²), stormwater figures; the figure coverage still watches them.",
+  "provenance": {
+    "source": "Géoportail de l'urbanisme (GPU)",
+    "licence": "Licence Ouverte v2.0 (Etalab)",
+    "retrievedAt": "2026-11-20",
+    "text": "test-fixtures/fr-urban-rules/evaluation/bouc-bel-air-ue/pages.json"
+  },
+  "draftedBy": "Claude Code",
+  "draftedAt": "2026-11-20",
+  "draftNote": "Drafted from the chapter's text (pages 197 to 209) before any model's reading of it, on the conventions of the UD, UG and UF truths. The destination table of article UE1 is garbled by the text layer (cells on separate lines): only the figures of its notes are used. Held-out zone with eight sectors and sub-sectors. The drafter is itself a model.",
+  "validatedBy": "independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",
+  "validatedAt": "2026-11-20",
+  "rules": [
+    {
+      "id": "e01",
+      "kind": "road_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 5,
+        "unit": "m"
+      },
+      "page": 202,
+      "quote": "Les constructions doivent être implantées avec un recul minimum de 5 mètres par rapport à l’alignement* actuel ou futur des voies* et emprises publiques* et privées ouvertes à la circulation publique, et des emprises publiques.",
+      "note": "4.1.1: « dans la zone UE et tous ses secteurs » (the sectors are not named): JUDGEMENT CALL, kept as the zone's own."
+    },
+    {
+      "id": "e02",
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 3,
+        "unit": "m"
+      },
+      "page": 203,
+      "quote": "Les constructions doivent être implantées contre les limites séparatives*, ou en retrait minimum de 3 mètres des limites séparatives.",
+      "note": "4.2.1 names the zone UE and the sectors UEa, UEa1, UEa2, UEb, UEc: one rule each; « contre les limites » is the other allowed placement."
+    },
+    {
+      "id": "e03",
+      "kind": "boundary_setback",
+      "sector": "UEa",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 3,
+        "unit": "m"
+      },
+      "page": 203,
+      "quote": "Les constructions doivent être implantées contre les limites séparatives*, ou en retrait minimum de 3 mètres des limites séparatives.",
+      "note": "4.2.1 names the zone UE and the sectors UEa, UEa1, UEa2, UEb, UEc: one rule each; « contre les limites » is the other allowed placement."
+    },
+    {
+      "id": "e04",
+      "kind": "boundary_setback",
+      "sector": "UEa1",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 3,
+        "unit": "m"
+      },
+      "page": 203,
+      "quote": "Les constructions doivent être implantées contre les limites séparatives*, ou en retrait minimum de 3 mètres des limites séparatives.",
+      "note": "4.2.1 names the zone UE and the sectors UEa, UEa1, UEa2, UEb, UEc: one rule each; « contre les limites » is the other allowed placement."
+    },
+    {
+      "id": "e05",
+      "kind": "boundary_setback",
+      "sector": "UEa2",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 3,
+        "unit": "m"
+      },
+      "page": 203,
+      "quote": "Les constructions doivent être implantées contre les limites séparatives*, ou en retrait minimum de 3 mètres des limites séparatives.",
+      "note": "4.2.1 names the zone UE and the sectors UEa, UEa1, UEa2, UEb, UEc: one rule each; « contre les limites » is the other allowed placement."
+    },
+    {
+      "id": "e06",
+      "kind": "boundary_setback",
+      "sector": "UEb",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 3,
+        "unit": "m"
+      },
+      "page": 203,
+      "quote": "Les constructions doivent être implantées contre les limites séparatives*, ou en retrait minimum de 3 mètres des limites séparatives.",
+      "note": "4.2.1 names the zone UE and the sectors UEa, UEa1, UEa2, UEb, UEc: one rule each; « contre les limites » is the other allowed placement."
+    },
+    {
+      "id": "e07",
+      "kind": "boundary_setback",
+      "sector": "UEc",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 3,
+        "unit": "m"
+      },
+      "page": 203,
+      "quote": "Les constructions doivent être implantées contre les limites séparatives*, ou en retrait minimum de 3 mètres des limites séparatives.",
+      "note": "4.2.1 names the zone UE and the sectors UEa, UEa1, UEa2, UEb, UEc: one rule each; « contre les limites » is the other allowed placement."
+    },
+    {
+      "id": "e08",
+      "kind": "boundary_setback",
+      "sector": "UEm",
+      "statement": "limit",
+      "limit": {
+        "kind": "height_relative",
+        "reference": "altitude_difference",
+        "factor": 0.5,
+        "offsetMetres": null,
+        "minimumMetres": 5
+      },
+      "page": 204,
+      "quote": "au moins égale à la moitié de la différence de hauteur entre ces deux points, sans être inférieure à 5 mètres.",
+      "note": "4.2.2, UEm: half the height difference, at least 5 m."
+    },
+    {
+      "id": "e09",
+      "kind": "boundary_setback",
+      "sector": "UEp",
+      "statement": "limit",
+      "limit": {
+        "kind": "height_relative",
+        "reference": "altitude_difference",
+        "factor": 0.5,
+        "offsetMetres": null,
+        "minimumMetres": 5
+      },
+      "page": 204,
+      "quote": "au moins égale à la moitié de la différence de hauteur entre ces deux points, sans être inférieure à 5 mètres.",
+      "note": "4.2.3, UEp and UEp1: the same sentence as UEm's."
+    },
+    {
+      "id": "e10",
+      "kind": "boundary_setback",
+      "sector": "UEp1",
+      "statement": "limit",
+      "limit": {
+        "kind": "height_relative",
+        "reference": "altitude_difference",
+        "factor": 0.5,
+        "offsetMetres": null,
+        "minimumMetres": 5
+      },
+      "page": 204,
+      "quote": "au moins égale à la moitié de la différence de hauteur entre ces deux points, sans être inférieure à 5 mètres.",
+      "note": "4.2.3, UEp and UEp1: the same sentence as UEm's."
+    },
+    {
+      "id": "e11",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "described",
+      "limit": null,
+      "page": 203,
+      "quote": "la hauteur totale de l’extension soit inférieure ou égale à 4 mètres",
+      "note": "The alternative rule of 4.2.1 for an extension in the strip closer than the setback. REVISED: described, not a 4 m limit (the strip has no stated depth)."
+    },
+    {
+      "id": "e12",
+      "kind": "height_total",
+      "sector": "UEa",
+      "statement": "described",
+      "limit": null,
+      "page": 203,
+      "quote": "la hauteur totale de l’extension soit inférieure ou égale à 4 mètres",
+      "note": "The alternative rule of 4.2.1 for an extension in the strip closer than the setback. REVISED: described, not a 4 m limit (the strip has no stated depth)."
+    },
+    {
+      "id": "e13",
+      "kind": "height_total",
+      "sector": "UEa1",
+      "statement": "described",
+      "limit": null,
+      "page": 203,
+      "quote": "la hauteur totale de l’extension soit inférieure ou égale à 4 mètres",
+      "note": "The alternative rule of 4.2.1 for an extension in the strip closer than the setback. REVISED: described, not a 4 m limit (the strip has no stated depth)."
+    },
+    {
+      "id": "e14",
+      "kind": "height_total",
+      "sector": "UEa2",
+      "statement": "described",
+      "limit": null,
+      "page": 203,
+      "quote": "la hauteur totale de l’extension soit inférieure ou égale à 4 mètres",
+      "note": "The alternative rule of 4.2.1 for an extension in the strip closer than the setback. REVISED: described, not a 4 m limit (the strip has no stated depth)."
+    },
+    {
+      "id": "e15",
+      "kind": "height_total",
+      "sector": "UEb",
+      "statement": "described",
+      "limit": null,
+      "page": 203,
+      "quote": "la hauteur totale de l’extension soit inférieure ou égale à 4 mètres",
+      "note": "The alternative rule of 4.2.1 for an extension in the strip closer than the setback. REVISED: described, not a 4 m limit (the strip has no stated depth)."
+    },
+    {
+      "id": "e16",
+      "kind": "height_total",
+      "sector": "UEc",
+      "statement": "described",
+      "limit": null,
+      "page": 203,
+      "quote": "la hauteur totale de l’extension soit inférieure ou égale à 4 mètres",
+      "note": "The alternative rule of 4.2.1 for an extension in the strip closer than the setback. REVISED: described, not a 4 m limit (the strip has no stated depth)."
+    },
+    {
+      "id": "e17",
+      "kind": "height_total",
+      "sector": "UEm",
+      "statement": "described",
+      "limit": null,
+      "page": 204,
+      "quote": "la hauteur totale de l’extension soit inférieure ou égale à 4 mètres",
+      "note": "The alternative rule of 4.2.2 (UEm). REVISED: described, not a 4 m limit (the strip has no stated depth)."
+    },
+    {
+      "id": "e18",
+      "kind": "height_total",
+      "sector": "UEp",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 204,
+      "quote": "Les constructions dont la hauteur totale n’excède pas 4 mètres pourront être implantées dans une bande de 0 à 5 mètres",
+      "note": "The alternative rule of 4.2.3: constructions up to 4 m in the strip of 0 to 5 m."
+    },
+    {
+      "id": "e19",
+      "kind": "height_total",
+      "sector": "UEp1",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 204,
+      "quote": "Les constructions dont la hauteur totale n’excède pas 4 mètres pourront être implantées dans une bande de 0 à 5 mètres",
+      "note": "The alternative rule of 4.2.3: constructions up to 4 m in the strip of 0 to 5 m."
+    },
+    {
+      "id": "e20",
+      "kind": "building_distance",
+      "sector": null,
+      "statement": "not_regulated",
+      "limit": null,
+      "page": 204,
+      "quote": "unité foncière. Non réglementée",
+      "note": "Article 4.3."
+    },
+    {
+      "id": "e21",
+      "kind": "footprint_ratio",
+      "sector": null,
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 204,
+      "quote": "L’emprise au sol* des constructions ne pourra excéder l’emprise maximale indiquée au règlement graphique lorsqu’elle existe.",
+      "note": "Article 4.4."
+    },
+    {
+      "id": "e22",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 204,
+      "quote": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle existe.",
+      "note": "4.5.1: the zone and its sectors, with no gabarit line."
+    },
+    {
+      "id": "e23",
+      "kind": "height_total",
+      "sector": "UEp",
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 204,
+      "quote": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle existe.",
+      "note": "4.5.3: UEp and UEp1 (the same sentence again, with its own alternative rule)."
+    },
+    {
+      "id": "e24",
+      "kind": "height_total",
+      "sector": "UEp1",
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 204,
+      "quote": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle existe.",
+      "note": "4.5.3: UEp and UEp1 (the same sentence again, with its own alternative rule)."
+    },
+    {
+      "id": "e25",
+      "kind": "height_facade",
+      "sector": "UEc",
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 204,
+      "quote": "La hauteur des constructions* ne peut excéder une hauteur de façade* indiquée par le linéaire de gabarit* figurant sur le règlement graphique.",
+      "note": "4.5.2, UEc: in the band defined by the gabarit line."
+    },
+    {
+      "id": "e26",
+      "kind": "green_ratio",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 15,
+        "base": "plot_area"
+      },
+      "page": 206,
+      "quote": "UE, UEa, UEa1, UEa2, UEp, UEm, UEp1 Au moins 15 % du terrain d'assiette* du projet",
+      "note": "The table's first row: the zone itself (null) and each sector it names."
+    },
+    {
+      "id": "e27",
+      "kind": "green_ratio",
+      "sector": "UEa",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 15,
+        "base": "plot_area"
+      },
+      "page": 206,
+      "quote": "UE, UEa, UEa1, UEa2, UEp, UEm, UEp1 Au moins 15 % du terrain d'assiette* du projet",
+      "note": "The table's first row: the zone itself (null) and each sector it names."
+    },
+    {
+      "id": "e28",
+      "kind": "green_ratio",
+      "sector": "UEa1",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 15,
+        "base": "plot_area"
+      },
+      "page": 206,
+      "quote": "UE, UEa, UEa1, UEa2, UEp, UEm, UEp1 Au moins 15 % du terrain d'assiette* du projet",
+      "note": "The table's first row: the zone itself (null) and each sector it names."
+    },
+    {
+      "id": "e29",
+      "kind": "green_ratio",
+      "sector": "UEa2",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 15,
+        "base": "plot_area"
+      },
+      "page": 206,
+      "quote": "UE, UEa, UEa1, UEa2, UEp, UEm, UEp1 Au moins 15 % du terrain d'assiette* du projet",
+      "note": "The table's first row: the zone itself (null) and each sector it names."
+    },
+    {
+      "id": "e30",
+      "kind": "green_ratio",
+      "sector": "UEp",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 15,
+        "base": "plot_area"
+      },
+      "page": 206,
+      "quote": "UE, UEa, UEa1, UEa2, UEp, UEm, UEp1 Au moins 15 % du terrain d'assiette* du projet",
+      "note": "The table's first row: the zone itself (null) and each sector it names."
+    },
+    {
+      "id": "e31",
+      "kind": "green_ratio",
+      "sector": "UEm",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 15,
+        "base": "plot_area"
+      },
+      "page": 206,
+      "quote": "UE, UEa, UEa1, UEa2, UEp, UEm, UEp1 Au moins 15 % du terrain d'assiette* du projet",
+      "note": "The table's first row: the zone itself (null) and each sector it names."
+    },
+    {
+      "id": "e32",
+      "kind": "green_ratio",
+      "sector": "UEp1",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 15,
+        "base": "plot_area"
+      },
+      "page": 206,
+      "quote": "UE, UEa, UEa1, UEa2, UEp, UEm, UEp1 Au moins 15 % du terrain d'assiette* du projet",
+      "note": "The table's first row: the zone itself (null) and each sector it names."
+    },
+    {
+      "id": "e33",
+      "kind": "green_ratio",
+      "sector": "UEb",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 20,
+        "base": "plot_area"
+      },
+      "page": 206,
+      "quote": "UEb Au moins 20% du terrain d'assiette* du projet",
+      "note": ""
+    },
+    {
+      "id": "e34",
+      "kind": "green_ratio",
+      "sector": "UEc",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 15,
+        "base": "plot_area"
+      },
+      "page": 206,
+      "quote": "UEc en l’absence de linéaire de gabarit* Au moins 15 % du terrain d'assiette* du projet",
+      "note": "UEc where there is no gabarit line."
+    },
+    {
+      "id": "e35",
+      "kind": "green_ratio",
+      "sector": "UEc",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 15,
+        "base": "plot_area"
+      },
+      "page": 206,
+      "quote": "définie par le linéaire de gabarit Au moins 15 % du terrain d'assiette* du projet",
+      "note": "UEc beyond the band built along the gabarit line (a second row, the same figure)."
+    },
+    {
+      "id": "e36",
+      "kind": "extension_max",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 40,
+        "unit": "m2"
+      },
+      "page": 199,
+      "quote": "dès lors que l’extension n’excède pas 40 m2 de surface de plancher* et d’emprise au sol*",
+      "note": "Article UE1 note [2]: one extension of a dwelling (the zone, but UEp1). Two readings of the same sentence exist (area, or floor area and footprint): an area cap."
+    },
+    {
+      "id": "e37",
+      "kind": "annex_max",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 30,
+        "unit": "m2"
+      },
+      "page": 199,
+      "quote": "que son emprise au sol* n’excède pas 30 m2",
+      "note": "Article UE1 note [2]: the footprint of the one annex of a dwelling."
+    },
+    {
+      "id": "e38",
+      "kind": "extension_max",
+      "sector": "UEa1",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 15,
+        "base": "surface_de_plancher"
+      },
+      "page": 200,
+      "quote": "dans la limite de 15% de la surface de plancher* existante",
+      "note": "Article UE1 note [5a], the sub-sectors UEa1 and UEa2: one extension of an existing craft shop."
+    },
+    {
+      "id": "e39",
+      "kind": "extension_max",
+      "sector": "UEa2",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 15,
+        "base": "surface_de_plancher"
+      },
+      "page": 200,
+      "quote": "dans la limite de 15% de la surface de plancher* existante",
+      "note": "Article UE1 note [5a], the sub-sectors UEa1 and UEa2: one extension of an existing craft shop."
+    },
+    {
+      "id": "e40",
+      "kind": "extension_max",
+      "sector": "UEp",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 15,
+        "base": "surface_de_plancher"
+      },
+      "page": 201,
+      "quote": "dans la limite de 15% de la surface de plancher* existante ;",
+      "note": "Article UE1 note [8c] (UEp) and [9c] (UEp1): one extension of an existing shop, restaurant or service."
+    },
+    {
+      "id": "e41",
+      "kind": "extension_max",
+      "sector": "UEp1",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 15,
+        "base": "surface_de_plancher"
+      },
+      "page": 201,
+      "quote": "dans la limite de 15% de la surface de plancher* existante ;",
+      "note": "Article UE1 note [8c] (UEp) and [9c] (UEp1): one extension of an existing shop, restaurant or service."
+    }
+  ],
+  "crossCheck": {
+    "by": "a second model (Fable 5.2) given only the chapter text and the product's rule definitions, never this truth",
+    "at": "2026-11-20",
+    "blindRules": 56,
+    "draftersRulesFoundExactly": "41 of 41 (wrong values 0, other sectors 0, not found 0)",
+    "adopted": {
+      "reason": "nothing to add: every rule of the draft was found by the blind reader with the same kind, sector, figure and statement; the blind reader's 15 other items are alternative rules without a figure, a siting distance and a gabarit-line clause, left out on the UD truth's conventions.",
+      "ids": []
+    },
+    "notAdopted": [
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 203,
+        "quote": "Les extensions* de constructions existantes régulièrement édifiées mais non conformes aux règles d’implantation du présent PLUi peuvent être implantées à une di",
+        "why": "An alternative rule or a clause with no figure (extensions of a non-conforming building may stand closer; the graphic height may be exceeded for technical needs): not listed, as in the UD truth."
+      },
+      {
+        "kind": "road_setback",
+        "sector": "UEc",
+        "statement": "described",
+        "limit": null,
+        "page": 203,
+        "quote": "Les extensions* de constructions existantes régulièrement édifiées mais non conformes aux règles d’implantation du présent PLUi peuvent être implantées à une di",
+        "why": "An alternative rule or a clause with no figure (extensions of a non-conforming building may stand closer; the graphic height may be exceeded for technical needs): not listed, as in the UD truth."
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 203,
+        "quote": "du présent PLUi peuvent être implantées à une distance inférieure de la règle générale, à condition : • qu’elles soient réalisées dans le prolongement de la con",
+        "why": "An alternative rule or a clause with no figure (extensions of a non-conforming building may stand closer; the graphic height may be exceeded for technical needs): not listed, as in the UD truth."
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UEa",
+        "statement": "described",
+        "limit": null,
+        "page": 203,
+        "quote": "du présent PLUi peuvent être implantées à une distance inférieure de la règle générale, à condition : • qu’elles soient réalisées dans le prolongement de la con",
+        "why": "An alternative rule or a clause with no figure (extensions of a non-conforming building may stand closer; the graphic height may be exceeded for technical needs): not listed, as in the UD truth."
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UEa1",
+        "statement": "described",
+        "limit": null,
+        "page": 203,
+        "quote": "du présent PLUi peuvent être implantées à une distance inférieure de la règle générale, à condition : • qu’elles soient réalisées dans le prolongement de la con",
+        "why": "An alternative rule or a clause with no figure (extensions of a non-conforming building may stand closer; the graphic height may be exceeded for technical needs): not listed, as in the UD truth."
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UEa2",
+        "statement": "described",
+        "limit": null,
+        "page": 203,
+        "quote": "du présent PLUi peuvent être implantées à une distance inférieure de la règle générale, à condition : • qu’elles soient réalisées dans le prolongement de la con",
+        "why": "An alternative rule or a clause with no figure (extensions of a non-conforming building may stand closer; the graphic height may be exceeded for technical needs): not listed, as in the UD truth."
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UEb",
+        "statement": "described",
+        "limit": null,
+        "page": 203,
+        "quote": "du présent PLUi peuvent être implantées à une distance inférieure de la règle générale, à condition : • qu’elles soient réalisées dans le prolongement de la con",
+        "why": "An alternative rule or a clause with no figure (extensions of a non-conforming building may stand closer; the graphic height may be exceeded for technical needs): not listed, as in the UD truth."
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UEc",
+        "statement": "described",
+        "limit": null,
+        "page": 203,
+        "quote": "du présent PLUi peuvent être implantées à une distance inférieure de la règle générale, à condition : • qu’elles soient réalisées dans le prolongement de la con",
+        "why": "An alternative rule or a clause with no figure (extensions of a non-conforming building may stand closer; the graphic height may be exceeded for technical needs): not listed, as in the UD truth."
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": "UEm",
+        "statement": "described",
+        "limit": null,
+        "page": 204,
+        "quote": "Les extensions* de constructions existantes régulièrement édifiées mais non conformes aux règles d’implantation du présent PLUi peuvent être implantées à une di",
+        "why": "An alternative rule or a clause with no figure (extensions of a non-conforming building may stand closer; the graphic height may be exceeded for technical needs): not listed, as in the UD truth."
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEp",
+        "statement": "described",
+        "limit": null,
+        "page": 204,
+        "quote": "La hauteur des constructions* pourra excéder la hauteur indiquée au règlement graphique en cas de nécessités techniques d’exploitation des bâtiments* ; et pour ",
+        "why": "An alternative rule or a clause with no figure (extensions of a non-conforming building may stand closer; the graphic height may be exceeded for technical needs): not listed, as in the UD truth."
+      },
+      {
+        "kind": "height_total",
+        "sector": "UEp1",
+        "statement": "described",
+        "limit": null,
+        "page": 204,
+        "quote": "La hauteur des constructions* pourra excéder la hauteur indiquée au règlement graphique en cas de nécessités techniques d’exploitation des bâtiments* ; et pour ",
+        "why": "An alternative rule or a clause with no figure (extensions of a non-conforming building may stand closer; the graphic height may be exceeded for technical needs): not listed, as in the UD truth."
+      },
+      {
+        "kind": "green_ratio",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 206,
+        "quote": "Lorsqu’un terrain d'assiette* est non conforme à la règle générale du présent article, les changements de destination et l’extension* des constructions existant",
+        "why": "An alternative rule or a clause with no figure (extensions of a non-conforming building may stand closer; the graphic height may be exceeded for technical needs): not listed, as in the UD truth."
+      },
+      {
+        "kind": "road_setback",
+        "sector": "UEc",
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 203,
+        "quote": "Le long des linéaires de gabarit* figurant sur le règlement graphique, les constructions doivent être implantées sur le linéaire de gabarit*.",
+        "why": "UE4.1.2, UEc: implantation on the gabarit line drawn on the graphic regulation; a described rule rather than a limit, and not listed (the same sentence was left out of the UD truth)."
+      },
+      {
+        "kind": "extension_max",
+        "sector": "UEm",
+        "statement": "described",
+        "limit": null,
+        "page": 200,
+        "quote": "l’aménagement et l’extension* limitée des constructions existantes régulièrement édifiées de la sous-destination « hébergement ».",
+        "why": "A « limited » extension of existing accommodation, no figure: not listed."
+      },
+      {
+        "kind": "annex_max",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 30,
+          "unit": "m"
+        },
+        "page": 199,
+        "quote": "dans un rayon de 30 mètres de la construction* de la sous-destination de « logement »",
+        "why": "A siting distance (the annex within 30 m of the dwelling), not a cap on an annex: kind other, out of scope (listed in the scope note)."
+      }
+    ]
+  },
+  "revisions": [
+    {
+      "at": "2026-11-20",
+      "sprint": "002.42",
+      "ids": [
+        "e11",
+        "e12",
+        "e13",
+        "e14",
+        "e15",
+        "e16",
+        "e17"
+      ],
+      "why": "Revised 2026-11-20 (Sprint 002.42), on the owner's decision after the held-out zones: the text sets a height of 4 m for an extension in a strip whose depth it does not state (« dans une bande … inférieure au retrait défini par la règle générale »), so it is a statement in words, not a plain limit on the whole building (Sprint 002.21). It was a plain 4 m limit in the draft, a convention taken from UD d05 and wrong. Applied to the baseline and the new readings alike."
+    }
+  ]
+}

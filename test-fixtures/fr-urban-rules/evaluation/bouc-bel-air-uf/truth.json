@@ -1,0 +1,368 @@
+{
+  "format": "archisimple-reading-truth",
+  "version": 1,
+  "zone": "UF",
+  "document": {
+    "idurba": "200054807_PLUi_20260306_B",
+    "nomfic": "200054807_reglement_20260306_B.pdf",
+    "partition": "DU_200054807_B"
+  },
+  "chapter": {
+    "pages": [
+      189,
+      196
+    ]
+  },
+  "scopeKinds": [
+    "road_setback",
+    "boundary_setback",
+    "building_distance",
+    "footprint_ratio",
+    "extension_max",
+    "annex_max",
+    "height_total",
+    "height_facade",
+    "green_ratio"
+  ],
+  "scopeNote": "The kinds the buildable area uses. Not covered (never counted as an extra): the 300 m² floor-area cap on existing + extension + annexes (note [2], floor_area_max), the 50 m² floor-area threshold of the existing building, the distance of 35 m from a pool to the dwelling, the extension of existing farm buildings (note [1], no figure), the pointer of article 4.4 to article 1 (a sentence with no limit), fences (2 m, 1.20 m), stormwater figures; the figure coverage still watches them.",
+  "provenance": {
+    "source": "Géoportail de l'urbanisme (GPU)",
+    "licence": "Licence Ouverte v2.0 (Etalab)",
+    "retrievedAt": "2026-11-20",
+    "text": "test-fixtures/fr-urban-rules/evaluation/bouc-bel-air-uf/pages.json"
+  },
+  "draftedBy": "Claude Code",
+  "draftedAt": "2026-11-20",
+  "draftNote": "Drafted from the chapter's text (pages 189 to 196) before any model's reading of it, on the conventions of the UD and UG truths. Held-out zone. The drafter is itself a model.",
+  "validatedBy": "independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",
+  "validatedAt": "2026-11-20",
+  "rules": [
+    {
+      "id": "f01",
+      "kind": "road_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 5,
+        "unit": "m"
+      },
+      "page": 192,
+      "quote": "Les constructions doivent être implantées avec un recul minimum de 5 mètres par rapport à l’alignement* existant ou futur des voies* publiques et privées* ouvertes à la circulation publique et des emprises publiques*.",
+      "note": "Article 4.1: the zone and its sector UFa."
+    },
+    {
+      "id": "f02",
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "height_relative",
+        "reference": "facade_height",
+        "factor": 1,
+        "offsetMetres": null,
+        "minimumMetres": 5
+      },
+      "page": 192,
+      "quote": "au moins égale à sa hauteur de façade* sans être inférieure à 5 mètres.",
+      "note": "Article 4.2: the façade height, at least 5 m."
+    },
+    {
+      "id": "f03",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "described",
+      "limit": null,
+      "page": 192,
+      "quote": "la hauteur totale de l’extension soit inférieure ou égale à 4 mètres",
+      "note": "The alternative rule for an extension in the strip closer than the setback (as UD d05). REVISED: described, not a 4 m limit (the strip has no stated depth)."
+    },
+    {
+      "id": "f04",
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 2,
+        "unit": "m"
+      },
+      "page": 192,
+      "quote": "Le bassin de piscine non couvert peut être implanté à une distance minimale de 2 mètres par rapport aux limites séparatives*.",
+      "note": "An uncovered pool only."
+    },
+    {
+      "id": "f05",
+      "kind": "building_distance",
+      "sector": null,
+      "statement": "not_regulated",
+      "limit": null,
+      "page": 192,
+      "quote": "unité foncière. Non réglementée",
+      "note": "Article 4.3."
+    },
+    {
+      "id": "f06",
+      "kind": "annex_max",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 30,
+        "unit": "m2"
+      },
+      "page": 191,
+      "quote": "que l’emprise au sol* totale cumulée des annexes* n’excède pas 30 m2",
+      "note": "Article UF1 note [2]: the cumulated footprint of the annexes. Article 4.4 sends the footprint rules to article 1."
+    },
+    {
+      "id": "f07",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "see_graphic",
+      "limit": null,
+      "page": 193,
+      "quote": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle existe.",
+      "note": ""
+    },
+    {
+      "id": "f08",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 193,
+      "quote": "La hauteur totale des annexes* de la construction* principale à usage d’habitation ne peut excéder 4 mètres.",
+      "note": "Annexes of the main dwelling."
+    },
+    {
+      "id": "f09",
+      "kind": "green_ratio",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 50,
+        "base": "plot_area"
+      },
+      "page": 194,
+      "quote": "UF et UFa Au moins 50% du terrain d'assiette* du projet",
+      "note": "The table's row « UF et UFa »: the zone itself."
+    },
+    {
+      "id": "f10",
+      "kind": "green_ratio",
+      "sector": "UFa",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 50,
+        "base": "plot_area"
+      },
+      "page": 194,
+      "quote": "UF et UFa Au moins 50% du terrain d'assiette* du projet",
+      "note": "The same row, for the sector UFa."
+    },
+    {
+      "id": "f11",
+      "kind": "extension_max",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 30,
+        "base": "surface_de_plancher"
+      },
+      "page": 190,
+      "quote": "qu’une seule extension* du bâtiment* principal n’excédant pas 30 % de la surface de plancher* existante soit réalisée",
+      "note": "Article UF1 note [2]: one extension of the main dwelling."
+    },
+    {
+      "id": "f12",
+      "kind": "extension_max",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 30,
+        "base": "surface_de_plancher"
+      },
+      "page": 191,
+      "quote": "est admise dans la limite de 30% de la surface de plancher* existante.",
+      "note": "Article UF1 note [3]: extension of a public-interest facility."
+    },
+    {
+      "id": "f13",
+      "kind": "extension_max",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 15,
+        "base": "surface_de_plancher"
+      },
+      "page": 191,
+      "quote": "est admise dans la limite de 15% de la surface de plancher* existante.",
+      "note": "Article UF1 note [4]: one extension of a shop or service."
+    },
+    {
+      "id": "f14",
+      "kind": "extension_max",
+      "sector": "UFa",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 30,
+        "base": "surface_de_plancher"
+      },
+      "page": 190,
+      "quote": "qu’une seule extension* du bâtiment* principal n’excédant pas 30 % de la surface de plancher* existante soit réalisée",
+      "note": "Added after the independent cross-check. Same note as f11: the destination table has one column headed « UF et secteur UFa », so the note applies to the zone and to UFa, and the definitions say one item per sector."
+    },
+    {
+      "id": "f15",
+      "kind": "annex_max",
+      "sector": "UFa",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 30,
+        "unit": "m2"
+      },
+      "page": 191,
+      "quote": "que l’emprise au sol* totale cumulée des annexes* n’excède pas 30 m2",
+      "note": "Added after the independent cross-check. Same note as f06: the destination table has one column headed « UF et secteur UFa », so the note applies to the zone and to UFa, and the definitions say one item per sector."
+    },
+    {
+      "id": "f16",
+      "kind": "extension_max",
+      "sector": "UFa",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 30,
+        "base": "surface_de_plancher"
+      },
+      "page": 191,
+      "quote": "est admise dans la limite de 30% de la surface de plancher* existante.",
+      "note": "Added after the independent cross-check. Same note as f12: the destination table has one column headed « UF et secteur UFa », so the note applies to the zone and to UFa, and the definitions say one item per sector."
+    },
+    {
+      "id": "f17",
+      "kind": "extension_max",
+      "sector": "UFa",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 15,
+        "base": "surface_de_plancher"
+      },
+      "page": 191,
+      "quote": "est admise dans la limite de 15% de la surface de plancher* existante.",
+      "note": "Added after the independent cross-check. Same note as f13: the destination table has one column headed « UF et secteur UFa », so the note applies to the zone and to UFa, and the definitions say one item per sector."
+    }
+  ],
+  "crossCheck": {
+    "by": "a second model (Fable 5.2) given only the chapter text and the product's rule definitions, never this truth",
+    "at": "2026-11-20",
+    "blindRules": 23,
+    "draftersRulesFoundExactly": "12 of 13 (wrong values 0, other sectors 0, not found 1: the see_graphic height, typed height_facade by the blind reader)",
+    "adopted": {
+      "reason": "Article UF1's destination table is headed « UF et secteur UFa » (one column), so notes [2], [3] and [4] apply to the zone and to the sector UFa, and the definitions say one item per sector: the UFa copies of the annex cap (30 m²) and of the three extension caps are listed.",
+      "ids": [
+        "f14",
+        "f15",
+        "f16",
+        "f17"
+      ]
+    },
+    "notAdopted": [
+      {
+        "kind": "height_facade",
+        "sector": null,
+        "statement": "see_graphic",
+        "limit": null,
+        "page": 193,
+        "quote": "La hauteur des constructions* ne pourra excéder la hauteur indiquée au règlement graphique lorsqu’elle existe.",
+        "why": "Typed height_total in the draft, height_facade by the blind reader: the sentence says « la hauteur des constructions » without façade or total. The same sentence is height_total in the UD and UG truths (the product's definition of height_total is the maximum height). A judgement call: either type could be right; kept as height_total."
+      },
+      {
+        "kind": "annex_max",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "max",
+          "value": 35,
+          "unit": "m"
+        },
+        "page": 191,
+        "quote": "qu’une seule piscine soit implantée en tous points à moins de 35 mètres maximum mesurés à partir des murs extérieurs du bâtiment d’habitation principal",
+        "why": "A siting distance of the pool from the dwelling, not a cap on an annex: kind other, out of scope (listed in the scope note)."
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 192,
+        "quote": "Les extensions* de constructions existantes régulièrement édifiées mais non conformes aux règles d’implantation du présent PLUi peuvent être implantées à une di",
+        "why": "An alternative rule with no figure: not listed, as in the UD truth."
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 192,
+        "quote": "à la même distance de la limite séparative* que celle du rez-de-chaussée existant",
+        "why": "An alternative rule with no figure: not listed, as in the UD truth."
+      },
+      {
+        "kind": "green_ratio",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 194,
+        "quote": "peuvent être admises à condition qu’ils ne diminuent pas la surface d’espace de pleine terre* existante sur l’ensemble du terrain avant travaux",
+        "why": "An alternative rule with no figure: not listed, as in the UD truth."
+      },
+      {
+        "kind": "footprint_ratio",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 193,
+        "quote": "Les dispositions particulières relatives à l’emprise au sol* des constructions sont définies à l’article 1 de la présente zone.",
+        "why": "A pointer to article 1 (« définies à l'article 1 »), no limit of its own: the annex footprint it points to is listed (f06)."
+      }
+    ]
+  },
+  "revisions": [
+    {
+      "at": "2026-11-20",
+      "sprint": "002.42",
+      "ids": [
+        "f03"
+      ],
+      "why": "Revised 2026-11-20 (Sprint 002.42), on the owner's decision after the held-out zones: the text sets a height of 4 m for an extension in a strip whose depth it does not state (« dans une bande … inférieure au retrait défini par la règle générale »), so it is a statement in words, not a plain limit on the whole building (Sprint 002.21). It was a plain 4 m limit in the draft, a convention taken from UD d05 and wrong. Applied to the baseline and the new readings alike."
+    }
+  ]
+}

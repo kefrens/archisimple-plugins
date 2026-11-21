@@ -1,0 +1,416 @@
+{
+  "format": "archisimple-reading-truth",
+  "version": 1,
+  "zone": "UC",
+  "document": {
+    "idurba": "84133_PLU_20181012",
+    "nomfic": "84133_reglement_20181012.pdf",
+    "partition": "DU_84133"
+  },
+  "chapter": {
+    "pages": [
+      45,
+      56
+    ]
+  },
+  "scopeKinds": [
+    "road_setback",
+    "boundary_setback",
+    "building_distance",
+    "footprint_ratio",
+    "extension_max",
+    "annex_max",
+    "height_total",
+    "height_facade",
+    "green_ratio"
+  ],
+  "scopeNote": "Left out as out of scope: art. 2 office floor area cap (75 m2) and social-housing shares (30 % / 25 %); art. 3 access-road widths (5 m) and gate recess (5 m from the alignment); art. 4 stormwater formula; art. 5 (characteristics of plots, not regulated, not a listed kind); art. 11 roof slopes (25-35 %), window proportions, awning and pillar sizes, fence and wall heights (0.50 m, 0.60, 0.80 m, 1.80 m); art. 12 parking (25 m2, 2.30 m, 1 place per 50 m2 / 25 m2); art. 14 cycle parking (0.75 / 1.5 / 3 m2, 1.5 %). Art. 6 setbacks from river and canal banks (zone UC: 20 m Eze, 20 m Ourgouse, 10 m other watercourses; UCa: 20 m Eze) were left out as not road or public-space setbacks. Described rules not listed: art. 6 and 7 'dispositions particulières' (extensions of non-compliant buildings, public-service technical works) and art. 7 annexes allowed on the side boundaries.",
+  "provenance": {
+    "source": "Géoportail de l'urbanisme (GPU)",
+    "licence": "Licence Ouverte v2.0 (Etalab)",
+    "retrievedAt": "2026-11-20",
+    "text": "test-fixtures/fr-urban-rules/evaluation/la-tour-d-aigues-uc/pages.json"
+  },
+  "draftedBy": "Claude Opus 5.5 (a subagent), from the written conventions of the evaluation set",
+  "draftedAt": "2026-11-20",
+  "draftNote": "Drafted from the chapter's text before any model's reading of it, by a model that saw only the chapter, the conventions and the product's definitions (never another truth, never a reading). Held-out zone of another document and layout. Judgement calls of the drafter: Art. 6 setbacks from the banks of the Eze, the Ourgouse and other watercourses (20/20/10 m zone, 20 m UCa) were excluded as not road/public-space setbacks; a reader treating article 6 wholesale as road_setback would list them. | Each item of the art. 6 lists was taken as a separate rule (one per road with its own figure) instead of one rule per list sentence. | Art. 7 UCa: both cases (cas 1 on one side boundary with L = H-4 >= 4 m from the opposite one, cas 2 detached) listed as two UCa rules; cas 1 could be seen as an alternative not to list. | Art. 7 'Dans le reste de la zone UC' taken as sector null (the zone outside UCa); art. 8 and art. 10 name no sector, so listed only with sector null although they also bind UCa. | Art. 7 H read as an altitude difference ('différence de niveau'), reference altitude_difference, factor 1, offset -4, minimum 4. | Art. 10 annex ridge heights (3.5 m on the boundary within a 4 m depth, 4 m when at least 4 m away) listed as height_total; they apply to annexes only and the first holds within a 4 m strip, which the rule shape cannot carry.",
+  "validatedBy": "independent cross-check (a second model, Fable 5.2, that did not see this truth) reconciled by Claude Code; not validated by the owner",
+  "validatedAt": "2026-11-20",
+  "rules": [
+    {
+      "id": "tc01",
+      "kind": "road_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 10,
+        "unit": "m"
+      },
+      "page": 49,
+      "quote": "10 mètres de l’axe de la RD956,",
+      "note": "Art. 6 zone UC: minimum 10 m from the axis of the RD956."
+    },
+    {
+      "id": "tc02",
+      "kind": "road_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 10,
+        "unit": "m"
+      },
+      "page": 49,
+      "quote": "10 mètres de l’axe des autres voies et emprises publiques ou privées existantes, modifiées ou à créer,",
+      "note": "Art. 6 zone UC: minimum 10 m from the axis of the other roads and public spaces."
+    },
+    {
+      "id": "tc03",
+      "kind": "road_setback",
+      "sector": "UCa",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 10,
+        "unit": "m"
+      },
+      "page": 49,
+      "quote": "10 mètres de l’axe de la RD 165,",
+      "note": "Art. 6 sub-sectors UCa: minimum 10 m from the axis of the RD 165."
+    },
+    {
+      "id": "tc04",
+      "kind": "road_setback",
+      "sector": "UCa",
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 6,
+        "unit": "m"
+      },
+      "page": 49,
+      "quote": "6 mètres de l’axe des autres voies publiques ou privées, existantes, modifiées ou à créer,",
+      "note": "Art. 6 sub-sectors UCa: minimum 6 m from the axis of the other roads."
+    },
+    {
+      "id": "tc05",
+      "kind": "boundary_setback",
+      "sector": "UCa",
+      "statement": "limit",
+      "limit": {
+        "kind": "height_relative",
+        "reference": "altitude_difference",
+        "factor": 1,
+        "offsetMetres": -4,
+        "minimumMetres": 4
+      },
+      "page": 49,
+      "quote": "Soit sur une des limites séparatives latérales en respectant un recul (L) par rapport à la limite séparative opposée au moins égal à la différence de niveau (H) entre tout point du bâtiment à édifier et le point le plus proche de la limite séparative, diminuée de 4 mètres, avec un minimum de 4 mètres, soit L = H-4 ≥ 4m (cas 1) ;",
+      "note": "Art. 7 UCa, case 1: on one side boundary, L = H-4 >= 4 m from the opposite boundary."
+    },
+    {
+      "id": "tc06",
+      "kind": "boundary_setback",
+      "sector": "UCa",
+      "statement": "limit",
+      "limit": {
+        "kind": "height_relative",
+        "reference": "altitude_difference",
+        "factor": 1,
+        "offsetMetres": -4,
+        "minimumMetres": 4
+      },
+      "page": 50,
+      "quote": "Soit en respectant un recul (L) au moins égal à la différence de niveau (H) entre tout point du bâtiment à édifier et le point le plus proche de la limite séparative, diminuée de 4 mètres, avec un minimum de 4 mètres, soit L = H-4 ≥ 4m (cas 2) ;",
+      "note": "Art. 7 UCa, case 2: set back L = H-4 >= 4 m."
+    },
+    {
+      "id": "tc07",
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "height_relative",
+        "reference": "altitude_difference",
+        "factor": 1,
+        "offsetMetres": -4,
+        "minimumMetres": 4
+      },
+      "page": 50,
+      "quote": "Dans le reste de la zone UC, les constructions et piscines doivent s’implanter en respectant un recul (L) au moins égal à la différence de niveau (H) entre tout point du bâtiment à édifier et le point le plus proche de la limite séparative, diminuée de 4 mètres, avec un minimum de 4 mètres, soit L = H-4 ≥ 4m.",
+      "note": "Art. 7 rest of zone UC: L = H-4 >= 4 m."
+    },
+    {
+      "id": "tc08",
+      "kind": "building_distance",
+      "sector": null,
+      "statement": "not_regulated",
+      "limit": null,
+      "page": 50,
+      "quote": "aux autres sur une même propriété Non règlementé.",
+      "note": "Art. 8: not regulated."
+    },
+    {
+      "id": "tc09",
+      "kind": "footprint_ratio",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 30,
+        "base": "plot_area"
+      },
+      "page": 50,
+      "quote": "Dans la zone UC, l’emprise au sol totale des constructions ne peut excéder 30% de la surface de l’unité foncière.",
+      "note": "Art. 9 zone UC: footprint at most 30 % of the plot."
+    },
+    {
+      "id": "tc10",
+      "kind": "footprint_ratio",
+      "sector": "UCa",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "max",
+        "percent": 40,
+        "base": "plot_area"
+      },
+      "page": 51,
+      "quote": "Dans le sous-secteur UCa, l’emprise au sol totale des constructions ne peut excéder 40% de la surface de l’unité foncière.",
+      "note": "Art. 9 UCa: footprint at most 40 % of the plot."
+    },
+    {
+      "id": "tc11",
+      "kind": "height_facade",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 6.5,
+        "unit": "m"
+      },
+      "page": 51,
+      "quote": "La hauteur des constructions ne peut excéder 6,50 mètres à l’égout du toit (ou acrotère) et 8 mètres au faîtage.",
+      "note": "Art. 10: at most 6.50 m at the eaves (or parapet)."
+    },
+    {
+      "id": "tc12",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 8,
+        "unit": "m"
+      },
+      "page": 51,
+      "quote": "La hauteur des constructions ne peut excéder 6,50 mètres à l’égout du toit (ou acrotère) et 8 mètres au faîtage.",
+      "note": "Art. 10: at most 8 m at the ridge."
+    },
+    {
+      "id": "tc13",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 3.5,
+        "unit": "m"
+      },
+      "page": 51,
+      "quote": "3,5 mètres dans le cas d’une implantation en limite séparative, et sur une profondeur de 4 mètres,",
+      "note": "Art. 10 annexes: ridge at most 3.5 m when on the boundary, within a 4 m depth."
+    },
+    {
+      "id": "tc14",
+      "kind": "height_total",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 4,
+        "unit": "m"
+      },
+      "page": 51,
+      "quote": "4 mètres dans le cas d’une implantation à minimum 4 mètres de la limite séparative.",
+      "note": "Art. 10 annexes: ridge at most 4 m when at least 4 m from the boundary."
+    },
+    {
+      "id": "tc15",
+      "kind": "green_ratio",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 50,
+        "base": "plot_area"
+      },
+      "page": 54,
+      "quote": "Dans la zone UC, au minimum 50 % de la surface totale du terrain sera traitée en pleine terre.",
+      "note": "Art. 13 zone UC: at least 50 % open ground."
+    },
+    {
+      "id": "tc16",
+      "kind": "green_ratio",
+      "sector": "UCa",
+      "statement": "limit",
+      "limit": {
+        "kind": "ratio",
+        "comparison": "min",
+        "percent": 40,
+        "base": "plot_area"
+      },
+      "page": 54,
+      "quote": "Dans le sous-secteur UCa, au minimum 40 % de la surface totale du terrain sera traitée en pleine terre.",
+      "note": "Art. 13 UCa: at least 40 % open ground."
+    }
+  ],
+  "crossCheck": {
+    "by": "a second model (Fable 5.2) given only the chapter text and the product's rule definitions, never this truth; the draft itself was written by another model (Opus 5.5) from the written conventions",
+    "at": "2026-11-20",
+    "blindRules": 23,
+    "draftersRulesFoundExactly": "16 of 16 (wrong values 0, other sectors 0, not found 0)",
+    "adopted": {
+      "reason": "nothing to add: every rule of the draft was found by the blind reader with the same kind, sector, figure and statement; the blind reader's 7 other items are alternative rules with no figure and setbacks from watercourses, left out on the conventions.",
+      "ids": []
+    },
+    "notAdopted": [
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 10,
+          "unit": "m"
+        },
+        "page": 49,
+        "quote": "10 mètres de l’axe de la RD956",
+        "why": "A setback from the banks of a watercourse (art. 6), not from a road or a public space: kind other, out of scope (the definitions say road_setback is the distance from the road or public space)."
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 10,
+          "unit": "m"
+        },
+        "page": 49,
+        "quote": "10 mètres de l’axe des autres voies et emprises publiques ou privées existantes, modifiées ou à créer",
+        "why": "A setback from the banks of a watercourse (art. 6), not from a road or a public space: kind other, out of scope (the definitions say road_setback is the distance from the road or public space)."
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 20,
+          "unit": "m"
+        },
+        "page": 49,
+        "quote": "20 mètres des berges de l’Eze,",
+        "why": "A setback from the banks of a watercourse (art. 6), not from a road or a public space: kind other, out of scope (the definitions say road_setback is the distance from the road or public space)."
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 20,
+          "unit": "m"
+        },
+        "page": 49,
+        "quote": "20 mètres des berges de l’Ourgouse",
+        "why": "A setback from the banks of a watercourse (art. 6), not from a road or a public space: kind other, out of scope (the definitions say road_setback is the distance from the road or public space)."
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 10,
+          "unit": "m"
+        },
+        "page": 49,
+        "quote": "10 mètres des berges des autres cours d’eau ou canaux",
+        "why": "A setback from the banks of a watercourse (art. 6), not from a road or a public space: kind other, out of scope (the definitions say road_setback is the distance from the road or public space)."
+      },
+      {
+        "kind": "road_setback",
+        "sector": "UCa",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 10,
+          "unit": "m"
+        },
+        "page": 49,
+        "quote": "10 mètres de l’axe de la RD 165",
+        "why": "A setback from the banks of a watercourse (art. 6), not from a road or a public space: kind other, out of scope (the definitions say road_setback is the distance from the road or public space)."
+      },
+      {
+        "kind": "road_setback",
+        "sector": "UCa",
+        "statement": "limit",
+        "limit": {
+          "kind": "value",
+          "comparison": "min",
+          "value": 20,
+          "unit": "m"
+        },
+        "page": 49,
+        "quote": "20 mètres des berges de l’Eze.",
+        "why": "A setback from the banks of a watercourse (art. 6), not from a road or a public space: kind other, out of scope (the definitions say road_setback is the distance from the road or public space)."
+      },
+      {
+        "kind": "road_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 49,
+        "quote": "Les dispositions générales ne s’appliquent pas à l’extension, l’aménagement ou la surélévation d’une construction existante ne respectant pas les règles ci-dess",
+        "why": "An alternative rule or exception with no figure of its own (the existing non-conforming building may be extended if the non-conformity is not worsened; annexes may stand on the boundary): not listed, as in every truth of this set."
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 50,
+        "quote": "Dans l’ensemble de la zone UC, l’implantation des annexes est possible sur les limites séparatives.",
+        "why": "An alternative rule or exception with no figure of its own (the existing non-conforming building may be extended if the non-conformity is not worsened; annexes may stand on the boundary): not listed, as in every truth of this set."
+      },
+      {
+        "kind": "boundary_setback",
+        "sector": null,
+        "statement": "described",
+        "limit": null,
+        "page": 50,
+        "quote": "Les dispositions générales ne s’appliquent pas à l’extension, l’aménagement ou la surélévation d’une construction existante ne respectant pas les règles ci-dess",
+        "why": "An alternative rule or exception with no figure of its own (the existing non-conforming building may be extended if the non-conformity is not worsened; annexes may stand on the boundary): not listed, as in every truth of this set."
+      }
+    ]
+  }
+}
