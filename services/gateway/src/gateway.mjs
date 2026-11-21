@@ -199,15 +199,15 @@ export async function mountServices({ servicesDir = SERVICES_DIR, env, log, data
   return mounted;
 }
 
-/** The request body as text, or `undefined` past {@link MAX_BODY_BYTES}. */
-function readBody(request) {
+/** The request body as text, or `undefined` past `limit` ({@link MAX_BODY_BYTES} unless a service asked for more). */
+function readBody(request, limit = MAX_BODY_BYTES) {
   return new Promise((resolve) => {
     const chunks = [];
     let size = 0;
     let over = false;
     request.on('data', (chunk) => {
       size += chunk.length;
-      if (size <= MAX_BODY_BYTES) {
+      if (size <= limit) {
         chunks.push(chunk);
         return;
       }
@@ -248,18 +248,27 @@ export function createGateway({ mounted, env, log }) {
 
   return createServer(async (request, response) => {
     try {
+      const parsed = parseTarget(request.url ?? '/');
+      // Sprint 002.30: 4 KiB for every route (002.5b's POST is ~200 bytes), except where the SERVICE says its route takes
+      // more (`maxBodyBytes`, an uploaded page); the target is parsed first so the limit is the route's own. A target that
+      // is refused, or a service that says nothing, keeps 4 KiB.
+      let limit = MAX_BODY_BYTES;
+      if (parsed.ok) {
+        const [first, ...others] = parsed.segments;
+        const asked = mounted.get(first)?.service.maxBodyBytes?.({ method: request.method ?? 'GET', segments: others });
+        if (Number.isInteger(asked) && asked > limit) limit = asked;
+      }
       const declared = Number(request.headers['content-length'] ?? 0);
-      if (!(declared <= MAX_BODY_BYTES)) {
+      if (!(declared <= limit)) {
         request.resume();
         return answer(response, 400, { error: 'invalid_request' }, { Connection: 'close' });
       }
-      // A body is read whole, up to 4 KiB (002.5b's POST is ~200 bytes); beyond, 400.
-      const body = await readBody(request);
+      // A body is read whole, up to the limit; beyond, 400.
+      const body = await readBody(request, limit);
       if (body === undefined) {
         response.once('finish', () => request.destroy());
         return answer(response, 400, { error: 'invalid_request' }, { Connection: 'close' });
       }
-      const parsed = parseTarget(request.url ?? '/');
       if (!parsed.ok) return answer(response, parsed.status, { error: parsed.error });
       const [id, ...rest] = parsed.segments;
       const method = request.method ?? 'GET';

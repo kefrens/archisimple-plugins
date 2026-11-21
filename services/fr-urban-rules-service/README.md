@@ -70,6 +70,10 @@ Errors answer `{ "error": "<code>", …details }`:
 | `extraction_unavailable` | 503    | ai-service lacks `structured-output`, or has no provider                                                                                                                |
 | `extraction_failed`      | 502    | every chunk failed; `codes` lists 096.7's                                                                                                                               |
 | `ai_budget_exhausted`    | 402    | the account's monthly AI budget ran out **before any part was read** (0.7.0, 002.27): the job's `error`, with the figures — see « The AI budget » below                    |
+| `too_many_pages`         | 422    | an uploaded reading names more pages than the limit (`max`)                                                                                                             |
+| `upload_unreadable`      | 422    | a reading had no readable page (002.30; an empty page is now a result `unreadable`)                                                                                                                              |
+| `transcription_failed`   | 502    | a page could not be transcribed after one retry (002.30)                                                                                                                |
+| `route_not_offered`      | 422    | `ai` names neither Sonnet 5.5 nor a local provider (`lmstudio`, `ollama`) (002.30 Addendum A)                                                                           |
 | `not_configured`         | 503    | `v1/georisques` with no `FR_URBAN_RULES_GEORISQUES_TOKEN` (002.10)                                                                                                      |
 | `internal_error`         | 500    | an unexpected exception; only its name is logged                                                                                                                        |
 
@@ -243,7 +247,7 @@ GET  v1/extractions?partition&idurba&nomfic&zone[&provider[&model]]&cachedOnly=1
   the deployment's account gateway overwrites on every request and `web` passes on to `/plugins-api/`. Only well-formed ids are
   kept (`^[a-z0-9][a-z0-9-]{0,39}$`, at most 32, header at most 1 024 characters, else none). The service stores them with the
   job and sends `X-Authenticated-Features` on `extract` and `health` to ai-service — nothing else about the user (since 0.7.0
-  an opaque `X-Authenticated-AI-Subject`, on `extract` only: see « The AI budget »), never an
+  an opaque `X-Authenticated-AI-Subject`, on `extract` and, since Sprint 002.30, the uploads' plain `chat` call: see « The AI budget »), never an
   `Authorization`. **ai-service decides**: a granted provider needs `ai-<id>`.
 - **Refusals** are the job's `error`, with ai-service's own code, at the first chunk and free of charge (the charge is given
   back): `provider_not_permitted` (the account was not granted it), `unknown_provider`. `{ code, providerId }`.
@@ -326,6 +330,83 @@ Sprint 120.2). Nothing here computes a price or holds a ledger; the service **ca
   Compose `plugin-services` network, the chart's NetworkPolicy), not code. A client that can reach this port can name any
   subject, which is why the deployment publishes no port.
 
+## Uploaded documents (0.7.0, Sprint 002.30) — release note
+
+A person adds a lotissement, hameau, ZAC, SPR or copropriété PDF to the project (platform 122.0) and chooses the pages to read. The
+route is **document-agnostic**: it is given page text (a text PDF's, or the transcripts of a scan) and answers the PLU reading's own
+candidates, by the same chain (`prepareChapter` → `extractChapter`) and the same verification. It never imports a platform package.
+
+```text
+POST   v1/uploads/estimate        { mode: 'text'|'image', pages, scanPages?, characters?, ai? }   → 200 { estimate, limits }   no model call
+POST   v1/uploads/transcriptions  { page, image: { mediaType, data }, ai? }                       → 202 { jobId, state, route }   (a page is a job)
+GET    v1/uploads/transcriptions/{id}  → { jobId, state, route, progress: { step, elapsedMs, timeoutMs }, result?, error? }
+POST   v1/uploads/transcriptions/{id}/cancel · DELETE v1/uploads/transcriptions/{id}
+POST   v1/uploads/readings        { documentId, pages: [{ page, text, transcribed?, truncated?, unreadable? }], ai? } → 202 { jobId }
+GET    v1/uploads/readings/{id}   → { jobId, state, progress, result?, error? }            the user who started it only
+POST   v1/uploads/readings/{id}/cancel
+DELETE v1/uploads/readings/{id}                                                            drops the reading, result included
+```
+
+- **The estimate comes first and costs nothing.** `estimate` is `{ mode, pages, scanPages, characters, chunks, model, microusd, aboutUsd,
+  lowUsd, highUsd, breakdown, priceTable: { version } }`: the pages, the model (`anthropic` / `claude-sonnet-5-5`), the about-cost rounded up
+  to the cent with a range for the output's variance, and the date of the price table. The prices are a **dated copy** of the platform's
+  table (`apps/ai-service/src/price-table.ts`, 2026-11-19: $2 in, $10 out per million tokens); the table is not served over HTTP, so a
+  change there needs this copy updated (`uploaded.mjs`, `PRICE`). The figures are the measured ones: a scanned page costs 2,385 input
+  and about 1,425 output tokens to transcribe; an extraction chunk follows the zone UD's.
+- **A scan is read by vision, one page a job.** `transcriptions` forwards the picture to ai-service's plain `POST /api/ai/chat`
+  (the images, no tools, no history, `maxTokens` 8,192 on the cloud route, 4,096 on the local one) with the measured instruction (`[illisible]`, `[tampon]`, article numbers kept,
+  nothing summarised or corrected), and forgets it. One page a request because the web proxy in front takes 1 MiB a body; the
+  gateway lets only these POSTs carry up to 900 KiB (`maxBodyBytes`). **Since Addendum A a page is a job** (`202 { jobId }`, then a poll,
+  `…/cancel`, `DELETE`): it is private like a reading (memory, the user's own, gone 30 minutes after it ends), it reports its `elapsedMs`, and
+  **no request waits for the model any more**, so a local page that takes minutes is not cut by the web proxy's two minutes or the gateway's
+  100 s. The result is `{ page, text, truncated, illegible, route, model, unreadable? }`: a reply cut off by its output limit is `truncated: true`; one
+  that is mostly « [illisible] » `illegible: true`; one that is **empty or a loop is `unreadable: { reason }`, its text is `''` and never handed on**
+  (a result, not an error: the reading goes on past the page). A per-page timeout bounds the call: **180 s on the cloud route**,
+  **15 minutes on the local one** (`FR_URBAN_RULES_LOCAL_PAGE_TIMEOUT_MS`, at least 30 s). A person holds at most 4 unfinished pages (`busy`).
+  Cloud pages run up to three at once; **local pages run one at a time** (a local model server does one page at a time), in their own lane. Readings (the
+  extraction, always Sonnet) run one at a time.
+- **Two routes, one of them hybrid (Addendum A, owner decisions of 2026-11-21).** `ai: { providerId, model? }` is the AI panel's selection as an extension
+  reads it (`ai.selectedModel()`: a name, never an address; the same check as `POST v1/extractions`). **Absent, or `anthropic` + `claude-sonnet-5-5`: the cloud
+  route** (the recommended one: transcription and extraction on Sonnet, metered). **`lmstudio` or `ollama` (a model optional): the local route, for the
+  TRANSCRIPTION only**: the scans are transcribed on the local model, free and never reaching the AI budget (the platform never gates a call to a `free`
+  provider). **The extraction of the rules always runs on Sonnet 5.5, for every route**, with the account's subject: it is metered as `extract`, gated by the budget and
+  stopped by it like any (a stop keeps the parts read). Reason: measured, a local extraction took 685 s for one page and read no rule, where Sonnet read 14 rules from 17
+  pages in 15 s. On a reading, `ai` only records where the pages were transcribed (`reading.route`); it never changes the extraction's model. Anything else than
+  those two routes is `route_not_offered` (422). The estimate of a local route is **transcription `$0` plus the extraction's about-cost on Sonnet** (about $0.08 for 17
+  pages; `microusd`, `aboutUsd`, `lowUsd`, `highUsd` are the extraction's), with `compare` (what an all-Sonnet reading would cost), `extractionModel` and `timing` (Sonnet
+  13 s a page; the local transcription time `known: false`, measured 46 s a page on a laptop with a GPU and about 13 minutes a page on a CPU-only host). **The local model's
+  address is the deployment's**: the AI service resolves `lmstudio` to the server the operator configured (`AI_PROVIDER_LMSTUDIO_*`); a server the person added in
+  Preferences is not reachable from here (an extension is given a name, never an address). **Operators: set the AI service's `AI_SERVICE_REQUEST_TIMEOUT_MS` above the local
+  page timeout** (15 minutes by default: `FR_URBAN_RULES_LOCAL_PAGE_TIMEOUT_MS`); its own default is 120 s, and a local page that takes longer fails there as `provider_error`,
+  which this service reports as `transcription_failed`. The local reply cap is 4,096 tokens (the measured one: a loop costs at most this).
+- **The loop guard (`loop-guard.mjs`).** A reply is judged when it is finished: the share of its words that repeat a run before them (an n-gram of 1 to 8 words
+  repeated 6 times in a row, 12 for a single word). **Degenerate** from 0.5, or from 0.2 when the reply hit the output cap: it is `unreadable: { reason: 'repetition' }`.
+  A reply cut off **without** repetition is kept and `truncated`. Validated on the 17 + 17 real replies of the 2026-11-21 runs: exactly the loops are flagged, no honest page.
+  **It cannot stop a page while it loops** (the `chat` route is not streamed); the output cap and the timeout bound the time lost.
+- **Usage purpose.** Each page's `chat` call carries `x-ai-usage-purpose: transcribe` so the platform records it as usage kind `transcribe` (no body field; the AI service honours it
+  only where `AI_SERVICE_TRUST_ACCOUNT_FEATURES` is on). `extract` and every other call send none. **Rollout: the platform's account service must be deployed BEFORE this
+  service sends the header** (an older account service answers 400 to the unknown kind and the usage record is dropped).
+- **The reading is private.** Nothing is read from or written to the shared result cache or the chunk memo (both are keyed by text and
+  shared by every user); the job is held **in memory**, bound to the user who started it (another user's poll, cancel or delete is
+  `404`), and gone 30 minutes after it ends or at `DELETE`. Page text and pictures are never written to disk and no log line carries
+  one (counts and codes only). The extension keeps the result in the project.
+- **The result** has the PLU result's shape (`rules`, `dropped`, `chunks`, `model`, `stopped?`, `schemaVersion`, `promptVersion`), no GPU
+  document, and per rule `source: { documentId, page }` (the id the caller gave) and `fromTranscript: true` when its page was transcribed,
+  so a client can put the page picture beside the passage: **a transcription error is « verified » against its own transcript**, and
+  only the picture shows it. `reading` lists the pages read, the transcribed ones and `truncatedPages`.
+- **Metered to the account** (ADR-0136): the account's opaque subject rides on the transcription's `chat` call and on every `extract`
+  call. A budget stop keeps what was read: a transcription refused is `402 ai_budget_exhausted` with the figures (the client keeps the
+  pages it has); an extraction stopped between parts is a result with `stopped` and `chunks.unread`, never cached. The transcription
+  is usage kind `assistant` in the account's listing (the plain chat call), the extraction `extract`.
+- **Sonnet by default.** The model of the extraction (always) and of the transcription (unless the local route is chosen) is `anthropic` / `claude-sonnet-5-5`, whatever the AI panel chose; an account without
+  `ai-anthropic` gets ai-service's own `provider_not_permitted`. (Addendum A: Sonnet is the default route, and a local one may be chosen beside it, above.)
+- **Pages read, not file size.** At most 80 pages a reading (`FR_URBAN_RULES_LIMIT_UPLOAD_PAGES`), 200 pages transcribed an hour
+  (`FR_URBAN_RULES_LIMIT_UPLOAD_TRANSCRIBED_HOUR`) and 6 readings an hour (`FR_URBAN_RULES_LIMIT_UPLOAD_READINGS_HOUR`) per user; a page
+  that never reached a model gives its place back. New codes: `too_many_pages` (422), `upload_unreadable` (422),
+  `transcription_failed` (502), `route_not_offered` (422; Addendum A). `upload_unreadable` is now the refusal of a reading in which no page is readable.
+- **Not changed:** `SCHEMA_VERSION` and `PROMPT_VERSION` (no cached reading is dropped). The extraction's instructions still say « zone chapter of a
+  PLU »: measured on PLU chapters only, and on one lotissement règlement in Sprint 002.30's run.
+
 ## Hosts contacted
 
 Three, over `https:` only, from URL templates — no URL comes from a
@@ -360,6 +441,7 @@ client (the third only when the deployment sets a Géorisques token):
 | `refresh=1`                                                                                                             | 2 per day per user                                                | `FR_URBAN_RULES_LIMIT_REFRESH_DAY`                                      |
 | A first look at a partition not yet watched (one GPU call)                                                              | 60 per hour per user                                              | `FR_URBAN_RULES_LIMIT_WATCH_SEED_HOUR`                                  |
 | Géorisques v2 calls the cache did not answer                                                                            | 240 per hour per user                                             | `FR_URBAN_RULES_LIMIT_GEORISQUES_HOUR`                                  |
+| Uploaded documents (0.7.0, 002.30): pages in one reading; pages transcribed; readings started                          | 80; 200 per hour; 6 per hour (per user)                           | `FR_URBAN_RULES_LIMIT_UPLOAD_PAGES`, `…_UPLOAD_TRANSCRIBED_HOUR`, `…_UPLOAD_READINGS_HOUR` |
 | The watch's own GPU requests (daily checks and first looks together)                                                    | 1 per second                                                      | —                                                                       |
 | Extractions running / waiting                                                                                           | 1 / 10                                                            | —                                                                       |
 | Download size, counted while streaming                                                                                  | 32 MiB                                                            | —                                                                       |
@@ -443,6 +525,10 @@ raw name. Level: `FR_URBAN_RULES_LOG_LEVEL` (`debug`, `info` (default),
 | `FR_URBAN_RULES_WATCH`                  | on                                | `off` stops the daily schedule                                                                  |
 | `FR_URBAN_RULES_LIMIT_WATCH_SEED_HOUR`  | `60`                              | optional                                                                                        |
 | `FR_URBAN_RULES_LIMIT_GEORISQUES_HOUR`  | `240`                             | optional                                                                                        |
+| `FR_URBAN_RULES_LIMIT_UPLOAD_PAGES`     | `80`                              | optional (002.30: pages read in one uploaded-document reading)                                  |
+| `FR_URBAN_RULES_LIMIT_UPLOAD_TRANSCRIBED_HOUR` | `200`                      | optional (002.30)                                                                               |
+| `FR_URBAN_RULES_LIMIT_UPLOAD_READINGS_HOUR` | `6`                           | optional (002.30)                                                                               |
+| `FR_URBAN_RULES_LOCAL_PAGE_TIMEOUT_MS`  | `900000`                          | optional (002.30 Addendum A: one page on a local model; at least 30 000)                        |
 
 No model key, and none is ever read here (ADR-0114 Rule 7). The Géorisques token is another kind of credential — a public service's free registration, not a model's — and is this service's alone.
 

@@ -36,6 +36,16 @@ const MAX_FEATURES = 32;
 /** The opaque per-user subject ai-service meters a call by (platform 120.0, ADR-0136 Rule 1). */
 export const AI_SUBJECT_HEADER = 'x-authenticated-ai-subject';
 export const MAX_AI_SUBJECT_LENGTH = 128;
+
+/**
+ * The platform's usage kind for a page transcription (platform, Sprint 002.30 follow-up): a plain completion that reads a page
+ * picture is recorded as `transcribe`, not `assistant`. A header only, no body field; the AI service honours it only where it
+ * trusts the account gateway's headers (`AI_SERVICE_TRUST_ACCOUNT_FEATURES`, the switch the subject rides on). ROLLOUT: the account
+ * service must be rolled out BEFORE a plugins service sends it (an older one answers 400 to the unknown kind and drops the record).
+ * Only the transcription's `chat` call sends it; `extract` and every other call never do.
+ */
+export const USAGE_PURPOSE_HEADER = 'x-ai-usage-purpose';
+export const TRANSCRIBE_PURPOSE = 'transcribe';
 /** Printable ASCII, no space: a UUID is what the account service gives; anything else is dropped, never repaired. */
 const AI_SUBJECT = /^[\x21-\x7e]{1,128}$/u;
 
@@ -269,6 +279,47 @@ export function createAiClient({
         }
       }
       return answer;
+    },
+
+    /**
+     * Sprint 002.30: one plain `POST /api/ai/chat` — a model looks at the images and answers in words (no history, no
+     * tools, no workspace, no system prompt): the vision step that transcribes a scanned page. Metered like every call
+     * (the account's subject rides along). `{ providerId, model, content, finishReason }`; `finishReason: 'length'` is
+     * a reply cut off by its output limit. `route.timeoutMs` bounds the call (a page is one request through a proxy
+     * that waits two minutes).
+     */
+    async chat({ userMessage, images, maxTokens, purpose }, route = {}) {
+      const named = typeof route.providerId === 'string' && route.providerId !== '';
+      const answer = await call(
+        '/api/ai/chat',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...entitlementHeaders(route.features, route.aiSubject),
+            ...(purpose === TRANSCRIBE_PURPOSE ? { [USAGE_PURPOSE_HEADER]: TRANSCRIBE_PURPOSE } : {})
+          },
+          body: JSON.stringify({
+            ...(named ? { providerId: route.providerId } : {}),
+            ...(named && typeof route.model === 'string' && route.model !== '' ? { model: route.model } : {}),
+            systemPrompt: '',
+            history: [],
+            userMessage,
+            images,
+            ...(Number.isInteger(maxTokens) ? { maxTokens } : {})
+          })
+        },
+        route.timeoutMs ?? extractTimeoutMs,
+        true,
+        route.signal
+      );
+      if (typeof answer?.content !== 'string') throw new AiError('malformed', 200);
+      return {
+        providerId: typeof answer.providerId === 'string' ? answer.providerId : route.providerId,
+        model: typeof answer.model === 'string' ? answer.model : route.model,
+        content: answer.content,
+        finishReason: typeof answer.finishReason === 'string' ? answer.finishReason : undefined
+      };
     }
   };
 }

@@ -441,6 +441,38 @@ async function fetchJson(fetchImpl, url, readSignal, timeoutMs, body) {
   if (!FETCHED_HOSTS.includes(new URL(url).hostname)) {
     return { failed: 'network', detail: { key: 'fr-urban-rules.status.network' } };
   }
+  // One more try for a server error or a dropped connection: public services (IGN's API Carto answered a
+  // 500 once on a plot that a second call served) fail briefly. Never a timeout — that already took the
+  // whole allowance — nor a 4xx, which is an answer. The reads are queries, so asking twice changes nothing.
+  const first = await fetchJsonOnce(fetchImpl, url, readSignal, timeoutMs, body);
+  if (!isTransient(first)) return first;
+  await pause(RETRY_DELAY_MS, readSignal);
+  return fetchJsonOnce(fetchImpl, url, readSignal, timeoutMs, body);
+}
+
+/** Wait before the second try; an aborted read ends the wait. */
+const RETRY_DELAY_MS = 500;
+function pause(ms, readSignal) {
+  return new Promise((resolve, reject) => {
+    const done = () => {
+      readSignal.removeEventListener('abort', aborted);
+      resolve();
+    };
+    const timer = setTimeout(done, ms);
+    const aborted = () => {
+      clearTimeout(timer);
+      reject(new ReadAborted());
+    };
+    readSignal.addEventListener('abort', aborted, { once: true });
+  });
+}
+
+/** A source's failure that a second try may cure: a 5xx, or a request that never got an answer. */
+const isTransient = (result) =>
+  (result.failed === 'http' && result.status >= 500) || result.failed === 'network';
+
+async function fetchJsonOnce(fetchImpl, url, readSignal, timeoutMs, body) {
+  if (readSignal.aborted) throw new ReadAborted();
   const timeout = AbortSignal.timeout(timeoutMs);
   const signal = AbortSignal.any([readSignal, timeout]);
   try {
@@ -480,7 +512,11 @@ async function fetchJson(fetchImpl, url, readSignal, timeoutMs, body) {
   }
 }
 
-const phraseOfHttp = (status) => ({ key: 'fr-urban-rules.status.http', params: { status } });
+// A 5xx is the service failing, not refusing: the panel says so (« Refused the request » would blame the request).
+const phraseOfHttp = (status) => ({
+  key: status >= 500 ? 'fr-urban-rules.status.httpServer' : 'fr-urban-rules.status.http',
+  params: { status }
+});
 // ── The companion service's client (Sprint 002.6a, DEC-1) ───────────────────────
 
 /**
@@ -1065,6 +1101,8 @@ const AUTO_APPLY_DOUBTS = new Set(['sentence-repeated']);
  * before `doubts` existed has none: the label is all there is, and only `high` passes.
  */
 function autoApplyAllowed(item) {
+  // Sprint 002.30 DEC-7: a rule read from a document the person uploaded is to confirm, whatever it checks out against.
+  if (item.source?.documentId !== undefined) return false;
   if (!Array.isArray(item.doubts)) return item.confidence === 'high';
   return item.doubts.every((cause) => AUTO_APPLY_DOUBTS.has(cause));
 }
@@ -1486,6 +1524,9 @@ export function readingCardOf(view) {
     );
   if ((status === 'failed' && WRITTEN_CODES[writtenCodeOf(error?.code)]?.retry !== false) || status === 'cancelled')
     actions.push({ id: 'retry', label: cardKey(status === 'cancelled' ? 'fr-urban-rules.card.action.again' : 'fr-urban-rules.card.action.retry') });
+  // Sprint 002.30: where the reading falls short, the person can add a document of their own (a lotissement's règlement).
+  if (view.canAddDocument === true && !running && status !== 'cancelled')
+    actions.push({ id: 'add-document', label: cardKey('fr-urban-rules.card.action.addDocument') });
 
   const counts = view.counts;
   const stats =
@@ -1544,7 +1585,7 @@ export function readingCardOf(view) {
  * host has one: a host older than 1.41 finds nothing here and the panel shows the wait as before.
  * Disposing it takes every card down (the extension's own subscriptions do that on a disable).
  */
-export function createReadingCards({ ai, act, onDone = undefined }) {
+export function createReadingCards({ ai, act, onDone = undefined, canAddDocument = () => false }) {
   /** record id → { handle, view } */
   const posted = new Map();
   const service = () => {
@@ -1580,7 +1621,8 @@ export function createReadingCards({ ai, act, onDone = undefined }) {
         error: record.error,
         model: entry?.model ?? extra.model,
         counts: entry?.counts,
-        cancelled: record.cancelledByUser === true
+        cancelled: record.cancelledByUser === true,
+        canAddDocument: canAddDocument() === true
       };
       const card = readingCardOf(view);
       const json = JSON.stringify(card);
@@ -3259,6 +3301,922 @@ function versionDayOfIdurba(idurba) {
 /** A reading that is whole: nothing failed, nothing stopped. Only such a reading is kept for everyone. */
 const isSharedReading = (result) => result.chunks.failed === 0 && result.stopped === undefined;
 
+// ── Reading a document the person added to the project (Sprint 002.30, SDK 1.44) ─────────────
+
+/** The project's documents (SDK 1.44, capability `project-documents`): ambient to nobody, public ABI by name. */
+const ProjectDocumentServiceToken = { name: 'project-documents' };
+/** The actions of the Documents block of the Rules view. */
+const DOCUMENT_ACTIONS = new Set(['doc-add', 'doc-plan', 'doc-read', 'doc-cancel', 'doc-open', 'doc-forget', 'doc-retry-cloud']);
+/** What the service reads in one go, until its estimate says otherwise (`FR_URBAN_RULES_LIMIT_UPLOAD_PAGES`). */
+const DOCUMENT_PAGES_MAX = 80;
+/** A page with fewer non-blank characters than this has no text layer worth reading: it is read as a picture. */
+const SCAN_PAGE_CHARS = 80;
+/** What a scanned page holds once transcribed, when only some of a range is a scan (measured: 2,400). */
+const SCAN_PAGE_TRANSCRIPT_CHARS = 2400;
+/** The host's `readText` takes at most 40 pages a call. */
+const TEXT_PAGES_PER_CALL = 40;
+/** The reading kept in the project: rules, not transcripts; the section stays small. */
+const KEPT_RULES_MAX = 200;
+const KEPT_READINGS_MAX = 12;
+const DOCUMENT_POLL_MS = 1500;
+/** Addendum A: after half a minute of waiting a page, poll every 4 s (a local page is minutes long). */
+const DOCUMENT_POLL_SLOW_MS = 4000;
+/** The longest a page job is waited for, queue included: the service's own per-page timeout is 15 minutes for a local model. */
+const DOCUMENT_PAGE_POLL_MAX_MS = 60 * 60_000;
+/** The local providers the AI panel can select (the platform's catalogue, kind `local`): the local route exists only for these. */
+const LOCAL_PROVIDER_IDS = new Set(['lmstudio', 'ollama']);
+/**
+ * What reading ONE page on the cloud route costs, named to the person before they confirm (the service's own estimate of a
+ * single scanned page: $0.019 to transcribe and $0.011 for the extraction's fixed part, rounded up, 2026-11-21).
+ */
+const RETRY_PAGE_ABOUT_USD = 0.03;
+/** « 2:10 »: the time a page has taken, in a form that needs no language. */
+function mmss(ms) {
+  const seconds = Math.max(0, Math.round(Number(ms) / 1000) || 0);
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+}
+
+/**
+ * The reading with one retried page joined (Addendum A, DEC-A7): its rules added, the page no longer unreadable, and listed as
+ * read on the cloud route. The rest of the reading, and its local route, stand.
+ */
+function mergeRetried(result, page, retried) {
+  const reading = result.reading ?? {};
+  const numeric = (a, b) => a - b;
+  return {
+    ...result,
+    rules: [...(result.rules ?? []), ...(Array.isArray(retried?.rules) ? retried.rules : [])],
+    reading: {
+      ...reading,
+      mode: 'image',
+      unreadablePages: (reading.unreadablePages ?? []).filter((n) => n !== page),
+      transcribedPages: [...new Set([...(reading.transcribedPages ?? []), page])].sort(numeric),
+      truncatedPages: retried?.reading?.truncatedPages?.includes(page) ? [...new Set([...(reading.truncatedPages ?? []), page])].sort(numeric) : (reading.truncatedPages ?? []),
+      retriedPages: [...new Set([...(reading.retriedPages ?? []), page])].sort(numeric)
+    }
+  };
+}
+const DOCUMENT_POLL_MAX_MS = 20 * 60_000;
+const DOCUMENT_CALL_TIMEOUT_MS = 110_000;
+/** The service's codes the panel words one by one; any other is « could not be read (code) ». */
+const DOCUMENT_ERROR_KEYS = {
+  too_many_pages: 'fr-urban-rules.documents.error.too_many_pages',
+  no_text_layer: 'fr-urban-rules.documents.error.no_text_layer',
+  ai_budget_exhausted: 'fr-urban-rules.documents.error.ai_budget_exhausted',
+  provider_not_permitted: 'fr-urban-rules.documents.error.provider_not_permitted',
+  unknown_provider: 'fr-urban-rules.documents.error.unknown_provider',
+  extraction_unavailable: 'fr-urban-rules.documents.error.extraction_unavailable',
+  rate_limited: 'fr-urban-rules.documents.error.rate_limited',
+  busy: 'fr-urban-rules.documents.error.busy',
+  extraction_failed: 'fr-urban-rules.documents.error.extraction_failed',
+  transcription_failed: 'fr-urban-rules.documents.error.transcription_failed',
+  upload_unreadable: 'fr-urban-rules.documents.error.upload_unreadable',
+  unreadable: 'fr-urban-rules.documents.error.unreadable',
+  unavailable: 'fr-urban-rules.documents.error.unavailable',
+  route_not_offered: 'fr-urban-rules.documents.error.route_not_offered',
+  network: 'fr-urban-rules.documents.error.network',
+  timeout: 'fr-urban-rules.documents.error.timeout',
+  invalid_request: 'fr-urban-rules.documents.error.invalid_request',
+  not_in_file: 'fr-urban-rules.documents.error.not_in_file'
+};
+const documentErrorKey = (code) => (Object.hasOwn(DOCUMENT_ERROR_KEYS, code) ? DOCUMENT_ERROR_KEYS[code] : 'fr-urban-rules.documents.error.generic');
+const WHERE_KEYS = { local: 'fr-urban-rules.documents.where.local', cloud: 'fr-urban-rules.documents.where.cloud' };
+const DOCUMENT_KIND_KEYS = {
+  lotissement: 'fr-urban-rules.documents.kind.lotissement',
+  'cahier-des-charges': 'fr-urban-rules.documents.kind.cahier-des-charges',
+  zac: 'fr-urban-rules.documents.kind.zac',
+  spr: 'fr-urban-rules.documents.kind.spr',
+  copropriete: 'fr-urban-rules.documents.kind.copropriete',
+  oap: 'fr-urban-rules.documents.kind.oap',
+  other: 'fr-urban-rules.documents.kind.other'
+};
+const DOCUMENT_RANGE_KEYS = {
+  range: 'fr-urban-rules.documents.range.range',
+  order: 'fr-urban-rules.documents.range.order',
+  'too-many': 'fr-urban-rules.documents.range.too-many'
+};
+const DOCUMENT_STATEMENT_KEYS = {
+  limit: 'fr-urban-rules.documents.statement.limit',
+  not_regulated: 'fr-urban-rules.documents.statement.not_regulated',
+  see_graphic: 'fr-urban-rules.documents.statement.see_graphic',
+  described: 'fr-urban-rules.documents.statement.described'
+};
+
+/**
+ * The pages a person chose, checked: whole numbers, inside the document, in order, and no more than the limit of one
+ * reading (pages READ, never the file's size). `{ ok: true, from, to, pages }` or `{ ok: false, reason, max? }`.
+ */
+export function pageRangeOf(range, pageCount, max = DOCUMENT_PAGES_MAX) {
+  const from = Number(range?.from);
+  const to = Number(range?.to);
+  if (!Number.isInteger(from) || !Number.isInteger(to) || from < 1 || to < 1 || to > pageCount || from > pageCount)
+    return { ok: false, reason: 'range' };
+  if (from > to) return { ok: false, reason: 'order' };
+  const pages = to - from + 1;
+  if (pages > max) return { ok: false, reason: 'too-many', max };
+  return { ok: true, from, to, pages };
+}
+
+const usdText = (usd) => `$${Number(usd).toFixed(2)}`;
+
+function base64Of(bytes) {
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(binary);
+}
+
+/**
+ * A result of the service's uploaded reading, as rules TO CONFIRM with their source (Sprint 002.30 DEC-6, DEC-7): every
+ * rule names its document, kind and page, says when it was read from a transcript, and is never applied on its own.
+ */
+export function documentRulesOf(result, info) {
+  const rules = Array.isArray(result?.rules) ? result.rules : [];
+  return rules
+    .filter((rule) => rule !== null && typeof rule === 'object' && Number.isSafeInteger(rule.page) && typeof rule.passage === 'string')
+    .map((rule) => ({
+      kind: WRITTEN_KINDS.has(rule.kind) ? rule.kind : 'other',
+      statement: WRITTEN_STATEMENTS.has(rule.statement) ? rule.statement : 'described',
+      limit: rule.limit ?? undefined,
+      sector: typeof rule.sector === 'string' ? cut(rule.sector, 40) : null,
+      page: rule.page,
+      ...(typeof rule.article === 'string' ? { article: cut(rule.article, 40) } : {}),
+      passage: cut(rule.passage, WRITTEN_PASSAGE_MAX),
+      confidence: CONFIDENCES.has(rule.confidence) ? rule.confidence : 'low',
+      doubts: Array.isArray(rule.doubts) ? rule.doubts.filter((d) => typeof d === 'string' && DOUBT_CAUSE.test(d)).slice(0, 8) : [],
+      source: { documentId: info.id, name: cut(info.name, 120), kind: info.kind, page: rule.page },
+      ...(rule.fromTranscript === true ? { fromTranscript: true } : {}),
+      // To confirm, always: the rules of an uploaded document are never applied without a person (DEC-7).
+      status: 'to_confirm',
+      autoApply: false
+    }));
+}
+
+/** What the section keeps of one reading: no transcript, no offsets, rules cut to what is shown. */
+function keptReading({ info, range, result, now }) {
+  return {
+    documentId: info.id,
+    hash: info.hash,
+    name: cut(info.name, 120),
+    kind: info.kind,
+    pages: [range.from, range.to],
+    readAt: now().toISOString(),
+    result: {
+      schemaVersion: result.schemaVersion,
+      promptVersion: result.promptVersion,
+      extractedAt: result.extractedAt,
+      model: result.model,
+      reading: result.reading,
+      chunks: result.chunks,
+      ...(result.stopped === undefined ? {} : { stopped: result.stopped }),
+      rules: (result.rules ?? []).slice(0, KEPT_RULES_MAX).map((rule) => ({
+        kind: rule.kind,
+        sector: rule.sector ?? null,
+        statement: rule.statement,
+        limit: rule.limit ?? null,
+        page: rule.page,
+        ...(rule.article === undefined ? {} : { article: rule.article }),
+        passage: cut(rule.passage, WRITTEN_PASSAGE_MAX),
+        conditions: (rule.conditions ?? []).slice(0, 6).map((c) => cut(String(c), 300)),
+        exceptions: (rule.exceptions ?? []).slice(0, 6).map((c) => cut(String(c), 300)),
+        confidence: rule.confidence,
+        doubts: rule.doubts ?? [],
+        ...(rule.fromTranscript === true ? { fromTranscript: true } : {})
+      }))
+    }
+  };
+}
+
+const isDocumentReading = (entry) =>
+  isRecord(entry) &&
+  typeof entry.documentId === 'string' &&
+  entry.documentId.length > 0 &&
+  entry.documentId.length <= 64 &&
+  typeof entry.hash === 'string' &&
+  /^[0-9a-f]{64}$/u.test(entry.hash) &&
+  Array.isArray(entry.pages) &&
+  entry.pages.length === 2 &&
+  entry.pages.every(Number.isSafeInteger) &&
+  isRecord(entry.result) &&
+  Array.isArray(entry.result.rules);
+
+/**
+ * The reading of a document the person added: choose the pages, see the estimate and the cost heads-up, confirm, read
+ * (a scan is transcribed by vision, one page picture a request), keep the result in the project. Rules are shown to
+ * confirm, with their source; confirming them as written rules is Sprint 002.31.
+ */
+export function createDocumentReadings({
+  documents: documentsOf,
+  pluginService = () => undefined,
+  ai: aiOf = () => undefined,
+  fetch: fetchImpl,
+  now = () => new Date(),
+  wait = (ms, signal) => new Promise((resolve) => (signal?.aborted ? resolve() : setTimeout(resolve, ms))),
+  requestSignal = () => {},
+  packageData = () => undefined,
+  translate = () => undefined,
+  log = () => {}
+}) {
+  /** document id → { state, range?, plan?, estimate?, transcripts: Map, progress?, result?, error?, controller?, restored? } */
+  const records = new Map();
+  const service = () => {
+    try {
+      const candidate = documentsOf();
+      return typeof candidate?.list === 'function' ? candidate : undefined;
+    } catch {
+      return undefined;
+    }
+  };
+  const available = () => service() !== undefined;
+  const recordOf = (info) => {
+    let record = records.get(info.id);
+    if (record === undefined || (record.hash !== undefined && record.hash !== info.hash)) {
+      record = { id: info.id, hash: info.hash, state: 'idle', transcripts: new Map() };
+      records.set(info.id, record);
+    }
+    return record;
+  };
+  const changed = () => requestSignal();
+
+  const savedOf = () => {
+    try {
+      const { section } = sectionOf(packageData()?.read?.());
+      return Array.isArray(section?.documentReadings) ? section.documentReadings.filter(isDocumentReading) : [];
+    } catch {
+      return [];
+    }
+  };
+  /** One write of the reading list, on the section as it is (the other members are kept). `false` when it cannot be written. */
+  function writeReadings(update) {
+    try {
+      const data = packageData();
+      if (typeof data?.write !== 'function') return false;
+      const before = data.read?.();
+      const { section, readOnly } = sectionOf(before);
+      if (readOnly) return false;
+      const next = { ...(section ?? {}), schema: SECTION_SCHEMA, documentReadings: update(Array.isArray(section?.documentReadings) ? section.documentReadings : []) };
+      const label = cut(translate(UNDO_KEYS['doc-reading']) ?? 'Document reading', LABEL_MAX);
+      return Boolean(data.write(next, label, before ?? null));
+    } catch (cause) {
+      log(`${SOURCE_ID}: the document reading could not be written: ${String(cause)}`);
+      return false;
+    }
+  }
+
+  async function locate() {
+    try {
+      const found = checkedLocation(await pluginService()?.locate?.());
+      return found?.baseUrl;
+    } catch {
+      return undefined;
+    }
+  }
+
+  /** One request to the companion: `{ status, json }` or `{ failed }`. Never throws. */
+  async function call(baseUrl, path, init = {}, signal) {
+    const timeout = AbortSignal.timeout(DOCUMENT_CALL_TIMEOUT_MS);
+    try {
+      const response = await fetchImpl(new URL(path, baseUrl).href, {
+        ...init,
+        signal: signal === undefined ? timeout : AbortSignal.any([timeout, signal]),
+        headers: { accept: 'application/json', ...(init.body === undefined ? {} : { 'content-type': 'application/json' }), ...(init.headers ?? {}) },
+        credentials: 'same-origin'
+      });
+      const type = response.headers?.get?.('content-type');
+      if (typeof type !== 'string' || !/\bjson\b/i.test(type)) return { failed: 'unavailable' };
+      return { status: response.status, json: JSON.parse(await response.text()) };
+    } catch {
+      return { failed: signal?.aborted ? 'aborted' : timeout.aborted ? 'timeout' : 'network' };
+    }
+  }
+  const post = (baseUrl, path, body, signal) => call(baseUrl, path, { method: 'POST', body: JSON.stringify(body) }, signal);
+  const errorOf = (answer) => {
+    if (answer.failed !== undefined) return { code: answer.failed };
+    const body = answer.json;
+    const code = typeof body?.error === 'string' ? body.error : 'unavailable';
+    const stopped = code === 'ai_budget_exhausted' ? checkedStop({ reason: 'ai-budget', ...body }) : undefined;
+    return { code, ...(stopped === undefined ? {} : { stopped }) };
+  };
+
+  const refuse = (key, params) => ({ status: 'refused', message: { key, ...(params === undefined ? {} : { params }) } });
+  const infoOf = (target) => {
+    const id = subjectFields(target?.subjectId).doc;
+    return id === undefined ? undefined : service()?.get?.(id);
+  };
+
+  /** The local model the AI panel selected, as a name: `{ providerId, model? }`, or `undefined` (none, a cloud one, an older host). */
+  const localChoice = () => {
+    const chosen = chosenModelOf(aiOf());
+    return chosen !== undefined && LOCAL_PROVIDER_IDS.has(chosen.providerId) ? chosen : undefined;
+  };
+
+  /** `doc-plan`: the pages chosen, what they are (text or scan), and the estimate. Nothing is sent but counts. */
+  async function plan(info, values) {
+    const record = recordOf(info);
+    if (record.state === 'running') return { status: 'done' };
+    const checked = pageRangeOf(values, info.pageCount, record.limit ?? DOCUMENT_PAGES_MAX);
+    if (!checked.ok) return refuse(DOCUMENT_RANGE_KEYS[checked.reason], { max: checked.max ?? DOCUMENT_PAGES_MAX, pages: info.pageCount });
+    // Addendum A: Sonnet unless the person chose the local route, which exists only while the AI panel's selection is a local model.
+    const route = values?.route === 'local' ? 'local' : 'cloud';
+    const ai = route === 'local' ? localChoice() : undefined;
+    if (route === 'local' && ai === undefined) return refuse('fr-urban-rules.documents.error.noLocal');
+    const baseUrl = await locate();
+    if (baseUrl === undefined) return refuse('fr-urban-rules.documents.error.unavailable');
+    record.state = 'estimating';
+    changed();
+    const pages = [];
+    for (let first = checked.from; first <= checked.to; first += TEXT_PAGES_PER_CALL) {
+      const last = Math.min(checked.to, first + TEXT_PAGES_PER_CALL - 1);
+      const read = await service().readText(info.id, { pages: { first, last } });
+      if (read?.ok !== true) {
+        record.state = 'failed';
+        record.error = { code: read?.reason === 'not-in-file' ? 'not_in_file' : 'unreadable' };
+        changed();
+        return refuse(documentErrorKey(record.error.code));
+      }
+      for (const p of read.pages) pages.push({ page: p.page, text: p.text, scan: !(p.hasText && p.text.replace(/\s/gu, '').length >= SCAN_PAGE_CHARS) });
+    }
+    const scans = pages.filter((p) => p.scan);
+    // A page transcribed earlier in this session is not drawn, sent or paid for again.
+    const toTranscribe = scans.filter((p) => !record.transcripts.has(p.page)).length;
+    const textChars = pages.filter((p) => !p.scan).reduce((sum, p) => sum + p.text.length, 0);
+    const body = {
+      mode: scans.length > 0 ? 'image' : 'text',
+      pages: pages.length,
+      scanPages: toTranscribe,
+      // Only a range that mixes the two knows its characters; a pure scan lets the service use its measured average.
+      characters: scans.length === pages.length ? 0 : textChars + scans.length * SCAN_PAGE_TRANSCRIPT_CHARS,
+      ...(ai === undefined ? {} : { ai })
+    };
+    const answer = await post(baseUrl, 'v1/uploads/estimate', body);
+    if (answer.failed !== undefined || answer.status !== 200 || !isRecord(answer.json?.estimate)) {
+      record.state = 'failed';
+      record.error = errorOf(answer);
+      changed();
+      return refuse(documentErrorKey(record.error.code), { code: record.error.code });
+    }
+    record.limit = Number.isSafeInteger(answer.json.limits?.pagesPerReading) ? answer.json.limits.pagesPerReading : undefined;
+    Object.assign(record, { state: 'estimated', range: checked, plan: pages, estimate: answer.json.estimate, baseUrl, route, ai, error: undefined, result: undefined, retryError: undefined, restored: false });
+    changed();
+    return { status: 'done' };
+  }
+
+  /** What a page job's failure says: its code, and the budget's numbers when the budget stopped it. */
+  const jobErrorOf = (error) => {
+    const code = typeof error?.code === 'string' ? error.code : 'transcription_failed';
+    const stopped = code === 'ai_budget_exhausted' ? checkedStop({ reason: 'ai-budget', ...error }) : undefined;
+    return { code, ...(stopped === undefined ? {} : { stopped }) };
+  };
+
+  /**
+   * One page, as the service's job (Addendum A): draw it, start the job, poll it until it ends, drop it. A local page can take
+   * minutes, so nothing waits on one request. `{ result }` (it may say `unreadable`), `{ error: { code, stopped? } }` or `{ aborted }`.
+   */
+  async function transcribePage({ info, record, controller, baseUrl, page, ai, route, done, of, target = record }) {
+    const drawn = await service().renderPages(info.id, [page]);
+    if (drawn?.ok !== true || drawn.images?.length !== 1) return { error: { code: 'unreadable' } };
+    const [image] = drawn.images;
+    const started = await post(baseUrl, 'v1/uploads/transcriptions', { page, image: { mediaType: image.mimeType, data: base64Of(image.bytes) }, ...(ai === undefined ? {} : { ai }) }, controller.signal);
+    if (controller.signal.aborted) return { aborted: true };
+    if (started.failed !== undefined || started.status !== 202 || typeof started.json?.jobId !== 'string') return { error: errorOf(started) };
+    const jobPath = `v1/uploads/transcriptions/${encodeURIComponent(started.json.jobId)}`;
+    target.pageJobPath = jobPath;
+    const began = now().getTime();
+    let polls = 0;
+    try {
+      for (;;) {
+        const status = await call(baseUrl, jobPath, {}, controller.signal);
+        if (controller.signal.aborted) return { aborted: true };
+        if (status.failed !== undefined || status.status !== 200) return { error: errorOf(status) };
+        const job = status.json;
+        if (job.state === 'failed') return { error: jobErrorOf(job.error) };
+        if (job.state === 'done' && isRecord(job.result) && typeof job.result.text === 'string') return { result: job.result };
+        target.progress = { step: 'transcribing', route, page, done, of, elapsed: mmss(job.progress?.elapsedMs ?? 0), queued: job.state === 'queued' };
+        changed();
+        if (now().getTime() - began > DOCUMENT_PAGE_POLL_MAX_MS) {
+          void call(baseUrl, `${jobPath}/cancel`, { method: 'POST' });
+          return { error: { code: 'timeout' } };
+        }
+        polls += 1;
+        // A page of a local model is minutes long: a poll every 1.5 s at first, every 4 s after half a minute.
+        await wait(polls < 20 ? DOCUMENT_POLL_MS : DOCUMENT_POLL_SLOW_MS, controller.signal);
+      }
+    } finally {
+      target.pageJobPath = undefined;
+      // The service forgets the page's result now: the extension holds what it needs.
+      void call(baseUrl, jobPath, { method: 'DELETE' });
+    }
+  }
+
+  /** Starts a reading of `pages` and polls it to its end: `{ result }`, `{ error }` or `{ aborted }`. */
+  async function readPages({ info, baseUrl, pages, ai, controller, target }) {
+    const started = await post(baseUrl, 'v1/uploads/readings', { documentId: info.id, pages, ...(ai === undefined ? {} : { ai }) }, controller.signal);
+    if (controller.signal.aborted) return { aborted: true };
+    if (started.failed !== undefined || started.status !== 202 || typeof started.json?.jobId !== 'string') return { error: errorOf(started) };
+    const jobId = started.json.jobId;
+    const jobPath = `v1/uploads/readings/${encodeURIComponent(jobId)}`;
+    target.jobId = jobId;
+    const began = now().getTime();
+    for (;;) {
+      const status = await call(baseUrl, jobPath, {}, controller.signal);
+      if (controller.signal.aborted) return { aborted: true };
+      if (status.failed !== undefined || status.status !== 200) return { error: errorOf(status) };
+      const job = status.json;
+      if (job.state === 'failed') return { error: { code: typeof job.error?.code === 'string' ? job.error.code : 'extraction_failed', ...(job.error?.code === 'ai_budget_exhausted' ? { stopped: checkedStop({ reason: 'ai-budget', ...job.error }) } : {}) } };
+      if (job.state === 'done' && isRecord(job.result) && Array.isArray(job.result.rules)) {
+        // The service holds nothing of it from now on: the project does.
+        void call(baseUrl, jobPath, { method: 'DELETE' });
+        target.jobId = undefined;
+        return { result: job.result };
+      }
+      if (isRecord(job.progress)) target.progress = { step: 'extracting', route: target.route, chunk: job.progress.chunk ?? 0, of: job.progress.of ?? 0 };
+      changed();
+      if (now().getTime() - began > DOCUMENT_POLL_MAX_MS) return { error: { code: 'timeout' } };
+      await wait(DOCUMENT_POLL_MS, controller.signal);
+    }
+  }
+
+  /** The whole reading: transcribe the scans (pages the model could not read are left out), read the text in parts, keep the result. */
+  async function run(info, record) {
+    const controller = new AbortController();
+    record.controller = controller;
+    record.state = 'running';
+    record.error = undefined;
+    record.retryError = undefined;
+    const { baseUrl, range, route = 'cloud', ai } = record;
+    const scans = record.plan.filter((p) => p.scan);
+    const fail = (error) => {
+      if (controller.signal.aborted) return;
+      record.state = 'failed';
+      record.error = error;
+      record.progress = undefined;
+      changed();
+    };
+    try {
+      const unreadable = new Set();
+      let processed = scans.filter((p) => record.transcripts.has(p.page)).length;
+      let failedInARow = 0;
+      for (const p of scans) {
+        if (controller.signal.aborted) return;
+        record.progress = { step: 'transcribing', route, page: p.page, done: processed, of: scans.length, elapsed: mmss(0) };
+        changed();
+        if (record.transcripts.has(p.page)) continue;
+        const out = await transcribePage({ info, record, controller, baseUrl, page: p.page, ai, route, done: processed, of: scans.length });
+        if (controller.signal.aborted || out.aborted) return;
+        if (out.error !== undefined) {
+          const error = out.error;
+          if (error.code === 'ai_budget_exhausted') {
+            // The AI budget ran out: what was transcribed stays (in this session), nothing more is read.
+            record.state = 'done';
+            record.result = {
+              rules: [],
+              reading: { mode: 'image', route, pages: [], transcribedPages: [...record.transcripts.keys()], truncatedPages: [] },
+              chunks: { of: scans.length, failed: 0, unread: scans.length - processed },
+              stopped: error.stopped ?? { reason: 'ai-budget' },
+              transcriptionStop: true
+            };
+            record.progress = undefined;
+            changed();
+            return;
+          }
+          // A local page that cannot be had (a timeout, a model that fell over) is left out and the reading goes on; two in a row
+          // mean the server itself is the trouble, and it is said instead of waited for page after page.
+          if (route === 'local' && error.code === 'transcription_failed') {
+            failedInARow += 1;
+            if (failedInARow >= 2) return fail(error);
+            unreadable.add(p.page);
+            processed += 1;
+            continue;
+          }
+          return fail(error);
+        }
+        failedInARow = 0;
+        processed += 1;
+        if (isRecord(out.result.unreadable)) {
+          unreadable.add(p.page);
+          continue;
+        }
+        record.transcripts.set(p.page, { text: out.result.text, truncated: out.result.truncated === true });
+      }
+      const sent = record.plan.map((p) => {
+        if (!p.scan) return { page: p.page, text: p.text, transcribed: false, truncated: false };
+        if (unreadable.has(p.page)) return { page: p.page, text: '', transcribed: true, truncated: false, unreadable: true };
+        const t = record.transcripts.get(p.page);
+        return { page: p.page, text: t?.text ?? '', transcribed: true, truncated: t?.truncated === true };
+      });
+      record.progress = { step: 'extracting', route, chunk: 0, of: 0 };
+      changed();
+      const out = await readPages({ info, baseUrl, pages: sent, ai, controller, target: record });
+      if (controller.signal.aborted || out.aborted) return;
+      if (out.error !== undefined) return fail(out.error);
+      record.result = out.result;
+      record.state = 'done';
+      record.progress = undefined;
+      record.restored = false;
+      record.kept = writeReadings((held) => [...held.filter((h) => h.documentId !== info.id), keptReading({ info, range, result: out.result, now })].slice(-KEPT_READINGS_MAX));
+      changed();
+    } catch (cause) {
+      log(`${SOURCE_ID}: a document reading failed: ${String(cause)}`);
+      fail({ code: 'unavailable' });
+    }
+  }
+
+  /**
+   * « Read page N with Sonnet 5.5 » (Addendum A, DEC-A7): a page the local model could not read, on the cloud route — the picture
+   * transcribed, that page's text read for rules — and its rules joined to the reading the project keeps.
+   */
+  async function retryPage(info, record, page) {
+    const controller = new AbortController();
+    record.retry = { page, controller, route: 'cloud', progress: { step: 'transcribing', route: 'cloud', page, done: 0, of: 1, elapsed: mmss(0) } };
+    record.retryError = undefined;
+    changed();
+    const target = record.retry;
+    try {
+      const baseUrl = record.baseUrl ?? (await locate());
+      if (baseUrl === undefined) {
+        record.retryError = { page, code: 'unavailable' };
+        return;
+      }
+      const out = await transcribePage({ info, record, controller, baseUrl, page, ai: undefined, route: 'cloud', done: 0, of: 1, target });
+      if (controller.signal.aborted || out.aborted) return;
+      if (out.error !== undefined || isRecord(out.result.unreadable)) {
+        record.retryError = { page, code: out.error?.code ?? 'unreadable_again' };
+        return;
+      }
+      record.transcripts.set(page, { text: out.result.text, truncated: out.result.truncated === true });
+      target.progress = { step: 'extracting', route: 'cloud', chunk: 0, of: 0 };
+      changed();
+      const read = await readPages({ info, baseUrl, pages: [{ page, text: out.result.text, transcribed: true, truncated: out.result.truncated === true }], ai: undefined, controller, target });
+      if (controller.signal.aborted || read.aborted) return;
+      if (read.error !== undefined) {
+        record.retryError = { page, code: read.error.code };
+        return;
+      }
+      record.result = mergeRetried(record.result, page, read.result);
+      record.kept = writeReadings((held) => [...held.filter((h) => h.documentId !== info.id), keptReading({ info, range: record.range, result: record.result, now })].slice(-KEPT_READINGS_MAX));
+    } catch (cause) {
+      log(`${SOURCE_ID}: a page retry failed: ${String(cause)}`);
+      record.retryError = { page, code: 'unavailable' };
+    } finally {
+      if (record.retry === target) record.retry = undefined;
+      changed();
+    }
+  }
+
+  /** The document actions of the Rules view. */
+  async function runAction(request) {
+    const id = request?.actionId;
+    if (!DOCUMENT_ACTIONS.has(id)) return refuse('fr-urban-rules.documents.error.generic', { code: 'action' });
+    if (id === 'doc-add') {
+      void service()?.requestAdd?.(request.values?.kind === undefined ? undefined : { kind: request.values.kind })?.then?.(() => changed());
+      return { status: 'done' };
+    }
+    const info = infoOf(request.target);
+    if (info === undefined) return refuse('fr-urban-rules.documents.error.generic', { code: 'document' });
+    const record = recordOf(info);
+    if (id === 'doc-plan') return plan(info, request.values);
+    if (id === 'doc-read') {
+      if (record.state !== 'estimated' || record.estimate === undefined) return refuse('fr-urban-rules.documents.error.noEstimate');
+      if (request.values?.confirm !== 'yes') return refuse('fr-urban-rules.documents.confirm.required');
+      void run(info, record);
+      return { status: 'done' };
+    }
+    if (id === 'doc-cancel') {
+      const { controller, baseUrl, jobId, pageJobPath, retry } = record;
+      if (record.state === 'running') {
+        controller?.abort();
+        record.state = 'idle';
+        record.progress = undefined;
+        record.jobId = undefined;
+        if (baseUrl !== undefined) {
+          // The page job in flight and the reading job are both stopped on the service, which aborts the call to the model.
+          if (pageJobPath !== undefined) void call(baseUrl, `${pageJobPath}/cancel`, { method: 'POST' });
+          if (jobId !== undefined) void call(baseUrl, `v1/uploads/readings/${encodeURIComponent(jobId)}/cancel`, { method: 'POST' });
+        }
+        changed();
+      } else if (retry !== undefined) {
+        retry.controller.abort();
+        record.retry = undefined;
+        const base = record.baseUrl;
+        if (base !== undefined) {
+          if (retry.pageJobPath !== undefined) void call(base, `${retry.pageJobPath}/cancel`, { method: 'POST' });
+          if (retry.jobId !== undefined) void call(base, `v1/uploads/readings/${encodeURIComponent(retry.jobId)}/cancel`, { method: 'POST' });
+        }
+        changed();
+      }
+      return { status: 'done' };
+    }
+    if (id === 'doc-retry-cloud') {
+      const page = Number(subjectFields(request.target?.subjectId).p);
+      const pending = record.result?.reading?.unreadablePages;
+      if (!Number.isSafeInteger(page) || !Array.isArray(pending) || !pending.includes(page) || record.state !== 'done') return refuse('fr-urban-rules.documents.error.generic', { code: 'page' });
+      if (request.values?.confirm !== 'yes') return refuse('fr-urban-rules.documents.confirm.required');
+      if (record.retry !== undefined) return { status: 'done' };
+      void retryPage(info, record, page);
+      return { status: 'done' };
+    }
+    if (id === 'doc-open') {
+      const page = Number(subjectFields(request.target?.subjectId).p);
+      if (!Number.isSafeInteger(page) || page < 1) return refuse('fr-urban-rules.documents.error.generic', { code: 'page' });
+      service()?.open?.({ documentId: info.id, page });
+      return { status: 'done' };
+    }
+    // doc-forget
+    records.delete(info.id);
+    writeReadings((held) => held.filter((h) => h.documentId !== info.id));
+    changed();
+    return { status: 'done' };
+  }
+
+  const kindKey = (kind) => DOCUMENT_KIND_KEYS[Object.hasOwn(DOCUMENT_KIND_KEYS, kind) ? kind : 'other'];
+  /** A kind in the person's language: a parameter of a phrase is shown as it is, so it is translated here. */
+  const kindLabel = (kind) => cut(translate(kindKey(kind)) ?? kindKey(kind), 80);
+
+  /** The result of a record, as blocks: what was read, its caveats, the rules to confirm with their source, the pages to look at. */
+  function resultBlocks(info, record, subject) {
+    const blocks = [];
+    const result = record.result;
+    const items = documentRulesOf(result, info);
+    const stopped = result.stopped;
+    if (stopped !== undefined) {
+      const total = result.chunks?.of ?? 0;
+      const read = Math.max(0, total - (result.chunks?.unread ?? 0));
+      blocks.push({ kind: 'notice', tone: 'warning', text: { key: 'fr-urban-rules.documents.result.stopped', params: { read, total } } });
+    }
+    const truncated = result.reading?.truncatedPages ?? [];
+    if (truncated.length > 0) blocks.push({ kind: 'notice', tone: 'warning', text: { key: 'fr-urban-rules.documents.result.truncated', params: { pages: truncated.join(', ') } } });
+    if (result.transcriptionStop !== true) {
+      blocks.push({
+        kind: 'notice',
+        tone: 'info',
+        text: {
+          key: items.length === 0 ? 'fr-urban-rules.documents.result.none' : 'fr-urban-rules.documents.result.summary',
+          params: { count: items.length, from: record.range?.from ?? '', to: record.range?.to ?? '' }
+        }
+      });
+    }
+    if ((result.reading?.transcribedPages ?? []).length > 0 && items.length > 0) {
+      blocks.push({ kind: 'notice', tone: 'caution', text: { key: 'fr-urban-rules.documents.result.transcribed' } });
+    }
+    // Addendum A, DEC-A6: a local model's digits are not flagged when wrong. Said on the result as it was before confirming, for the pages
+    // it transcribed (a page Sonnet read in a retry, or a text page, is not one of them).
+    const retriedPages = new Set(Array.isArray(result.reading?.retriedPages) ? result.reading.retriedPages : []);
+    const localPages = (result.reading?.transcribedPages ?? []).filter((n) => !retriedPages.has(n));
+    if (result.reading?.route === 'local' && result.transcriptionStop !== true && localPages.length > 0) {
+      blocks.push({ kind: 'notice', tone: 'warning', text: { key: 'fr-urban-rules.documents.result.checkFigures' } });
+    }
+    const unreadablePages = Array.isArray(result.reading?.unreadablePages) ? result.reading.unreadablePages.filter(Number.isSafeInteger) : [];
+    if (unreadablePages.length > 0) {
+      blocks.push({ kind: 'notice', tone: 'warning', text: { key: 'fr-urban-rules.documents.result.unreadable', params: { pages: unreadablePages.join(', ') } } });
+    }
+    const retried = Array.isArray(result.reading?.retriedPages) ? result.reading.retriedPages.filter(Number.isSafeInteger) : [];
+    if (retried.length > 0) {
+      blocks.push({ kind: 'notice', tone: 'info', text: { key: 'fr-urban-rules.documents.result.retried', params: { pages: retried.join(', ') } } });
+    }
+    if (record.retry !== undefined) {
+      blocks.push({ kind: 'notice', tone: 'info', text: { key: 'fr-urban-rules.documents.progress.retrying', params: { page: record.retry.page, step: record.retry.progress?.step ?? 'transcribing' } } });
+      blocks.push({ kind: 'actions', actions: [{ id: 'doc-cancel', label: { key: 'fr-urban-rules.documents.cancel' }, target: { subjectId: subject } }] });
+    } else if (unreadablePages.length > 0 && record.state === 'done') {
+      // « One click »: the page's own confirmation names what it costs.
+      const cost = usdText(RETRY_PAGE_ABOUT_USD);
+      blocks.push({
+        kind: 'actions',
+        actions: unreadablePages.slice(0, 8).map((page) => ({
+          id: 'doc-retry-cloud',
+          label: { key: 'fr-urban-rules.documents.retryCloud', params: { page } },
+          target: { subjectId: `${subject}|p=${page}` },
+          fields: [{ key: 'confirm', label: { key: 'fr-urban-rules.documents.confirm.field' }, kind: 'choice', required: true, options: [{ value: 'yes', label: { key: 'fr-urban-rules.documents.confirm.retryOption', params: { page, cost } } }] }]
+        }))
+      });
+    }
+    if (record.retryError !== undefined) {
+      const code = record.retryError.code;
+      blocks.push({ kind: 'notice', tone: 'warning', text: code === 'ai_budget_exhausted' ? { key: documentErrorKey(code) } : { key: 'fr-urban-rules.documents.error.retry', params: { page: record.retryError.page, code: String(code) } } });
+    }
+    if (items.length > 0) {
+      blocks.push({
+        kind: 'table',
+        columns: [
+          { key: 'fr-urban-rules.documents.table.rule' },
+          { key: 'fr-urban-rules.documents.table.limit' },
+          { key: 'fr-urban-rules.documents.table.source' },
+          { key: 'fr-urban-rules.documents.table.status' }
+        ],
+        rows: items.slice(0, TABLE_ROWS).map((item) => [
+          { key: WRITTEN_KIND_KEYS[item.kind] },
+          item.limit?.kind === 'value' && SDK_UNITS.has(item.limit.unit)
+            ? { value: item.limit.value, unit: item.limit.unit }
+            : item.limit?.kind === 'ratio'
+              ? { value: item.limit.percent, unit: 'percent' }
+              : { key: DOCUMENT_STATEMENT_KEYS[item.statement] },
+          { key: 'fr-urban-rules.documents.source.cell', params: { name: item.source.name, kind: kindLabel(item.source.kind), page: item.source.page } },
+          { key: 'fr-urban-rules.documents.table.toConfirm' }
+        ])
+      });
+      for (const item of items.slice(0, 20)) {
+        blocks.push({
+          kind: 'quote',
+          passage: { text: item.passage, lang: 'fr' },
+          citation: { document: { key: 'fr-urban-rules.documents.source.cell', params: { name: item.source.name, kind: kindLabel(item.source.kind), page: item.source.page } }, page: item.page, ...(item.article === undefined ? {} : { article: item.article }) }
+        });
+      }
+      const pages = [...new Set(items.map((item) => item.page))].sort((a, b) => a - b).slice(0, 8);
+      blocks.push({
+        kind: 'actions',
+        actions: pages.map((page) => ({ id: 'doc-open', label: { key: 'fr-urban-rules.documents.openPage', params: { page } }, target: { subjectId: `${subject}|p=${page}` } }))
+      });
+    }
+    return blocks;
+  }
+
+  function documentBlocks(info) {
+    const record = recordOf(info);
+    const subject = `doc=${encodeURIComponent(info.id)}`;
+    const target = { subjectId: subject };
+    const action = (id, key, extra = {}) => ({ id, label: { key, ...(extra.params === undefined ? {} : { params: extra.params }) }, target, ...(extra.emphasis === undefined ? {} : { emphasis: extra.emphasis }), ...(extra.fields === undefined ? {} : { fields: extra.fields }) });
+    const blocks = [
+      {
+        kind: 'fields',
+        rows: [
+          { label: { key: 'fr-urban-rules.documents.field.kind' }, value: { key: kindKey(info.kind) } },
+          { label: { key: 'fr-urban-rules.documents.field.pages' }, value: { text: String(info.pageCount) } }
+        ]
+      }
+    ];
+    // A reading kept in the project, shown when this session has none and the file is the one it was read from.
+    if (record.state === 'idle' && record.result === undefined) {
+      const kept = savedOf().find((h) => h.documentId === info.id);
+      if (kept !== undefined && kept.hash === info.hash) {
+        Object.assign(record, { state: 'done', result: kept.result, range: { from: kept.pages[0], to: kept.pages[1] }, restored: true });
+      } else if (kept !== undefined) {
+        blocks.push({ kind: 'notice', tone: 'info', text: { key: 'fr-urban-rules.documents.changed' } });
+      }
+    }
+    // Addendum A: the person's choice of route, only while the AI panel's selection is a local model (named), Sonnet preselected.
+    const local = localChoice();
+    const routeFields =
+      local === undefined
+        ? []
+        : [
+            {
+              key: 'route',
+              label: { key: 'fr-urban-rules.documents.field.route' },
+              kind: 'choice',
+              required: true,
+              initial: record.route === 'local' ? 'local' : 'cloud',
+              options: [
+                { value: 'cloud', label: { key: 'fr-urban-rules.documents.route.cloud' } },
+                { value: 'local', label: { key: 'fr-urban-rules.documents.route.local', params: { model: cut(local.model ?? local.providerId, 80) } } }
+              ]
+            }
+          ];
+    const planAction = (key = 'fr-urban-rules.documents.plan') =>
+      action('doc-plan', key, {
+        emphasis: 'primary',
+        fields: [
+          { key: 'from', label: { key: 'fr-urban-rules.documents.field.from' }, kind: 'number', min: 1, max: info.pageCount, required: true, initial: record.range?.from ?? 1 },
+          { key: 'to', label: { key: 'fr-urban-rules.documents.field.to' }, kind: 'number', min: 1, max: info.pageCount, required: true, initial: record.range?.to ?? Math.min(info.pageCount, 20) },
+          ...routeFields
+        ]
+      });
+    if (record.state === 'idle') {
+      blocks.push({ kind: 'notice', tone: 'info', text: { key: 'fr-urban-rules.documents.state.idle', params: { pages: info.pageCount } } });
+      blocks.push({ kind: 'actions', actions: [planAction()] });
+    } else if (record.state === 'estimating') {
+      blocks.push({ kind: 'notice', tone: 'info', text: { key: 'fr-urban-rules.documents.state.estimating' } });
+    } else if (record.state === 'estimated') {
+      const e = record.estimate;
+      const isLocal = e.route === 'local';
+      const model = typeof e.model?.model === 'string' ? e.model.model : isLocal ? String(e.model?.providerId ?? '') : 'claude-sonnet-5-5';
+      const cost = usdText(e.aboutUsd);
+      const rows = [
+        { label: { key: 'fr-urban-rules.documents.field.read' }, value: { text: `${record.range.from}–${record.range.to}` } },
+        { label: { key: 'fr-urban-rules.documents.field.model' }, value: { text: cut(model, 80) } },
+        // HYBRID: even on the local route the extraction runs on Sonnet, so this is the about-cost of THAT step (the transcription is free).
+        { label: { key: 'fr-urban-rules.documents.field.cost' }, value: { text: `${cost} (${usdText(e.lowUsd)}–${usdText(e.highUsd)})` } }
+      ];
+      if (isLocal) {
+        // Addendum A, DEC-A3: a local model's time is not known in advance; Sonnet's measured one and the two measured machines are.
+        const measured = e.timing?.local?.measuredSecondsPerPage ?? {};
+        rows.push({
+          label: { key: 'fr-urban-rules.documents.field.time' },
+          value: {
+            key: 'fr-urban-rules.documents.estimate.timeLocal',
+            params: { cloud: e.timing?.cloudSecondsPerPage ?? 13, fast: measured.fast ?? 46, slow: Math.round((measured.slow ?? 773) / 60) }
+          }
+        });
+      }
+      blocks.push({ kind: 'fields', rows });
+      blocks.push({
+        kind: 'notice',
+        tone: 'warning',
+        text: isLocal
+          ? {
+              key: 'fr-urban-rules.documents.estimate.headsUpLocal',
+              params: { pages: e.pages, scans: e.scanPages ?? 0, model: cut(model, 80), cost, low: usdText(e.lowUsd), high: usdText(e.highUsd), compare: usdText(e.compare?.aboutUsd ?? 0) }
+            }
+          : {
+              key: 'fr-urban-rules.documents.estimate.headsUp',
+              params: { pages: e.pages, scans: e.scanPages ?? 0, model: cut(model, 80), cost, low: usdText(e.lowUsd), high: usdText(e.highUsd) }
+            }
+      });
+      blocks.push({
+        kind: 'actions',
+        actions: [
+          action('doc-read', isLocal ? 'fr-urban-rules.documents.readLocal' : 'fr-urban-rules.documents.read', {
+            emphasis: 'primary',
+            params: { cost },
+            fields: [
+              {
+                key: 'confirm',
+                label: { key: 'fr-urban-rules.documents.confirm.field' },
+                kind: 'choice',
+                required: true,
+                options: [{ value: 'yes', label: isLocal ? { key: 'fr-urban-rules.documents.confirm.optionLocal', params: { cost } } : { key: 'fr-urban-rules.documents.confirm.option', params: { cost } } }]
+              }
+            ]
+          }),
+          planAction('fr-urban-rules.documents.again')
+        ]
+      });
+    } else if (record.state === 'running') {
+      const p = record.progress ?? {};
+      blocks.push({
+        kind: 'notice',
+        tone: 'info',
+        text:
+          p.step === 'transcribing'
+            ? { key: 'fr-urban-rules.documents.progress.transcribingPage', params: { page: p.page ?? '', done: p.done ?? 0, of: p.of ?? 0, elapsed: p.elapsed ?? mmss(0), where: cut(translate(p.route === 'local' ? WHERE_KEYS.local : WHERE_KEYS.cloud) ?? WHERE_KEYS.cloud, 40) } }
+            : p.of > 0
+              ? { key: 'fr-urban-rules.documents.progress.extractingPart', params: { chunk: Math.max(1, p.chunk), of: p.of } }
+              : { key: 'fr-urban-rules.documents.progress.extracting' }
+      });
+      blocks.push({ kind: 'actions', actions: [action('doc-cancel', 'fr-urban-rules.documents.cancel')] });
+    } else if (record.state === 'failed') {
+      const code = record.error?.code;
+      blocks.push({
+        kind: 'notice',
+        tone: 'warning',
+        text: { key: documentErrorKey(code), params: { code: String(code ?? '') } }
+      });
+      blocks.push({ kind: 'actions', actions: [planAction()] });
+    } else if (record.state === 'done' && record.result !== undefined) {
+      blocks.push(...resultBlocks(info, record, subject));
+      if (record.restored !== true && record.kept === false) blocks.push({ kind: 'notice', tone: 'info', text: { key: 'fr-urban-rules.documents.notKept' } });
+      blocks.push({ kind: 'actions', actions: [planAction('fr-urban-rules.documents.again'), action('doc-forget', 'fr-urban-rules.documents.forget')] });
+    }
+    return blocks;
+  }
+
+  return {
+    available,
+    runAction,
+    /** Opens the host's own dialog, with the kind the offer hints at (the reading card, the Rules view). */
+    async requestAdd(options) {
+      const added = await service()?.requestAdd?.(options);
+      changed();
+      return added;
+    },
+    /** The Documents block of the Rules view and its source line: nothing when the host has no such service. */
+    stateOf() {
+      const docs = service();
+      if (docs === undefined) return { sources: [], blocks: [] };
+      const list = docs.list();
+      const blocks = [{ kind: 'heading', text: { key: 'fr-urban-rules.documents.heading' } }];
+      if (list.length === 0) blocks.push({ kind: 'notice', tone: 'info', text: { key: 'fr-urban-rules.documents.none' } });
+      for (const info of list) {
+        blocks.push({
+          kind: 'section',
+          id: `doc-${cyrb53(info.id)}`,
+          title: { text: cut(info.name, 120) },
+          icon: 'document',
+          open: true,
+          blocks: documentBlocks(info)
+        });
+      }
+      blocks.push({ kind: 'actions', actions: [{ id: 'doc-add', label: { key: 'fr-urban-rules.documents.add' }, target: {} }] });
+      const running = [...records.values()].some((r) => r.state === 'running' || r.state === 'estimating' || r.retry !== undefined);
+      return {
+        sources: [
+          {
+            id: 'project-documents',
+            name: { key: 'fr-urban-rules.documents.source' },
+            state: running ? 'loading' : 'ready',
+            detail: { key: 'fr-urban-rules.documents.count', params: { count: list.length } }
+          }
+        ],
+        blocks
+      };
+    },
+    dispose() {
+      for (const record of records.values()) {
+        record.controller?.abort();
+        record.retry?.controller.abort();
+      }
+      records.clear();
+    }
+  };
+}
+
 // ── The reader ──────────────────────────────────────────────────────────────────
 
 /**
@@ -3286,6 +4244,8 @@ export function createReader({
   mapFeatures = () => undefined,
   ai = () => undefined,
   translate = () => undefined,
+  // Sprint 002.30: the project's documents (SDK 1.44), `getOptional` on each use: a host without it answers `undefined`.
+  projectDocuments = () => undefined,
   // Sprint 002.6a: the companion service, asked through `getOptional` on each
   // read (DEC-1); the 2 s wait and the chapter timeout are injectable for tests.
   pluginService = () => undefined,
@@ -3347,8 +4307,22 @@ export function createReader({
    */
   /** Sprint 002.24: the Rules view's latest offer of questions about the project. */
   let projectOffer;
+  // Sprint 002.30: documents the person added to the project, read for rules (SDK 1.44).
+  const documentReadings = createDocumentReadings({
+    documents: projectDocuments,
+    pluginService,
+    fetch: fetchImpl,
+    now,
+    wait,
+    requestSignal: () => requestSignal(),
+    packageData,
+    translate,
+    ai,
+    log
+  });
   const cards = createReadingCards({
     ai,
+    canAddDocument: () => documentReadings.available(),
     act: (record, actionId) => cardAction(record, actionId),
     onDone: () => projectCards.afterReading()
   });
@@ -3425,7 +4399,8 @@ export function createReader({
     ai,
     translate,
     now,
-    log
+    log,
+    documentState: () => documentReadings.stateOf()
   });
 
   /**
@@ -4250,6 +5225,7 @@ export function createReader({
     cards.dispose();
     offers.dispose();
     projectCards.dispose();
+    documentReadings.dispose();
     for (const w of watches.values()) {
       w.wanted = false;
       w.cancel?.();
@@ -5019,6 +5995,11 @@ export function createReader({
     }
     if (actionId === 'narrow') {
       projectCards.ask();
+      return;
+    }
+    // Sprint 002.30: the host's own add-document dialog, then the Rules view's Documents block takes over.
+    if (actionId === 'add-document') {
+      await documentReadings.requestAdd();
       return;
     }
     if (actionId === 'cancel') {
@@ -6356,7 +7337,9 @@ export function createReader({
     runAction: (request, context) =>
       WRITTEN_ACTIONS.has(request?.actionId)
         ? runWrittenAction(request)
-        : rnu.runAction(request, context)
+        : DOCUMENT_ACTIONS.has(request?.actionId)
+          ? documentReadings.runAction(request)
+          : rnu.runAction(request, context)
   };
 }
 
@@ -6983,6 +7966,9 @@ function sectionOf(raw) {
   }
   // Sprint 002.24: the project's nature is one record, never overwritten in a shape not recognised.
   if (raw.projectNature !== undefined && !isProjectNature(raw.projectNature))
+    return { section: raw, readOnly: true };
+  // Sprint 002.30: the readings of the project's documents, never overwritten in a shape not recognised.
+  if (raw.documentReadings !== undefined && (!Array.isArray(raw.documentReadings) || !raw.documentReadings.every(isDocumentReading)))
     return { section: raw, readOnly: true };
   // Sprint 002.46: the switch is `false` or absent; any other shape is not this sprint's.
   if (raw.autoApply !== undefined && raw.autoApply !== false) return { section: raw, readOnly: true };
@@ -8771,6 +9757,7 @@ const NEW_DOCUMENT_VERSION_UNDATED_KEY = 'fr-urban-rules.notice.newDocumentVersi
 
 /** The undo labels, one per decision (translated by the host's `i18n`; at most 80 characters). */
 const UNDO_KEYS = {
+  'doc-reading': 'fr-urban-rules.undo.documentReading',
   confirm: 'fr-urban-rules.undo.confirm',
   'edit-value': 'fr-urban-rules.undo.editValue',
   'not-applicable': 'fr-urban-rules.undo.notApplicable',
@@ -9628,7 +10615,9 @@ function createRnu({
   ai: aiOf = () => undefined,
   translate,
   now,
-  log
+  log,
+  // Sprint 002.30: the Documents block of the Rules view (the reader owns the readings; this view only shows them).
+  documentState = () => ({ sources: [], blocks: [] })
 }) {
   /** Sprint 002.24: a use, a kind of works or a comparison, in the language the host speaks (the key when none answers). */
   const projectLabel = (key) => translate(key) ?? key;
@@ -10519,12 +11508,17 @@ function createRnu({
     // 002.6b DEC-2: the written rules' state per zone — a source line and the Rules view's blocks.
     const writtenState = writtenStateOf(written, planned);
     sources.push(...writtenState.sources);
+    // Sprint 002.30: the project's documents, in the Rules view after the zones' written rules.
+    const documentShown = documentState();
+    sources.push(...documentShown.sources);
     // 002.9 (criterion 6): where no règlement exists, the Rules view says why nothing is read.
     const notOffered = WRITTEN_NOT_OFFERED_KEYS[report.regime?.code];
-    const writtenBlocks =
-      notOffered === undefined || writtenState.blocks.length > 0
+    const writtenBlocks = [
+      ...(notOffered === undefined || writtenState.blocks.length > 0
         ? writtenState.blocks
-        : [{ kind: 'notice', tone: 'info', text: { key: notOffered } }];
+        : [{ kind: 'notice', tone: 'info', text: { key: notOffered } }]),
+      ...documentShown.blocks
+    ];
     const prescriptionChoices = prescriptionChoiceBlocks(exclusions, planned.current);
     const views = [
       ...report.views.map((view) =>
@@ -19465,7 +20459,9 @@ export function activate(context) {
     translate: (key, params) =>
       context.services.getOptional(I18nServiceToken)?.translate(key, params),
     // 002.6a DEC-1: `getOptional` on each read — a host without the token answers `undefined`.
-    pluginService: () => context.services.getOptional(PluginServiceToken)
+    pluginService: () => context.services.getOptional(PluginServiceToken),
+    // Sprint 002.30: `getOptional` on each use — without the `project-documents` capability or SDK 1.44 it is `undefined`.
+    projectDocuments: () => context.services.getOptional(ProjectDocumentServiceToken)
   });
   // 002.4 DEC-2: the capture replays the host's own request (its `plotArea`).
   let lastRequest;
@@ -19552,6 +20548,9 @@ export function deactivate() {
 
 export const __testing = {
   SOURCE_ID,
+  createDocumentReadings,
+  pageRangeOf,
+  documentRulesOf,
   versionDayOfIdurba,
   checkedDocumentStatus,
   FETCHED_HOSTS,

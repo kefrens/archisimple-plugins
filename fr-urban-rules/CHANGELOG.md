@@ -1,5 +1,58 @@
 # Changelog — `fr-urban-rules`
 
+## 0.27.0 — Sprint 002.30, Addendum A: Both Routes, Sonnet And A Local Model
+
+- **The owner's decision O1 (2026-11-21): offer BOTH routes.** Reading an uploaded document keeps **Sonnet 5.5 as the default and the recommended route**
+  and now offers **a local model** beside it, **only while the model chosen in the AI panel is a local one** (`ai.selectedModel()`, SDK 1.40: LM Studio or Ollama,
+  a name and never an address; no SDK change, no platform change). The person picks the route in the pages form (« Lire avec »); the panel sends that selection
+  as `ai: { providerId, model? }` exactly as the PLU reading does. A cloud selection other than Sonnet offers no local route.
+- **Hybrid (the owner's decision of 2026-11-21): the local model TRANSCRIBES, Sonnet always EXTRACTS.** The scans are transcribed on the local model for free, and that
+  never touches the AI budget; **the rules are read by Sonnet 5.5 for every route** (measured: a local extraction took 685 s for one page and read no rule), about $0.08
+  of the AI budget for 17 pages, stopped by the budget like any reading. The estimate shows the free transcription, **that its time is not known in advance** (Sonnet: about
+  13 s a page; this kind of model: 46 s a page on a recent laptop with a graphics chip, about 13 minutes on a computer without one, same model, same pages), the extraction's
+  about-cost and what an all-Sonnet reading would cost; the confirmation names that cost and the figures check.
+- **A page is an asynchronous job.** The panel starts a page on the service, polls it (every 1.5 s, then every 4 s), shows « page 61, 3 of 17 done, 2:10 on this page… »,
+  and « Arrêter la lecture » cancels the job (the service aborts the call to the model). No request waits for a slow model any more, for Sonnet either. Every page job is
+  dropped as soon as it is read.
+- **« Check every figure ».** A local model does not flag a digit it misread (750 read as 760 in a measured run): a warning before the confirmation (whose own wording says
+  so), shown only for pages the local model transcribed and again on the result, the page picture beside every passage (« Voir la page »), and the rules stay to confirm, never applied.
+- **A page the local model cannot read is left out, not fatal.** A loop (« [illisible] » to the cap), an empty answer or a timeout leaves that page out of the reading
+  and lists it (« Le modèle local n’a pas pu lire la ou les pages … »). Two failed pages in a row stop the reading with the cause: a server that is down is not waited for
+  seventeen times.
+- **« Lire la page N avec Sonnet 5.5 » — one click.** For each such page, with a confirmation that names its about-cost ($0.03): the page is transcribed and read on the
+  cloud route, its rules are **joined** to the reading, and the project's kept reading follows (`reading.route`, `unreadablePages`, `retriedPages`). A second failure keeps
+  the page listed.
+- Strings: `documents.field.{route,time}`, `documents.route.*`, `documents.estimate.{timeLocal,headsUpLocal}` (the heads-up now names the extraction's cost), `documents.{readLocal,retryCloud}`,
+  `documents.confirm.{optionLocal,retryOption}`, `documents.progress.{transcribingPage,retrying}`, `documents.where.*`, `documents.result.{checkFigures,unreadable,retried}`,
+  `documents.error.{noLocal,route_not_offered,retry}` (en, fr); `documents.progress.transcribing` is replaced by `transcribingPage`.
+- **Needs the companion service 0.7.0 with Addendum A** (still unreleased: asynchronous page jobs, `ai`, `route_not_offered`, `reading.unreadablePages`). A 0.26.0 extension
+  against it would not poll a page job: release them together. SDK 1.44 unchanged. Tests: `documents.test.mjs` 21 → 34 (the transcription fake became a job; each existing
+  test keeps its assertions, and its request list gained the poll and the drop); `package.test.mjs` follows the version. No existing assertion was weakened.
+
+## 0.26.0 — Sprint 002.30, Reading An Uploaded Document
+
+- **SDK 1.44**, capability **`project-documents`** (was 1.43). **A host older than 1.44 does not activate this version: release the platform
+  (122.0 and 122.1) first.** The companion service (0.7.0, unreleased) gains the `v1/uploads/…` routes this version calls.
+- **A document the person added to the project can be read for rules.** The Rules view gains a **Documents** block: « Ajouter un
+  document… » (the host's own dialog), and for each document its kind, its page count and the flow below. A scan is read by vision.
+  The reading card of the AI panel offers « Ajouter un document… » in its end states (done, partial, stopped, failed).
+- **Choose the pages, see the cost, then confirm.** A first/last page form (checked against the document and the 80-page limit), then the
+  **estimate**: the pages, how many are scans, the model (Sonnet 5.5, fixed), the about-cost with its range, and a **heads-up that it uses the
+  account's AI budget and that the pages go to the AI service of the deployment**. Nothing is sent until a required confirmation that names
+  the cost; the estimate itself sends counts only. Thumbnails are **not** built (the host's view language has no image block).
+- **The reading:** a page with a text layer is sent as text; a scan is drawn by the host (`renderPages`), **one picture a request**, and
+  transcribed; then the pages are read in parts by the PLU reading's own chain and checks. Progress and « Arrêter la lecture » are shown. A page whose
+  transcription was cut off by its length limit is said; **an AI budget stop keeps what was read** (the pages transcribed stay for the session, so
+  reading again does not pay for them twice; an extraction stopped between parts keeps the parts read).
+- **The rules arrive to confirm, with their source:** a table (rule, limit, source = document name · kind · page, « À confirmer »), each passage
+  quoted with its page, and « Voir la page N » which opens the host's viewer at that page, so a figure misread from a scan can be checked against
+  the picture. **They are never applied automatically**: `autoApplyAllowed` (002.46) refuses any rule that carries a `source`. Confirming one as a
+  written rule, and feeding the buildable area, is Sprint 002.31.
+- **Kept in the project:** the reading (rules, not transcripts) is written to the Site section (`documentReadings`, at most 12 readings, 200 rules each), for
+  the document's file (its hash): a changed file shows nothing of the earlier reading. With no writable section the reading is shown for the session and says so.
+- Strings: `documents.*`, `card.action.addDocument`, `undo.documentReading` (en, fr). Tests: `documents.test.mjs` (21); `package.test.mjs` follows the
+  version, the SDK and the capability. No existing test was weakened.
+
 ## 0.25.0 — Sprint 002.46, Verified Readings Apply Automatically
 
 - **New behaviour: some rules are applied without a click.** A written reading whose figure is written in its own quoted text, with no strip, no

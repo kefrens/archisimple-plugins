@@ -1,0 +1,440 @@
+{
+  "ran": "2026-11-21",
+  "pages": {
+    "from": 59,
+    "to": 75,
+    "transcribed": 17
+  },
+  "estimate": {
+    "aboutUsd": 0.42,
+    "lowUsd": 0.24,
+    "highUsd": 0.67,
+    "microusd": 414467
+  },
+  "measured": {
+    "costMicrousd": 405878,
+    "afterTranscriptionMicrousd": 321770,
+    "byKind": {
+      "assistant": {
+        "calls": 17,
+        "inputTokens": 40545,
+        "outputTokens": 24068,
+        "costMicrousd": 321770
+      },
+      "extract": {
+        "calls": 2,
+        "inputTokens": 27559,
+        "outputTokens": 2899,
+        "costMicrousd": 84108
+      }
+    },
+    "transcriptionSeconds": 224.3,
+    "readingSeconds": 14.9,
+    "priceVersion": "2026-11-19"
+  },
+  "pagesOut": [
+    {
+      "page": 59,
+      "seconds": 5.7,
+      "chars": 659,
+      "truncated": false,
+      "illegible": false
+    },
+    {
+      "page": 60,
+      "seconds": 6,
+      "chars": 1696,
+      "truncated": false,
+      "illegible": false
+    },
+    {
+      "page": 61,
+      "seconds": 8.9,
+      "chars": 2898,
+      "truncated": false,
+      "illegible": false
+    },
+    {
+      "page": 62,
+      "seconds": 12.2,
+      "chars": 3454,
+      "truncated": false,
+      "illegible": false
+    },
+    {
+      "page": 63,
+      "seconds": 9.9,
+      "chars": 3491,
+      "truncated": false,
+      "illegible": false
+    },
+    {
+      "page": 64,
+      "seconds": 12.2,
+      "chars": 4024,
+      "truncated": false,
+      "illegible": false
+    },
+    {
+      "page": 65,
+      "seconds": 10.5,
+      "chars": 3295,
+      "truncated": false,
+      "illegible": false
+    },
+    {
+      "page": 66,
+      "seconds": 8,
+      "chars": 2851,
+      "truncated": false,
+      "illegible": false
+    },
+    {
+      "page": 67,
+      "seconds": 4.2,
+      "chars": 716,
+      "truncated": false,
+      "illegible": false
+    },
+    {
+      "page": 68,
+      "seconds": 6.9,
+      "chars": 559,
+      "truncated": false,
+      "illegible": false
+    },
+    {
+      "page": 69,
+      "seconds": 13.5,
+      "chars": 1296,
+      "truncated": false,
+      "illegible": false
+    },
+    {
+      "page": 70,
+      "seconds": 3.9,
+      "chars": 545,
+      "truncated": false,
+      "illegible": false
+    },
+    {
+      "page": 71,
+      "seconds": 7.3,
+      "chars": 2774,
+      "truncated": false,
+      "illegible": false
+    },
+    {
+      "page": 72,
+      "seconds": 7.6,
+      "chars": 3016,
+      "truncated": false,
+      "illegible": false
+    },
+    {
+      "page": 73,
+      "seconds": 8.2,
+      "chars": 3265,
+      "truncated": false,
+      "illegible": false
+    },
+    {
+      "page": 74,
+      "seconds": 88.6,
+      "chars": 3803,
+      "truncated": false,
+      "illegible": false
+    },
+    {
+      "page": 75,
+      "seconds": 10.6,
+      "chars": 3209,
+      "truncated": false,
+      "illegible": false
+    }
+  ],
+  "fidelityAgainstEarlierSonnetTranscripts": [
+    {
+      "id": "G1",
+      "what": "figures with a unit recovered",
+      "value": 1
+    },
+    {
+      "id": "G2",
+      "what": "article numbers recovered",
+      "value": 1
+    },
+    {
+      "id": "G3",
+      "what": "wrong figures among the candidate's",
+      "value": 0
+    },
+    {
+      "id": "G4",
+      "what": "words recovered",
+      "value": 0.9882237487733072
+    },
+    {
+      "id": "G5",
+      "what": "no page with a figure empty or cut off",
+      "value": 0
+    }
+  ],
+  "reading": {
+    "state": "done",
+    "chunks": {
+      "of": 2,
+      "failed": 0
+    },
+    "dropped": {
+      "passageNotFound": 0,
+      "schemaInvalid": 1,
+      "overLimit": 0,
+      "conditionNotVerbatim": 2,
+      "incoherent": 1,
+      "valueNotInPassage": 0,
+      "droppedConditions": 2,
+      "unknownSector": 2
+    },
+    "model": {
+      "providerId": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "constraint": "schema"
+    },
+    "truncatedPages": []
+  },
+  "rules": [
+    {
+      "kind": "road_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 5,
+        "unit": "m"
+      },
+      "page": 63,
+      "article": "6",
+      "passage": "se situent à 5 mètres minimum des lignes divisoires (09-05) et des emprises des voies",
+      "confidence": "low",
+      "doubts": [
+        "model-medium",
+        "sentence-repeated"
+      ],
+      "fromTranscript": true
+    },
+    {
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 5,
+        "unit": "m"
+      },
+      "page": 63,
+      "article": "6",
+      "passage": "se situent à 5 mètres minimum des lignes divisoires (09-05) et des emprises des voies",
+      "confidence": "low",
+      "doubts": [
+        "model-medium",
+        "sentence-repeated"
+      ],
+      "fromTranscript": true
+    },
+    {
+      "kind": "annex_max",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 20,
+        "unit": "m2"
+      },
+      "page": 63,
+      "article": "6",
+      "passage": "leurs surfaces hors oeuvres brutes ne dépassent pas 20 mètres carrés (les piscines n'entrent pas dans ce calcul)",
+      "confidence": "high",
+      "doubts": [],
+      "fromTranscript": true
+    },
+    {
+      "kind": "floor_area_max",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 21021,
+        "unit": "m2"
+      },
+      "page": 63,
+      "article": "6",
+      "passage": "sont fixées à 21 021 m2 SHON",
+      "confidence": "low",
+      "doubts": [
+        "condition-not-found"
+      ],
+      "fromTranscript": true
+    },
+    {
+      "kind": "other",
+      "sector": null,
+      "statement": "described",
+      "limit": null,
+      "page": 63,
+      "article": "10",
+      "passage": "Les lots 123, 186 et 187 sont destinés à recevoir individuellement un seul immeuble d'habitation ne comportant qu'un seul logement d'un niveau habitable en rez de chaussée.",
+      "confidence": "medium",
+      "doubts": [
+        "model-medium"
+      ],
+      "fromTranscript": true
+    },
+    {
+      "kind": "other",
+      "sector": null,
+      "statement": "described",
+      "limit": null,
+      "page": 63,
+      "article": "10",
+      "passage": "le deuxième niveau n'ayant que la moitié de la surface hors-oeuvre du premier",
+      "confidence": "medium",
+      "doubts": [
+        "model-medium"
+      ],
+      "fromTranscript": true
+    },
+    {
+      "kind": "other",
+      "sector": null,
+      "statement": "described",
+      "limit": null,
+      "page": 63,
+      "article": "10",
+      "passage": "Tous les autres lots sont destinés à recevoir individuellement un seul immeuble ne comprenant qu'un seul logement et pouvant comporter deux niveaux habitables.",
+      "confidence": "medium",
+      "doubts": [
+        "model-medium"
+      ],
+      "fromTranscript": true
+    },
+    {
+      "kind": "other",
+      "sector": null,
+      "statement": "described",
+      "limit": null,
+      "page": 65,
+      "article": "12",
+      "passage": "Une servitude non aedificandi existe sur:",
+      "confidence": "low",
+      "doubts": [
+        "model-low",
+        "condition-not-found"
+      ],
+      "fromTranscript": true
+    },
+    {
+      "kind": "green_ratio",
+      "sector": null,
+      "statement": "described",
+      "limit": null,
+      "page": 72,
+      "article": "21",
+      "passage": "L'espace libre entre la clôture sur la voie et le bâtiment principal sera aménagé en jardin d'agrément ou en espace vert.",
+      "confidence": "medium",
+      "doubts": [
+        "model-medium"
+      ],
+      "fromTranscript": true
+    },
+    {
+      "kind": "footprint_ratio",
+      "sector": null,
+      "statement": "described",
+      "limit": null,
+      "page": 75,
+      "article": "9",
+      "passage": "L'emprise au sol des constructions, y compris leurs annexes, doit s'inscrire à l'intérieur des zones constructibles, délimitées sur le plan de masse de lotissement.",
+      "confidence": "medium",
+      "doubts": [
+        "model-medium"
+      ],
+      "fromTranscript": true
+    },
+    {
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "height_relative",
+        "reference": "altitude_difference",
+        "factor": 1,
+        "offsetMetres": null,
+        "minimumMetres": null
+      },
+      "page": 75,
+      "article": "9",
+      "passage": "Les constructions implantées dans ces zones doivent être continues et en retrait des limites séparatives des parcelles, d'une distance au moins égale à la différence de hauteur entre le point le plus haut de la façade et le niveau de terrain naturel en limite de propriété.",
+      "confidence": "medium",
+      "doubts": [
+        "model-medium"
+      ],
+      "fromTranscript": true
+    },
+    {
+      "kind": "boundary_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 5,
+        "unit": "m"
+      },
+      "page": 75,
+      "article": "9",
+      "passage": "D'une manière générale, aucune construction ne peut être implantée à moins de 5 mètres des lignes divisoires et des emprises des voies.",
+      "confidence": "high",
+      "doubts": [],
+      "fromTranscript": true
+    },
+    {
+      "kind": "road_setback",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "min",
+        "value": 5,
+        "unit": "m"
+      },
+      "page": 75,
+      "article": "9",
+      "passage": "D'une manière générale, aucune construction ne peut être implantée à moins de 5 mètres des lignes divisoires et des emprises des voies.",
+      "confidence": "high",
+      "doubts": [],
+      "fromTranscript": true
+    },
+    {
+      "kind": "other",
+      "sector": null,
+      "statement": "limit",
+      "limit": {
+        "kind": "value",
+        "comparison": "max",
+        "value": 30,
+        "unit": "m"
+      },
+      "page": 75,
+      "article": "9",
+      "passage": "La longueur des constructions est limitée à 30 mètres.",
+      "confidence": "high",
+      "doubts": [],
+      "fromTranscript": true
+    }
+  ]
+}

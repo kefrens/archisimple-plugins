@@ -17,6 +17,13 @@ export const DEFAULT_REFRESHES_PER_DAY = 2;
 /** Sprint 002.10: a first look at a partition not yet watched (one GPU call); Géorisques calls the cache did not answer. */
 export const DEFAULT_WATCH_SEEDS_PER_HOUR = 60;
 export const DEFAULT_GEORISQUES_PER_HOUR = 240;
+/** Sprint 002.30: an uploaded document's reading counts the pages READ, never the file's size or page count. */
+export const DEFAULT_UPLOAD_PAGES_PER_READING = 80;
+export const DEFAULT_UPLOAD_TRANSCRIBED_PAGES_PER_HOUR = 200;
+export const DEFAULT_UPLOAD_READINGS_PER_HOUR = 6;
+/** Addendum A: how long ONE page may take on a local model (a slow, CPU-only host took 13 minutes a page on average). */
+export const DEFAULT_LOCAL_PAGE_TIMEOUT_MS = 15 * 60_000;
+export const MIN_LOCAL_PAGE_TIMEOUT_MS = 30_000;
 
 function positiveInteger(value, fallback) {
   const n = Number(value);
@@ -36,7 +43,11 @@ export function limitsFromEnv(env) {
     watchSeedsPerHour: positiveInteger(env.FR_URBAN_RULES_LIMIT_WATCH_SEED_HOUR, DEFAULT_WATCH_SEEDS_PER_HOUR),
     georisquesPerHour: positiveInteger(env.FR_URBAN_RULES_LIMIT_GEORISQUES_HOUR, DEFAULT_GEORISQUES_PER_HOUR),
     fetchesPerHour: positiveInteger(env.FR_URBAN_RULES_LIMIT_FETCH_HOUR, DEFAULT_FETCHES_PER_HOUR),
-    readsPerMinute: positiveInteger(env.FR_URBAN_RULES_LIMIT_READ_MINUTE, DEFAULT_READS_PER_MINUTE)
+    readsPerMinute: positiveInteger(env.FR_URBAN_RULES_LIMIT_READ_MINUTE, DEFAULT_READS_PER_MINUTE),
+    uploadPagesPerReading: positiveInteger(env.FR_URBAN_RULES_LIMIT_UPLOAD_PAGES, DEFAULT_UPLOAD_PAGES_PER_READING),
+    uploadTranscribedPagesPerHour: positiveInteger(env.FR_URBAN_RULES_LIMIT_UPLOAD_TRANSCRIBED_HOUR, DEFAULT_UPLOAD_TRANSCRIBED_PAGES_PER_HOUR),
+    uploadReadingsPerHour: positiveInteger(env.FR_URBAN_RULES_LIMIT_UPLOAD_READINGS_HOUR, DEFAULT_UPLOAD_READINGS_PER_HOUR),
+    localPageTimeoutMs: Math.max(MIN_LOCAL_PAGE_TIMEOUT_MS, positiveInteger(env.FR_URBAN_RULES_LOCAL_PAGE_TIMEOUT_MS, DEFAULT_LOCAL_PAGE_TIMEOUT_MS))
   };
 }
 

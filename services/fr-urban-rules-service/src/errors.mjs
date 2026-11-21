@@ -31,6 +31,12 @@ export const ERROR_STATUS = Object.freeze({
   // Sprint 002.27: the account's monthly AI budget stopped the reading before any chunk was read
   // (ADR-0136). A reading that had read some chunks is a result with `stopped`, not this error.
   ai_budget_exhausted: 402,
+  // Sprint 002.30: an uploaded document's reading (the person's own pages, never the shared cache).
+  too_many_pages: 422,
+  upload_unreadable: 422,
+  transcription_failed: 502,
+  // Addendum A: the route named is neither Sonnet nor a local provider (a cloud provider that was not measured).
+  route_not_offered: 422,
   // Sprint 002.10 DEC-5: the Géorisques proxy has no token on this deployment.
   not_configured: 503,
   // An unexpected exception: its message is never answered or logged.

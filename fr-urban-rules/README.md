@@ -121,6 +121,26 @@ features travel with the call to the AI service (companion service 0.4.0, platfo
 granted the chosen provider is refused there, and the zone says so. Nothing chosen, or a host older than 1.40, and the
 deployment's default model reads, as in 0.14.0. An address, a key or an endpoint is never part of the choice.
 
+## Documents of the project (0.26.0 and 0.27.0, Sprint 002.30)
+
+With SDK 1.44 and the capability `project-documents`, a lotissement, hameau, ZAC, SPR or copropriété PDF the person added to the project (platform
+122.0) can be read for rules. The Rules view's **Documents** block (and the reading card's end states) offers « Ajouter un document… »; the person
+chooses the pages to read, sees the **estimate and a heads-up about the AI budget** before anything is sent, confirms, and reads. A page with a
+text layer is read from its text; a **scan is transcribed by vision** (Sonnet 5.5, one page picture a request, through the companion service
+`v1/uploads/…`), then the PLU reading's extraction and verification run on the transcript. The rules come back **to confirm**, each with its source
+(document, kind, page), a quoted passage and « Voir la page » (the host's viewer): a misread figure is checked against the picture. They are never
+applied automatically, and are kept in the project's section for the document's file. Confirming them as rules, and several documents side by side, is
+Sprint 002.31. Thumbnails of the pages are not built. See `docs/sprints/sprint-002.30-reading-an-uploaded-document.md`.
+
+**Two routes (0.27.0, Sprint 002.30 Addendum A).** Sonnet 5.5 is the default and the recommended route. When the **model chosen in the AI panel is a local
+one** (LM Studio or Ollama: `ai.selectedModel()`, the same name-only mechanism the PLU reading uses; never an address), the estimate step also offers it,
+named: the **scans are transcribed** on that model through the deployment's AI service, for **$0 and without touching the AI budget**; **the rules are always read by
+Sonnet 5.5** (about $0.08 of the AI budget for 17 pages, shown before you confirm, with what an all-Sonnet reading would cost). The transcription's time is **not known in advance** (the estimate shows Sonnet's measured 13 s a page and the two measured machines: 46 s a page on a recent laptop with a graphics chip, about
+13 minutes on one without), so a page is an asynchronous job the panel polls, with its elapsed time and « Arrêter la lecture ». A local model does not flag a digit it
+misread: a **« check every figure » notice** comes before the confirmation and again on the result, the page picture stays beside each passage, and the rules stay to
+confirm. A page it cannot read (a loop, an empty answer, a timeout) is **left out and listed**, with **« Lire la page N avec Sonnet 5.5 »** (a confirmation that names about $0.03):
+that page is read on the cloud route and its rules joined to the reading. The reading's `route`, `unreadablePages` and `retriedPages` are kept with it in the project.
+
 ## The document watch (0.14.0)
 
 When the deployment runs the companion service, a read that finds a PLU(i) also asks the service
@@ -473,7 +493,8 @@ from the published index):
 
 ## What it needs from the platform
 
-- **SDK 1.33** (since 0.9.0: the Site cache, 096.17; 1.32 since 0.8.0:
+- **SDK 1.44** since 0.26.0 (the `project-documents` capability: the documents of the project, platform 122.1 — release the platform first);
+  **SDK 1.33** (since 0.9.0: the Site cache, 096.17; 1.32 since 0.8.0:
   `checkVariation`, 096.11's 1.31, and the questions, 096.12's 1.32; 1.30 since
   0.7.0 for the volume and the sheet; 1.28 since 0.5.0 for `plugin-service`)
   and the `regulations` capability; `ai` for the programme enricher and the questions, `document` for

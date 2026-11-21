@@ -41,12 +41,15 @@ import { ServiceError } from './errors.mjs';
 import { createFetcher } from './fetcher.mjs';
 import { createGeorisques } from './georisques.mjs';
 import { createExtractions } from './jobs.mjs';
+import { createUploads } from './uploaded.mjs';
 import { SCHEMA_VERSION } from './extract.mjs';
 import { createWindowLimiter, limitsFromEnv } from './limits.mjs';
 import { prepareChapter } from './text.mjs';
 import { createWatcher } from './watch.mjs';
 
 export const PACKAGE_ID = 'com.archisimple.fr-urban-rules';
+/** Sprint 002.30: under the web proxy's 1 MiB (`client_max_body_size` of `/plugins-api/`), with room for its headers. */
+export const UPLOAD_BODY_BYTES = 900 * 1024;
 
 /**
  * Sprint 002.16: what the editor may name of the AI panel's choice. An id as ai-service's providers
@@ -199,6 +202,7 @@ export async function createService({
     }
     return removed;
   }
+  const aiClient = ai ?? createAiClient({ baseUrl: aiServiceUrl, extractTimeoutMs: extractTimeoutFromEnv(env) });
   const fetches = createWindowLimiter({ limit: limits.fetchesPerHour, windowMs: 3_600_000, now: clock });
   const reads = createWindowLimiter({ limit: limits.readsPerMinute, windowMs: 60_000, now: clock });
   const HOUR = 3_600_000;
@@ -207,7 +211,7 @@ export async function createService({
     store,
     documents: cache,
     results: resultCache(caches.extractions),
-    ai: ai ?? createAiClient({ baseUrl: aiServiceUrl, extractTimeoutMs: extractTimeoutFromEnv(env) }),
+    ai: aiClient,
     limiters: {
       fetchHour: fetches,
       extractHour: createWindowLimiter({ limit: limits.extractsPerHour, windowMs: HOUR, now: clock }),
@@ -218,6 +222,22 @@ export async function createService({
     clock,
     now,
     onCall,
+    chunkChars: limits.chunkChars,
+    maxItems: limits.maxItemsPerChunk
+  });
+  // Sprint 002.30: an uploaded document's reading — private, in memory, metered; never the caches above.
+  const uploads = createUploads({
+    ai: aiClient,
+    limiters: {
+      transcribedHour: createWindowLimiter({ limit: limits.uploadTranscribedPagesPerHour, windowMs: HOUR, now: clock }),
+      readingsHour: createWindowLimiter({ limit: limits.uploadReadingsPerHour, windowMs: HOUR, now: clock })
+    },
+    logger,
+    clock,
+    now,
+    maxPages: limits.uploadPagesPerReading,
+    localPageTimeoutMs: limits.localPageTimeoutMs,
+    readSelection,
     chunkChars: limits.chunkChars,
     maxItems: limits.maxItemsPerChunk
   });
@@ -335,6 +355,72 @@ export async function createService({
     throw new ServiceError('invalid_request', { field: 'method' });
   }
 
+  /** A JSON body of an uploads route: an object, or `invalid_request`. */
+  function jsonBody(body) {
+    try {
+      const parsed = JSON.parse(body ?? '');
+      if (parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed;
+    } catch {
+      /* falls through */
+    }
+    throw new ServiceError('invalid_request', { field: 'body' });
+  }
+
+  /** The uploads routes (Sprint 002.30): `{ status, body, record }`. Never a page's text in the record. */
+  async function uploadsRoute(request, rest) {
+    takeRead(request.limitKey);
+    const who = {
+      limitKey: request.limitKey,
+      userHash: request.userHash,
+      userSource: request.userSource,
+      features: request.features,
+      aiSubject: request.aiSubject
+    };
+    const [first, id, action] = rest;
+    const method = request.method;
+    const allow = (...methods) => {
+      if (!methods.includes(method)) throw new ServiceError('invalid_request', { field: 'method' });
+    };
+    if (rest.length === 1 && first === 'estimate') {
+      allow('POST');
+      return { ...uploads.estimate(jsonBody(request.body)), record: { event: 'upload_estimate' } };
+    }
+    if (first === 'transcriptions') {
+      // Addendum A: a page is a job: POST starts it (202), GET polls it, POST …/cancel stops it, DELETE drops it.
+      if (rest.length === 1) {
+        allow('POST');
+        return { ...(await uploads.transcribe(jsonBody(request.body), who)), record: { event: 'upload_transcription_post' } };
+      }
+      if (rest.length === 2) {
+        allow('GET', 'DELETE');
+        return method === 'GET'
+          ? { ...uploads.pageStatus(id, who), record: { event: 'upload_transcription_poll' } }
+          : { ...uploads.pageRemove(id, who), record: { event: 'upload_transcription_remove' } };
+      }
+      if (rest.length === 3 && action === 'cancel') {
+        allow('POST');
+        return { ...uploads.pageCancel(id, who), record: { event: 'upload_transcription_cancel' } };
+      }
+    }
+    if (first === 'readings') {
+      if (rest.length === 1) {
+        allow('POST');
+        return { ...(await uploads.post(jsonBody(request.body), who)), record: { event: 'upload_reading_post' } };
+      }
+      if (rest.length === 2) {
+        allow('GET', 'DELETE');
+        return method === 'GET'
+          ? { ...uploads.status(id, who), record: { event: 'upload_reading_poll' } }
+          : { ...uploads.remove(id, who), record: { event: 'upload_reading_remove' } };
+      }
+      if (rest.length === 3 && action === 'cancel') {
+        allow('POST');
+        return { ...uploads.cancel(id, who), record: { event: 'upload_reading_cancel' } };
+      }
+    }
+    throw new ServiceError('not_found');
+  }
+
   /** `GET v1/documents/{partition}` (002.10 DEC-3). */
   async function documentsRoute(request, rest) {
     if (rest.length !== 1) throw new ServiceError('not_found');
@@ -409,7 +495,7 @@ export async function createService({
       const [version, name, ...rest] = request.segments;
       if (
         version !== 'v1' ||
-        !['chapter', 'extractions', 'documents', 'georisques'].includes(name) ||
+        !['chapter', 'extractions', 'documents', 'georisques', 'uploads'].includes(name) ||
         (name === 'chapter' && rest.length > 0)
       ) {
         return { status: 404, body: { error: 'not_found' } };
@@ -434,6 +520,16 @@ export async function createService({
           return { status: 200, body: answer.body };
         } catch (error) {
           return failed(error, { ...record, event, route: routeName }, started, request.query);
+        }
+      }
+      if (name === 'uploads') {
+        try {
+          const answer = await uploadsRoute(request, rest);
+          // Counts and codes only: never a page, a transcript or a rule.
+          logger('info', { ...answer.record, route: `v1/uploads/${rest[0]}${rest.length > 1 ? '/{…}' : ''}`, user: request.userHash, userSource: request.userSource, outcome: answer.body.error ?? 'ok', durationMs: clock() - started });
+          return { status: answer.status, body: answer.body };
+        } catch (error) {
+          return failed(error, { ...record, event: 'upload_request', route: 'v1/uploads' }, started, request.query);
         }
       }
       if (name === 'extractions') {
@@ -467,7 +563,20 @@ export async function createService({
     },
 
     /** Resolves when no extraction is queued or running (tests, the recording tool). */
-    idle: () => extractions.idle(),
+    idle: async () => {
+      await extractions.idle();
+      await uploads.idle();
+    },
+
+    /** Uploaded readings held in memory (tests: a reading is private and short-lived). */
+    uploadsHeld: () => uploads.held(),
+
+    /**
+     * The largest request body, in bytes, this service takes on a route; `undefined` for the gateway's own 4 KiB. Only
+     * the uploads' POSTs carry pages, and a page image or a few pages of text must fit the proxy's 1 MiB in front.
+     */
+    maxBodyBytes: ({ method, segments }) =>
+      method === 'POST' && segments[0] === 'v1' && segments[1] === 'uploads' ? UPLOAD_BODY_BYTES : undefined,
 
     /** The document watch (002.10): tests and the walk drive it directly. */
     watcher,

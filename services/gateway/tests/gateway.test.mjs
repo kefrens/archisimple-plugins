@@ -377,3 +377,40 @@ test('binds the loopback unless the deployment names another address', () => {
   // A blank `.env` line must not become listen(''), which binds every interface.
   assert.equal(listenHost({ PLUGIN_SERVICES_HOST: '' }), '127.0.0.1');
 });
+
+// Sprint 002.30: a body above 4 KiB only where the SERVICE says its route takes it.
+test('a service may take a larger body on a route of its own (an uploaded page); every other route keeps 4 KiB', async () => {
+  const seen = [];
+  const mounted = new Map([
+    [
+      'org.example.big',
+      {
+        version: '1',
+        service: {
+          maxBodyBytes: ({ method, segments }) => (method === 'POST' && segments.join('/') === 'v1/uploads/readings' ? 900 * 1024 : undefined),
+          handle: async (request) => {
+            seen.push(request.body?.length);
+            return { status: 200, body: { ok: true } };
+          }
+        }
+      }
+    ],
+    ['org.example.plain', { version: '1', service: { handle: async () => ({ status: 200, body: { ok: true } }) } }]
+  ]);
+  const capture = capturingLog();
+  const port = await listen(createGateway({ mounted, env: {}, log: capture.log }));
+  const big = 'x'.repeat(200 * 1024);
+  const headers = { 'content-length': String(big.length) };
+  const allowed = await get(port, '/plugins-api/org.example.big/v1/uploads/readings', headers, 'POST', big);
+  assert.equal(allowed.status, 200);
+  assert.deepEqual(seen, [big.length], 'the whole body reached the service');
+  const otherRoute = await get(port, '/plugins-api/org.example.big/v1/extractions', headers, 'POST', big);
+  assert.equal(otherRoute.status, 400, 'the same service, another route: 4 KiB');
+  const otherMethod = await get(port, '/plugins-api/org.example.big/v1/uploads/readings', headers, 'PUT', big);
+  assert.equal(otherMethod.status, 400);
+  const noSay = await get(port, '/plugins-api/org.example.plain/v1/x', headers, 'POST', big);
+  assert.equal(noSay.status, 400, 'a service that says nothing keeps 4 KiB');
+  const tooBig = 'x'.repeat(901 * 1024);
+  const over = await get(port, '/plugins-api/org.example.big/v1/uploads/readings', { 'content-length': String(tooBig.length) }, 'POST', tooBig);
+  assert.equal(over.status, 400, 'and the route\'s own limit holds');
+});

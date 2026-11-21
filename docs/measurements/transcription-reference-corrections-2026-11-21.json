@@ -1,0 +1,13 @@
+[
+  {
+    "page": 68,
+    "append": "(16 m)",
+    "note": "Page 68 is a cadastral plan of the lotissement. The label « 16 m » beside the road at the right edge is on the page image; the Sonnet transcript of 2026-11-20 omitted it and the Haiku transcript has it. Added to the reference, so every candidate is judged against what the page holds."
+  },
+  {
+    "page": 74,
+    "from": "2.031 m²",
+    "to": "2 031 m²",
+    "note": "Lot 181 is printed « 2.031 m² » with a dot as the thousands separator (the page image shows it): the number is 2031, as « 2 031 » elsewhere in the table. The scorer reads a dot as a decimal point, so the reference is normalised; it is a formatting difference, not a misreading."
+  }
+]
