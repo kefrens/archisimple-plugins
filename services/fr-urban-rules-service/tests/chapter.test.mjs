@@ -148,6 +148,67 @@ test('no chapter: zone_chapter_not_found lists the codes it saw', () => {
   }
 });
 
+// Lomagne's PLUi (DU_248200065, 2026-11-21): « Règlement des zones Ucb … 18 » on the contents page, a running
+// header « Règlement écrit | Zones Ucb » on every chapter page, an outline of « Diapositive N », and the zones
+// Ucb2, Up2 and Ac living inside the chapters of Ucb, Up and A.
+function lomagne() {
+  const chapters = [
+    ['Ucb', 4, 6],
+    ['Up', 7, 9],
+    ['A', 10, 12]
+  ];
+  const nav = 'Dispo\nGénérales\nUcb\nUp\nA\nPLUi · version d’approbation · novembre 2025';
+  const pages = [
+    'Procédure\nRapport de présentation\n3. REGLEMENT',
+    'Règlement écrit\n1 PLUi\nRapport de présentation',
+    [
+      'Règlement écrit\n2 PLUi\nSommaire',
+      'Dispositions générales et particulières ........ 2',
+      ...chapters.map(([code, from]) => `Règlement des zones ${code} ........ ${from - 1}`),
+      'Lexique ........ 12',
+      'Les zones humides ........ 12'
+    ].join('\n')
+  ];
+  for (const [code, from, to] of chapters) {
+    for (let page = from; page <= to; page += 1) {
+      pages[page - 1] = `Règlement écrit | Zones ${code}\n${page - 1}\n${nav}\nArticle ${page} du chapitre ${code}.`;
+    }
+  }
+  pages[12 - 1] += '\nLe présent chapitre est applicable à la zone Ucb et aux zones agricoles.';
+  return { outline: [1, 2, 3].map((n) => ({ title: `Diapositive ${n}`, page: n, depth: 1 })), pages: pages.slice(0, 12) };
+}
+
+test('plural titles: « Règlement des zones Ucb » names Ucb, and only when the code ends the title', () => {
+  assert.deepEqual(codesInTitle('Règlement des zones Ucb'), ['Ucb']);
+  assert.deepEqual(codesInTitle('Règlement écrit | Zones A'), ['A']);
+  assert.deepEqual(codesInTitle('Règlement des zones AU'), ['AU']);
+  assert.deepEqual(codesInTitle('2.5 LES ZONES A URBANISER'), [], 'a code followed by words is a phrase');
+  assert.deepEqual(codesInTitle('Les zones humides'), [], 'a lower-case word is not a code');
+  for (const title of ['ZONES URBAINES', 'Zones Agricoles', 'LES ZONES NATURELLES']) {
+    assert.deepEqual(codesInTitle(title), [], `${title}: a long word is not a code`);
+  }
+});
+
+test('a sector digit is a child only of a plural chapter: « zones Ucb » holds Ucb2, « Zone U1 » does not hold U12', () => {
+  assert.equal(isParentCode('Ucb', 'Ucb2'), false);
+  assert.equal(isParentCode('Ucb', 'Ucb2', { digitSectors: true }), true);
+  assert.equal(isParentCode('A', 'AU', { digitSectors: true }), false, 'AU stays another zone');
+  const plural = { code: 'Ucb', plural: true };
+  assert.deepEqual(bestCandidate([plural], 'Ucb2'), { candidate: plural, match: 'prefix' });
+  assert.equal(bestCandidate([{ code: 'Ucb' }], 'Ucb2'), undefined);
+});
+
+test('Lomagne: Ucb2, Up2 and Ac are found in the chapters of « zones Ucb », « zones Up » and « zones A »', () => {
+  const doc = lomagne();
+  assert.deepEqual(findChapter(doc, 'Ucb2'), { pages: [4, 6], found: 'contents', match: 'prefix', title: 'Règlement des zones Ucb' });
+  assert.deepEqual(findChapter(doc, 'Up2').pages, [7, 9]);
+  assert.deepEqual(findChapter(doc, 'Ac').pages, [10, 12]);
+  assert.deepEqual(findChapter(doc, 'Ucb'), { pages: [4, 6], found: 'contents', match: 'exact', title: 'Règlement des zones Ucb' });
+  for (const zone of ['AU', 'Uh']) {
+    assert.throws(() => findChapter(doc, zone), (e) => e.code === 'zone_chapter_not_found' && e.details.contentsCodes.join() === 'Ucb,Up,A');
+  }
+});
+
 test('a chapter over 80 pages is chapter_too_large, not guessed at', () => {
   const doc = {
     outline: [

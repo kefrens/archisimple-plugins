@@ -44,7 +44,29 @@ export function codesInTitle(title) {
     const second = match[2] === undefined ? '' : stripPunctuation(match[2]);
     codes.push(/^[0-9]{1,2}$/u.test(second) ? first + second : first);
   }
+  const plural = pluralCode(text);
+  if (plural !== undefined) codes.push(plural);
   return codes;
+}
+
+/**
+ * The code of a title written « Règlement des zones Ucb » (Lomagne's PLUi): « zones » and one code
+ * that ends the title. Narrower than the singular on purpose: « 2.5 LES ZONES A URBANISER » and
+ * « zones humides » name a kind of zone in words, not a code, and a code followed by more words
+ * is such a phrase. A code starts with a capital letter or a digit and is not a long word.
+ */
+function pluralCode(text) {
+  const match = /\bzones\s+(\S+)\s*$/iu.exec(text);
+  if (match === null) return undefined;
+  const code = stripPunctuation(match[1]);
+  // « ZONES URBAINES », « Zones Agricoles »: six letters or more and no digit is a word, never a code.
+  if (!/^[\p{Lu}0-9]/u.test(code) || /^\p{L}{6,}$/u.test(code)) return undefined;
+  return code;
+}
+
+/** True when the title names its chapter's zones in the plural: the chapter covers the code's sectors (Ucb, Ucb1, Ucb2). */
+export function namesZonesInPlural(title) {
+  return pluralCode(String(title).normalize('NFKC')) !== undefined;
 }
 
 function stripPunctuation(token) {
@@ -57,18 +79,19 @@ function stripPunctuation(token) {
  * `N` → `Nl`). `A` is not `AU`'s parent, nor `U1` `U12`'s: those are other
  * zones, and a chapter for another zone is worse than none.
  */
-export function isParentCode(code, zone) {
+export function isParentCode(code, zone, { digitSectors = false } = {}) {
   const wanted = String(zone).normalize('NFKC').replace(/\s+/gu, '');
   const parent = normaliseCode(code);
   if (parent === '' || !wanted.toLowerCase().startsWith(parent)) return false;
-  return /^\p{Ll}/u.test(wanted.slice(parent.length));
+  // A chapter titled « zones Ucb » covers Ucb1, Ucb2…; `U1` for `U12` stays refused: a singular chapter is one zone.
+  return (digitSectors ? /^[\p{Ll}0-9]/u : /^\p{Ll}/u).test(wanted.slice(parent.length));
 }
 
 /**
  * The best of several candidates for `zone`: an exact code, else the longest
  * code that is its parent ({@link isParentCode}). `undefined` when none fits.
  *
- * @template {{ code: string }} T
+ * @template {{ code: string, plural?: boolean }} T
  * @param {readonly T[]} candidates in document order; the first wins a tie
  * @param {string} zone
  * @returns {{ candidate: T, match: 'exact' | 'prefix' } | undefined}
@@ -79,7 +102,7 @@ export function bestCandidate(candidates, zone) {
   if (exact !== undefined) return { candidate: exact, match: 'exact' };
   let best;
   for (const c of candidates) {
-    if (!isParentCode(c.code, zone)) continue;
+    if (!isParentCode(c.code, zone, { digitSectors: c.plural === true })) continue;
     if (best === undefined || normaliseCode(c.code).length > normaliseCode(best.code).length) best = c;
   }
   return best === undefined ? undefined : { candidate: best, match: 'prefix' };
@@ -100,7 +123,8 @@ function fromOutline(outline, pageCount, zone) {
   const candidates = [];
   outline.forEach((entry, position) => {
     if (!Number.isInteger(entry.page)) return;
-    for (const code of codesInTitle(entry.title)) candidates.push({ code, entry, position });
+    const plural = namesZonesInPlural(entry.title);
+    for (const code of codesInTitle(entry.title)) candidates.push({ code, entry, position, plural });
   });
   const best = bestCandidate(candidates, zone);
   if (best === undefined) return { codes: candidates.map((c) => c.code) };
@@ -153,16 +177,31 @@ export function contentsLines(pages) {
   return lines;
 }
 
+function zoneCodeSource(code) {
+  return [...normaliseCode(code)].map((c) => c.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')).join('\\s*');
+}
+
 function zonePattern(code) {
-  const chars = [...normaliseCode(code)].map((c) => c.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&'));
-  return new RegExp(`\\bzone\\s+${chars.join('\\s*')}(?![\\p{L}\\p{N}])`, 'iu');
+  return new RegExp(`\\bzone\\s+${zoneCodeSource(code)}(?![\\p{L}\\p{N}])`, 'iu');
+}
+
+/** Lomagne prints « Règlement écrit | Zones Ucb » at the top of every page of the chapter: not upper case, so no heading. */
+const RUNNING_HEADER_LINES = 3;
+function runningHeaderPattern(code) {
+  return new RegExp(`\\bzones?\\s+${zoneCodeSource(code)}\\s*$`, 'iu');
+}
+function hasRunningHeader(text, pattern) {
+  return linesOf(String(text ?? '').slice(0, HEADING_WINDOW))
+    .slice(0, RUNNING_HEADER_LINES)
+    .some((line) => pattern.test(line));
 }
 
 function fromContents(pages, zone) {
   const lines = contentsLines(pages);
   const candidates = [];
   lines.forEach((line, position) => {
-    for (const code of codesInTitle(line.label)) candidates.push({ code, line, position });
+    const plural = namesZonesInPlural(line.label);
+    for (const code of codesInTitle(line.label)) candidates.push({ code, line, position, plural });
   });
   const best = bestCandidate(candidates, zone);
   if (best === undefined) return { codes: candidates.map((c) => c.code) };
@@ -172,6 +211,7 @@ function fromContents(pages, zone) {
   // The printed-to-PDF offset: the heading's text, on PDF pages n − 3 … n + 5,
   // past the contents itself, nearest to n first.
   const pattern = zonePattern(best.candidate.code);
+  const header = runningHeaderPattern(best.candidate.code);
   const n = line.printed;
   const order = [0, 1, -1, 2, -2, 3, -3, 4, 5];
   const at = order
@@ -180,7 +220,7 @@ function fromContents(pages, zone) {
       (p) =>
         p > contentsEnd &&
         p <= pages.length &&
-        headingLines(pages[p - 1]).some((h) => pattern.test(h))
+        (headingLines(pages[p - 1]).some((h) => pattern.test(h)) || hasRunningHeader(pages[p - 1], header))
     );
   if (at === undefined) return { codes: candidates.map((c) => c.code) };
   const offset = at - n;

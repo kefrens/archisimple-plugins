@@ -196,14 +196,112 @@ test('criterion 5: a failing municipality gives `unknown`, never `not_published`
   assert.equal(report.regime.code, 'unknown');
   assert.notEqual(report.regime.code, 'not_published');
   assert.equal(source(report, 'municipality').state, 'unavailable');
+  // A 5xx is the service failing, not refusing: its own sentence, after one more try.
   assert.deepEqual(source(report, 'municipality').detail, {
-    key: 'fr-urban-rules.status.http',
+    key: 'fr-urban-rules.status.httpServer',
     params: { status: 503 }
   });
   assert.equal(report.overview[0].text.key, 'fr-urban-rules.notice.unknown');
   assert.equal(view(report, 'zone'), undefined);
   // Easements and risks are still read: they need no regime.
   assert.ok(report.features.some((f) => f.category === 'easement'));
+});
+
+// ── One more try for a transient failure ─────────────────────────────────────────
+
+/** An override answering `first` once, then what the recording holds for the same URL. */
+function failingOnce(plot, first) {
+  const recorded = recordedFetch(plots[plot].answers).fetch;
+  const calls = [];
+  const override = (url, init) => {
+    calls.push(url);
+    return calls.length === 1 ? first() : recorded(url, init);
+  };
+  return { override, calls };
+}
+
+test('a 500 from one source is asked once more, and the second answer is the source’s', async () => {
+  const { override, calls } = failingOnce('lyon', () => answering(500, null)());
+  const { report } = await readOnce('lyon', { overrides: { 'apicarto-municipality': override } });
+  assert.equal(calls.length, 2);
+  assert.equal(source(report, 'municipality').state, 'ready');
+  assert.equal(report.regime.code, 'plui');
+});
+
+test('a dropped connection is asked once more too', async () => {
+  const { override, calls } = failingOnce('lyon', () => {
+    throw new TypeError('Failed to fetch');
+  });
+  const { report } = await readOnce('lyon', { overrides: { 'apicarto-municipality': override } });
+  assert.equal(calls.length, 2);
+  assert.equal(source(report, 'municipality').state, 'ready');
+});
+
+test('a source that fails twice says so once, in the server-error sentence, and the rest of the read goes on', async () => {
+  let calls = 0;
+  const { report } = await readOnce('lyon', {
+    overrides: {
+      'apicarto-prescription-surf': async () => {
+        calls += 1;
+        return answering(500, null)();
+      }
+    }
+  });
+  assert.equal(calls, 2, 'one more try, not a loop');
+  assert.equal(source(report, 'prescription-surf').state, 'unavailable');
+  assert.deepEqual(source(report, 'prescription-surf').detail, {
+    key: 'fr-urban-rules.status.httpServer',
+    params: { status: 500 }
+  });
+  assert.equal(report.regime.code, 'plui');
+  assert.ok(report.features.some((f) => f.category === 'zone'));
+});
+
+test('a 4xx is an answer, never asked twice; a timeout is not asked twice either', async () => {
+  let refused = 0;
+  const { report } = await readOnce('lyon', {
+    overrides: {
+      'apicarto-prescription-surf': async () => {
+        refused += 1;
+        return answering(422, null)();
+      }
+    }
+  });
+  assert.equal(refused, 1);
+  assert.deepEqual(source(report, 'prescription-surf').detail, {
+    key: 'fr-urban-rules.status.http',
+    params: { status: 422 }
+  });
+  let slow = 0;
+  await readOnce('lyon', {
+    overrides: {
+      'apicarto-prescription-surf': (url, init) => {
+        slow += 1;
+        return hanging()(url, init);
+      }
+    },
+    timeoutMs: 50
+  });
+  assert.equal(slow, 1);
+});
+
+test('a read superseded while it waits to try again ends there, with no report', async () => {
+  const controller = new AbortController();
+  let calls = 0;
+  const context = readerFor('lyon', {
+    overrides: {
+      'apicarto-municipality': async () => {
+        calls += 1;
+        queueMicrotask(() => controller.abort());
+        return answering(500, null)();
+      }
+    }
+  });
+  await assert.rejects(
+    context.reader.read(requestFor(context.site), { signal: controller.signal, progress: () => {} }),
+    (error) => error.name === 'AbortError'
+  );
+  assert.equal(calls, 1, 'the second try never went out');
 });
 
 test('criterion 5: a timed-out prescription read leaves zone and easements filled, that one source failed', async () => {
